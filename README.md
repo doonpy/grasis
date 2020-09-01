@@ -1,2 +1,0 @@
-# grasis
-Graduation thesis
