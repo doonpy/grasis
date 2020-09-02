@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-09-02T09:05:00.018Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="u8uLLF3AqDRHC9SYwfDr" version="13.6.5" type="github" pages="7">
+<mxfile host="app.diagrams.net" modified="2020-09-02T11:06:01.391Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="7fwLYv7PQQMUt8e6nhqD" version="13.6.5" type="github" pages="7">
   <diagram id="6g13zmwLoHxmv2ATgvaI" name="Quản lý khóa luận">
     <mxGraphModel dx="1390" dy="890" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -296,7 +296,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="2THE8mXfMffBGKKK_MHZ" name="Quản lý báo cáo tiến độ">
-    <mxGraphModel dx="1390" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1390" dy="890" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="eW-Itgsju2nnqSjzE58P-0" />
         <mxCell id="eW-Itgsju2nnqSjzE58P-1" parent="eW-Itgsju2nnqSjzE58P-0" />
@@ -358,10 +358,13 @@
     </mxGraphModel>
   </diagram>
   <diagram id="1Og2VHi6Q6YGARP5NEdc" name="Quản lý nhận xét báo cáo tiến độ">
-    <mxGraphModel dx="1390" dy="890" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1390" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="Kgds-SAC3pQRxBhbiTS7-0" />
         <mxCell id="Kgds-SAC3pQRxBhbiTS7-1" parent="Kgds-SAC3pQRxBhbiTS7-0" />
+        <mxCell id="GR0XCsAUiOpYaIaK52AU-0" value="Quản lý nhận xét báo cáo tiến độ" style="whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;fontStyle=1" vertex="1" parent="Kgds-SAC3pQRxBhbiTS7-1">
+          <mxGeometry x="40" y="320" width="760" height="520" as="geometry" />
+        </mxCell>
         <mxCell id="ScYmP4MjTPI9xbJkr5RU-18" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;" parent="Kgds-SAC3pQRxBhbiTS7-1" source="ScYmP4MjTPI9xbJkr5RU-21" target="ScYmP4MjTPI9xbJkr5RU-31" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
@@ -414,10 +417,13 @@
     </mxGraphModel>
   </diagram>
   <diagram id="3phcgzRmJWwZlPurHAd7" name="Quản lý lịch báo cáo tiến độ">
-    <mxGraphModel dx="1390" dy="890" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1390" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="7AEc97mhs4ZNhoMu7WVm-0" />
         <mxCell id="7AEc97mhs4ZNhoMu7WVm-1" parent="7AEc97mhs4ZNhoMu7WVm-0" />
+        <mxCell id="1TUkebirGdR3uQXQlT0D-0" value="Quản lý lịch nhận xét báo cáo tiến độ" style="whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;fontStyle=1" vertex="1" parent="7AEc97mhs4ZNhoMu7WVm-1">
+          <mxGeometry x="40" y="200" width="760" height="640" as="geometry" />
+        </mxCell>
         <mxCell id="etyGsmdFHb5Fxk1OPto--0" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;" parent="7AEc97mhs4ZNhoMu7WVm-1" source="etyGsmdFHb5Fxk1OPto--4" target="etyGsmdFHb5Fxk1OPto--16" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
@@ -448,7 +454,7 @@
         <mxCell id="etyGsmdFHb5Fxk1OPto--12" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" parent="7AEc97mhs4ZNhoMu7WVm-1" source="etyGsmdFHb5Fxk1OPto--13" target="etyGsmdFHb5Fxk1OPto--5" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="etyGsmdFHb5Fxk1OPto--13" value="Xem tất cả lịch&lt;br&gt;báo cáo tiến độ" style="ellipse;whiteSpace=wrap;html=1;" parent="7AEc97mhs4ZNhoMu7WVm-1" vertex="1">
+        <mxCell id="etyGsmdFHb5Fxk1OPto--13" value="6.1. Xem tất cả lịch&lt;br&gt;báo cáo tiến độ" style="ellipse;whiteSpace=wrap;html=1;" parent="7AEc97mhs4ZNhoMu7WVm-1" vertex="1">
           <mxGeometry x="360" y="240" width="120" height="80" as="geometry" />
         </mxCell>
         <mxCell id="etyGsmdFHb5Fxk1OPto--14" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" parent="7AEc97mhs4ZNhoMu7WVm-1" source="etyGsmdFHb5Fxk1OPto--16" target="etyGsmdFHb5Fxk1OPto--10" edge="1">
@@ -457,16 +463,16 @@
         <mxCell id="etyGsmdFHb5Fxk1OPto--15" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" parent="7AEc97mhs4ZNhoMu7WVm-1" source="etyGsmdFHb5Fxk1OPto--16" target="etyGsmdFHb5Fxk1OPto--5" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="etyGsmdFHb5Fxk1OPto--16" value="Xem thông tin chi tiết lịch báo cáo&lt;br&gt;tiến độ" style="ellipse;whiteSpace=wrap;html=1;" parent="7AEc97mhs4ZNhoMu7WVm-1" vertex="1">
+        <mxCell id="etyGsmdFHb5Fxk1OPto--16" value="6.2. Xem thông tin&lt;br&gt;chi tiết lịch&lt;br&gt;báo cáo tiến độ" style="ellipse;whiteSpace=wrap;html=1;" parent="7AEc97mhs4ZNhoMu7WVm-1" vertex="1">
           <mxGeometry x="360" y="360" width="120" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="etyGsmdFHb5Fxk1OPto--17" value="Tạo lịch&lt;br&gt;báo cáo tiến độ" style="ellipse;whiteSpace=wrap;html=1;" parent="7AEc97mhs4ZNhoMu7WVm-1" vertex="1">
+        <mxCell id="etyGsmdFHb5Fxk1OPto--17" value="6.3. Tạo lịch&lt;br&gt;báo cáo tiến độ" style="ellipse;whiteSpace=wrap;html=1;" parent="7AEc97mhs4ZNhoMu7WVm-1" vertex="1">
           <mxGeometry x="360" y="480" width="120" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="etyGsmdFHb5Fxk1OPto--18" value="Sửa lịch&amp;nbsp;&lt;br&gt;báo cáo tiến độ" style="ellipse;whiteSpace=wrap;html=1;" parent="7AEc97mhs4ZNhoMu7WVm-1" vertex="1">
+        <mxCell id="etyGsmdFHb5Fxk1OPto--18" value="6.4. Sửa lịch&amp;nbsp;&lt;br&gt;báo cáo tiến độ" style="ellipse;whiteSpace=wrap;html=1;" parent="7AEc97mhs4ZNhoMu7WVm-1" vertex="1">
           <mxGeometry x="360" y="600" width="120" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="etyGsmdFHb5Fxk1OPto--19" value="Xóa lịch&amp;nbsp;&lt;br&gt;báo cáo tiến độ" style="ellipse;whiteSpace=wrap;html=1;" parent="7AEc97mhs4ZNhoMu7WVm-1" vertex="1">
+        <mxCell id="etyGsmdFHb5Fxk1OPto--19" value="6.5. Xóa lịch&amp;nbsp;&lt;br&gt;báo cáo tiến độ" style="ellipse;whiteSpace=wrap;html=1;" parent="7AEc97mhs4ZNhoMu7WVm-1" vertex="1">
           <mxGeometry x="360" y="720" width="120" height="80" as="geometry" />
         </mxCell>
       </root>
