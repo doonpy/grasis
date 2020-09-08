@@ -8,7 +8,7 @@ bash ./create-volume.sh
 echo "=> Create mySQL container..."
 docker run \
   --name gravis-db \
-  --mount source=$VOLUME_NAME,target=/var/lib/mysql \
+  --volume $VOLUME_NAME:/var/lib/mysql \
   -p 3306:3306 \
   -e MYSQL_DATABASE=$CONTAINER_NAME \
   -e MYSQL_ROOT_PASSWORD=$DB_PASSWORD \
