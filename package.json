@@ -1,0 +1,33 @@
+{
+  "name": "grasis",
+  "version": "1.0.0",
+  "description": "Graduation thesis",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "lint": "eslint --fix --max-warnings=0 --ext .ts,.tsx .",
+    "install": "npm run --prefix api install:dependencies && npm run --prefix web install:dependencies",
+    "build": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"npm run --prefix api build\" \"npm run --prefix web build\"",
+    "start:dev": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"npm run --prefix api start:dev\" \"npm run --prefix web start:dev\"",
+    "start:prod": "concurrently -p \"[{pid}][{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"npm run --prefix api start:prod\" \"npm run --prefix web start:prod\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doonpy/grasis.git"
+  },
+  "keywords": [],
+  "author": "Poon Nguyen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/doonpy/grasis/issues"
+  },
+  "homepage": "https://github.com/doonpy/grasis#readme",
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "eslint": "^7.8.1",
+    "prettier": "^2.1.1",
+    "react": "^16.13.1",
+    "typescript": "^4.0.2"
+  }
+}
