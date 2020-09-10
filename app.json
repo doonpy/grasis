@@ -8,5 +8,8 @@
     {
       "url": "heroku/nodejs"
     }
-  ]
+  ],
+  "env": {
+    "PROJECT_PATH": "api"
+  }
 }
