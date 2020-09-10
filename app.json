@@ -1,0 +1,12 @@
+{
+  "name": "Config file for Review app on Heroku",
+  "description": "Do not modify this file",
+  "buildpacks": [
+    {
+      "url": "https://github.com/timanovsky/subdir-heroku-buildpack"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
