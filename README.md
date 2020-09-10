@@ -22,9 +22,9 @@ Updating
 - To build:
 `npm run build`
 - To run for development: 
-`npm run start:dev`
+`npm run start-all:dev`
 - To run for production:
-`npm run start:prod`
+`npm run start-all:prod`
 
 ### For deployment
 Updating...
