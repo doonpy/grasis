@@ -10,7 +10,8 @@
     "start:dev": "next dev -p 3001",
     "build": "next build",
     "start:prod": "next start -p 3001",
-    "install:dependencies": "npm i"
+    "install:dependencies": "npm i",
+    "test": ""
   },
   "dependencies": {
     "next": "9.5.3",

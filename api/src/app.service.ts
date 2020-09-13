@@ -15,6 +15,10 @@ export class AppService {
     return "Hello World! I'm Groot";
   }
 
+  public getClient(): Sequelize {
+    return this.client;
+  }
+
   public static getMySQLDatabaseConfig(
     isWithoutDatabase: boolean,
   ): SequelizeModuleOptions {
