@@ -11,7 +11,7 @@
   },
   "scripts": {
     "lint": "eslint --fix --max-warnings=0 --ext .ts,.tsx .",
-    "test":"concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"npm run --prefix api test\" \"npm run --prefix web test\"",
+    "test": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"npm run --prefix api test\" \"npm run --prefix web test\"",
     "install": "npm run --prefix api install:dependencies && npm run --prefix web install:dependencies",
     "build": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"npm run --prefix api build\" \"npm run --prefix web build\"",
     "start-all:dev": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"npm run --prefix api start:dev\" \"npm run --prefix web start:dev\"",
