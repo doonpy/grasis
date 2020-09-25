@@ -25,7 +25,7 @@ export const STD_CONTROLLER_RESOURCE = {
 };
 
 export const STD_ERROR_RESOURCE = {
-  STD_ERR_1: 'Mã sinh viên đã tồn tại.',
-  STD_ERR_2: 'Mã người dùng đã tồn tại.',
-  STD_ERR_3: 'Sinh viên không tồn tại.',
+  ERR_1: 'Mã sinh viên đã tồn tại.',
+  ERR_2: 'Mã người dùng đã tồn tại.',
+  ERR_3: 'Sinh viên không tồn tại.',
 };
