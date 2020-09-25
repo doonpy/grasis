@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-09-18T03:39:07.200Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36" etag="pRxt-GZbnYpQsXvAHIV2" version="13.6.10" type="github" pages="14">
+<mxfile host="app.diagrams.net" modified="2020-09-25T08:52:39.404Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36" etag="bedtSgfB-LYi0FI21NGv" version="13.7.3" type="github" pages="14">
   <diagram id="6g13zmwLoHxmv2ATgvaI" name="Quản lý khóa luận">
     <mxGraphModel dx="1390" dy="890" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -204,7 +204,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="BtfHXhDaznPpTXogRlLH" name="Quản lý đăng ký đề tài">
-    <mxGraphModel dx="1390" dy="890" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1426" dy="890" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0ZLb3gAiznchvIHJvV-u-0" />
         <mxCell id="0ZLb3gAiznchvIHJvV-u-1" parent="0ZLb3gAiznchvIHJvV-u-0" />
@@ -296,7 +296,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="3phcgzRmJWwZlPurHAd7" name="Quản lý lịch báo cáo tiến độ">
-    <mxGraphModel dx="1390" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1426" dy="890" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="7AEc97mhs4ZNhoMu7WVm-0" />
         <mxCell id="7AEc97mhs4ZNhoMu7WVm-1" parent="7AEc97mhs4ZNhoMu7WVm-0" />
@@ -928,96 +928,116 @@
     </mxGraphModel>
   </diagram>
   <diagram id="GoO0FxXjRTMfWDM9PTq0" name="Main flow">
-    <mxGraphModel dx="1390" dy="868" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1186" dy="740" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="zHODQj96A6RnRTsgILl9-0" />
         <mxCell id="zHODQj96A6RnRTsgILl9-1" parent="zHODQj96A6RnRTsgILl9-0" />
-        <mxCell id="zHODQj96A6RnRTsgILl9-13" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-2" target="zHODQj96A6RnRTsgILl9-3">
+        <mxCell id="zHODQj96A6RnRTsgILl9-13" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-2" target="zHODQj96A6RnRTsgILl9-3" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="qNidsCmqm0IqJNN_xUCW-0" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;dashed=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-2" target="zHODQj96A6RnRTsgILl9-22">
+        <mxCell id="qNidsCmqm0IqJNN_xUCW-0" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;dashed=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-2" target="zHODQj96A6RnRTsgILl9-22" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-2" value="Trưởng ngành tạo khóa luận" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+        <mxCell id="zHODQj96A6RnRTsgILl9-2" value="Trưởng ngành tạo khóa luận" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
           <mxGeometry x="320" y="40" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-14" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-3" target="zHODQj96A6RnRTsgILl9-4">
+        <mxCell id="zHODQj96A6RnRTsgILl9-14" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-3" target="zHODQj96A6RnRTsgILl9-4" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="qNidsCmqm0IqJNN_xUCW-1" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-3" target="zHODQj96A6RnRTsgILl9-23">
+        <mxCell id="qNidsCmqm0IqJNN_xUCW-1" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-3" target="zHODQj96A6RnRTsgILl9-23" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-3" value="Giảng viên hướng dẫn&lt;br&gt;đăng ký đề tài" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+        <mxCell id="zHODQj96A6RnRTsgILl9-3" value="Giảng viên hướng dẫn&lt;br&gt;đăng ký đề tài" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
           <mxGeometry x="320" y="160" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-15" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-4" target="zHODQj96A6RnRTsgILl9-5">
+        <mxCell id="zHODQj96A6RnRTsgILl9-15" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-4" target="zHODQj96A6RnRTsgILl9-5" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="qNidsCmqm0IqJNN_xUCW-2" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-4" target="zHODQj96A6RnRTsgILl9-24">
+        <mxCell id="qNidsCmqm0IqJNN_xUCW-2" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-4" target="zHODQj96A6RnRTsgILl9-24" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-4" value="Sinh viên đăng ký&lt;br&gt;đề tài" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+        <mxCell id="zHODQj96A6RnRTsgILl9-4" value="Sinh viên đăng ký&lt;br&gt;đề tài" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
           <mxGeometry x="320" y="280" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-16" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-5" target="zHODQj96A6RnRTsgILl9-6">
+        <mxCell id="zHODQj96A6RnRTsgILl9-16" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-5" target="zHODQj96A6RnRTsgILl9-6" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-5" value="Trưởng ngành sắp xếp lịch báo cáo tiến độ" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+        <mxCell id="zHODQj96A6RnRTsgILl9-5" value="Trưởng ngành sắp xếp lịch báo cáo tiến độ" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
           <mxGeometry x="320" y="400" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-17" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-6" target="zHODQj96A6RnRTsgILl9-7">
+        <mxCell id="zHODQj96A6RnRTsgILl9-17" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-6" target="zHODQj96A6RnRTsgILl9-7" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-6" value="Sinh viên báo cáo tiến độ theo lịch" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+        <mxCell id="zHODQj96A6RnRTsgILl9-6" value="Sinh viên báo cáo tiến độ theo lịch" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
           <mxGeometry x="320" y="520" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-18" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-7" target="zHODQj96A6RnRTsgILl9-8">
+        <mxCell id="zHODQj96A6RnRTsgILl9-18" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-7" target="zHODQj96A6RnRTsgILl9-8" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-7" value="Trưởng ngành sắp xếp lịch phản biện" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+        <mxCell id="zHODQj96A6RnRTsgILl9-7" value="Trưởng ngành sắp xếp lịch phản biện" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
           <mxGeometry x="320" y="640" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-19" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-8" target="zHODQj96A6RnRTsgILl9-10">
+        <mxCell id="zHODQj96A6RnRTsgILl9-19" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-8" target="zHODQj96A6RnRTsgILl9-10" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-8" value="Sinh viên phản biện theo lịch" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+        <mxCell id="zHODQj96A6RnRTsgILl9-8" value="Sinh viên phản biện theo lịch" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
           <mxGeometry x="320" y="760" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-20" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-10" target="zHODQj96A6RnRTsgILl9-11">
+        <mxCell id="zHODQj96A6RnRTsgILl9-20" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-10" target="zHODQj96A6RnRTsgILl9-11" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="qNidsCmqm0IqJNN_xUCW-3" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-10" target="zHODQj96A6RnRTsgILl9-26">
+        <mxCell id="qNidsCmqm0IqJNN_xUCW-3" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-10" target="zHODQj96A6RnRTsgILl9-26" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-10" value="Trưởng ngành sắp xếp lịch bảo vệ và hội đồng bảo vệ" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+        <mxCell id="zHODQj96A6RnRTsgILl9-10" value="Trưởng ngành sắp xếp lịch bảo vệ và hội đồng bảo vệ" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
           <mxGeometry x="320" y="880" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-21" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-11" target="zHODQj96A6RnRTsgILl9-12">
+        <mxCell id="zHODQj96A6RnRTsgILl9-21" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-11" target="8wq8jUEC1wSob07ooWyo-6" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-11" value="Sinh viên thực hiện bảo vệ luận văn" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+        <mxCell id="zHODQj96A6RnRTsgILl9-11" value="Sinh viên thực hiện bảo vệ luận văn" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
           <mxGeometry x="320" y="1000" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="qNidsCmqm0IqJNN_xUCW-4" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-12" target="zHODQj96A6RnRTsgILl9-27">
+        <mxCell id="qNidsCmqm0IqJNN_xUCW-4" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" parent="zHODQj96A6RnRTsgILl9-1" source="zHODQj96A6RnRTsgILl9-12" target="zHODQj96A6RnRTsgILl9-27" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-12" value="Thông báo kết quả khóa luận và kết thúc" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+        <mxCell id="zHODQj96A6RnRTsgILl9-12" value="Thông báo kết quả khóa luận và kết thúc" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
+          <mxGeometry x="320" y="1240" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="zHODQj96A6RnRTsgILl9-22" value="- Trưởng ngành chọn GVHD và sinh viên tham gia.&lt;br&gt;- Chọn deadline cho từng giai đoạn của khóa luận (có thể chỉnh sửa).&lt;br&gt;- Tên &quot;khóa luận&quot; còn mơ hồ." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
+          <mxGeometry x="560" y="40" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="zHODQj96A6RnRTsgILl9-23" value="- Đề tài có thể chuyển tiếp từ tiểu luận chuyên ngành.&lt;br&gt;- Đề tài phải được Trưởng ngành chấp nhận.&lt;br&gt;- Nếu có sinh viên thực hiện, phải có sự đồng ý của sinh viên" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
+          <mxGeometry x="560" y="160" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="zHODQj96A6RnRTsgILl9-24" value="- Một đề tài có thể được nhiều nhóm sinh viên đăng ký nhưng GVHD chỉ chọn một nhóm.&lt;br&gt;- Mỗi sinh viên chỉ có thể đăng ký 1 đề tài cùng 1 lúc.&lt;br&gt;- Trưởng ngành có quyền assign sinh viên vào một đề tài." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
+          <mxGeometry x="560" y="280" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="zHODQj96A6RnRTsgILl9-26" value="- Trưởng ngành chỉ sắp xếp lịch cho sinh viên phản biện thành công." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
+          <mxGeometry x="560" y="880" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="zHODQj96A6RnRTsgILl9-27" value="- Sinh viên nộp bản hoàn thiện của báo cáo." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" parent="zHODQj96A6RnRTsgILl9-1" vertex="1">
+          <mxGeometry x="560" y="1240" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="8wq8jUEC1wSob07ooWyo-0" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" target="8wq8jUEC1wSob07ooWyo-1" source="zHODQj96A6RnRTsgILl9-8">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="490" y="790" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8wq8jUEC1wSob07ooWyo-1" value="- Trưởng ngành cập nhật kết quả phản biện.&lt;br&gt;- Cho phép sinh viên có được bảo vệ hay không." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+          <mxGeometry x="560" y="760" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="8wq8jUEC1wSob07ooWyo-5" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="8wq8jUEC1wSob07ooWyo-6" target="8wq8jUEC1wSob07ooWyo-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8wq8jUEC1wSob07ooWyo-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="zHODQj96A6RnRTsgILl9-1" source="8wq8jUEC1wSob07ooWyo-6" target="zHODQj96A6RnRTsgILl9-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8wq8jUEC1wSob07ooWyo-6" value="Chấm điểm" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
           <mxGeometry x="320" y="1120" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-22" value="- Trưởng ngành chọn GVHD và sinh viên tham gia.&lt;br&gt;- Chọn deadline cho từng giai đoạn của khóa luận (có thể chỉnh sửa)." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
-          <mxGeometry x="560" y="40" width="200" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-23" value="- Đề tài có thể chuyển tiếp từ tiểu luận chuyên ngành.&lt;br&gt;- Đề tài phải được Trưởng ngành chấp nhận." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
-          <mxGeometry x="560" y="160" width="200" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-24" value="- Một đề tài có thể được nhiều nhóm sinh viên đăng ký nhưng GVHD chỉ chọn một nhóm." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
-          <mxGeometry x="560" y="280" width="200" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-26" value="- Trưởng ngành chỉ sắp xếp lịch cho sinh viên phản biện thành công." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
-          <mxGeometry x="560" y="880" width="200" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="zHODQj96A6RnRTsgILl9-27" value="- Hội đồng bảo vệ cập nhật kết quả.&lt;br&gt;- Sinh viên nộp bản hoàn thiện của báo cáo." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
-          <mxGeometry x="560" y="1120" width="200" height="80" as="geometry" />
+        <mxCell id="8wq8jUEC1wSob07ooWyo-7" value="- Công thức chấm điểm: (Trưởng ngành + GVHD + Hội đồng) / 3" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;size=15;" vertex="1" parent="zHODQj96A6RnRTsgILl9-1">
+          <mxGeometry x="560" y="1120" width="400" height="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
