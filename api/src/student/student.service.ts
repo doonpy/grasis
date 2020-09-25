@@ -78,7 +78,7 @@ export class StudentService {
     });
 
     if (!student) {
-      throw new BadRequestException(STD_ERROR_RESOURCE.STD_ERR_3);
+      throw new BadRequestException(STD_ERROR_RESOURCE.ERR_3);
     }
 
     return student;
@@ -99,11 +99,11 @@ export class StudentService {
         student.userId = createdUser.id;
 
         if (await this.isStudentIdExist(student.studentId)) {
-          throw new BadRequestException(STD_ERROR_RESOURCE.STD_ERR_1);
+          throw new BadRequestException(STD_ERROR_RESOURCE.ERR_1);
         }
 
         if (await this.isUserIdExist(student.userId)) {
-          throw new BadRequestException(STD_ERROR_RESOURCE.STD_ERR_2);
+          throw new BadRequestException(STD_ERROR_RESOURCE.ERR_2);
         }
 
         await this.studentModel.create(student);
@@ -130,7 +130,7 @@ export class StudentService {
             student.studentId &&
             (await this.isStudentIdExist(student.studentId))
           ) {
-            throw new BadRequestException(STD_ERROR_RESOURCE.STD_ERR_1);
+            throw new BadRequestException(STD_ERROR_RESOURCE.ERR_1);
           }
 
           await currentStudent.update(student);
