@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { AppPrepend } from './app.prepend';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { getDatabaseConfig } from './mysql/mysql.helper';
+import { StudentModule } from './student/student.module';
 
 enum DatabaseType {
   LOCAL = 'local',
@@ -42,9 +43,10 @@ function getEnvFilePath(): string {
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: getEnvFilePath() }),
-    SequelizeModule.forRoot(AppService.getMySQLDatabaseConfig(false)),
+    SequelizeModule.forRoot(getDatabaseConfig(true)),
+    StudentModule,
   ],
   controllers: [AppController],
-  providers: [AppPrepend, AppService],
+  providers: [AppService],
 })
 export class AppModule {}
