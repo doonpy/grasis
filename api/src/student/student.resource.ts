@@ -8,6 +8,7 @@ export const STD_MODEL_RESOURCE = {
     SCHOOL_YEAR: 'schoolYear',
   },
   INDEX_NAME: {
+    USER_ID: 'idx_userId',
     STUDENT_ID: 'idx_studentId',
   },
 };

@@ -15,13 +15,13 @@ import { User } from '../user/user.model';
   modelName: STD_MODEL_RESOURCE.MODEL_NAME,
   indexes: [
     {
-      fields: ['userId'],
-      name: 'idx_userId',
+      fields: [STD_MODEL_RESOURCE.FIELD_NAME.USER_ID],
+      name: STD_MODEL_RESOURCE.INDEX_NAME.USER_ID,
       unique: true,
     },
     {
-      fields: ['studentId'],
-      name: 'idx_studentId',
+      fields: [STD_MODEL_RESOURCE.FIELD_NAME.STUDENT_ID],
+      name: STD_MODEL_RESOURCE.INDEX_NAME.STUDENT_ID,
       unique: true,
     },
   ],
