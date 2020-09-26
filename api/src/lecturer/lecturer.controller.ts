@@ -12,10 +12,13 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Student } from './student.model';
-import { StudentService } from './student.service';
-import { STD_CONTROLLER_RESOURCE } from './student.resource';
-import { User } from '../user/user.model';
+import { LEC_CONTROLLER_RESOURCE } from './lecturer.resource';
+import { LecturerService } from './lecturer.service';
+import {
+  COMMON_PARAMS,
+  COMMON_QUERIES,
+  COMMON_QUERIES_VALUE,
+} from '../common/common.resource';
 import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
 import {
   commonIdValidateSchema,
@@ -23,34 +26,31 @@ import {
   commonOffsetValidateSchema,
 } from '../common/common.validation';
 import {
-  COMMON_PARAMS,
-  COMMON_QUERIES,
-  COMMON_QUERIES_VALUE,
-} from '../common/common.resource';
-import {
-  studentCreateValidationSchema,
-  studentUpdateValidationSchema,
-} from './student.validation';
+  userCreateValidationSchema,
+  userUpdateValidationSchema,
+} from '../user/user.validation';
+import { User } from '../user/user.model';
 import {
   CommonFindAllResponse,
   CommonResponse,
 } from '../common/common.interface';
+import { Lecturer } from './lecturer.model';
 import {
-  userCreateValidationSchema,
-  userUpdateValidationSchema,
-} from '../user/user.validation';
+  lecturerCreateValidationSchema,
+  lecturerUpdateValidationSchema,
+} from './lecturer.validation';
 
-interface StudentFindAllResponse extends CommonFindAllResponse {
-  students: Student[];
+interface LecturerFindAllResponse extends CommonFindAllResponse {
+  lecturers: Lecturer[];
 }
 
-interface StudentFindByIdResponse extends CommonResponse {
-  student: Student;
+interface LecturerFindByIdResponse extends CommonResponse {
+  lecturer: Lecturer;
 }
 
-@Controller(STD_CONTROLLER_RESOURCE.PATH.ROOT)
-export class StudentController {
-  constructor(private studentService: StudentService) {}
+@Controller(LEC_CONTROLLER_RESOURCE.PATH.ROOT)
+export class LecturerController {
+  constructor(private lecturerService: LecturerService) {}
 
   @Get()
   public async findAll(
@@ -68,22 +68,22 @@ export class StudentController {
       ParseIntPipe,
     )
     limit: number,
-  ): Promise<StudentFindAllResponse> {
-    const students: Student[] = await this.studentService.findAll(
+  ): Promise<LecturerFindAllResponse> {
+    const lecturers: Lecturer[] = await this.lecturerService.findAll(
       offset,
       limit,
     );
-    const currentAmount: number = await this.studentService.getStudentAmount();
-    const isNext = currentAmount - students.length - offset > 0;
+    const currentAmount: number = await this.lecturerService.getLecturerAmount();
+    const isNext = currentAmount - lecturers.length - offset > 0;
 
     return {
       statusCode: HttpStatus.OK,
-      students,
+      lecturers,
       isNext,
     };
   }
 
-  @Get(STD_CONTROLLER_RESOURCE.PATH.SPECIFY)
+  @Get(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
   public async findById(
     @Param(
       COMMON_PARAMS.ID,
@@ -92,12 +92,12 @@ export class StudentController {
       ParseIntPipe,
     )
     id: number,
-  ): Promise<StudentFindByIdResponse> {
-    const student: Student = await this.studentService.findById(id);
+  ): Promise<LecturerFindByIdResponse> {
+    const lecturer: Lecturer = await this.lecturerService.findById(id);
 
     return {
       statusCode: HttpStatus.OK,
-      student,
+      lecturer,
     };
   }
 
@@ -105,20 +105,20 @@ export class StudentController {
   @HttpCode(HttpStatus.CREATED)
   public async create(
     @Body(
-      STD_CONTROLLER_RESOURCE.PARAM.USER,
+      LEC_CONTROLLER_RESOURCE.PARAM.USER,
       new JoiValidationPipe(userCreateValidationSchema),
     )
     user: User,
     @Body(
-      STD_CONTROLLER_RESOURCE.PARAM.STUDENT,
-      new JoiValidationPipe(studentCreateValidationSchema),
+      LEC_CONTROLLER_RESOURCE.PARAM.LECTURER,
+      new JoiValidationPipe(lecturerCreateValidationSchema),
     )
-    student: Student,
+    lecturer: Lecturer,
   ): Promise<void> {
-    await this.studentService.create(user, student);
+    await this.lecturerService.create(user, lecturer);
   }
 
-  @Patch(STD_CONTROLLER_RESOURCE.PATH.SPECIFY)
+  @Patch(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
   @HttpCode(HttpStatus.OK)
   public async updateById(
     @Param(
@@ -129,20 +129,20 @@ export class StudentController {
     )
     id: number,
     @Body(
-      STD_CONTROLLER_RESOURCE.PARAM.USER,
+      LEC_CONTROLLER_RESOURCE.PARAM.USER,
       new JoiValidationPipe(userUpdateValidationSchema),
     )
     user: Partial<User>,
     @Body(
-      STD_CONTROLLER_RESOURCE.PARAM.STUDENT,
-      new JoiValidationPipe(studentUpdateValidationSchema),
+      LEC_CONTROLLER_RESOURCE.PARAM.LECTURER,
+      new JoiValidationPipe(lecturerUpdateValidationSchema),
     )
-    student: Partial<Student>,
+    lecturer: Partial<Lecturer>,
   ): Promise<void> {
-    await this.studentService.updateById(id, user, student);
+    await this.lecturerService.updateById(id, user, lecturer);
   }
 
-  @Delete(STD_CONTROLLER_RESOURCE.PATH.SPECIFY)
+  @Delete(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteById(
     @Param(
@@ -153,6 +153,6 @@ export class StudentController {
     )
     id: number,
   ): Promise<void> {
-    await this.studentService.deleteById(id);
+    await this.lecturerService.deleteById(id);
   }
 }

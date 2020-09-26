@@ -1,13 +1,19 @@
-import {
-  COMMON_TABLE_OPTIONS,
-  Gender,
-  UserStatus,
-} from '../common/common.resource';
-import { Table, Model, Column, DataType } from 'sequelize-typescript';
+import { COMMON_TABLE_OPTIONS } from '../common/common.resource';
+import { Column, DataType, Model, Table } from 'sequelize-typescript';
 import { USER_MODEL_RESOURCE } from './user.resource';
+
+export enum Gender {
+  MALE = 0,
+  FEMALE = 1,
+}
+export enum UserStatus {
+  INACTIVE = 0,
+  ACTIVE = 1,
+}
 
 @Table({
   ...COMMON_TABLE_OPTIONS,
+  paranoid: true,
   tableName: USER_MODEL_RESOURCE.TABLE_NAME,
   modelName: USER_MODEL_RESOURCE.MODEL_NAME,
   indexes: [
@@ -33,37 +39,31 @@ export class User extends Model<User> {
 
   @Column({
     type: DataType.STRING({ length: 50 }),
-    allowNull: false,
   })
   firstname!: string;
 
   @Column({
     type: DataType.STRING({ length: 50 }),
-    allowNull: false,
   })
   lastname!: string;
 
   @Column({
     type: DataType.TINYINT,
-    allowNull: true,
   })
   gender!: Gender;
 
   @Column({
     type: DataType.STRING({ length: 100 }),
-    allowNull: true,
   })
   email!: string;
 
   @Column({
     type: DataType.STRING({ length: 100 }),
-    allowNull: true,
   })
   address!: string;
 
   @Column({
     type: DataType.CHAR({ length: 10 }),
-    allowNull: true,
   })
   phone!: string;
 

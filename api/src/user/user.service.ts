@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model';
-import { COMMON_QUERIES_VALUE } from '../common/common.resource';
 import { USER_ERROR_RESOURCE } from './user.resource';
 import { createHmac } from 'crypto';
 
@@ -9,10 +8,7 @@ import { createHmac } from 'crypto';
 export class UserService {
   constructor(@InjectModel(User) private userModel: typeof User) {}
 
-  public async findAll(
-    offset: number = COMMON_QUERIES_VALUE.OFFSET,
-    limit: number = COMMON_QUERIES_VALUE.LIMIT,
-  ): Promise<User[]> {
+  public async findAll(offset: number, limit: number): Promise<User[]> {
     return this.userModel.findAll({ offset, limit });
   }
 
@@ -72,6 +68,8 @@ export class UserService {
   }
 
   public hashPassword(password: string, secret: string): string {
-    return createHmac('sha1', secret).update(password).digest('hex');
+    return createHmac('sha1', password + secret.toUpperCase())
+      .update(password)
+      .digest('hex');
   }
 }
