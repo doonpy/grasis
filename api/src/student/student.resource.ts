@@ -3,12 +3,10 @@ export const STD_MODEL_RESOURCE = {
   MODEL_NAME: 's',
 
   FIELD_NAME: {
-    USER_ID: 'userId',
     STUDENT_ID: 'studentId',
     SCHOOL_YEAR: 'schoolYear',
   },
   INDEX_NAME: {
-    USER_ID: 'idx_userId',
     STUDENT_ID: 'idx_studentId',
   },
 };
@@ -19,7 +17,6 @@ export const STD_CONTROLLER_RESOURCE = {
     SPECIFY: '/:id',
   },
   PARAM: {
-    ID: 'id',
     USER: 'user',
     STUDENT: 'student',
   },

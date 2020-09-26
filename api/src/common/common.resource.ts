@@ -8,11 +8,15 @@ export const COMMON_TABLE_OPTIONS: TableOptions = {
 export const COMMON_MODEL_RESOURCE = {
   FIELD_NAME: {
     ID: 'id',
-    CREATE_AT: 'createdAt',
-    UPDATE_AT: 'updatedAt',
-    DELETE_AT: 'deletedAt',
+    CREATED_AT: 'createdAt',
+    UPDATED_AT: 'updatedAt',
+    DELETED_AT: 'deletedAt',
   },
 };
+export const COMMON_SELECT_ATTRIBUTES = [
+  COMMON_MODEL_RESOURCE.FIELD_NAME.CREATED_AT,
+  COMMON_MODEL_RESOURCE.FIELD_NAME.UPDATED_AT,
+];
 export const COMMON_QUERIES_VALUE = {
   OFFSET: 0,
   LIMIT: 20,

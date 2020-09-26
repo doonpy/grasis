@@ -15,11 +15,6 @@ import { User } from '../user/user.model';
   modelName: STD_MODEL_RESOURCE.MODEL_NAME,
   indexes: [
     {
-      fields: [STD_MODEL_RESOURCE.FIELD_NAME.USER_ID],
-      name: STD_MODEL_RESOURCE.INDEX_NAME.USER_ID,
-      unique: true,
-    },
-    {
       fields: [STD_MODEL_RESOURCE.FIELD_NAME.STUDENT_ID],
       name: STD_MODEL_RESOURCE.INDEX_NAME.STUDENT_ID,
       unique: true,
@@ -27,18 +22,13 @@ import { User } from '../user/user.model';
   ],
 })
 export class Student extends Model<Student> {
-  @Column({
-    type: DataType.INTEGER({ length: 11 }),
-    allowNull: false,
-    primaryKey: true,
-  })
   @BelongsTo(() => User, {
-    foreignKey: 'userId',
+    foreignKey: 'id',
     as: 'userDetail',
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  userId!: number;
+  id!: number;
 
   @Column({
     type: DataType.CHAR({ length: 8 }),

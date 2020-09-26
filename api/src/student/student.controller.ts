@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -55,20 +57,24 @@ export class StudentController {
     @Query(
       COMMON_QUERIES.OFFSET,
       new JoiValidationPipe(commonOffsetValidateSchema),
+      new DefaultValuePipe(COMMON_QUERIES_VALUE.OFFSET),
+      ParseIntPipe,
     )
-    offset: string,
+    offset: number,
     @Query(
       COMMON_QUERIES.LIMIT,
       new JoiValidationPipe(commonLimitValidateSchema),
+      new DefaultValuePipe(COMMON_QUERIES_VALUE.LIMIT),
+      ParseIntPipe,
     )
-    limit: string,
+    limit: number,
   ): Promise<StudentFindAllResponse> {
     const students: Student[] = await this.studentService.findAll(
-      parseInt(offset) || COMMON_QUERIES_VALUE.OFFSET,
-      parseInt(limit) || COMMON_QUERIES_VALUE.LIMIT,
+      offset || COMMON_QUERIES_VALUE.OFFSET,
+      limit || COMMON_QUERIES_VALUE.LIMIT,
     );
     const currentAmount: number = await this.studentService.getStudentAmount();
-    const isNext = currentAmount - students.length - parseInt(offset) > 0;
+    const isNext = currentAmount - students.length - offset > 0;
 
     return {
       statusCode: HttpStatus.OK,
@@ -79,12 +85,15 @@ export class StudentController {
 
   @Get(STD_CONTROLLER_RESOURCE.PATH.SPECIFY)
   public async findById(
-    @Param(COMMON_PARAMS.ID, new JoiValidationPipe(commonIdValidateSchema))
-    id: string,
+    @Param(
+      COMMON_PARAMS.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(COMMON_QUERIES_VALUE.FAILED_ID),
+      ParseIntPipe,
+    )
+    id: number,
   ): Promise<StudentFindByIdResponse> {
-    const student: Student = await this.studentService.findByUserId(
-      parseInt(id),
-    );
+    const student: Student = await this.studentService.findById(id);
 
     return {
       statusCode: HttpStatus.OK,
@@ -113,8 +122,10 @@ export class StudentController {
   @HttpCode(HttpStatus.OK)
   public async updateById(
     @Param(
-      STD_CONTROLLER_RESOURCE.PARAM.ID,
+      COMMON_PARAMS.ID,
       new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(COMMON_QUERIES_VALUE.FAILED_ID),
+      ParseIntPipe,
     )
     id: number,
     @Body(
@@ -135,8 +146,10 @@ export class StudentController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteById(
     @Param(
-      STD_CONTROLLER_RESOURCE.PARAM.ID,
+      COMMON_PARAMS.ID,
       new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(COMMON_QUERIES_VALUE.FAILED_ID),
+      ParseIntPipe,
     )
     id: number,
   ): Promise<void> {

@@ -10,10 +10,32 @@ import { UserService } from '../user/user.service';
 import { Sequelize } from 'sequelize-typescript';
 import { STD_ERROR_RESOURCE, STD_MODEL_RESOURCE } from './student.resource';
 import {
-  COMMON_MODEL_RESOURCE,
   COMMON_QUERIES_VALUE,
+  COMMON_SELECT_ATTRIBUTES,
 } from '../common/common.resource';
 import { USER_MODEL_RESOURCE } from '../user/user.resource';
+
+const findAttributes = [
+  ...COMMON_SELECT_ATTRIBUTES,
+  STD_MODEL_RESOURCE.FIELD_NAME.STUDENT_ID,
+  STD_MODEL_RESOURCE.FIELD_NAME.SCHOOL_YEAR,
+];
+
+const includeAttributes = [
+  {
+    model: User,
+    attributes: [
+      USER_MODEL_RESOURCE.FIELD_NAME.USERNAME,
+      USER_MODEL_RESOURCE.FIELD_NAME.FIRSTNAME,
+      USER_MODEL_RESOURCE.FIELD_NAME.LASTNAME,
+      USER_MODEL_RESOURCE.FIELD_NAME.GENDER,
+      USER_MODEL_RESOURCE.FIELD_NAME.EMAIL,
+      USER_MODEL_RESOURCE.FIELD_NAME.ADDRESS,
+      USER_MODEL_RESOURCE.FIELD_NAME.PHONE,
+      USER_MODEL_RESOURCE.FIELD_NAME.STATUS,
+    ],
+  },
+];
 
 @Injectable()
 export class StudentService {
@@ -28,53 +50,17 @@ export class StudentService {
     limit: number = COMMON_QUERIES_VALUE.LIMIT,
   ): Promise<Student[]> {
     return this.studentModel.findAll({
-      attributes: [
-        STD_MODEL_RESOURCE.FIELD_NAME.USER_ID,
-        STD_MODEL_RESOURCE.FIELD_NAME.STUDENT_ID,
-        STD_MODEL_RESOURCE.FIELD_NAME.SCHOOL_YEAR,
-        COMMON_MODEL_RESOURCE.FIELD_NAME.CREATE_AT,
-        COMMON_MODEL_RESOURCE.FIELD_NAME.UPDATE_AT,
-      ],
-      include: {
-        all: true,
-        attributes: [
-          USER_MODEL_RESOURCE.FIELD_NAME.USERNAME,
-          USER_MODEL_RESOURCE.FIELD_NAME.FIRSTNAME,
-          USER_MODEL_RESOURCE.FIELD_NAME.LASTNAME,
-          USER_MODEL_RESOURCE.FIELD_NAME.GENDER,
-          USER_MODEL_RESOURCE.FIELD_NAME.EMAIL,
-          USER_MODEL_RESOURCE.FIELD_NAME.ADDRESS,
-          USER_MODEL_RESOURCE.FIELD_NAME.PHONE,
-          USER_MODEL_RESOURCE.FIELD_NAME.STATUS,
-        ],
-      },
       offset,
       limit,
+      attributes: findAttributes,
+      include: includeAttributes,
     });
   }
 
-  public async findByUserId(userId: number): Promise<Student> {
-    const student: Student | null = await this.studentModel.findByPk(userId, {
-      attributes: [
-        STD_MODEL_RESOURCE.FIELD_NAME.USER_ID,
-        STD_MODEL_RESOURCE.FIELD_NAME.STUDENT_ID,
-        STD_MODEL_RESOURCE.FIELD_NAME.SCHOOL_YEAR,
-        COMMON_MODEL_RESOURCE.FIELD_NAME.CREATE_AT,
-        COMMON_MODEL_RESOURCE.FIELD_NAME.UPDATE_AT,
-      ],
-      include: {
-        all: true,
-        attributes: [
-          USER_MODEL_RESOURCE.FIELD_NAME.USERNAME,
-          USER_MODEL_RESOURCE.FIELD_NAME.FIRSTNAME,
-          USER_MODEL_RESOURCE.FIELD_NAME.LASTNAME,
-          USER_MODEL_RESOURCE.FIELD_NAME.GENDER,
-          USER_MODEL_RESOURCE.FIELD_NAME.EMAIL,
-          USER_MODEL_RESOURCE.FIELD_NAME.ADDRESS,
-          USER_MODEL_RESOURCE.FIELD_NAME.PHONE,
-          USER_MODEL_RESOURCE.FIELD_NAME.STATUS,
-        ],
-      },
+  public async findById(id: number): Promise<Student> {
+    const student: Student | null = await this.studentModel.findByPk(id, {
+      attributes: findAttributes,
+      include: includeAttributes,
     });
 
     if (!student) {
@@ -88,21 +74,21 @@ export class StudentService {
     return (await this.studentModel.count({ where: { studentId } })) > 0;
   }
 
-  public async isUserIdExist(userId: number): Promise<boolean> {
-    return (await this.studentModel.count({ where: { userId } })) > 0;
+  public async isStudentExits(id: number): Promise<boolean> {
+    return (await this.studentModel.count({ where: { id } })) > 0;
   }
 
   public async create(user: User, student: Student): Promise<void> {
     try {
       return this.sequelize.transaction(async () => {
         const createdUser: User = await this.userService.create(user);
-        student.userId = createdUser.id;
+        student.id = createdUser.id;
 
         if (await this.isStudentIdExist(student.studentId)) {
           throw new BadRequestException(STD_ERROR_RESOURCE.ERR_1);
         }
 
-        if (await this.isUserIdExist(student.userId)) {
+        if (await this.isStudentExits(student.id)) {
           throw new BadRequestException(STD_ERROR_RESOURCE.ERR_2);
         }
 
@@ -123,7 +109,7 @@ export class StudentService {
         if (user) {
           await this.userService.updateById(id, user);
         }
-        const currentStudent: Student = await this.findByUserId(id);
+        const currentStudent: Student = await this.findById(id);
 
         if (student) {
           if (
@@ -144,8 +130,8 @@ export class StudentService {
   public async deleteById(id: number): Promise<void> {
     try {
       await this.sequelize.transaction(async () => {
-        const currentValue: Student = await this.findByUserId(id);
-        await currentValue.destroy();
+        const student: Student = await this.findById(id);
+        await student.destroy();
         await this.userService.deleteById(id);
       });
     } catch ({ message }) {
