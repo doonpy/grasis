@@ -5,6 +5,9 @@ import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { getDatabaseConfig } from './mysql/mysql.helper';
 import { StudentModule } from './student/student.module';
+import { LecturerModule } from './lecturer/lecturer.module';
+import { LecturerPositionModule } from './lecturer-position/lecturer-position.module';
+import { UserModule } from './user/user.module';
 
 enum DatabaseType {
   LOCAL = 'local',
@@ -44,7 +47,10 @@ function getEnvFilePath(): string {
   imports: [
     ConfigModule.forRoot({ envFilePath: getEnvFilePath() }),
     SequelizeModule.forRoot(getDatabaseConfig(true)),
+    UserModule,
     StudentModule,
+    LecturerModule,
+    LecturerPositionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

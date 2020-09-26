@@ -11,6 +11,7 @@ import { User } from '../user/user.model';
 
 @Table({
   ...COMMON_TABLE_OPTIONS,
+  paranoid: true,
   tableName: STD_MODEL_RESOURCE.TABLE_NAME,
   modelName: STD_MODEL_RESOURCE.MODEL_NAME,
   indexes: [

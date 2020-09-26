@@ -9,10 +9,7 @@ import { User } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { Sequelize } from 'sequelize-typescript';
 import { STD_ERROR_RESOURCE, STD_MODEL_RESOURCE } from './student.resource';
-import {
-  COMMON_QUERIES_VALUE,
-  COMMON_SELECT_ATTRIBUTES,
-} from '../common/common.resource';
+import { COMMON_SELECT_ATTRIBUTES } from '../common/common.resource';
 import { USER_MODEL_RESOURCE } from '../user/user.resource';
 
 const findAttributes = [
@@ -45,10 +42,7 @@ export class StudentService {
     private sequelize: Sequelize,
   ) {}
 
-  public async findAll(
-    offset: number = COMMON_QUERIES_VALUE.OFFSET,
-    limit: number = COMMON_QUERIES_VALUE.LIMIT,
-  ): Promise<Student[]> {
+  public async findAll(offset: number, limit: number): Promise<Student[]> {
     return this.studentModel.findAll({
       offset,
       limit,

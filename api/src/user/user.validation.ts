@@ -32,11 +32,5 @@ export const userCreateValidationSchema = userUpdateValidationSchema.concat(
     password: Joi.required().messages({
       'any.required': 'Mật khẩu là thông tin bắt buộc.',
     }),
-    firstname: Joi.required().messages({
-      'any.required': 'Tên là thông tin bắt buộc.',
-    }),
-    lastname: Joi.required().messages({
-      'any.required': 'Họ và tên lót là thông tin bắt buộc.',
-    }),
   }),
 );
