@@ -4,26 +4,26 @@ export const STD_MODEL_RESOURCE = {
 
   FIELD_NAME: {
     STUDENT_ID: 'studentId',
-    SCHOOL_YEAR: 'schoolYear',
+    SCHOOL_YEAR: 'schoolYear'
   },
   INDEX_NAME: {
-    STUDENT_ID: 'idx_studentId',
-  },
+    STUDENT_ID: 'idx_studentId'
+  }
 };
 
 export const STD_CONTROLLER_RESOURCE = {
   PATH: {
     ROOT: 'students',
-    SPECIFY: '/:id',
+    SPECIFY: '/:id'
   },
   PARAM: {
     USER: 'user',
-    STUDENT: 'student',
-  },
+    STUDENT: 'student'
+  }
 };
 
 export const STD_ERROR_RESOURCE = {
   ERR_1: 'Mã sinh viên đã tồn tại.',
   ERR_2: 'Mã người dùng đã tồn tại.',
-  ERR_3: 'Sinh viên không tồn tại.',
+  ERR_3: 'Sinh viên không tồn tại.'
 };

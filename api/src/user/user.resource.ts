@@ -10,24 +10,24 @@ export const USER_MODEL_RESOURCE = {
     EMAIL: 'email',
     ADDRESS: 'address',
     PHONE: 'phone',
-    STATUS: 'status',
+    STATUS: 'status'
   },
   INDEX_NAME: {
-    USERNAME: 'idx_username',
-  },
+    USERNAME: 'idx_username'
+  }
 };
 
 export const USER_CONTROLLER_RESOURCE = {
   PATH: {
     ROOT: 'users',
-    SPECIFY: '/:id',
+    SPECIFY: '/:id'
   },
   PARAM: {
-    ID: 'id',
-  },
+    ID: 'id'
+  }
 };
 
 export const USER_ERROR_RESOURCE = {
   USER_ERR_1: 'Người dùng không tồn tại.',
-  USER_ERR_2: 'Tên người dùng đã tồn tại.',
+  USER_ERR_2: 'Tên người dùng đã tồn tại.'
 };

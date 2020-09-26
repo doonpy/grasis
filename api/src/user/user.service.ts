@@ -24,7 +24,7 @@ export class UserService {
   public async isUsernameExist(username: string): Promise<boolean> {
     return (
       (await this.userModel.count({
-        where: { username },
+        where: { username }
       })) > 0
     );
   }
@@ -35,18 +35,12 @@ export class UserService {
       throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_2);
     }
 
-    createValue.password = this.hashPassword(
-      createValue.password,
-      createValue.username,
-    );
+    createValue.password = this.hashPassword(createValue.password, createValue.username);
 
     return this.userModel.create(createValue);
   }
 
-  public async updateById(
-    id: number,
-    updateValue: Partial<User>,
-  ): Promise<User> {
+  public async updateById(id: number, updateValue: Partial<User>): Promise<User> {
     const { username } = updateValue;
     if (username && (await this.isUsernameExist(username))) {
       throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_2);
@@ -56,7 +50,7 @@ export class UserService {
     if (updateValue.password) {
       updateValue.password = this.hashPassword(
         updateValue.password,
-        username ? username : user.username,
+        username ? username : user.username
       );
     }
     return user.update(updateValue);

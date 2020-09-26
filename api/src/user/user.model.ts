@@ -4,11 +4,12 @@ import { USER_MODEL_RESOURCE } from './user.resource';
 
 export enum Gender {
   MALE = 0,
-  FEMALE = 1,
+  FEMALE = 1
 }
+
 export enum UserStatus {
   INACTIVE = 0,
-  ACTIVE = 1,
+  ACTIVE = 1
 }
 
 @Table({
@@ -20,57 +21,57 @@ export enum UserStatus {
     {
       fields: [USER_MODEL_RESOURCE.FIELD_NAME.USERNAME],
       name: USER_MODEL_RESOURCE.INDEX_NAME.USERNAME,
-      unique: true,
-    },
-  ],
+      unique: true
+    }
+  ]
 })
 export class User extends Model<User> {
   @Column({
     type: DataType.STRING({ length: 50 }),
-    allowNull: false,
+    allowNull: false
   })
   username!: string;
 
   @Column({
     type: DataType.STRING({ length: 40 }),
-    allowNull: false,
+    allowNull: false
   })
   password!: string;
 
   @Column({
-    type: DataType.STRING({ length: 50 }),
+    type: DataType.STRING({ length: 50 })
   })
   firstname!: string;
 
   @Column({
-    type: DataType.STRING({ length: 50 }),
+    type: DataType.STRING({ length: 50 })
   })
   lastname!: string;
 
   @Column({
-    type: DataType.TINYINT,
+    type: DataType.TINYINT
   })
   gender!: Gender;
 
   @Column({
-    type: DataType.STRING({ length: 100 }),
+    type: DataType.STRING({ length: 100 })
   })
   email!: string;
 
   @Column({
-    type: DataType.STRING({ length: 100 }),
+    type: DataType.STRING({ length: 100 })
   })
   address!: string;
 
   @Column({
-    type: DataType.CHAR({ length: 10 }),
+    type: DataType.CHAR({ length: 10 })
   })
   phone!: string;
 
   @Column({
     type: DataType.TINYINT,
     allowNull: false,
-    defaultValue: UserStatus.ACTIVE,
+    defaultValue: UserStatus.ACTIVE
   })
   status!: UserStatus;
 }

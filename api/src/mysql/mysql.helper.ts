@@ -1,17 +1,12 @@
 import { SequelizeModuleOptions } from '@nestjs/sequelize';
 import chalk from 'chalk';
-import {
-  isProductionDatabase,
-  isProductionMode,
-} from '../common/common.helper';
+import { isProductionDatabase, isProductionMode } from '../common/common.helper';
 import { Student } from '../student/student.model';
 import { User } from '../user/user.model';
 import { LecturerPosition } from '../lecturer-position/lecturer-position.model';
 import { Lecturer } from '../lecturer/lecturer.model';
 
-export function getDatabaseConfig(
-  includeDatabase: boolean,
-): SequelizeModuleOptions {
+export function getDatabaseConfig(includeDatabase: boolean): SequelizeModuleOptions {
   const configs: SequelizeModuleOptions = {
     dialect: 'mysql',
     models: [User, Student, LecturerPosition, Lecturer],
@@ -23,9 +18,9 @@ export function getDatabaseConfig(
       !isProductionMode() &&
       function (log: string, timing?: number): void {
         console.log(
-          `${chalk.cyan(`[MySQL] ${process.pid}`)}   - ${chalk.blue(
-            log,
-          )} ${chalk.red(`+${timing}ms`)}`,
+          `${chalk.cyan(`[MySQL] ${process.pid}`)}   - ${chalk.blue(log)} ${chalk.red(
+            `+${timing}ms`
+          )}`
         );
       },
     benchmark: !isProductionMode(),
@@ -33,9 +28,9 @@ export function getDatabaseConfig(
     autoLoadModels: true,
     sync: {
       alter: true,
-      force: !isProductionDatabase(),
+      force: !isProductionDatabase()
     },
-    timezone: process.env.DB_MYSQL_TIMEZONE,
+    timezone: process.env.DB_MYSQL_TIMEZONE
   };
 
   if (includeDatabase) {

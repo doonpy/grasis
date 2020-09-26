@@ -7,13 +7,9 @@ import { UserModule } from '../user/user.module';
 import { LecturerPositionModule } from '../lecturer-position/lecturer-position.module';
 
 @Module({
-  imports: [
-    SequelizeModule.forFeature([Lecturer]),
-    UserModule,
-    LecturerPositionModule,
-  ],
+  imports: [SequelizeModule.forFeature([Lecturer]), UserModule, LecturerPositionModule],
   providers: [LecturerService],
   controllers: [LecturerController],
-  exports: [LecturerService],
+  exports: [LecturerService]
 })
 export class LecturerModule {}

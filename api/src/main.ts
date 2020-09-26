@@ -20,11 +20,9 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
     if (!isProductionMode()) {
-      const logFormat = `${chalk.magenta(
-        `[:method] ${process.pid}`,
-      )}   - ${chalk.white(':url :status :res[content-length]')} ${chalk.red(
-        '+:response-time ms',
-      )}`;
+      const logFormat = `${chalk.magenta(`[:method] ${process.pid}`)}   - ${chalk.white(
+        ':url :status :res[content-length]'
+      )} ${chalk.red('+:response-time ms')}`;
       app.use(morgan(logFormat));
     }
 
@@ -34,4 +32,5 @@ async function bootstrap() {
     console.log(error);
   }
 }
+
 bootstrap();
