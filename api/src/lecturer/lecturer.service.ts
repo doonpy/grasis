@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Lecturer } from './lecturer.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { COMMON_SELECT_ATTRIBUTES } from '../common/common.resource';
@@ -19,7 +15,7 @@ const findAttributes = [
   ...COMMON_SELECT_ATTRIBUTES,
   LEC_MODEL_RESOURCE.FIELD_NAME.LECTURER_ID,
   LEC_MODEL_RESOURCE.FIELD_NAME.POSITION_ID,
-  LEC_MODEL_RESOURCE.FIELD_NAME.LEVEL,
+  LEC_MODEL_RESOURCE.FIELD_NAME.LEVEL
 ];
 
 const includeAttributes = [
@@ -33,13 +29,13 @@ const includeAttributes = [
       USER_MODEL_RESOURCE.FIELD_NAME.EMAIL,
       USER_MODEL_RESOURCE.FIELD_NAME.ADDRESS,
       USER_MODEL_RESOURCE.FIELD_NAME.PHONE,
-      USER_MODEL_RESOURCE.FIELD_NAME.STATUS,
-    ],
+      USER_MODEL_RESOURCE.FIELD_NAME.STATUS
+    ]
   },
   {
     model: LecturerPosition,
-    attributes: [...COMMON_SELECT_ATTRIBUTES],
-  },
+    attributes: [...COMMON_SELECT_ATTRIBUTES]
+  }
 ];
 
 @Injectable()
@@ -48,7 +44,7 @@ export class LecturerService {
     @InjectModel(Lecturer) private lecturerModel: typeof Lecturer,
     private userService: UserService,
     private lecturerPositionService: LecturerPositionService,
-    private sequelize: Sequelize,
+    private sequelize: Sequelize
   ) {}
 
   public async findAll(offset: number, limit: number): Promise<Lecturer[]> {
@@ -56,14 +52,14 @@ export class LecturerService {
       offset,
       limit,
       attributes: findAttributes,
-      include: includeAttributes,
+      include: includeAttributes
     });
   }
 
   public async findById(id: number): Promise<Lecturer> {
     const lecturer: Lecturer | null = await this.lecturerModel.findByPk(id, {
       attributes: findAttributes,
-      include: includeAttributes,
+      include: includeAttributes
     });
 
     if (!lecturer) {
@@ -95,9 +91,7 @@ export class LecturerService {
           throw new BadRequestException(STD_ERROR_RESOURCE.ERR_3);
         }
 
-        await this.lecturerPositionService.checkLecturerPositionExistedById(
-          lecturer.positionId,
-        );
+        await this.lecturerPositionService.checkLecturerPositionExistedById(lecturer.positionId);
         await this.lecturerModel.create(lecturer);
       });
     } catch ({ message }) {
@@ -108,7 +102,7 @@ export class LecturerService {
   public async updateById(
     id: number,
     user: Partial<User> | undefined,
-    lecturer: Partial<Lecturer> | undefined,
+    lecturer: Partial<Lecturer> | undefined
   ): Promise<void> {
     try {
       return this.sequelize.transaction(async () => {
@@ -118,16 +112,13 @@ export class LecturerService {
         const currentLecturer: Lecturer = await this.findById(id);
 
         if (lecturer) {
-          if (
-            lecturer.lecturerId &&
-            (await this.isLecturerIdExist(lecturer.lecturerId))
-          ) {
+          if (lecturer.lecturerId && (await this.isLecturerIdExist(lecturer.lecturerId))) {
             throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_2);
           }
 
           if (lecturer.positionId) {
             await this.lecturerPositionService.checkLecturerPositionExistedById(
-              lecturer.positionId,
+              lecturer.positionId
             );
           }
 

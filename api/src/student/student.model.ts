@@ -1,10 +1,4 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  Model,
-  Table,
-} from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, Model, Table } from 'sequelize-typescript';
 import { COMMON_TABLE_OPTIONS } from '../common/common.resource';
 import { STD_MODEL_RESOURCE } from './student.resource';
 import { User } from '../user/user.model';
@@ -18,28 +12,28 @@ import { User } from '../user/user.model';
     {
       fields: [STD_MODEL_RESOURCE.FIELD_NAME.STUDENT_ID],
       name: STD_MODEL_RESOURCE.INDEX_NAME.STUDENT_ID,
-      unique: true,
-    },
-  ],
+      unique: true
+    }
+  ]
 })
 export class Student extends Model<Student> {
   @BelongsTo(() => User, {
     foreignKey: 'id',
     as: 'userDetail',
     onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
+    onUpdate: 'CASCADE'
   })
   id!: number;
 
   @Column({
     type: DataType.CHAR({ length: 8 }),
-    allowNull: false,
+    allowNull: false
   })
   studentId!: string;
 
   @Column({
     type: DataType.CHAR({ length: 4 }),
-    allowNull: false,
+    allowNull: false
   })
   schoolYear!: string;
 }

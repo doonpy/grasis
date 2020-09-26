@@ -5,6 +5,7 @@ import { UserService } from './user/user.service';
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
   constructor(private sequelize: Sequelize, private userService: UserService) {}
+
   getHello(): string {
     return "Hello World! I'm Groot";
   }
@@ -14,7 +15,7 @@ export class AppService implements OnApplicationBootstrap {
       process.env.ADMIN_USERNAME
     }", "${this.userService.hashPassword(
       process.env.ADMIN_PASSWORD || 'Administrator',
-      process.env.ADMIN_USERNAME || 'admin',
+      process.env.ADMIN_USERNAME || 'admin'
     )}", CURRENT_TIME, CURRENT_TIME);`;
     await this.sequelize.query(createUserQuery);
 

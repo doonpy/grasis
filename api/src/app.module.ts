@@ -13,14 +13,14 @@ enum DatabaseType {
   LOCAL = 'local',
   REVIEW = 'review',
   STAGING = 'staging',
-  PRODUCTION = 'production',
+  PRODUCTION = 'production'
 }
 
 enum EnvFileName {
   LOCAL = 'local.env',
   REVIEW = 'review.env',
   STAGING = 'staging.env',
-  PRODUCTION = 'production.env',
+  PRODUCTION = 'production.env'
 }
 
 function getEnvFilePath(): string {
@@ -50,9 +50,9 @@ function getEnvFilePath(): string {
     UserModule,
     StudentModule,
     LecturerModule,
-    LecturerPositionModule,
+    LecturerPositionModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}

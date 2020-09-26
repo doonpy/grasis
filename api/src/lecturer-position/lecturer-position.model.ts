@@ -6,18 +6,18 @@ import { Lecturer } from '../lecturer/lecturer.model';
 @Table({
   ...COMMON_TABLE_OPTIONS,
   tableName: LPO_MODEL_RESOURCE.TABLE_NAME,
-  modelName: LPO_MODEL_RESOURCE.MODEL_NAME,
+  modelName: LPO_MODEL_RESOURCE.MODEL_NAME
 })
 export class LecturerPosition extends Model<LecturerPosition> {
   @HasMany(() => Lecturer, {
     foreignKey: 'positionId',
-    as: 'lecturers',
+    as: 'lecturers'
   })
   id!: number;
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: false
   })
   title!: string;
 }

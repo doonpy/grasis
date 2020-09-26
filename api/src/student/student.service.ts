@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Student } from './student.model';
 import { User } from '../user/user.model';
@@ -15,7 +11,7 @@ import { USER_MODEL_RESOURCE } from '../user/user.resource';
 const findAttributes = [
   ...COMMON_SELECT_ATTRIBUTES,
   STD_MODEL_RESOURCE.FIELD_NAME.STUDENT_ID,
-  STD_MODEL_RESOURCE.FIELD_NAME.SCHOOL_YEAR,
+  STD_MODEL_RESOURCE.FIELD_NAME.SCHOOL_YEAR
 ];
 
 const includeAttributes = [
@@ -29,9 +25,9 @@ const includeAttributes = [
       USER_MODEL_RESOURCE.FIELD_NAME.EMAIL,
       USER_MODEL_RESOURCE.FIELD_NAME.ADDRESS,
       USER_MODEL_RESOURCE.FIELD_NAME.PHONE,
-      USER_MODEL_RESOURCE.FIELD_NAME.STATUS,
-    ],
-  },
+      USER_MODEL_RESOURCE.FIELD_NAME.STATUS
+    ]
+  }
 ];
 
 @Injectable()
@@ -39,7 +35,7 @@ export class StudentService {
   constructor(
     @InjectModel(Student) private studentModel: typeof Student,
     private userService: UserService,
-    private sequelize: Sequelize,
+    private sequelize: Sequelize
   ) {}
 
   public async findAll(offset: number, limit: number): Promise<Student[]> {
@@ -47,14 +43,14 @@ export class StudentService {
       offset,
       limit,
       attributes: findAttributes,
-      include: includeAttributes,
+      include: includeAttributes
     });
   }
 
   public async findById(id: number): Promise<Student> {
     const student: Student | null = await this.studentModel.findByPk(id, {
       attributes: findAttributes,
-      include: includeAttributes,
+      include: includeAttributes
     });
 
     if (!student) {
@@ -96,7 +92,7 @@ export class StudentService {
   public async updateById(
     id: number,
     user: Partial<User> | undefined,
-    student: Partial<Student> | undefined,
+    student: Partial<Student> | undefined
   ): Promise<void> {
     try {
       return this.sequelize.transaction(async () => {
@@ -106,10 +102,7 @@ export class StudentService {
         const currentStudent: Student = await this.findById(id);
 
         if (student) {
-          if (
-            student.studentId &&
-            (await this.isStudentIdExist(student.studentId))
-          ) {
+          if (student.studentId && (await this.isStudentIdExist(student.studentId))) {
             throw new BadRequestException(STD_ERROR_RESOURCE.ERR_1);
           }
 

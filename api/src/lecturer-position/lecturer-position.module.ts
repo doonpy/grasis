@@ -8,6 +8,6 @@ import { LecturerPositionController } from './lecturer-position.controller';
   imports: [SequelizeModule.forFeature([LecturerPosition])],
   providers: [LecturerPositionService],
   exports: [LecturerPositionService],
-  controllers: [LecturerPositionController],
+  controllers: [LecturerPositionController]
 })
 export class LecturerPositionModule {}

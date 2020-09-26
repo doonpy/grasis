@@ -11,7 +11,4 @@ export const commonLimitValidateSchema = Joi.number()
   .min(1)
   .message('Giới hạn không hợp lệ.');
 
-export const commonIdValidateSchema = Joi.number()
-  .integer()
-  .min(1)
-  .message('ID không hợp lệ.');
+export const commonIdValidateSchema = Joi.number().integer().min(1).message('ID không hợp lệ.');

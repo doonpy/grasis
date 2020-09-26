@@ -10,25 +10,18 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Query,
+  Query
 } from '@nestjs/common';
 import { LPO_CONTROLLER_RESOURCE } from './lecturer-position.resource';
 import { LecturerPositionService } from './lecturer-position.service';
-import {
-  COMMON_PARAMS,
-  COMMON_QUERIES,
-  COMMON_QUERIES_VALUE,
-} from '../common/common.resource';
+import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/common.resource';
 import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
 import {
   commonIdValidateSchema,
   commonLimitValidateSchema,
-  commonOffsetValidateSchema,
+  commonOffsetValidateSchema
 } from '../common/common.validation';
-import {
-  CommonFindAllResponse,
-  CommonResponse,
-} from '../common/common.interface';
+import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
 import { LecturerPosition } from './lecturer-position.model';
 import { lecturerPositionCreateValidationSchema } from './lecture-position.validation';
 
@@ -50,20 +43,20 @@ export class LecturerPositionController {
       COMMON_QUERIES.OFFSET,
       new JoiValidationPipe(commonOffsetValidateSchema),
       new DefaultValuePipe(COMMON_QUERIES_VALUE.OFFSET),
-      ParseIntPipe,
+      ParseIntPipe
     )
     offset: number,
     @Query(
       COMMON_QUERIES.LIMIT,
       new JoiValidationPipe(commonLimitValidateSchema),
       new DefaultValuePipe(COMMON_QUERIES_VALUE.LIMIT),
-      ParseIntPipe,
+      ParseIntPipe
     )
-    limit: number,
+    limit: number
   ): Promise<LecturerPositionFindAllResponse> {
     const lecturerPositions: LecturerPosition[] = await this.lecturerPositionService.findAll(
       offset,
-      limit,
+      limit
     );
     const currentAmount: number = await this.lecturerPositionService.getLecturerPositionMount();
     const isNext = currentAmount - lecturerPositions.length - offset > 0;
@@ -71,7 +64,7 @@ export class LecturerPositionController {
     return {
       statusCode: HttpStatus.OK,
       lecturerPositions,
-      isNext,
+      isNext
     };
   }
 
@@ -81,17 +74,15 @@ export class LecturerPositionController {
       COMMON_PARAMS.ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(COMMON_QUERIES_VALUE.FAILED_ID),
-      ParseIntPipe,
+      ParseIntPipe
     )
-    id: number,
+    id: number
   ): Promise<LecturerPositionFindByIdResponse> {
-    const lecturerPosition: LecturerPosition = await this.lecturerPositionService.findById(
-      id,
-    );
+    const lecturerPosition: LecturerPosition = await this.lecturerPositionService.findById(id);
 
     return {
       statusCode: HttpStatus.OK,
-      lecturerPosition,
+      lecturerPosition
     };
   }
 
@@ -99,7 +90,7 @@ export class LecturerPositionController {
   @HttpCode(HttpStatus.CREATED)
   public async create(
     @Body(new JoiValidationPipe(lecturerPositionCreateValidationSchema))
-    lecturePosition: LecturerPosition,
+    lecturePosition: LecturerPosition
   ): Promise<void> {
     console.log(lecturePosition);
     await this.lecturerPositionService.create(lecturePosition);
@@ -112,11 +103,11 @@ export class LecturerPositionController {
       COMMON_PARAMS.ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(COMMON_QUERIES_VALUE.FAILED_ID),
-      ParseIntPipe,
+      ParseIntPipe
     )
     id: number,
     @Body(new JoiValidationPipe(lecturerPositionCreateValidationSchema))
-    lecturePosition: LecturerPosition,
+    lecturePosition: LecturerPosition
   ): Promise<void> {
     await this.lecturerPositionService.updateById(id, lecturePosition);
   }
@@ -128,9 +119,9 @@ export class LecturerPositionController {
       COMMON_PARAMS.ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(COMMON_QUERIES_VALUE.FAILED_ID),
-      ParseIntPipe,
+      ParseIntPipe
     )
-    id: number,
+    id: number
   ): Promise<void> {
     await this.lecturerPositionService.deleteById(id);
   }
