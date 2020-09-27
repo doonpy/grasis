@@ -8,6 +8,7 @@ import { StudentModule } from './student/student.module';
 import { LecturerModule } from './lecturer/lecturer.module';
 import { LecturerPositionModule } from './lecturer-position/lecturer-position.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 enum DatabaseType {
   LOCAL = 'local',
@@ -50,7 +51,8 @@ function getEnvFilePath(): string {
     UserModule,
     StudentModule,
     LecturerModule,
-    LecturerPositionModule
+    LecturerPositionModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService]

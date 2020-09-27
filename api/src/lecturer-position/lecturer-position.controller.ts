@@ -10,7 +10,8 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Query
+  Query,
+  UseGuards
 } from '@nestjs/common';
 import { LPO_CONTROLLER_RESOURCE } from './lecturer-position.resource';
 import { LecturerPositionService } from './lecturer-position.service';
@@ -24,6 +25,7 @@ import {
 import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
 import { LecturerPosition } from './lecturer-position.model';
 import { lecturerPositionCreateValidationSchema } from './lecture-position.validation';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 interface LecturerPositionFindAllResponse extends CommonFindAllResponse {
   lecturerPositions: LecturerPosition[];
@@ -33,6 +35,7 @@ interface LecturerPositionFindByIdResponse extends CommonResponse {
   lecturerPosition: LecturerPosition;
 }
 
+@UseGuards(JwtAuthGuard)
 @Controller(LPO_CONTROLLER_RESOURCE.PATH.ROOT)
 export class LecturerPositionController {
   constructor(private lecturerPositionService: LecturerPositionService) {}
