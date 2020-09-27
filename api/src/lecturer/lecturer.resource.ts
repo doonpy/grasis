@@ -5,12 +5,10 @@ export const LEC_MODEL_RESOURCE = {
   FIELD_NAME: {
     LECTURER_ID: 'lecturerId',
     POSITION_ID: 'positionId',
-    LEVEL: 'level',
-    IS_ADMIN: 'isAdmin'
+    LEVEL: 'level'
   },
   INDEX_NAME: {
-    LECTURER_ID: 'idx_lecturerId',
-    IS_ADMIN: 'idx_isAdmin'
+    LECTURER_ID: 'idx_lecturerId'
   }
 };
 

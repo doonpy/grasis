@@ -10,7 +10,8 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Query
+  Query,
+  UseGuards
 } from '@nestjs/common';
 import { LEC_CONTROLLER_RESOURCE } from './lecturer.resource';
 import { LecturerService } from './lecturer.service';
@@ -29,6 +30,7 @@ import {
   lecturerCreateValidationSchema,
   lecturerUpdateValidationSchema
 } from './lecturer.validation';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 interface LecturerFindAllResponse extends CommonFindAllResponse {
   lecturers: Lecturer[];
@@ -38,6 +40,7 @@ interface LecturerFindByIdResponse extends CommonResponse {
   lecturer: Lecturer;
 }
 
+@UseGuards(JwtAuthGuard)
 @Controller(LEC_CONTROLLER_RESOURCE.PATH.ROOT)
 export class LecturerController {
   constructor(private lecturerService: LecturerService) {}

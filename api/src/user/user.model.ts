@@ -12,6 +12,16 @@ export enum UserStatus {
   ACTIVE = 1
 }
 
+export enum IsAdmin {
+  FALSE = 0,
+  TRUE = 1
+}
+
+export enum UserType {
+  STUDENT = 0,
+  LECTURER = 1
+}
+
 @Table({
   ...COMMON_TABLE_OPTIONS,
   paranoid: true,
@@ -22,6 +32,14 @@ export enum UserStatus {
       fields: [USER_MODEL_RESOURCE.FIELD_NAME.USERNAME],
       name: USER_MODEL_RESOURCE.INDEX_NAME.USERNAME,
       unique: true
+    },
+    {
+      fields: [USER_MODEL_RESOURCE.FIELD_NAME.IS_ADMIN],
+      name: USER_MODEL_RESOURCE.INDEX_NAME.IS_ADMIN
+    },
+    {
+      fields: [USER_MODEL_RESOURCE.FIELD_NAME.USER_TYPE],
+      name: USER_MODEL_RESOURCE.INDEX_NAME.USER_TYPE
     }
   ]
 })
@@ -74,4 +92,17 @@ export class User extends Model<User> {
     defaultValue: UserStatus.ACTIVE
   })
   status!: UserStatus;
+
+  @Column({
+    type: DataType.TINYINT,
+    allowNull: false,
+    defaultValue: IsAdmin.FALSE
+  })
+  isAdmin!: number;
+
+  @Column({
+    type: DataType.TINYINT,
+    allowNull: false
+  })
+  userType!: number;
 }

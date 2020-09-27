@@ -10,7 +10,8 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Query
+  Query,
+  UseGuards
 } from '@nestjs/common';
 import { Student } from './student.model';
 import { StudentService } from './student.service';
@@ -26,6 +27,7 @@ import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/c
 import { studentCreateValidationSchema, studentUpdateValidationSchema } from './student.validation';
 import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
 import { userCreateValidationSchema, userUpdateValidationSchema } from '../user/user.validation';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 interface StudentFindAllResponse extends CommonFindAllResponse {
   students: Student[];
@@ -35,6 +37,7 @@ interface StudentFindByIdResponse extends CommonResponse {
   student: Student;
 }
 
+@UseGuards(JwtAuthGuard)
 @Controller(STD_CONTROLLER_RESOURCE.PATH.ROOT)
 export class StudentController {
   constructor(private studentService: StudentService) {}

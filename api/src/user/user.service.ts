@@ -66,4 +66,8 @@ export class UserService {
       .update(password)
       .digest('hex');
   }
+
+  public async findByUsername(username: string): Promise<User | null> {
+    return this.userModel.findOne({ where: { username } });
+  }
 }

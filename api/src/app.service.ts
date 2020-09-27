@@ -11,15 +11,15 @@ export class AppService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap(): Promise<void> {
-    const createUserQuery = `INSERT IGNORE INTO \`user\` (\`id\`,\`username\`,\`password\`,\`createdAt\`,\`updatedAt\`) VALUES (DEFAULT, "${
+    const createUserQuery = `INSERT IGNORE INTO \`user\` (\`id\`,\`username\`,\`password\`,\`isAdmin\`,\`userType\`,\`createdAt\`,\`updatedAt\`) VALUES (DEFAULT, "${
       process.env.ADMIN_USERNAME
     }", "${this.userService.hashPassword(
       process.env.ADMIN_PASSWORD || 'Administrator',
       process.env.ADMIN_USERNAME || 'admin'
-    )}", CURRENT_TIME, CURRENT_TIME);`;
+    )}", 1, 1, CURRENT_TIME, CURRENT_TIME);`;
     await this.sequelize.query(createUserQuery);
 
-    const createLecturerQuery = ` INSERT IGNORE INTO \`lecturer\` (\`id\`,\`isAdmin\`,\`createdAt\`,\`updatedAt\`) VALUES (1, 1, CURRENT_TIME, CURRENT_TIME);`;
+    const createLecturerQuery = ` INSERT IGNORE INTO \`lecturer\` (\`id\`,\`createdAt\`,\`updatedAt\`) VALUES (1, CURRENT_TIME, CURRENT_TIME);`;
     await this.sequelize.query(createLecturerQuery);
   }
 }

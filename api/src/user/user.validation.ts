@@ -10,7 +10,8 @@ export const userUpdateValidationSchema = Joi.object<User>({
   email: Joi.string().email({ allowUnicode: true }).max(100).message('Email không hợp lệ.'),
   address: Joi.string().max(100).message('Địa chỉ không hợp lệ.'),
   phone: Joi.string().length(10).message('Số điện thoại không hợp lệ.'),
-  status: Joi.number().integer().min(0).max(1).message('Trạng thái không hợp lệ.')
+  status: Joi.number().integer().min(0).max(1).message('Trạng thái không hợp lệ.'),
+  isAdmin: Joi.number().min(0).max(1).message('Quyền quản trị không hợp lệ.')
 });
 
 export const userCreateValidationSchema = userUpdateValidationSchema.concat(

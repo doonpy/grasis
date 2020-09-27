@@ -6,7 +6,7 @@ import { UserService } from '../user/user.service';
 import { Sequelize } from 'sequelize-typescript';
 import { STD_ERROR_RESOURCE, STD_MODEL_RESOURCE } from './student.resource';
 import { COMMON_SELECT_ATTRIBUTES } from '../common/common.resource';
-import { USER_MODEL_RESOURCE } from '../user/user.resource';
+import { USER_SELECT_ATTRIBUTES } from '../user/user.resource';
 
 const findAttributes = [
   ...COMMON_SELECT_ATTRIBUTES,
@@ -17,16 +17,7 @@ const findAttributes = [
 const includeAttributes = [
   {
     model: User,
-    attributes: [
-      USER_MODEL_RESOURCE.FIELD_NAME.USERNAME,
-      USER_MODEL_RESOURCE.FIELD_NAME.FIRSTNAME,
-      USER_MODEL_RESOURCE.FIELD_NAME.LASTNAME,
-      USER_MODEL_RESOURCE.FIELD_NAME.GENDER,
-      USER_MODEL_RESOURCE.FIELD_NAME.EMAIL,
-      USER_MODEL_RESOURCE.FIELD_NAME.ADDRESS,
-      USER_MODEL_RESOURCE.FIELD_NAME.PHONE,
-      USER_MODEL_RESOURCE.FIELD_NAME.STATUS
-    ]
+    attributes: USER_SELECT_ATTRIBUTES
   }
 ];
 
