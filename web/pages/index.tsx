@@ -1,8 +1,9 @@
 import Head from 'next/head';
 
+import PrivateRoute from '../components/PrivateRoute';
 import styles from '../styles/Home.module.css';
 
-export default function Home(): JSX.Element {
+function Home(): JSX.Element {
   return (
     <div className={styles.container}>
       <Head>
@@ -55,3 +56,5 @@ export default function Home(): JSX.Element {
     </div>
   );
 }
+
+export default PrivateRoute(Home);
