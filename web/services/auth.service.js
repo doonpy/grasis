@@ -1,28 +1,19 @@
-import axios from 'axios';
 import Cookies from 'js-cookie';
 
-import { axiosBaseConfigs } from './axios.service';
+import Request from './api/Request';
 import { COOKIES } from './cookie.service';
 import { JwtService } from './jwt.service';
 
-export async function post(url, data) {
-  return axios.post(url, data, axiosBaseConfigs);
-}
-
 export async function postLogin(inputs) {
-  try {
-    const {
-      data: { accessToken, message },
-      status
-    } = await post('/login', inputs);
+  const request = new Request();
+  const { data, status } = await request.post('/login', inputs).catch(({ response }) => response);
 
-    if (status === 201 && accessToken) {
-      await JwtService.storeToken(accessToken);
-    }
+  if (status === 201) {
+    await JwtService.storeToken(data.accessToken);
+  }
 
-    return message;
-  } catch ({ message }) {
-    return message;
+  if (status === 401) {
+    return data.message;
   }
 }
 
@@ -42,4 +33,12 @@ export function setRememberMeValue(value) {
 
 export async function logout() {
   await JwtService.deleteToken();
+}
+
+export function isAdmin(auth) {
+  if (!auth) {
+    return false;
+  }
+
+  return auth.decodedToken.user.isAdmin === 1;
 }

@@ -1,6 +1,6 @@
 import { blackColor, hexToRgb, primaryColor } from '../nextjs-material-dashboard.js';
 
-const checkboxAdnRadioStyle = {
+const checkboxAndRadioStyle = {
   root: {
     padding: '13px',
     '&:hover': {
@@ -44,4 +44,4 @@ const checkboxAdnRadioStyle = {
   }
 };
 
-export default checkboxAdnRadioStyle;
+export default checkboxAndRadioStyle;

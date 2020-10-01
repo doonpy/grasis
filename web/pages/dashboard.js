@@ -28,7 +28,7 @@ import GridItem from '../components/Grid/GridItem.js';
 import Table from '../components/Table/Table.js';
 import Tasks from '../components/Tasks/Tasks.js';
 import Danger from '../components/Typography/Danger.js';
-import withAuth from '../HOC/withAuth';
+import withAuth from '../hooks/withAuth';
 // layout for this page
 import Admin from '../layouts/Admin.jsx';
 import {

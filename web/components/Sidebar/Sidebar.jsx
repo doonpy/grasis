@@ -1,48 +1,54 @@
-/*eslint-disable*/
-import React from 'react';
-import PropTypes from 'prop-types';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-
-import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
+import Icon from '@material-ui/core/Icon';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Icon from '@material-ui/core/Icon';
+import { makeStyles } from '@material-ui/core/styles';
+import classNames from 'classnames';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import AdminNavbarLinks from '../Navbars/AdminNavbarLinks.jsx';
-
-import styles from '../../assets/jss/nextjs-material-dashboard/components/sidebarStyle.js';
+import styles from '../../assets/jss/nextjs-material-dashboard/components/sidebarStyle';
+import AdminNavbarLinks from '../Navbars/AdminNavbarLinks';
 
 const useStyles = makeStyles(styles);
 
-
-
 export default function Sidebar(props) {
-  // used for checking current route
-  const router = useRouter();
-  // creates styles for this component
   const classes = useStyles();
-  // verifies if routeName is the one active (in browser input)
-  const { logo, image, logoText, routes, breadCrumb } = props;
-  console.log(breadCrumb)
+  const router = useRouter();
+
+  function isActiveRoute(routeName) {
+    return router.route.indexOf(routeName) > -1;
+  }
+
+  const { logo, image, logoText, routes, color } = props;
   const links = (
     <List className={classes.list}>
       {routes.map((prop, key) => {
+        const listItemActiveClass = classNames({
+          [' ' + classes[color]]: isActiveRoute(prop.path)
+        });
+        const whiteFontClasses = classNames({
+          [' ' + classes.whiteFont]: isActiveRoute(prop.path)
+        });
+
         return (
-          <Link href={prop.layout + prop.path} key={key}>
+          <Link href={prop.path} key={key}>
             <a className={classes.item}>
-              <ListItem button className={classes.itemLink}>
+              <ListItem button className={classes.itemLink + listItemActiveClass}>
                 {typeof prop.icon === 'string' ? (
-                  <Icon className={classes.itemIcon}>{prop.icon}</Icon>
+                  <Icon className={classNames(classes.itemIcon, whiteFontClasses)}>
+                    {prop.icon}
+                  </Icon>
                 ) : (
                   <prop.icon className={classes.itemIcon} />
                 )}
                 <ListItemText
                   primary={prop.name}
-                  className={classes.itemText}
+                  className={classNames(classes.itemText, whiteFontClasses)}
                   disableTypography={true}
                 />
               </ListItem>
@@ -115,4 +121,5 @@ Sidebar.propTypes = {
   logoText: PropTypes.string,
   routes: PropTypes.arrayOf(PropTypes.object),
   open: PropTypes.bool,
+  auth: PropTypes.object
 };

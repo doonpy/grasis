@@ -4,11 +4,11 @@ import {
   grayColor,
   primaryColor
 } from '../../nextjs-material-dashboard.js';
-import checkboxAdnRadioStyle from '../../nextjs-material-dashboard/checkboxAdnRadioStyle.js';
+import checkboxAndRadioStyle from '../checkboxAndRadioStyle.js';
 import tooltipStyle from '../../nextjs-material-dashboard/tooltipStyle.js';
 const tasksStyle = {
   ...tooltipStyle,
-  ...checkboxAdnRadioStyle,
+  ...checkboxAndRadioStyle,
   table: {
     marginBottom: '0',
     overflow: 'visible'

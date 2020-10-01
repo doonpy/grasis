@@ -20,7 +20,8 @@ export const LEC_CONTROLLER_RESOURCE = {
   PARAM: {
     ID: 'id',
     USER: 'user',
-    LECTURER: 'lecturer'
+    LECTURER: 'lecturer',
+    IS_LIST: 'isList'
   }
 };
 
@@ -29,3 +30,8 @@ export const LEC_ERROR_RESOURCE = {
   ERR_2: 'Mã giảng viên đã tồn tại.',
   ERR_3: 'Giảng viên không tồn tại.'
 };
+
+export enum IsList {
+  FALSE = 0,
+  TRUE = 1
+}

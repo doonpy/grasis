@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model';
-import { USER_ERROR_RESOURCE } from './user.resource';
+import { USER_ERROR_RESOURCE, USER_MODEL_RESOURCE, USER_SELECT_ATTRIBUTES } from './user.resource';
 import { createHmac } from 'crypto';
 
 @Injectable()
@@ -68,6 +68,12 @@ export class UserService {
   }
 
   public async findByUsername(username: string): Promise<User | null> {
-    return this.userModel.findOne({ where: { username } });
+    return this.userModel.findOne({ attributes: USER_SELECT_ATTRIBUTES, where: { username } });
+  }
+
+  public async findByUsernameForAuth(username: string): Promise<User | null> {
+    const findAttributes = [...USER_SELECT_ATTRIBUTES, USER_MODEL_RESOURCE.FIELD_NAME.PASSWORD];
+
+    return this.userModel.findOne({ attributes: findAttributes, where: { username } });
   }
 }

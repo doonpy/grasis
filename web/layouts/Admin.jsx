@@ -1,34 +1,30 @@
 import 'perfect-scrollbar/css/perfect-scrollbar.css';
 
 import { makeStyles } from '@material-ui/core/styles';
-import Head from 'next';
-import { useRouter } from 'next/router';
 import PerfectScrollbar from 'perfect-scrollbar';
 import React from 'react';
 
 import logo from '../assets/img/ hcmute-logo.png';
 import bgImage from '../assets/img/sidebar-2.jpg';
-import styles from '../assets/jss/nextjs-material-dashboard/layouts/adminStyle.js';
-import Footer from '../components/Footer/Footer.js';
-import Navbar from '../components/Navbars/Navbar.jsx';
-import Sidebar from '../components/Sidebar/Sidebar.jsx';
-import routes from '../components/Sidebar/routes.js';
+import styles from '../assets/jss/nextjs-material-dashboard/layouts/adminStyle';
+import Footer from '../components/Footer/Footer';
+import Navbar from '../components/Navbars/Navbar';
+import Sidebar from '../components/Sidebar/Sidebar';
+import { isAdmin } from '../services/auth.service';
+import { adminRoutes, normalRoutes } from './routes';
 
 let ps;
 
 const useStyles = makeStyles(styles);
 
 function Admin({ children, ...rest }) {
-  // styles
   const classes = useStyles();
-  // ref to help us initialize PerfectScrollbar on windows devices
   const mainPanel = React.createRef();
-  // states and functions
   const [mobileOpen, setMobileOpen] = React.useState(false);
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+  const sidebarRoutes = isAdmin(rest.auth) ? [...normalRoutes, ...adminRoutes] : normalRoutes;
 
   const resizeFunction = () => {
     if (window.innerWidth >= 960) {
@@ -58,7 +54,7 @@ function Admin({ children, ...rest }) {
   return (
     <div className={classes.wrapper}>
       <Sidebar
-        routes={routes}
+        routes={sidebarRoutes}
         logoText={'Grasis'}
         logo={logo}
         image={bgImage}

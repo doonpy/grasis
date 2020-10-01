@@ -20,8 +20,8 @@ import React, { useState } from 'react';
 
 import styles from '../assets/jss/nextjs-material-dashboard/views/loginStyle.js';
 import Copyright from '../components/Copyright/Copyright';
-import { JwtService } from '../services/jwt.service';
 import { getRememberMeValue, postLogin, setRememberMeValue } from '../services/auth.service';
+import { JwtService } from '../services/jwt.service';
 import { redirectTo, redirectToIndex } from '../services/redirect.service';
 
 const useStyles = makeStyles(styles);
@@ -37,9 +37,7 @@ export async function getServerSideProps(ctx) {
 
 function Login() {
   const classes = useStyles();
-  const {
-    query: { redirectUrl }
-  } = useRouter();
+  const router = useRouter();
   const initialRememberMe = getRememberMeValue();
   const initialValues = {
     username: initialRememberMe.username,
@@ -48,8 +46,7 @@ function Login() {
 
   const [inputs, setInputs] = useState(initialValues);
   const [rememberMe, setRememberMe] = useState(initialRememberMe.status ?? false);
-  const [snackBar, setSnackBar] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [snackBar, setSnackBar] = useState({ open: false, message: '' });
   const [errorInputs, setErrorInputs] = useState({
     username: initialValues.username.length === 0,
     password: initialValues.password.length === 0
@@ -59,8 +56,7 @@ function Login() {
     e.preventDefault();
     const message = await postLogin(inputs);
     if (message) {
-      setErrorMessage(message);
-      setSnackBar(true);
+      setSnackBar({ open: true, message });
       return;
     }
 
@@ -68,8 +64,8 @@ function Login() {
       setRememberMeValue({ status: rememberMe, username: inputs.username });
     }
 
-    if (redirectUrl) {
-      await redirectTo(redirectUrl);
+    if (router.query.redirectUrl) {
+      await redirectTo(router.query.redirectUrl);
     }
   };
 
@@ -87,7 +83,7 @@ function Login() {
   };
 
   const handleSnackbarClose = () => {
-    setSnackBar(false);
+    setSnackBar({ ...snackBar, open: false });
   };
 
   return (
@@ -96,11 +92,11 @@ function Login() {
         <title>Đăng nhập</title>
       </Head>
       <Snackbar
-        open={snackBar}
+        open={snackBar.open}
         anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
         autoHideDuration={5000}
         onClose={handleSnackbarClose}>
-        <Alert severity="error">{errorMessage}</Alert>
+        <Alert severity="error">{snackBar.message}</Alert>
       </Snackbar>
       <Grid container component="main" className={classes.root}>
         <CssBaseline />

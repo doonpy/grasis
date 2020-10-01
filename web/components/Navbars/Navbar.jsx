@@ -1,4 +1,5 @@
 import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,24 +13,17 @@ import AdminNavbarLinks from './AdminNavbarLinks.jsx';
 
 const useStyles = makeStyles(styles);
 
-export default function Header({ handleDrawerToggle, breadCrumb }) {
+export default function Header({ handleDrawerToggle, title }) {
   const classes = useStyles();
 
   return (
     <AppBar className={classes.appBar}>
       <Toolbar className={classes.container}>
-        <div className={classes.breadCrumb}>
-          {breadCrumb.map(({ name, path }, index) => {
-            return index !== breadCrumb.length - 1 ? (
-              <a key={index} href={path} className={classes.breadCrumbItem}>
-                {name}&nbsp;&gt;&nbsp;
-              </a>
-            ) : (
-              <span key={index} className={classes.breadCrumbLastItem}>
-                {name}
-              </span>
-            );
-          })}
+        <div className={classes.pageName}>
+          {/* Here we create navbar brand, based on route name */}
+          <Button color="transparent" href="#" className={classes.pageNameText}>
+            {title}
+          </Button>
         </div>
         <Hidden smDown implementation="css">
           <AdminNavbarLinks />

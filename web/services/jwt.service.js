@@ -8,9 +8,12 @@ import { COOKIES } from './cookie.service';
 export class JwtService {
   constructor(token) {
     this.decodedToken = { user: null, exp: 0 };
-
+    this.token = '';
     try {
-      if (token) this.decodedToken = jwtDecode(token);
+      if (token) {
+        this.decodedToken = jwtDecode(token);
+        this.token = token;
+      }
     } catch (e) {
       console.log(e);
     }

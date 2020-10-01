@@ -33,16 +33,22 @@ const headerStyle = () => ({
     ...container,
     minHeight: '50px'
   },
-  breadCrumb: {
-    flex: 1
+  pageName: {
+    flex: 1,
+    padding: 'inherit'
   },
-  breadCrumbItem: {
-    fontSize: '18px',
-    fontWeight: 'bold'
-  },
-  breadCrumbLastItem: {
-    fontSize: '18px',
-    fontWeight: 'bold'
+  pageNameText: {
+    ...defaultFont,
+    letterSpacing: 'unset',
+    lineHeight: '30px',
+    fontSize: '25px',
+    borderRadius: '3px',
+    textTransform: 'none',
+    color: 'inherit',
+    margin: '0',
+    '&:hover,&:focus': {
+      background: 'transparent'
+    }
   },
   title: {
     ...defaultFont,

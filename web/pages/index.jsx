@@ -1,19 +1,12 @@
-import React from 'react';
+import Router from 'next/router';
+import React, { Component } from 'react';
 
-import withAuth from '../HOC/withAuth';
-import Admin from '../layouts/Admin';
+export default class Index extends Component {
+  componentDidMount() {
+    Router.push('/graduation-thesis');
+  }
 
-function Index() {
-  return <div>Index neè</div>;
+  render() {
+    return <div />;
+  }
 }
-
-Index.layout = Admin;
-
-Index.getInitialProps = async () => {
-  return {
-    title: 'Trang chủ',
-    breadCrumb: [{ name: 'Trang chủ', path: '/' }]
-  };
-};
-
-export default withAuth(Index);

@@ -3,29 +3,32 @@ import { Lecturer } from './lecturer.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { COMMON_SELECT_ATTRIBUTES } from '../common/common.resource';
 import { LecturerPosition } from '../lecturer-position/lecturer-position.model';
-import { LEC_ERROR_RESOURCE, LEC_MODEL_RESOURCE } from './lecturer.resource';
+import { IsList, LEC_ERROR_RESOURCE, LEC_MODEL_RESOURCE } from './lecturer.resource';
 import { User } from '../user/user.model';
 import { STD_ERROR_RESOURCE } from '../student/student.resource';
 import { UserService } from '../user/user.service';
-import { Sequelize } from 'sequelize';
+import { IncludeOptions, Sequelize } from 'sequelize';
 import { LecturerPositionService } from '../lecturer-position/lecturer-position.service';
-import { USER_SELECT_ATTRIBUTES } from '../user/user.resource';
+import { USER_SELECT_ATTRIBUTES, USER_SELECT_FOR_LIST_ATTRIBUTES } from '../user/user.resource';
+import {
+  LPO_MODEL_RESOURCE,
+  LPO_SELECT_ATTRIBUTES
+} from '../lecturer-position/lecturer-position.resource';
 
-const findAttributes = [
+const defaultFindAttributes = [
   ...COMMON_SELECT_ATTRIBUTES,
   LEC_MODEL_RESOURCE.FIELD_NAME.LECTURER_ID,
-  LEC_MODEL_RESOURCE.FIELD_NAME.POSITION_ID,
   LEC_MODEL_RESOURCE.FIELD_NAME.LEVEL
 ];
 
-const includeAttributes = [
+const defaultIncludeAttributes = [
   {
     model: User,
     attributes: USER_SELECT_ATTRIBUTES
   },
   {
     model: LecturerPosition,
-    attributes: [...COMMON_SELECT_ATTRIBUTES]
+    attributes: [...LPO_SELECT_ATTRIBUTES]
   }
 ];
 
@@ -38,19 +41,32 @@ export class LecturerService {
     private sequelize: Sequelize
   ) {}
 
-  public async findAll(offset: number, limit: number): Promise<Lecturer[]> {
+  public async findAll(offset: number, limit: number, isList: IsList): Promise<Lecturer[]> {
+    const includeAttributes: IncludeOptions[] = [
+      {
+        model: LecturerPosition,
+        attributes: [LPO_MODEL_RESOURCE.FIELD_NAME.TITLE]
+      }
+    ];
+    if (isList === IsList.TRUE) {
+      includeAttributes.push({
+        model: User,
+        attributes: USER_SELECT_FOR_LIST_ATTRIBUTES
+      });
+    }
+
     return this.lecturerModel.findAll({
       offset,
       limit,
-      attributes: findAttributes,
+      attributes: defaultFindAttributes,
       include: includeAttributes
     });
   }
 
   public async findById(id: number): Promise<Lecturer> {
     const lecturer: Lecturer | null = await this.lecturerModel.findByPk(id, {
-      attributes: findAttributes,
-      include: includeAttributes
+      attributes: defaultFindAttributes,
+      include: defaultIncludeAttributes
     });
 
     if (!lecturer) {

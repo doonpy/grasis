@@ -30,13 +30,14 @@ const useStyles = makeStyles({
 
 export default function PageChange(props) {
   const classes = useStyles();
+  console.log(props);
   return (
     <div>
       <div className={classes.wrapperDiv}>
         <div className={classes.iconWrapper}>
           <CircularProgress className={classes.progress} />
         </div>
-        <h4 className={classes.title}>Loading page contents for: {props.path}</h4>
+        <h4 className={classes.title}>Đang tải dữ liệu cho {props.path}</h4>
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ import {
   Query,
   UseGuards
 } from '@nestjs/common';
-import { LEC_CONTROLLER_RESOURCE } from './lecturer.resource';
+import { IsList, LEC_CONTROLLER_RESOURCE } from './lecturer.resource';
 import { LecturerService } from './lecturer.service';
 import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/common.resource';
 import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
@@ -28,6 +28,7 @@ import { CommonFindAllResponse, CommonResponse } from '../common/common.interfac
 import { Lecturer } from './lecturer.model';
 import {
   lecturerCreateValidationSchema,
+  lecturerGetAllForListValidationSchema,
   lecturerUpdateValidationSchema
 } from './lecturer.validation';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -60,9 +61,16 @@ export class LecturerController {
       new DefaultValuePipe(COMMON_QUERIES_VALUE.LIMIT),
       ParseIntPipe
     )
-    limit: number
+    limit: number,
+    @Query(
+      LEC_CONTROLLER_RESOURCE.PARAM.IS_LIST,
+      new JoiValidationPipe(lecturerGetAllForListValidationSchema),
+      new DefaultValuePipe(IsList.FALSE),
+      ParseIntPipe
+    )
+    isList: IsList
   ): Promise<LecturerFindAllResponse> {
-    const lecturers: Lecturer[] = await this.lecturerService.findAll(offset, limit);
+    const lecturers: Lecturer[] = await this.lecturerService.findAll(offset, limit, isList);
     const currentAmount: number = await this.lecturerService.getLecturerAmount();
     const isNext = currentAmount - lecturers.length - offset > 0;
 

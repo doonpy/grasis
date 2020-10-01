@@ -17,3 +17,8 @@ export const lecturerCreateValidationSchema = lecturerUpdateValidationSchema.con
     })
   })
 );
+
+export const lecturerGetAllForListValidationSchema = Joi.number()
+  .min(0)
+  .max(1)
+  .message('Tham số isList không hợp lệ.');
