@@ -13,25 +13,22 @@ import {
   Query,
   UseGuards
 } from '@nestjs/common';
-import { IsList, LEC_CONTROLLER_RESOURCE } from './lecturer.resource';
-import { LecturerService } from './lecturer.service';
+
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
 import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/common.resource';
-import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
 import {
   commonIdValidateSchema,
   commonLimitValidateSchema,
   commonOffsetValidateSchema
 } from '../common/common.validation';
+import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
+import { User } from '../user/user.entity';
 import { userCreateValidationSchema, userUpdateValidationSchema } from '../user/user.validation';
-import { User } from '../user/user.model';
-import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
-import { Lecturer } from './lecturer.model';
-import {
-  lecturerCreateValidationSchema,
-  lecturerGetAllForListValidationSchema,
-  lecturerUpdateValidationSchema
-} from './lecturer.validation';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Lecturer } from './lecturer.entity';
+import { LEC_CONTROLLER_RESOURCE } from './lecturer.resource';
+import { LecturerService } from './lecturer.service';
+import { lecturerUpdateValidationSchema } from './lecturer.validation';
 
 interface LecturerFindAllResponse extends CommonFindAllResponse {
   lecturers: Lecturer[];
@@ -61,16 +58,9 @@ export class LecturerController {
       new DefaultValuePipe(COMMON_QUERIES_VALUE.LIMIT),
       ParseIntPipe
     )
-    limit: number,
-    @Query(
-      LEC_CONTROLLER_RESOURCE.PARAM.IS_LIST,
-      new JoiValidationPipe(lecturerGetAllForListValidationSchema),
-      new DefaultValuePipe(IsList.FALSE),
-      ParseIntPipe
-    )
-    isList: IsList
+    limit: number
   ): Promise<LecturerFindAllResponse> {
-    const lecturers: Lecturer[] = await this.lecturerService.findAll(offset, limit, isList);
+    const lecturers: Lecturer[] = await this.lecturerService.findAll(offset, limit);
     const currentAmount: number = await this.lecturerService.getLecturerAmount();
     const isNext = currentAmount - lecturers.length - offset > 0;
 
@@ -104,10 +94,7 @@ export class LecturerController {
   public async create(
     @Body(LEC_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userCreateValidationSchema))
     user: User,
-    @Body(
-      LEC_CONTROLLER_RESOURCE.PARAM.LECTURER,
-      new JoiValidationPipe(lecturerCreateValidationSchema)
-    )
+    @Body(LEC_CONTROLLER_RESOURCE.PARAM.LECTURER)
     lecturer: Lecturer
   ): Promise<void> {
     await this.lecturerService.create(user, lecturer);

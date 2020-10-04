@@ -1,7 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from '../../user/user.model';
-import { Lecturer } from '../../lecturer/lecturer.model';
+
+import { Lecturer } from '../../lecturer/lecturer.entity';
+import { User } from '../../user/user.entity';
 
 @Injectable()
 export class LocalAuthGuard extends AuthGuard('local') {

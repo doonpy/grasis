@@ -13,21 +13,22 @@ import {
   Query,
   UseGuards
 } from '@nestjs/common';
-import { Student } from './student.model';
-import { StudentService } from './student.service';
-import { STD_CONTROLLER_RESOURCE } from './student.resource';
-import { User } from '../user/user.model';
-import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
+
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
+import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/common.resource';
 import {
   commonIdValidateSchema,
   commonLimitValidateSchema,
   commonOffsetValidateSchema
 } from '../common/common.validation';
-import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/common.resource';
-import { studentCreateValidationSchema, studentUpdateValidationSchema } from './student.validation';
-import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
+import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
+import { User } from '../user/user.entity';
 import { userCreateValidationSchema, userUpdateValidationSchema } from '../user/user.validation';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Student } from './student.entity';
+import { STD_CONTROLLER_RESOURCE } from './student.resource';
+import { StudentService } from './student.service';
+import { studentUpdateValidationSchema } from './student.validation';
 
 interface StudentFindAllResponse extends CommonFindAllResponse {
   students: Student[];
@@ -92,12 +93,9 @@ export class StudentController {
   @HttpCode(HttpStatus.CREATED)
   public async create(
     @Body(STD_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userCreateValidationSchema))
-    user: User,
-    @Body(
-      STD_CONTROLLER_RESOURCE.PARAM.STUDENT,
-      new JoiValidationPipe(studentCreateValidationSchema)
-    )
-    student: Student
+    user: Partial<User>,
+    @Body(STD_CONTROLLER_RESOURCE.PARAM.STUDENT)
+    student: Partial<Student>
   ): Promise<void> {
     await this.studentService.create(user, student);
   }

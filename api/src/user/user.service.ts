@@ -1,19 +1,24 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
-import { User } from './user.model';
-import { USER_ERROR_RESOURCE, USER_MODEL_RESOURCE, USER_SELECT_ATTRIBUTES } from './user.resource';
+import { InjectRepository } from '@nestjs/typeorm';
 import { createHmac } from 'crypto';
+import { EntityManager, Repository } from 'typeorm';
+
+import { User } from './user.entity';
+import { USER_ERROR_RESOURCE } from './user.resource';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User) private userModel: typeof User) {}
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>
+  ) {}
 
   public async findAll(offset: number, limit: number): Promise<User[]> {
-    return this.userModel.findAll({ offset, limit });
+    return this.usersRepository.find({ skip: offset, take: limit });
   }
 
   public async findById(id: number): Promise<User> {
-    const user: User | null = await this.userModel.findByPk(id);
+    const user: User | undefined = await this.usersRepository.findOne(id);
     if (!user) {
       throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_1);
     }
@@ -21,44 +26,102 @@ export class UserService {
     return user;
   }
 
-  public async isUsernameExist(username: string): Promise<boolean> {
+  public async findByIdTransaction(manager: EntityManager, id: number): Promise<User> {
+    const user: User | undefined = await manager.findOne<User>(User, id);
+    if (!user) {
+      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_1);
+    }
+
+    return user;
+  }
+
+  public async isUserExistByUsername(username: string): Promise<boolean> {
     return (
-      (await this.userModel.count({
+      (await this.usersRepository.count({
         where: { username }
       })) > 0
     );
   }
 
-  public async create(createValue: User): Promise<User> {
-    const { username } = createValue;
-    if (await this.isUsernameExist(username)) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_2);
-    }
-
-    createValue.password = this.hashPassword(createValue.password, createValue.username);
-
-    return this.userModel.create(createValue);
+  public async isUserExist(id: number): Promise<boolean> {
+    return (
+      (await this.usersRepository.count({
+        where: { id }
+      })) > 0
+    );
   }
 
-  public async updateById(id: number, updateValue: Partial<User>): Promise<User> {
-    const { username } = updateValue;
-    if (username && (await this.isUsernameExist(username))) {
+  public async checkUserNotExistByUsername(username: string): Promise<void> {
+    if (await this.isUserExistByUsername(username)) {
       throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_2);
     }
-
-    const user: User = await this.findById(id);
-    if (updateValue.password) {
-      updateValue.password = this.hashPassword(
-        updateValue.password,
-        username ? username : user.username
-      );
-    }
-    return user.update(updateValue);
   }
 
-  public async deleteById(id: number): Promise<void> {
-    const user: User = await this.findById(id);
-    await user.destroy();
+  public async isUserExistByIdTransaction(manager: EntityManager, id: number): Promise<boolean> {
+    return (await manager.count<User>(User, { where: { id } })) > 0;
+  }
+
+  public async checkUserExistByIdTransaction(manager: EntityManager, id: number): Promise<void> {
+    if (!(await this.isUserExistByIdTransaction(manager, id))) {
+      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_1);
+    }
+  }
+
+  public async checkUserNotExistByIdTransaction(manager: EntityManager, id: number): Promise<void> {
+    if (await this.isUserExistByIdTransaction(manager, id)) {
+      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_2);
+    }
+  }
+
+  public async isUserExistByUsernameTransaction(
+    manager: EntityManager,
+    username: string
+  ): Promise<boolean> {
+    return (
+      (await manager.count<User>(User, {
+        where: { username }
+      })) > 0
+    );
+  }
+
+  public async checkUserNotExistByUsernameTransaction(
+    manager: EntityManager,
+    username: string
+  ): Promise<void> {
+    if (await this.isUserExistByUsernameTransaction(manager, username)) {
+      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_2);
+    }
+  }
+
+  public async createTransaction(manager: EntityManager, user: Partial<User>): Promise<User> {
+    const { username, password } = user;
+    await this.checkUserNotExistByUsernameTransaction(manager, username!);
+    user.password = this.hashPassword(password!, username!);
+    const createdUser = await manager.create<User>(User, user);
+
+    return manager.save<User>(createdUser);
+  }
+
+  public async updateByIdTransaction(
+    manager: EntityManager,
+    id: number,
+    user: Partial<User>
+  ): Promise<void> {
+    const { username, password } = user;
+    if (username) {
+      await this.checkUserNotExistByUsernameTransaction(manager, username);
+    }
+
+    const currentUser = await this.findByIdTransaction(manager, id);
+    if (password) {
+      user.password = this.hashPassword(password, username ? username : currentUser.username);
+    }
+
+    await manager.save(User, { ...currentUser, ...user });
+  }
+
+  public async deleteByIdTransaction(manager: EntityManager, id: number): Promise<void> {
+    await manager.softDelete<User>(User, id);
   }
 
   public hashPassword(password: string, secret: string): string {
@@ -67,13 +130,42 @@ export class UserService {
       .digest('hex');
   }
 
-  public async findByUsername(username: string): Promise<User | null> {
-    return this.userModel.findOne({ attributes: USER_SELECT_ATTRIBUTES, where: { username } });
+  public async findByUsername(username: string): Promise<User | undefined> {
+    return this.usersRepository.findOne({
+      select: [
+        'id',
+        'username',
+        'firstname',
+        'lastname',
+        'gender',
+        'email',
+        'address',
+        'phone',
+        'status',
+        'isAdmin',
+        'userType'
+      ],
+      where: { username }
+    });
   }
 
-  public async findByUsernameForAuth(username: string): Promise<User | null> {
-    const findAttributes = [...USER_SELECT_ATTRIBUTES, USER_MODEL_RESOURCE.FIELD_NAME.PASSWORD];
-
-    return this.userModel.findOne({ attributes: findAttributes, where: { username } });
+  public async findByUsernameForAuth(username: string): Promise<User | undefined> {
+    return this.usersRepository.findOne({
+      select: [
+        'id',
+        'username',
+        'password',
+        'firstname',
+        'lastname',
+        'gender',
+        'email',
+        'address',
+        'phone',
+        'status',
+        'isAdmin',
+        'userType'
+      ],
+      where: { username }
+    });
   }
 }

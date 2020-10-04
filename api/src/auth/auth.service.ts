@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from '../user/user.service';
-import { User } from '../user/user.model';
+import { JwtService } from '@nestjs/jwt';
+
 import { LecturerService } from '../lecturer/lecturer.service';
 import { StudentService } from '../student/student.service';
-import { JwtService } from '@nestjs/jwt';
+import { User } from '../user/user.entity';
+import { UserStatus } from '../user/user.resource';
+import { UserService } from '../user/user.service';
 
 export interface JwtToken {
   accessToken: string;
@@ -19,10 +21,10 @@ export class AuthService {
   ) {}
 
   public async validateUser(username: string, inputPassword: string): Promise<User | null> {
-    const user: User | null = await this.userService.findByUsernameForAuth(username);
+    const user: User | undefined = await this.userService.findByUsernameForAuth(username);
     const hashPassword: string = this.userService.hashPassword(inputPassword, username);
-
-    if (user && user.password === hashPassword) {
+    console.log(username, inputPassword, hashPassword);
+    if (user && user.password === hashPassword && user.status === UserStatus.ACTIVE) {
       return user;
     }
 
@@ -30,8 +32,10 @@ export class AuthService {
   }
 
   public login(user: User): JwtToken {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...payload } = user;
     return {
-      accessToken: this.jwtService.sign({ user })
+      accessToken: this.jwtService.sign({ user: payload })
     };
   }
 }

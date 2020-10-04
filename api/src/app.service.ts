@@ -1,25 +1,29 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
-import { Sequelize } from 'sequelize';
+
+import { LecturerService } from './lecturer/lecturer.service';
+import { User } from './user/user.entity';
+import { IsAdmin, UserType } from './user/user.resource';
 import { UserService } from './user/user.service';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
-  constructor(private sequelize: Sequelize, private userService: UserService) {}
+  constructor(private userService: UserService, private lecturerService: LecturerService) {}
 
   getHello(): string {
     return "Hello World! I'm Groot";
   }
 
   async onApplicationBootstrap(): Promise<void> {
-    const createUserQuery = `INSERT IGNORE INTO \`user\` (\`id\`,\`username\`,\`password\`,\`isAdmin\`,\`userType\`,\`createdAt\`,\`updatedAt\`) VALUES (DEFAULT, "${
-      process.env.ADMIN_USERNAME
-    }", "${this.userService.hashPassword(
-      process.env.ADMIN_PASSWORD || 'Administrator',
-      process.env.ADMIN_USERNAME || 'admin'
-    )}", 1, 1, CURRENT_TIME, CURRENT_TIME);`;
-    await this.sequelize.query(createUserQuery);
-
-    const createLecturerQuery = ` INSERT IGNORE INTO \`lecturer\` (\`id\`,\`createdAt\`,\`updatedAt\`) VALUES (1, CURRENT_TIME, CURRENT_TIME);`;
-    await this.sequelize.query(createLecturerQuery);
+    if (
+      !(await this.userService.isUserExistByUsername(process.env.ADMIN_USERNAME || 'Administrator'))
+    ) {
+      const user: Partial<User> = {
+        username: process.env.ADMIN_USERNAME,
+        password: process.env.ADMIN_PASSWORD,
+        isAdmin: IsAdmin.TRUE,
+        userType: UserType.LECTURER
+      };
+      await this.lecturerService.create(user, {});
+    }
   }
 }
