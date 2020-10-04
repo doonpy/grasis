@@ -1,15 +1,20 @@
 import Joi from '@hapi/joi';
-import { User } from './user.model';
+
+import { User } from './user.entity';
 
 export const userUpdateValidationSchema = Joi.object<User>({
-  username: Joi.string().max(50).message('Tên người dùng không hợp lệ.'),
+  username: Joi.string().insensitive().max(50).message('Tên người dùng không hợp lệ.'),
   password: Joi.string().max(50).message('Mật khẩu không hợp lệ.'),
   firstname: Joi.string().max(50).message('Tên không hợp lệ.'),
   lastname: Joi.string().max(50).message('Họ và tên lót không hợp lệ.'),
   gender: Joi.number().integer().min(0).max(1).message('Giới tính không hợp lệ.'),
   email: Joi.string().email({ allowUnicode: true }).max(100).message('Email không hợp lệ.'),
   address: Joi.string().max(100).message('Địa chỉ không hợp lệ.'),
-  phone: Joi.string().length(10).message('Số điện thoại không hợp lệ.'),
+  phone: Joi.string()
+    .length(10)
+    .message('Số điện thoại phải có 10 chữ số.')
+    .regex(/[0-9]{10}/)
+    .message('Số điện thoại phải là số.'),
   status: Joi.number().integer().min(0).max(1).message('Trạng thái không hợp lệ.'),
   isAdmin: Joi.number().min(0).max(1).message('Quyền quản trị không hợp lệ.')
 });

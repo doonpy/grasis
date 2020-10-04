@@ -1,72 +1,34 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { Lecturer } from './lecturer.model';
-import { InjectModel } from '@nestjs/sequelize';
-import { COMMON_SELECT_ATTRIBUTES } from '../common/common.resource';
-import { LecturerPosition } from '../lecturer-position/lecturer-position.model';
-import { IsList, LEC_ERROR_RESOURCE, LEC_MODEL_RESOURCE } from './lecturer.resource';
-import { User } from '../user/user.model';
-import { STD_ERROR_RESOURCE } from '../student/student.resource';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Connection, EntityManager, Repository } from 'typeorm';
+
+import { User } from '../user/user.entity';
+import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
-import { IncludeOptions, Sequelize } from 'sequelize';
-import { LecturerPositionService } from '../lecturer-position/lecturer-position.service';
-import { USER_SELECT_ATTRIBUTES, USER_SELECT_FOR_LIST_ATTRIBUTES } from '../user/user.resource';
-import {
-  LPO_MODEL_RESOURCE,
-  LPO_SELECT_ATTRIBUTES
-} from '../lecturer-position/lecturer-position.resource';
-
-const defaultFindAttributes = [
-  ...COMMON_SELECT_ATTRIBUTES,
-  LEC_MODEL_RESOURCE.FIELD_NAME.LECTURER_ID,
-  LEC_MODEL_RESOURCE.FIELD_NAME.LEVEL
-];
-
-const defaultIncludeAttributes = [
-  {
-    model: User,
-    attributes: USER_SELECT_ATTRIBUTES
-  },
-  {
-    model: LecturerPosition,
-    attributes: [...LPO_SELECT_ATTRIBUTES]
-  }
-];
+import { Lecturer } from './lecturer.entity';
+import { LEC_ERROR_RESOURCE } from './lecturer.resource';
 
 @Injectable()
 export class LecturerService {
   constructor(
-    @InjectModel(Lecturer) private lecturerModel: typeof Lecturer,
+    @InjectRepository(Lecturer) private lecturerRepository: Repository<Lecturer>,
     private userService: UserService,
-    private lecturerPositionService: LecturerPositionService,
-    private sequelize: Sequelize
+    private connection: Connection
   ) {}
 
-  public async findAll(offset: number, limit: number, isList: IsList): Promise<Lecturer[]> {
-    const includeAttributes: IncludeOptions[] = [
-      {
-        model: LecturerPosition,
-        attributes: [LPO_MODEL_RESOURCE.FIELD_NAME.TITLE]
-      }
-    ];
-    if (isList === IsList.TRUE) {
-      includeAttributes.push({
-        model: User,
-        attributes: USER_SELECT_FOR_LIST_ATTRIBUTES
-      });
-    }
-
-    return this.lecturerModel.findAll({
-      offset,
-      limit,
-      attributes: defaultFindAttributes,
-      include: includeAttributes
+  public async findAll(offset: number, limit: number): Promise<Lecturer[]> {
+    return this.lecturerRepository.find({
+      relations: ['id'],
+      skip: offset,
+      take: limit,
+      cache: true
     });
   }
 
   public async findById(id: number): Promise<Lecturer> {
-    const lecturer: Lecturer | null = await this.lecturerModel.findByPk(id, {
-      attributes: defaultFindAttributes,
-      include: defaultIncludeAttributes
+    const lecturer: Lecturer | undefined = await this.lecturerRepository.findOne(id, {
+      relations: ['id'],
+      cache: true
     });
 
     if (!lecturer) {
@@ -76,30 +38,68 @@ export class LecturerService {
     return lecturer;
   }
 
-  public async isLecturerIdExist(lecturerId: string): Promise<boolean> {
-    return (await this.lecturerModel.count({ where: { lecturerId } })) > 0;
+  public async findByIdTransaction(manager: EntityManager, id: number): Promise<Lecturer> {
+    const lecturer: Lecturer | undefined = await manager.findOne(Lecturer, id, {
+      relations: ['id'],
+      cache: true
+    });
+
+    if (!lecturer) {
+      throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_3);
+    }
+
+    return lecturer;
   }
 
-  public async isLecturerExist(id: number): Promise<boolean> {
-    return (await this.lecturerModel.count({ where: { id } })) > 0;
+  public async isLecturerExistByLecturerId(lecturerId: string): Promise<boolean> {
+    return (await this.lecturerRepository.count({ where: { lecturerId } })) > 0;
   }
 
-  public async create(user: User, lecturer: Lecturer): Promise<void> {
+  public async isLecturerExistById(id: number): Promise<boolean> {
+    return (await this.lecturerRepository.count({ where: { id } })) > 0;
+  }
+
+  public async isLecturerExistByLecturerIdTransaction(
+    manager: EntityManager,
+    lecturerId: string
+  ): Promise<boolean> {
+    return (await manager.count<Lecturer>(Lecturer, { where: { lecturerId } })) > 0;
+  }
+
+  public async checkLecturerExistByLecturerIdTransaction(
+    manager: EntityManager,
+    lecturerId: string
+  ): Promise<void> {
+    if (!(await this.isLecturerExistByLecturerIdTransaction(manager, lecturerId))) {
+      throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_1);
+    }
+  }
+
+  public async checkLecturerNotExistByLecturerIdTransaction(
+    manager: EntityManager,
+    lecturerId: string
+  ): Promise<void> {
+    if (await this.isLecturerExistByLecturerIdTransaction(manager, lecturerId)) {
+      throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_2);
+    }
+  }
+
+  public async create(user: Partial<User>, lecturer: Partial<Lecturer>): Promise<void> {
     try {
-      return this.sequelize.transaction(async () => {
-        const createdUser: User = await this.userService.create(user);
+      await this.connection.transaction(async (manager) => {
+        user.userType = UserType.LECTURER;
+        const createdUser: User = await this.userService.createTransaction(manager, user);
+        if (!lecturer) {
+          lecturer = {};
+        }
+
         lecturer.id = createdUser.id;
-
-        if (await this.isLecturerIdExist(lecturer.lecturerId)) {
-          throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_2);
+        if (lecturer.lecturerId) {
+          await this.checkLecturerNotExistByLecturerIdTransaction(manager, lecturer.lecturerId);
         }
 
-        if (await this.isLecturerExist(lecturer.id)) {
-          throw new BadRequestException(STD_ERROR_RESOURCE.ERR_3);
-        }
-
-        await this.lecturerPositionService.checkLecturerPositionExistedById(lecturer.positionId);
-        await this.lecturerModel.create(lecturer);
+        const createdLecturer: Lecturer = await manager.create<Lecturer>(Lecturer, lecturer);
+        await manager.save<Lecturer>(createdLecturer);
       });
     } catch ({ message }) {
       throw new InternalServerErrorException(message);
@@ -112,24 +112,21 @@ export class LecturerService {
     lecturer: Partial<Lecturer> | undefined
   ): Promise<void> {
     try {
-      return this.sequelize.transaction(async () => {
+      await this.connection.transaction(async (manager) => {
+        await this.userService.checkUserExistByIdTransaction(manager, id);
+
         if (user) {
-          await this.userService.updateById(id, user);
+          user.userType = UserType.LECTURER;
+          await this.userService.updateByIdTransaction(manager, id, user);
         }
-        const currentLecturer: Lecturer = await this.findById(id);
 
         if (lecturer) {
-          if (lecturer.lecturerId && (await this.isLecturerIdExist(lecturer.lecturerId))) {
-            throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_2);
+          if (lecturer.lecturerId) {
+            await this.checkLecturerNotExistByLecturerIdTransaction(manager, lecturer.lecturerId);
           }
 
-          if (lecturer.positionId) {
-            await this.lecturerPositionService.checkLecturerPositionExistedById(
-              lecturer.positionId
-            );
-          }
-
-          await currentLecturer.update(lecturer);
+          const currentLecturer = await this.findByIdTransaction(manager, id);
+          await manager.save(Lecturer, { ...currentLecturer, ...lecturer });
         }
       });
     } catch ({ message }) {
@@ -139,10 +136,10 @@ export class LecturerService {
 
   public async deleteById(id: number): Promise<void> {
     try {
-      await this.sequelize.transaction(async () => {
-        const lecturer: Lecturer = await this.findById(id);
-        await lecturer.destroy();
-        await this.userService.deleteById(id);
+      await this.connection.transaction(async (manager) => {
+        await this.userService.checkUserExistByIdTransaction(manager, id);
+        await manager.softDelete<Lecturer>(Lecturer, id);
+        await this.userService.deleteByIdTransaction(manager, id);
       });
     } catch ({ message }) {
       throw new InternalServerErrorException(message);
@@ -150,6 +147,6 @@ export class LecturerService {
   }
 
   public async getLecturerAmount(): Promise<number> {
-    return this.lecturerModel.count();
+    return this.lecturerRepository.count();
   }
 }

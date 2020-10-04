@@ -1,9 +1,10 @@
-import { Controller, Get, Post, UseGuards, Request } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { Request as ExRequest } from 'express-serve-static-core';
-import { User } from './user/user.model';
-import { LocalAuthGuard } from './auth/guards/local-auth.guard';
+
+import { AppService } from './app.service';
 import { AuthService, JwtToken } from './auth/auth.service';
+import { LocalAuthGuard } from './auth/guards/local-auth.guard';
+import { User } from './user/user.entity';
 
 interface LoginRequest extends ExRequest {
   user: User;

@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { getDatabaseConfig } from './mysql/mysql.helper';
-import { StudentModule } from './student/student.module';
-import { LecturerModule } from './lecturer/lecturer.module';
-import { LecturerPositionModule } from './lecturer-position/lecturer-position.module';
-import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { LecturerModule } from './lecturer/lecturer.module';
+import { getDatabaseConfig } from './mssql/mssql.helper';
+import { StudentModule } from './student/student.module';
+import { UserModule } from './user/user.module';
 
 enum DatabaseType {
   LOCAL = 'local',
@@ -47,11 +47,10 @@ function getEnvFilePath(): string {
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: getEnvFilePath() }),
-    SequelizeModule.forRoot(getDatabaseConfig(true)),
+    TypeOrmModule.forRoot(getDatabaseConfig()),
     UserModule,
     StudentModule,
     LecturerModule,
-    LecturerPositionModule,
     AuthModule
   ],
   controllers: [AppController],

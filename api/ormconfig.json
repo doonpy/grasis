@@ -1,0 +1,11 @@
+{  "type": "mssql",
+  "host": "localhost",
+  "port": 1433,
+  "username": "sa",
+  "password": "GrasisRoot13579@",
+  "database": "grasis",
+  "entities": ["src/**/*.entity.ts"],
+  "migrations": ["src/migration/*.ts"],
+  "cli": {
+    "migrationsDir": "migration"
+  }}

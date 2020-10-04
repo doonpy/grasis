@@ -1,22 +1,5 @@
-import { TableOptions } from 'sequelize-typescript';
+import { EntityOptions } from 'typeorm';
 
-export const COMMON_TABLE_OPTIONS: TableOptions = {
-  timestamps: true,
-  charset: 'utf8mb4'
-};
-export const COMMON_MODEL_RESOURCE = {
-  FIELD_NAME: {
-    ID: 'id',
-    CREATED_AT: 'createdAt',
-    UPDATED_AT: 'updatedAt',
-    DELETED_AT: 'deletedAt'
-  }
-};
-export const COMMON_SELECT_ATTRIBUTES = [
-  COMMON_MODEL_RESOURCE.FIELD_NAME.ID,
-  COMMON_MODEL_RESOURCE.FIELD_NAME.CREATED_AT,
-  COMMON_MODEL_RESOURCE.FIELD_NAME.UPDATED_AT
-];
 export const COMMON_QUERIES_VALUE = {
   OFFSET: 0,
   LIMIT: 20,
@@ -28,4 +11,8 @@ export const COMMON_QUERIES = {
 };
 export const COMMON_PARAMS = {
   ID: 'id'
+};
+export const COMMON_ENTITY_OPTIONS: EntityOptions = {
+  database: process.env.DB_MSSQL_DATABASE,
+  engine: 'InnoDB'
 };

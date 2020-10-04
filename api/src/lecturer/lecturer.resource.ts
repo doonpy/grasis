@@ -1,15 +1,5 @@
-export const LEC_MODEL_RESOURCE = {
-  TABLE_NAME: 'lecturer',
-  MODEL_NAME: 'l',
-
-  FIELD_NAME: {
-    LECTURER_ID: 'lecturerId',
-    POSITION_ID: 'positionId',
-    LEVEL: 'level'
-  },
-  INDEX_NAME: {
-    LECTURER_ID: 'idx_lecturerId'
-  }
+export const LEC_ENTITY_RESOURCE = {
+  TABLE_NAME: 'lecturer'
 };
 
 export const LEC_CONTROLLER_RESOURCE = {
@@ -30,8 +20,3 @@ export const LEC_ERROR_RESOURCE = {
   ERR_2: 'Mã giảng viên đã tồn tại.',
   ERR_3: 'Giảng viên không tồn tại.'
 };
-
-export enum IsList {
-  FALSE = 0,
-  TRUE = 1
-}

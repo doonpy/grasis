@@ -4,7 +4,7 @@ module.exports = {
     sourceType: 'module',
     ecmaVersion: 6
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['simple-import-sort', '@typescript-eslint/eslint-plugin'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
@@ -21,6 +21,8 @@ module.exports = {
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-explicit-any': 'off'
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    'simple-import-sort/sort': 'error'
   }
 };
