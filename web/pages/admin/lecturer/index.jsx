@@ -1,155 +1,159 @@
-import { Button } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import { makeStyles } from '@material-ui/core/styles';
-import AddAlert from '@material-ui/icons/AddAlert';
-import DescriptionIcon from '@material-ui/icons/Description';
-import { Skeleton } from '@material-ui/lab';
+import { FileTextTwoTone, PlusOutlined } from '@ant-design/icons';
+import { Button, Card, Col, message, Row, Table, Tag, Typography } from 'antd';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import Card from '../../../components/Card/Card';
-import CardBody from '../../../components/Card/CardBody';
-import CardFooter from '../../../components/Card/CardFooter';
-import CardHeader from '../../../components/Card/CardHeader';
-import RegularButton from '../../../components/CustomButtons/Button';
-import GridContainer from '../../../components/Grid/GridContainer';
-import GridItem from '../../../components/Grid/GridItem';
-import Snackbar from '../../../components/Snackbar/Snackbar';
-import Table from '../../../components/Table/Table';
 import { useFindAllForListLecturer } from '../../../hooks/lecturer.hook';
 import withAuth from '../../../hooks/withAuth';
-import Admin from '../../../layouts/Admin';
-import { formatUserDetailForList } from '../../../services/user.service';
+import Main from '../../../layouts/Main';
+import {
+  formatLecturerForGetMany,
+  LECTURER_LIMIT,
+  sortByLecturerId,
+  sortByPosition
+} from '../../../services/lecturer/lecturer.service';
+import {
+  GENDER,
+  sortByFirstname,
+  sortByGender,
+  sortByLastname,
+  sortByStatus,
+  sortByUsername,
+  USER_STATUS
+} from '../../../services/user.service';
 
-const styles = {
-  cardCategoryWhite: {
-    '&,& a,& a:hover,& a:focus': {
-      color: 'rgba(255,255,255,.62)',
-      margin: '0',
-      fontSize: '14px',
-      marginTop: '0',
-      marginBottom: '0'
-    },
-    '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
+const columns = [
+  {
+    title: '',
+    dataIndex: 'id',
+    width: '5%',
+    align: 'center',
+    render: (id) => (
+      <Link href={`/admin/lecturer/${id}`}>
+        <Button ghost type="primary" shape="circle" icon={<FileTextTwoTone />} />
+      </Link>
+    )
+  },
+  {
+    title: 'Tên người dùng',
+    dataIndex: 'username',
+    key: 'username',
+    sorter: {
+      compare: sortByUsername,
+      multiple: 1
     }
   },
-  cardTitleWhite: {
-    color: '#FFFFFF',
-    marginTop: '0px',
-    minHeight: 'auto',
-    fontWeight: '300',
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-    marginBottom: '3px',
-    textDecoration: 'none',
-    '& small': {
-      color: '#777',
-      fontSize: '65%',
-      fontWeight: '400',
-      lineHeight: '1'
+  {
+    title: 'Họ và tên đệm',
+    dataIndex: 'lastname',
+    key: 'lastname',
+    sorter: {
+      compare: sortByLastname,
+      multiple: 2
+    }
+  },
+  {
+    title: 'Tên',
+    dataIndex: 'firstname',
+    key: 'firstname',
+    sorter: {
+      compare: sortByFirstname,
+      multiple: 3
+    }
+  },
+  {
+    title: 'Giới tính',
+    dataIndex: 'gender',
+    key: 'gender',
+    width: '10%',
+    render: (gender) => (gender === GENDER.FEMALE ? 'Nữ' : 'Nam'),
+    sorter: {
+      compare: sortByGender,
+      multiple: 4
+    }
+  },
+  {
+    title: 'Mã giảng viên',
+    dataIndex: 'lecturerId',
+    key: 'lecturerId',
+    width: '10%',
+    sorter: {
+      compare: sortByLecturerId,
+      multiple: 6
+    }
+  },
+  {
+    title: 'Chức vụ',
+    dataIndex: 'position',
+    key: 'position',
+    sorter: {
+      compare: sortByPosition,
+      multiple: 7
+    }
+  },
+  {
+    title: 'Trạng thái',
+    dataIndex: 'status',
+    key: 'status',
+    width: '10%',
+    render: (status) =>
+      status === USER_STATUS.ACTIVE ? (
+        <Tag color="green">Đang hoạt động</Tag>
+      ) : (
+        <Tag color="volcano">Ngưng hoạt động</Tag>
+      ),
+    sorter: {
+      compare: sortByStatus,
+      multiple: 5
     }
   }
-};
-
-const useStyles = makeStyles(styles);
+];
 
 function Index() {
-  const router = useRouter();
-  const classes = useStyles();
-  const [notify, setNotify] = useState({ open: false, color: 'danger', message: '' });
-  const [pageNumber, setPageNumber] = useState(0);
-
-  const handleSnackbarClose = () => {
-    setNotify({ ...notify, open: false });
-  };
-  let lecturers = [];
-  const { data, isLoading } = useFindAllForListLecturer(pageNumber);
-
-  if (!isLoading && !data.error) {
-    lecturers = data.lecturers;
-  }
-
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: LECTURER_LIMIT,
+    total: 0,
+    onChange: (page) => {
+      setPagination({ ...pagination, current: page });
+    }
+  });
+  const { data, isLoading } = useFindAllForListLecturer(pagination.current);
+  const [lecturers, setLecturers] = useState([]);
   useEffect(() => {
-    console.log(data);
-    if (data.error) {
-      setNotify({ open: true, color: 'danger', message: data.message });
+    if (data && data.error) {
+      message.error(data.message);
+    }
+
+    if (data) {
+      setLecturers(formatLecturerForGetMany(data.lecturers));
+      setPagination({ ...pagination, total: data.total });
     }
   }, [data]);
 
   return (
-    <div>
-      <Snackbar
-        place="tc"
-        color={notify.color}
-        icon={AddAlert}
-        message={notify.message}
-        open={notify.open}
-        closeNotification={handleSnackbarClose}
-        close
+    <Card
+      title="Danh sách giảng viên"
+      extra={
+        <Link href={'/admin/lecturer/create'}>
+          <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" />
+        </Link>
+      }>
+      <Table
+        bordered
+        columns={columns}
+        dataSource={lecturers}
+        loading={isLoading}
+        pagination={pagination}
+        size="middle"
       />
-      <GridContainer>
-        <GridItem xs={12} sm={12} md={12}>
-          {isLoading ? (
-            <Skeleton variant="rect" height={300} />
-          ) : (
-            <Card>
-              <CardHeader color="primary">
-                <h4 className={classes.cardTitleWhite}>Danh sách giảng viên</h4>
-              </CardHeader>
-              <CardBody>
-                <Table
-                  tableHeaderColor="primary"
-                  tableHead={[
-                    '',
-                    'Mã giảng viên',
-                    'Chức vụ',
-                    'Tên người dùng',
-                    'Họ và tên',
-                    'Giới tính',
-                    'Trạng thái'
-                  ]}
-                  tableData={lecturers.map((lecturer, index) => [
-                    <Link key={index} href={`${router.pathname}/${lecturer.id}`}>
-                      <IconButton key={index} color="primary" aria-label="Chi tiết giảng viên">
-                        <DescriptionIcon />
-                      </IconButton>
-                    </Link>,
-                    lecturer.lecturerId || 'null',
-                    lecturer.position ? lecturer.position.title : 'null',
-                    ...formatUserDetailForList(lecturer.userDetail)
-                  ])}
-                />
-              </CardBody>
-              <CardFooter>
-                <RegularButton
-                  color="primary"
-                  disabled={pageNumber === 0}
-                  onClick={() => setPageNumber(pageNumber - 1)}>
-                  Quay lại
-                </RegularButton>
-                <RegularButton
-                  disabled={!data.isNext}
-                  color="primary"
-                  onClick={() => setPageNumber(pageNumber + 1)}>
-                  Tiếp theo
-                </RegularButton>
-              </CardFooter>
-            </Card>
-          )}
-        </GridItem>
-      </GridContainer>
-    </div>
+    </Card>
   );
 }
 
-Index.layout = Admin;
-
-Index.getInitialProps = async () => {
-  return {
-    title: 'Giảng viên',
-    breadCrumb: [{ name: 'Giảng viên', path: '/admin/lecturer' }]
-  };
+Index.layout = Main;
+Index.getInitialProps = async (ctx) => {
+  return { title: 'Giảng viên', selectedMenu: '7' };
 };
 
 export default withAuth(Index);

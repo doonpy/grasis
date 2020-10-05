@@ -12,10 +12,10 @@ import Person from '@material-ui/icons/Person';
 import classNames from 'classnames';
 import React from 'react';
 
-import styles from '../../assets/jss/nextjs-material-dashboard/components/headerLinksStyle.js';
+import styles from '../../assets/jss/components/headerLinksStyle.js';
 import Button from '../../components/CustomButtons/Button.js';
 import useWindowSize from '../../components/Hooks/useWindowSize.js';
-import { logout } from '../../services/auth.service';
+import { logout } from '../../services/auth/auth.service';
 
 const useStyles = makeStyles(styles);
 

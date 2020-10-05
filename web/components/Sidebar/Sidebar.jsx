@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import styles from '../../assets/jss/nextjs-material-dashboard/components/sidebarStyle';
+import styles from '../../assets/jss/components/sidebarStyle';
 import AdminNavbarLinks from '../Navbars/AdminNavbarLinks';
 
 const useStyles = makeStyles(styles);

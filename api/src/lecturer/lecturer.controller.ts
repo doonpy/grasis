@@ -23,7 +23,7 @@ import {
   commonOffsetValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
-import { User } from '../user/user.entity';
+import { UserRequestBody } from '../user/user.resource';
 import { userCreateValidationSchema, userUpdateValidationSchema } from '../user/user.validation';
 import { Lecturer } from './lecturer.entity';
 import { LEC_CONTROLLER_RESOURCE } from './lecturer.resource';
@@ -36,6 +36,10 @@ interface LecturerFindAllResponse extends CommonFindAllResponse {
 
 interface LecturerFindByIdResponse extends CommonResponse {
   lecturer: Lecturer;
+}
+
+interface LecturerCreateResponse extends CommonResponse {
+  id: number;
 }
 
 @UseGuards(JwtAuthGuard)
@@ -61,13 +65,12 @@ export class LecturerController {
     limit: number
   ): Promise<LecturerFindAllResponse> {
     const lecturers: Lecturer[] = await this.lecturerService.findAll(offset, limit);
-    const currentAmount: number = await this.lecturerService.getLecturerAmount();
-    const isNext = currentAmount - lecturers.length - offset > 0;
+    const total: number = await this.lecturerService.getLecturerAmount();
 
     return {
       statusCode: HttpStatus.OK,
       lecturers,
-      isNext
+      total
     };
   }
 
@@ -93,11 +96,16 @@ export class LecturerController {
   @HttpCode(HttpStatus.CREATED)
   public async create(
     @Body(LEC_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userCreateValidationSchema))
-    user: User,
+    user: UserRequestBody,
     @Body(LEC_CONTROLLER_RESOURCE.PARAM.LECTURER)
     lecturer: Lecturer
-  ): Promise<void> {
-    await this.lecturerService.create(user, lecturer);
+  ): Promise<LecturerCreateResponse> {
+    const createdLecturer: Lecturer = await this.lecturerService.create(user, lecturer);
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      id: createdLecturer.id
+    };
   }
 
   @Patch(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
@@ -111,7 +119,7 @@ export class LecturerController {
     )
     id: number,
     @Body(LEC_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userUpdateValidationSchema))
-    user: Partial<User>,
+    user: Partial<UserRequestBody>,
     @Body(
       LEC_CONTROLLER_RESOURCE.PARAM.LECTURER,
       new JoiValidationPipe(lecturerUpdateValidationSchema)

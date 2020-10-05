@@ -1,9 +1,4 @@
-import { CheckCircle, RemoveCircle } from '@material-ui/icons';
 import React from 'react';
-
-import Danger from '../components/Typography/Danger';
-import Primary from '../components/Typography/Primary';
-import Success from '../components/Typography/Success';
 
 export const GENDER = {
   MALE: 0,
@@ -18,89 +13,40 @@ export const IS_ADMIN = {
   TRUE: 1
 };
 
-export function formatUserDetailForList({ username, firstname, lastname, gender, status }) {
-  const statusFormatted = convertStatus(status);
-  const genderFormatted = convertGender(gender);
-  return [username, getFullName(firstname, lastname), genderFormatted, statusFormatted];
-}
-
-export function convertGender(gender) {
-  if (gender === undefined || gender === null) {
-    return '';
+export function sortByUsername(a, b) {
+  if (a.username < b.username) {
+    return -1;
   }
-
-  return gender === GENDER.MALE ? 'Nam' : 'Nữ';
-}
-
-export function convertStatus(status) {
-  if (status === undefined || status === null) {
-    return '';
+  if (a.username > b.username) {
+    return 1;
   }
-
-  return status === USER_STATUS.ACTIVE ? (
-    <Success>Đang hoạt động</Success>
-  ) : (
-    <Danger>Ngưng hoạt động</Danger>
-  );
+  return 0;
 }
 
-export function getFullName(firstname, lastname) {
-  return `${lastname || 'NULL'} ${firstname || 'NULL'}`;
-}
-
-export function convertIsAdmin(isAdmin) {
-  if (isAdmin === undefined || isAdmin === null) {
-    return '';
+export function sortByLastname(a, b) {
+  if (a.lastname < b.lastname) {
+    return -1;
   }
-
-  return isAdmin === IS_ADMIN.TRUE ? (
-    <Success>
-      <CheckCircle />
-    </Success>
-  ) : (
-    <Danger>
-      <RemoveCircle color="danger" />
-    </Danger>
-  );
+  if (a.lastname > b.lastname) {
+    return 1;
+  }
+  return 0;
 }
 
-export function formatUserDetailForGetOn({ username, gender, address, status, phone, isAdmin }) {
-  return [
-    [
-      <Primary key={'username'}>
-        <b>Tên người dùng</b>
-      </Primary>,
-      username
-    ],
-    [
-      <Primary key={'gender'}>
-        <b>Giới tính</b>
-      </Primary>,
-      convertGender(gender)
-    ],
-    [
-      <Primary key={'phone'}>
-        <b>Điện thoại</b>
-      </Primary>,
-      phone
-    ],
-    [
-      <Primary key={'address'}>
-        <b>Địa chỉ</b>
-      </Primary>,
-      address
-    ],
-    [
-      <Primary key={'isAdmin'}>
-        <b>Quản trị viên</b>
-      </Primary>,
-      convertIsAdmin(isAdmin)
-    ],
-    [
-      <Primary key={'status'}>
-        <b>Trạng thái</b>
-      </Primary>,
-      convertStatus(status)
-    ]
-  ];
+export function sortByFirstname(a, b) {
+  if (a.firstname < b.firstname) {
+    return -1;
+  }
+  if (a.firstname > b.firstname) {
+    return 1;
+  }
+  return 0;
+}
+
+export function sortByGender(a, b) {
+  return a.gender - b.gender;
+}
+
+export function sortByStatus(a, b) {
+  return a.status - b.status;
 }

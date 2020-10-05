@@ -24,6 +24,7 @@ import {
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
 import { User } from '../user/user.entity';
+import { UserRequestBody } from '../user/user.resource';
 import { userCreateValidationSchema, userUpdateValidationSchema } from '../user/user.validation';
 import { Student } from './student.entity';
 import { STD_CONTROLLER_RESOURCE } from './student.resource';
@@ -61,13 +62,12 @@ export class StudentController {
     limit: number
   ): Promise<StudentFindAllResponse> {
     const students: Student[] = await this.studentService.findAll(offset, limit);
-    const currentAmount: number = await this.studentService.getStudentAmount();
-    const isNext = currentAmount - students.length - offset > 0;
+    const total: number = await this.studentService.getStudentAmount();
 
     return {
       statusCode: HttpStatus.OK,
       students,
-      isNext
+      total
     };
   }
 
@@ -93,7 +93,7 @@ export class StudentController {
   @HttpCode(HttpStatus.CREATED)
   public async create(
     @Body(STD_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userCreateValidationSchema))
-    user: Partial<User>,
+    user: Partial<UserRequestBody>,
     @Body(STD_CONTROLLER_RESOURCE.PARAM.STUDENT)
     student: Partial<Student>
   ): Promise<void> {
@@ -111,7 +111,7 @@ export class StudentController {
     )
     id: number,
     @Body(STD_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userUpdateValidationSchema))
-    user: Partial<User>,
+    user: Partial<UserRequestBody>,
     @Body(
       STD_CONTROLLER_RESOURCE.PARAM.STUDENT,
       new JoiValidationPipe(studentUpdateValidationSchema)

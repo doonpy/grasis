@@ -1,8 +1,7 @@
 import Router from 'next/router';
 
-export async function redirectToLogin(redirectUrl, server) {
-  const reformatUrl = redirectUrl?.replace(/\?.*/gi, '');
-  const login = `/login?redirected=true&redirectUrl=${reformatUrl || '/'}`;
+export async function redirectToLogin(server) {
+  const login = '/login?redirected=true';
   if (server) {
     server.writeHead(302, {
       Location: login
@@ -21,7 +20,7 @@ export async function redirectToIndex(server) {
     });
     server.end();
   } else {
-    await Router.push(index);
+    await Router.replace(index);
   }
 }
 

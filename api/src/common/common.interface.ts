@@ -3,5 +3,5 @@ export interface CommonResponse {
 }
 
 export interface CommonFindAllResponse extends CommonResponse {
-  isNext: boolean;
+  total: number;
 }

@@ -1,17 +1,14 @@
 import withAuth from '../../hooks/withAuth';
-import Admin from '../../layouts/Admin';
+import Main from '../../layouts/Main';
 
 function Index() {
   return <div>Index neè</div>;
 }
 
-Index.layout = Admin;
+Index.layout = Main;
 
-Index.getInitialProps = async () => {
-  return {
-    title: 'Khóa luận',
-    breadCrumb: [{ name: 'Khóa luận', path: '/graduation-thesis' }]
-  };
+Index.getInitialProps = async (ctx) => {
+  return { title: 'Khóa luận', selectedMenu: '1' };
 };
 
 export default withAuth(Index);

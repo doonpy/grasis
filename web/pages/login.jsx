@@ -18,22 +18,13 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
-import styles from '../assets/jss/nextjs-material-dashboard/views/loginStyle.js';
+import styles from '../assets/jss/views/loginStyle.js';
 import Copyright from '../components/Copyright/Copyright';
-import { getRememberMeValue, postLogin, setRememberMeValue } from '../services/auth.service';
+import { getRememberMeValue, postLogin, setRememberMeValue } from '../services/auth/auth.service';
 import { JwtService } from '../services/jwt.service';
 import { redirectTo, redirectToIndex } from '../services/redirect.service';
 
 const useStyles = makeStyles(styles);
-
-export async function getServerSideProps(ctx) {
-  const auth = JwtService.fromNext(ctx);
-  if (!auth.isExpired()) {
-    await redirectToIndex(ctx.res);
-  }
-
-  return { props: {} };
-}
 
 function Login() {
   const classes = useStyles();
@@ -170,5 +161,14 @@ function Login() {
     </div>
   );
 }
+
+export const getServerSideProps = async (ctx) => {
+  const auth = JwtService.fromNext(ctx);
+  if (!auth.isExpired()) {
+    await redirectToIndex(ctx.res);
+  }
+
+  return { props: {} };
+};
 
 export default Login;

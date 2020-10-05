@@ -4,7 +4,7 @@ import { createHmac } from 'crypto';
 import { EntityManager, Repository } from 'typeorm';
 
 import { User } from './user.entity';
-import { USER_ERROR_RESOURCE } from './user.resource';
+import { USER_ERROR_RESOURCE, UserRequestBody } from './user.resource';
 
 @Injectable()
 export class UserService {
@@ -67,12 +67,6 @@ export class UserService {
     }
   }
 
-  public async checkUserNotExistByIdTransaction(manager: EntityManager, id: number): Promise<void> {
-    if (await this.isUserExistByIdTransaction(manager, id)) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_2);
-    }
-  }
-
   public async isUserExistByUsernameTransaction(
     manager: EntityManager,
     username: string
@@ -93,10 +87,23 @@ export class UserService {
     }
   }
 
-  public async createTransaction(manager: EntityManager, user: Partial<User>): Promise<User> {
-    const { username, password } = user;
+  public checkPasswordConfirm(
+    password: string | undefined,
+    confirmPassword: string | undefined
+  ): void {
+    if (!password || !confirmPassword || password !== confirmPassword) {
+      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_3);
+    }
+  }
+
+  public async createTransaction(
+    manager: EntityManager,
+    user: Partial<UserRequestBody>
+  ): Promise<User> {
+    const { username, password, confirmPassword } = user;
     await this.checkUserNotExistByUsernameTransaction(manager, username!);
-    user.password = this.hashPassword(password!, username!);
+    this.checkPasswordConfirm(password, confirmPassword);
+    user.password = this.hashPassword(password, username!);
     const createdUser = await manager.create<User>(User, user);
 
     return manager.save<User>(createdUser);
@@ -105,15 +112,16 @@ export class UserService {
   public async updateByIdTransaction(
     manager: EntityManager,
     id: number,
-    user: Partial<User>
+    user: Partial<UserRequestBody>
   ): Promise<void> {
-    const { username, password } = user;
+    const { username, password, confirmPassword } = user;
     if (username) {
       await this.checkUserNotExistByUsernameTransaction(manager, username);
     }
 
     const currentUser = await this.findByIdTransaction(manager, id);
     if (password) {
+      this.checkPasswordConfirm(password, confirmPassword);
       user.password = this.hashPassword(password, username ? username : currentUser.username);
     }
 
@@ -124,7 +132,11 @@ export class UserService {
     await manager.softDelete<User>(User, id);
   }
 
-  public hashPassword(password: string, secret: string): string {
+  public hashPassword(password: string | undefined, secret: string): string {
+    if (!password) {
+      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_4);
+    }
+
     return createHmac('sha1', password + secret.toUpperCase())
       .update(password)
       .digest('hex');

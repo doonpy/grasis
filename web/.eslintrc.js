@@ -28,6 +28,7 @@ module.exports = {
     'prettier/prettier': ['error', {}, { usePrettierrc: true }],
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
+    'react/display-name': 'off',
     'simple-import-sort/sort': 'error',
     'no-unused-vars': 'off',
     'jsx-a11y/click-events-have-key-events': 'off',

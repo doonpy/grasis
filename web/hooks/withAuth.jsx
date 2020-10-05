@@ -10,22 +10,24 @@ function withAuth(WrappedComponent) {
 
   Wrapper.getInitialProps = async (ctx) => {
     const auth = JwtService.fromNext(ctx);
-    const initialProps = { auth };
+    let authProps = {};
 
-    if (ctx.req && ctx.req.path === '/login') {
-      await redirectToIndex(ctx.res);
+    if (ctx.pathname !== '/login') {
+      if (auth.isExpired()) {
+        await redirectToLogin(ctx.res);
+      } else {
+        authProps = {
+          isAdmin: auth.decodedToken.user.isAdmin,
+          userType: auth.decodedToken.user.userType
+        };
+      }
     }
 
-    if (auth.isExpired()) {
-      await redirectToLogin(ctx.req.path, ctx.res);
-    }
+    const pageProps = WrappedComponent.getInitialProps
+      ? await WrappedComponent.getInitialProps(authProps)
+      : {};
 
-    if (WrappedComponent.getInitialProps) {
-      const wrappedProps = await WrappedComponent.getInitialProps(initialProps);
-      return { ...wrappedProps, auth };
-    }
-
-    return { initialProps };
+    return { ...authProps, ...pageProps };
   };
 
   Wrapper.layout = WrappedComponent.layout;

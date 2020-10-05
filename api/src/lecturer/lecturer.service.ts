@@ -84,9 +84,9 @@ export class LecturerService {
     }
   }
 
-  public async create(user: Partial<User>, lecturer: Partial<Lecturer>): Promise<void> {
+  public async create(user: Partial<User>, lecturer: Partial<Lecturer>): Promise<Lecturer> {
     try {
-      await this.connection.transaction(async (manager) => {
+      return await this.connection.transaction(async (manager) => {
         user.userType = UserType.LECTURER;
         const createdUser: User = await this.userService.createTransaction(manager, user);
         if (!lecturer) {
@@ -99,7 +99,7 @@ export class LecturerService {
         }
 
         const createdLecturer: Lecturer = await manager.create<Lecturer>(Lecturer, lecturer);
-        await manager.save<Lecturer>(createdLecturer);
+        return await manager.save<Lecturer>(createdLecturer);
       });
     } catch ({ message }) {
       throw new InternalServerErrorException(message);
