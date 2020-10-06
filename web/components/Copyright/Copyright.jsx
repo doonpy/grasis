@@ -1,16 +1,22 @@
-import Link from '@material-ui/core/Link';
-import Typography from '@material-ui/core/Typography';
 import React from 'react';
 
+const styles = {
+  copyright: {
+    width: '100%',
+    textAlign: 'center'
+  }
+};
+
 const Copyright = () => (
-  <Typography variant="body2" color="textSecondary" align="center">
+  <div style={styles.copyright}>
     {'Copyright © '}
-    <Link color="inherit" href="https://github.com/doonpy" target={'_blank'}>
+    {/* eslint-disable-next-line react/jsx-no-target-blank */}
+    <a href="https://github.com/doonpy" target={'_blank'}>
       Poon Nguyen
-    </Link>{' '}
+    </a>{' '}
     {new Date().getFullYear()}
     {' - HCMUTE'}
-  </Typography>
+  </div>
 );
 
 export default Copyright;

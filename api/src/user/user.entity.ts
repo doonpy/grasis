@@ -9,24 +9,24 @@ export class User extends CommonEntity {
   @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'nvarchar', length: 50 })
   username!: string;
 
   @Column({
-    type: 'char',
+    type: 'nchar',
     length: 40
   })
   password!: string;
 
   @Column({
-    type: 'varchar',
+    type: 'nvarchar',
     length: 50,
     nullable: true
   })
   firstname!: string;
 
   @Column({
-    type: 'varchar',
+    type: 'nvarchar',
     length: 50,
     nullable: true
   })
@@ -39,21 +39,21 @@ export class User extends CommonEntity {
   gender!: Gender;
 
   @Column({
-    type: 'varchar',
+    type: 'nvarchar',
     length: 100,
     nullable: true
   })
   email!: string;
 
   @Column({
-    type: 'varchar',
+    type: 'nvarchar',
     length: 100,
     nullable: true
   })
   address!: string;
 
   @Column({
-    type: 'char',
+    type: 'nchar',
     length: 10,
     nullable: true
   })

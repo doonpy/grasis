@@ -1,16 +1,10 @@
-import {
-  AppstoreOutlined,
-  BarChartOutlined,
-  CloudOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined
-} from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import Link from 'next/link';
 import React from 'react';
 
 import logo from '../../assets/img/hcmute-logo.png';
+import { SidebarItem } from '../../resource/sidebar';
+import { IS_ADMIN } from '../../resource/user';
 
 const { Sider: AntSider } = Layout;
 const styles = {
@@ -52,7 +46,7 @@ const styles = {
   }
 };
 
-function Sider({ isAdmin, selectedMenu }) {
+function Sider({ isAdmin, userType, selectedMenu }) {
   return (
     <AntSider style={styles.sidebar}>
       <div className="logo" />
@@ -67,50 +61,33 @@ function Sider({ isAdmin, selectedMenu }) {
         </Link>
       </div>
       <Menu theme="dark" mode="inline" defaultSelectedKeys={[selectedMenu]}>
-        <Menu.Item key="1" icon={<UserOutlined />}>
-          <Link href={'/graduation-thesis'}>
-            <a>Khóa luận</a>
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-          <Link href={'/topic'}>
-            <a>Đề tài</a>
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="3" icon={<UploadOutlined />}>
-          <Link href={'/register-topic'}>
-            <a>Đăng ký đề tài</a>
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="4" icon={<BarChartOutlined />}>
-          <Link href={'/progress-report'}>
-            <a>Báo cáo tiến độ</a>
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="5" icon={<CloudOutlined />}>
-          <Link href={'/review'}>
-            <a>Phản biện</a>
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="6" icon={<AppstoreOutlined />}>
-          <Link href={'/defense'}>
-            <a>Bảo vệ</a>
-          </Link>
-        </Menu.Item>
-        {isAdmin && (
-          <Menu.Item key="7" icon={<AppstoreOutlined />}>
-            <Link href={'/admin/lecturer'}>
-              <a>Giảng viên</a>
-            </Link>
-          </Menu.Item>
-        )}
-        {isAdmin && (
-          <Menu.Item key="8" icon={<AppstoreOutlined />}>
-            <Link href={'/admin/student'}>
-              <a>Sinh viên</a>
-            </Link>
-          </Menu.Item>
-        )}
+        {SidebarItem.map(({ key, icon, text, href, adminPermission, userTypes }) => {
+          if (userTypes.indexOf(userType) === -1) {
+            return;
+          }
+
+          if (adminPermission === IS_ADMIN.TRUE) {
+            if (isAdmin === IS_ADMIN.TRUE) {
+              return (
+                <Menu.Item key={key} icon={icon}>
+                  <Link href={href}>
+                    <a>{text}</a>
+                  </Link>
+                </Menu.Item>
+              );
+            } else {
+              return;
+            }
+          }
+
+          return (
+            <Menu.Item key={key} icon={icon}>
+              <Link href={href}>
+                <a>{text}</a>
+              </Link>
+            </Menu.Item>
+          );
+        })}
       </Menu>
     </AntSider>
   );

@@ -21,14 +21,14 @@ export class Student extends CommonEntity {
   id!: number;
 
   @Column({
-    type: 'char',
+    type: 'nchar',
     length: 8,
     nullable: true
   })
   studentId!: string;
 
   @Column({
-    type: 'varchar',
+    type: 'nvarchar',
     length: 10,
     nullable: true
   })

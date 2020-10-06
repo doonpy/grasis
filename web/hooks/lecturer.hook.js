@@ -1,9 +1,9 @@
 import useSWR from 'swr';
 
-import { LECTURER_LIMIT } from '../services/lecturer/lecturer.service';
+import { DEFAULT_PAGE_SIZE } from '../services/lecturer/lecturer.service';
 
-export function useFindAllForListLecturer(pageNumber = 0) {
-  const offset = (pageNumber - 1) * LECTURER_LIMIT;
+export function useFindAllForListLecturer(pageNumber = 0, pageSize = DEFAULT_PAGE_SIZE) {
+  const offset = (pageNumber - 1) * pageSize;
   const { data } = useSWR(`/lecturers?offset=${offset}`);
 
   return { data, isLoading: !data };

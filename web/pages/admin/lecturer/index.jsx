@@ -1,128 +1,36 @@
-import { FileTextTwoTone, PlusOutlined } from '@ant-design/icons';
-import { Button, Card, Col, message, Row, Table, Tag, Typography } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Card, message, Table } from 'antd';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
+import withAuth from '../../../hoc/withAuth';
 import { useFindAllForListLecturer } from '../../../hooks/lecturer.hook';
-import withAuth from '../../../hooks/withAuth';
 import Main from '../../../layouts/Main';
+import { SidebarKey } from '../../../resource/sidebar';
+import { USER_TABLE_COLUMNS, USER_TYPE } from '../../../resource/user';
 import {
-  formatLecturerForGetMany,
-  LECTURER_LIMIT,
-  sortByLecturerId,
-  sortByPosition
+  DEFAULT_PAGE_SIZE,
+  formatLecturerForGetMany
 } from '../../../services/lecturer/lecturer.service';
-import {
-  GENDER,
-  sortByFirstname,
-  sortByGender,
-  sortByLastname,
-  sortByStatus,
-  sortByUsername,
-  USER_STATUS
-} from '../../../services/user.service';
-
-const columns = [
-  {
-    title: '',
-    dataIndex: 'id',
-    width: '5%',
-    align: 'center',
-    render: (id) => (
-      <Link href={`/admin/lecturer/${id}`}>
-        <Button ghost type="primary" shape="circle" icon={<FileTextTwoTone />} />
-      </Link>
-    )
-  },
-  {
-    title: 'Tên người dùng',
-    dataIndex: 'username',
-    key: 'username',
-    sorter: {
-      compare: sortByUsername,
-      multiple: 1
-    }
-  },
-  {
-    title: 'Họ và tên đệm',
-    dataIndex: 'lastname',
-    key: 'lastname',
-    sorter: {
-      compare: sortByLastname,
-      multiple: 2
-    }
-  },
-  {
-    title: 'Tên',
-    dataIndex: 'firstname',
-    key: 'firstname',
-    sorter: {
-      compare: sortByFirstname,
-      multiple: 3
-    }
-  },
-  {
-    title: 'Giới tính',
-    dataIndex: 'gender',
-    key: 'gender',
-    width: '10%',
-    render: (gender) => (gender === GENDER.FEMALE ? 'Nữ' : 'Nam'),
-    sorter: {
-      compare: sortByGender,
-      multiple: 4
-    }
-  },
-  {
-    title: 'Mã giảng viên',
-    dataIndex: 'lecturerId',
-    key: 'lecturerId',
-    width: '10%',
-    sorter: {
-      compare: sortByLecturerId,
-      multiple: 6
-    }
-  },
-  {
-    title: 'Chức vụ',
-    dataIndex: 'position',
-    key: 'position',
-    sorter: {
-      compare: sortByPosition,
-      multiple: 7
-    }
-  },
-  {
-    title: 'Trạng thái',
-    dataIndex: 'status',
-    key: 'status',
-    width: '10%',
-    render: (status) =>
-      status === USER_STATUS.ACTIVE ? (
-        <Tag color="green">Đang hoạt động</Tag>
-      ) : (
-        <Tag color="volcano">Ngưng hoạt động</Tag>
-      ),
-    sorter: {
-      compare: sortByStatus,
-      multiple: 5
-    }
-  }
-];
+import { isAdminCheck, userTypeCheck } from '../../../services/user/user.service';
 
 function Index() {
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: LECTURER_LIMIT,
+    pageSize: DEFAULT_PAGE_SIZE,
     total: 0,
-    onChange: (page) => {
-      setPagination({ ...pagination, current: page });
-    }
+    showSizeChanger: false
   });
-  const { data, isLoading } = useFindAllForListLecturer(pagination.current);
+  const { data, isLoading } = useFindAllForListLecturer(pagination.current, pagination.pageSize);
   const [lecturers, setLecturers] = useState([]);
+  const handleTableChange = (paginationValues) => {
+    setPagination({ ...pagination, ...paginationValues });
+  };
+
   useEffect(() => {
-    if (data && data.error) {
+    if (data && data.message) {
       message.error(data.message);
+      return;
     }
 
     if (data) {
@@ -132,28 +40,38 @@ function Index() {
   }, [data]);
 
   return (
-    <Card
-      title="Danh sách giảng viên"
-      extra={
-        <Link href={'/admin/lecturer/create'}>
-          <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" />
-        </Link>
-      }>
-      <Table
-        bordered
-        columns={columns}
-        dataSource={lecturers}
-        loading={isLoading}
-        pagination={pagination}
-        size="middle"
-      />
-    </Card>
+    <div>
+      <Card
+        title="Danh sách giảng viên"
+        extra={
+          <Link href={'/admin/lecturer/create'}>
+            <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" />
+          </Link>
+        }>
+        <Table
+          bordered
+          columns={USER_TABLE_COLUMNS}
+          dataSource={lecturers}
+          loading={isLoading}
+          pagination={pagination}
+          size="middle"
+          onChange={handleTableChange}
+        />
+      </Card>
+    </div>
   );
 }
 
 Index.layout = Main;
-Index.getInitialProps = async (ctx) => {
-  return { title: 'Giảng viên', selectedMenu: '7' };
+Index.getInitialProps = ({ isAdmin, userType, asPath, res }) => {
+  isAdminCheck(isAdmin, res);
+  userTypeCheck([USER_TYPE.LECTURER, USER_TYPE.STUDENT], userType, res);
+
+  return {
+    title: 'Danh sách giảng viên',
+    selectedMenu: SidebarKey.ADMIN_LECTURER,
+    breadcrumbs: [{ text: 'Danh sách giảng viên', href: asPath }]
+  };
 };
 
 export default withAuth(Index);

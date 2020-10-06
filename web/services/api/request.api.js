@@ -1,15 +1,13 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import getConfig from 'next/config';
 
-import { COOKIES } from '../cookie.service';
-
-const { publicRuntimeConfig } = getConfig();
+import { COOKIES } from '../../resource/cookie';
+import { JwtService } from '../auth/jwt.service';
 
 export default class RequestApi {
   constructor(token) {
     this.baseConfigs = {
-      baseURL: publicRuntimeConfig.API_SERVER,
+      baseURL: process.env.NEXT_PUBLIC_API_SERVER,
       timeout: 10000,
       headers: {
         Accept: 'application/json',
@@ -20,30 +18,51 @@ export default class RequestApi {
   }
 
   async delete(url) {
-    const { data } = await axios.delete(url, this.baseConfigs).catch(({ response }) => response);
+    const res = await axios.delete(url, this.baseConfigs).catch(this.errorHandler);
+    if (res.data) {
+      return res.data;
+    }
 
-    return data;
+    return res;
   }
 
   async get(url) {
-    const { data } = await axios.get(url, this.baseConfigs).catch(({ response }) => response);
+    const res = await axios.get(url, this.baseConfigs).catch(this.errorHandler);
+    if (res.data) {
+      return res.data;
+    }
 
-    return data;
+    return res;
   }
 
   async post(url, body = {}) {
-    const { data } = await axios
-      .post(url, body, this.baseConfigs)
-      .catch(({ response }) => response);
+    const res = await axios.post(url, body, this.baseConfigs).catch(this.errorHandler);
+    if (res.data) {
+      return res.data;
+    }
 
-    return data;
+    return res;
   }
 
   async patch(url, body = {}) {
-    return axios.patch(url, body, this.baseConfigs);
+    const res = await axios.patch(url, body, this.baseConfigs).catch(this.errorHandler);
+    if (res.data) {
+      return res.data;
+    }
+
+    return res;
   }
 
-  async put(url, body = {}) {
-    return axios.put(url, body, this.baseConfigs);
+  errorHandler({ response, message }) {
+    if (response) {
+      if (response.status === 401) {
+        JwtService.deleteToken();
+      }
+
+      return response;
+    }
+
+    window.location.replace(`/error/500?title=Lỗi&message=${message}`);
+    return message;
   }
 }

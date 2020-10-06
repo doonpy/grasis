@@ -23,7 +23,6 @@ export class AuthService {
   public async validateUser(username: string, inputPassword: string): Promise<User | null> {
     const user: User | undefined = await this.userService.findByUsernameForAuth(username);
     const hashPassword: string = this.userService.hashPassword(inputPassword, username);
-    console.log(username, inputPassword, hashPassword);
     if (user && user.password === hashPassword && user.status === UserStatus.ACTIVE) {
       return user;
     }

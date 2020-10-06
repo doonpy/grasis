@@ -23,9 +23,8 @@ import {
   commonOffsetValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
-import { User } from '../user/user.entity';
 import { UserRequestBody } from '../user/user.resource';
-import { userCreateValidationSchema, userUpdateValidationSchema } from '../user/user.validation';
+import { userUpdateValidationSchema } from '../user/user.validation';
 import { Student } from './student.entity';
 import { STD_CONTROLLER_RESOURCE } from './student.resource';
 import { StudentService } from './student.service';
@@ -92,7 +91,7 @@ export class StudentController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public async create(
-    @Body(STD_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userCreateValidationSchema))
+    @Body(STD_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userUpdateValidationSchema))
     user: Partial<UserRequestBody>,
     @Body(STD_CONTROLLER_RESOURCE.PARAM.STUDENT)
     student: Partial<Student>

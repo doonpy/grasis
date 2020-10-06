@@ -98,6 +98,10 @@ export class LecturerService {
           await this.checkLecturerNotExistByLecturerIdTransaction(manager, lecturer.lecturerId);
         }
 
+        if (lecturer.level) {
+          lecturer.level = this.sanitizeLevel(lecturer.level);
+        }
+
         const createdLecturer: Lecturer = await manager.create<Lecturer>(Lecturer, lecturer);
         return await manager.save<Lecturer>(createdLecturer);
       });
@@ -114,6 +118,7 @@ export class LecturerService {
     try {
       await this.connection.transaction(async (manager) => {
         await this.userService.checkUserExistByIdTransaction(manager, id);
+        const currentLecturer = await this.findByIdTransaction(manager, id);
 
         if (user) {
           user.userType = UserType.LECTURER;
@@ -121,11 +126,14 @@ export class LecturerService {
         }
 
         if (lecturer) {
-          if (lecturer.lecturerId) {
+          if (lecturer.lecturerId && lecturer.lecturerId !== currentLecturer.lecturerId) {
             await this.checkLecturerNotExistByLecturerIdTransaction(manager, lecturer.lecturerId);
           }
 
-          const currentLecturer = await this.findByIdTransaction(manager, id);
+          if (lecturer.level) {
+            lecturer.level = this.sanitizeLevel(lecturer.level);
+          }
+
           await manager.save(Lecturer, { ...currentLecturer, ...lecturer });
         }
       });
@@ -148,5 +156,18 @@ export class LecturerService {
 
   public async getLecturerAmount(): Promise<number> {
     return this.lecturerRepository.count();
+  }
+
+  public sanitizeLevel(level: string): string {
+    let result = level.trim();
+    if (result.endsWith(';')) {
+      result = result.slice(0, result.length - 1);
+    }
+
+    if (result.startsWith(';')) {
+      result = result.slice(1, result.length);
+    }
+
+    return result;
   }
 }

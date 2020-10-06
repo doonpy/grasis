@@ -21,22 +21,22 @@ export class Lecturer extends CommonEntity {
   id!: number;
 
   @Column({
-    type: 'char',
+    type: 'nchar',
     length: 4,
     nullable: true
   })
   lecturerId!: string;
 
   @Column({
-    type: 'varchar',
-    length: 50,
+    type: 'nvarchar',
+    length: 255,
     nullable: true
   })
   position!: string;
 
   @Column({
-    type: 'varchar',
-    length: 50,
+    type: 'nvarchar',
+    length: 255,
     nullable: true
   })
   level!: string;

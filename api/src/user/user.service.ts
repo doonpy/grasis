@@ -115,11 +115,12 @@ export class UserService {
     user: Partial<UserRequestBody>
   ): Promise<void> {
     const { username, password, confirmPassword } = user;
-    if (username) {
+    const currentUser = await this.findByIdTransaction(manager, id);
+
+    if (username && username !== currentUser.username) {
       await this.checkUserNotExistByUsernameTransaction(manager, username);
     }
 
-    const currentUser = await this.findByIdTransaction(manager, id);
     if (password) {
       this.checkPasswordConfirm(password, confirmPassword);
       user.password = this.hashPassword(password, username ? username : currentUser.username);
