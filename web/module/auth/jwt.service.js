@@ -1,11 +1,10 @@
-import Cookie from 'js-cookie';
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import ServerCookie from 'next-cookies';
 import Router from 'next/router';
 
-import { COOKIES } from '../../resource/cookie';
-import { USER_STATUS } from '../../resource/user';
+import { COOKIES } from '../common/cookie';
+import { USER_STATUS } from '../user/user.resource';
 
 export class JwtService {
   constructor(token, remember) {
@@ -48,12 +47,16 @@ export class JwtService {
   }
 
   static async storeToken(token) {
-    Cookie.set(COOKIES.authToken, token);
+    Cookies.set(COOKIES.authToken, token);
     await Router.push('/');
   }
 
+  static getAuthTokenFromCookie() {
+    return `Bearer ${Cookies.get(COOKIES.authToken)}`;
+  }
+
   static async deleteToken() {
-    Cookie.remove(COOKIES.authToken);
+    Cookies.remove(COOKIES.authToken);
     await Router.push('/login');
   }
 

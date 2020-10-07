@@ -1,15 +1,15 @@
 import Icon from '@ant-design/icons';
 import React from 'react';
 
-import ChalkBoardTeacher from '../assets/svg/regular/chalkboard-teacher.svg';
-import FileSearch from '../assets/svg/regular/file-search.svg';
-import FlagAlt from '../assets/svg/regular/flag-alt.svg';
-import GraduationCap from '../assets/svg/regular/graduation-cap.svg';
-import LightBulbOn from '../assets/svg/regular/lightbulb-on.svg';
-import PenFancy from '../assets/svg/regular/pen-fancy.svg';
-import Shield from '../assets/svg/regular/shield.svg';
-import UserGraduate from '../assets/svg/regular/user-graduate.svg';
-import { IS_ADMIN, USER_TYPE } from './user';
+import ChalkBoardTeacher from '../../assets/svg/regular/chalkboard-teacher.svg';
+import FileSearch from '../../assets/svg/regular/file-search.svg';
+import FlagAlt from '../../assets/svg/regular/flag-alt.svg';
+import GraduationCap from '../../assets/svg/regular/graduation-cap.svg';
+import LightBulbOn from '../../assets/svg/regular/lightbulb-on.svg';
+import PenFancy from '../../assets/svg/regular/pen-fancy.svg';
+import Shield from '../../assets/svg/regular/shield.svg';
+import UserGraduate from '../../assets/svg/regular/user-graduate.svg';
+import { IS_ADMIN, USER_TYPE } from '../user/user.resource';
 
 export const SidebarKey = {
   GRADUATION_THESIS: '0',

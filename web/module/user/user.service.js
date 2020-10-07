@@ -2,8 +2,8 @@ import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
 import { Tag } from 'antd';
 import React from 'react';
 
-import { GENDER, IS_ADMIN, USER_PROPERTIES, USER_STATUS } from '../../resource/user';
 import { redirectTo } from '../auth/redirect.service';
+import { GENDER, IS_ADMIN, USER_PROPERTIES, USER_STATUS } from './user.resource';
 
 export function sortByUsername(a, b) {
   if (a.username < b.username) {

@@ -1,10 +1,10 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-import { COOKIES } from '../../resource/cookie';
 import { JwtService } from '../auth/jwt.service';
+import { COOKIES } from '../common/cookie';
 
-export default class RequestApi {
+export default class ApiRequest {
   constructor(token) {
     this.baseConfigs = {
       baseURL: process.env.NEXT_PUBLIC_API_SERVER,

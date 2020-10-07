@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import Link from 'next/link';
 import React from 'react';
 
-import { sortByLecturerId, sortByPosition } from '../services/lecturer/lecturer.service';
+import { sortByLecturerId, sortByPosition } from '../lecturer/lecturer.service';
 import {
   formatGenderForView,
   formatStatusForView,
@@ -12,7 +12,7 @@ import {
   sortByLastname,
   sortByStatus,
   sortByUsername
-} from '../services/user/user.service';
+} from './user.service';
 
 export const GENDER = {
   MALE: 0,

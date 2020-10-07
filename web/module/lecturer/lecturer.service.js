@@ -1,7 +1,10 @@
-import { LECTURE_PROPERTIES } from '../../resource/lecturer';
-import RequestApi from '../api/request.api';
+import { Tag } from 'antd';
+import React from 'react';
+
+import ApiRequest from '../api/api.request';
 import { JwtService } from '../auth/jwt.service';
 import { redirectTo } from '../auth/redirect.service';
+import { LECTURE_PROPERTIES } from './lecturer.resource';
 
 export const DEFAULT_PAGE_SIZE = 20;
 
@@ -22,7 +25,7 @@ export function formatLecturerForGetMany(lecturers) {
 }
 
 export function deleteLecturer(id) {
-  const request = new RequestApi();
+  const request = new ApiRequest();
 
   return request.delete(`/lecturers/${id}`);
 }
@@ -48,7 +51,7 @@ export function sortByPosition(a, b) {
 }
 
 export async function createLecturer(user, lecturer) {
-  const request = new RequestApi();
+  const request = new ApiRequest();
   return await request.post('/lecturers', { user, lecturer });
 }
 
@@ -80,7 +83,7 @@ export function formatLecturerForGetOne({
 }
 
 export async function updateLecturer(id, user, lecturer) {
-  const request = new RequestApi();
+  const request = new ApiRequest();
 
   return await request.patch(`/lecturers/${id}`, { user, lecturer });
 }
@@ -102,7 +105,7 @@ export function formatLecturerForPost(values) {
 }
 
 export async function getLecturerForView(id, token) {
-  const request = new RequestApi(token);
+  const request = new ApiRequest(token);
 
   return await request.get(`/lecturers/${id}`);
 }
@@ -121,7 +124,7 @@ export async function getInitialLecturer(id, req, res) {
   }
 
   lecturer = data.lecturer;
-  lecturer.level = formatLevelForView(lecturer.level);
+  lecturer.level = convertLevelToArray(lecturer.level);
   user = lecturer.id;
   delete user.password;
 
@@ -134,8 +137,24 @@ export function formatLevelForPost(level) {
   }
 }
 
-export function formatLevelForView(level) {
+export function convertLevelToArray(level) {
   if (level) {
     return level.split(';');
   }
+}
+
+export function formatLevelForView(level) {
+  if (!Array.isArray(level)) {
+    return 'NULL';
+  }
+
+  return (
+    <>
+      {level.map((item, index) => (
+        <Tag color="blue" key={index}>
+          {item}
+        </Tag>
+      ))}
+    </>
+  );
 }

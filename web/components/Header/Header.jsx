@@ -2,7 +2,7 @@ import { BellOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Col, Dropdown, Layout, Menu, Row } from 'antd';
 import React from 'react';
 
-import { logout } from '../../services/auth/auth.service';
+import { logout } from '../../module/auth/auth.service';
 
 const { Header: AntHeader } = Layout;
 const styles = {

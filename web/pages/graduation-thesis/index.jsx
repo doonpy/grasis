@@ -1,6 +1,6 @@
 import withAuth from '../../hoc/withAuth';
 import Main from '../../layouts/Main';
-import { SidebarKey } from '../../resource/sidebar';
+import { SidebarKey } from '../../module/resource/sidebar';
 
 function Index() {
   return <div>Implementing...</div>;

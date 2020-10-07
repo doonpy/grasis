@@ -6,13 +6,13 @@ import React, { useEffect, useState } from 'react';
 import withAuth from '../../../hoc/withAuth';
 import { useFindAllForListLecturer } from '../../../hooks/lecturer.hook';
 import Main from '../../../layouts/Main';
-import { SidebarKey } from '../../../resource/sidebar';
-import { USER_TABLE_COLUMNS, USER_TYPE } from '../../../resource/user';
+import { SidebarKey } from '../../../module/common/sidebar';
 import {
   DEFAULT_PAGE_SIZE,
   formatLecturerForGetMany
-} from '../../../services/lecturer/lecturer.service';
-import { isAdminCheck, userTypeCheck } from '../../../services/user/user.service';
+} from '../../../module/lecturer/lecturer.service';
+import { USER_TABLE_COLUMNS, USER_TYPE } from '../../../module/user/user.resource';
+import { isAdminCheck, userTypeCheck } from '../../../module/user/user.service';
 
 function Index() {
   const [pagination, setPagination] = useState({

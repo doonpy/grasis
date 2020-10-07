@@ -6,18 +6,18 @@ import LecturerFormItem from '../../../../components/Lecturer/LecturerFormItem';
 import UserFormItem from '../../../../components/User/UserFormItem';
 import withAuth from '../../../../hoc/withAuth';
 import Main from '../../../../layouts/Main';
-import { SidebarKey } from '../../../../resource/sidebar';
-import { USER_TYPE } from '../../../../resource/user';
+import { SidebarKey } from '../../../../module/common/sidebar';
 import {
   formatLecturerForPost,
   getInitialLecturer,
   updateLecturer
-} from '../../../../services/lecturer/lecturer.service';
+} from '../../../../module/lecturer/lecturer.service';
+import { USER_TYPE } from '../../../../module/user/user.resource';
 import {
   formatUserForPost,
   isAdminCheck,
   userTypeCheck
-} from '../../../../services/user/user.service';
+} from '../../../../module/user/user.service';
 
 function Edit({ initLecturer, initUser }) {
   const router = useRouter();

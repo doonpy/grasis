@@ -3,8 +3,8 @@ import Link from 'next/link';
 import React from 'react';
 
 import logo from '../../assets/img/hcmute-logo.png';
-import { SidebarItem } from '../../resource/sidebar';
-import { IS_ADMIN } from '../../resource/user';
+import { SidebarItem } from '../../module/common/sidebar';
+import { IS_ADMIN } from '../../module/user/user.resource';
 
 const { Sider: AntSider } = Layout;
 const styles = {

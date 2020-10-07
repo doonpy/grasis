@@ -13,10 +13,6 @@ export class UserService {
     private usersRepository: Repository<User>
   ) {}
 
-  public async findAll(offset: number, limit: number): Promise<User[]> {
-    return this.usersRepository.find({ skip: offset, take: limit });
-  }
-
   public async findById(id: number): Promise<User> {
     const user: User | undefined = await this.usersRepository.findOne(id);
     if (!user) {
@@ -43,7 +39,7 @@ export class UserService {
     );
   }
 
-  public async isUserExist(id: number): Promise<boolean> {
+  public async isUserExistById(id: number): Promise<boolean> {
     return (
       (await this.usersRepository.count({
         where: { id }
@@ -180,5 +176,11 @@ export class UserService {
       ],
       where: { username }
     });
+  }
+
+  public async checkUserExistById(id: number): Promise<void> {
+    if (!(await this.isUserExistById(id))) {
+      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_1);
+    }
   }
 }

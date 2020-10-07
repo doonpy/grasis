@@ -6,7 +6,7 @@ import {
   formatGenderForView,
   formatIsAdminForView,
   formatStatusForView
-} from '../../services/user/user.service';
+} from '../../module/user/user.service';
 
 const styles = {
   rowContentBox: {

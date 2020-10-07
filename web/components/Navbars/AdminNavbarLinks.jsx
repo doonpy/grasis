@@ -15,7 +15,7 @@ import React from 'react';
 import styles from '../../assets/jss/components/headerLinksStyle.js';
 import Button from '../../components/CustomButtons/Button.js';
 import useWindowSize from '../../components/Hooks/useWindowSize.js';
-import { logout } from '../../services/auth/auth.service';
+import { logout } from '../../module/auth/auth.service';
 
 const useStyles = makeStyles(styles);
 

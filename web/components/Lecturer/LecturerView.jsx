@@ -1,6 +1,8 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Col, Row, Tag, Typography } from 'antd';
+import { Col, Row, Typography } from 'antd';
 import React from 'react';
+
+import { formatLevelForView } from '../../module/lecturer/lecturer.service';
 
 const styles = {
   rowContentBox: {
@@ -59,15 +61,7 @@ function LecturerView({ lecturer }) {
             <Typography.Text>{lecturer.lecturerId || 'NULL'}</Typography.Text>
           </Row>
           <Row style={styles.rowContentItem}>
-            <Typography.Text>
-              {lecturer.level
-                ? lecturer.level.split(';').map((item, index) => (
-                    <Tag color="blue" key={index}>
-                      {item}
-                    </Tag>
-                  ))
-                : 'NULL'}
-            </Typography.Text>
+            <Typography.Text>{formatLevelForView(lecturer.level)}</Typography.Text>
           </Row>
           <Row style={styles.rowContentItem || 'NULL'}>
             <Typography.Text>{lecturer.position || 'NULL'}</Typography.Text>

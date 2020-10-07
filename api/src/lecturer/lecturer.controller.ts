@@ -22,9 +22,10 @@ import {
   commonLimitValidateSchema,
   commonOffsetValidateSchema
 } from '../common/common.validation';
-import { AdminGuard } from '../guard/admin.guard';
-import { UserTypes } from '../guard/decorator/user-type.decorator';
-import { UserTypeGuard } from '../guard/user-type.guard';
+import { UserTypes } from '../common/decorator/user-type.decorator';
+import { AdminGuard } from '../common/guard/admin.guard';
+import { UserPermissionGuard } from '../common/guard/user-permission.guard';
+import { UserTypeGuard } from '../common/guard/user-type.guard';
 import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
 import { UserRequestBody, UserType } from '../user/user.resource';
 import { userCreateValidationSchema, userUpdateValidationSchema } from '../user/user.validation';
@@ -99,8 +100,7 @@ export class LecturerController {
 
   @Post()
   @UseGuards(AdminGuard)
-  @HttpCode(HttpStatus.CREATED)
-  public async createForAdmin(
+  public async create(
     @Body(LEC_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userCreateValidationSchema))
     user: UserRequestBody,
     @Body(LEC_CONTROLLER_RESOURCE.PARAM.LECTURER, new JoiValidationPipe(lecturerValidationSchema))
@@ -115,9 +115,10 @@ export class LecturerController {
   }
 
   @Patch(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
-  @UseGuards(AdminGuard)
-  @HttpCode(HttpStatus.OK)
-  public async updateByIdForAdmin(
+  @UserTypes(UserType.LECTURER)
+  @UseGuards(UserTypeGuard)
+  @UseGuards(UserPermissionGuard)
+  public async updateById(
     @Param(
       COMMON_PARAMS.ID,
       new JoiValidationPipe(commonIdValidateSchema),
@@ -141,7 +142,7 @@ export class LecturerController {
   @Delete(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
   @UseGuards(AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async deleteByIdForAdmin(
+  public async deleteById(
     @Param(
       COMMON_PARAMS.ID,
       new JoiValidationPipe(commonIdValidateSchema),

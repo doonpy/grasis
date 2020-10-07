@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 
-import { DEFAULT_PAGE_SIZE } from '../services/lecturer/lecturer.service';
+import { DEFAULT_PAGE_SIZE } from '../module/lecturer/lecturer.service';
 
 export function useFindAllForListLecturer(pageNumber = 0, pageSize = DEFAULT_PAGE_SIZE) {
   const offset = (pageNumber - 1) * pageSize;

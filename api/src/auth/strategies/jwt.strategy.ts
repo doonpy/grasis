@@ -22,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   public async validate(tokenDecoded: Payload): Promise<Payload | null> {
-    if (!(await this.userService.isUserExist(tokenDecoded.user.id))) {
+    if (!(await this.userService.isUserExistById(tokenDecoded.user.id))) {
       return null;
     }
 

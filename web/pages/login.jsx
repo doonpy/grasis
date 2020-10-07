@@ -1,14 +1,15 @@
-import { LockOutlined, LoginOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Layout, message, Row } from 'antd';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Checkbox, Form, Image, Input, Layout, message, Space, Typography } from 'antd';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
+import logo from '../assets/img/hcmute-logo.png';
 import loginBg from '../assets/img/login-bg.jpg';
 import Copyright from '../components/Copyright/Copyright';
-import { postLogin } from '../services/auth/auth.service';
-import { JwtService } from '../services/auth/jwt.service';
-import { redirectTo, redirectToIndex } from '../services/auth/redirect.service';
+import { postLogin } from '../module/auth/auth.service';
+import { JwtService } from '../module/auth/jwt.service';
+import { redirectTo, redirectToIndex } from '../module/auth/redirect.service';
 
 const styles = {
   background: {
@@ -19,10 +20,11 @@ const styles = {
     backgroundPosition: 'center'
   },
   form: {
-    padding: '20%'
+    padding: '15%'
   },
   forgot: { float: 'right' },
-  button: { width: '100%' }
+  button: { width: '100%' },
+  brand: { textAlign: 'center', width: '100%' }
 };
 
 function Login({ initialRemember }) {
@@ -62,11 +64,10 @@ function Login({ initialRemember }) {
             initialValues={{ remember: initialRemember.status, username: initialRemember.username }}
             style={styles.form}
             onFinish={handleSubmit}>
-            <Row justify="center">
-              <Button icon={<LoginOutlined />} size="large" type="primary" shape="circle" ghost />
-            </Row>
-            <br />
-            <br />
+            <Space direction="vertical" size="large" style={styles.brand}>
+              <Image src={logo} width={170} />
+              <Typography.Title level={2}>GRASIS</Typography.Title>
+            </Space>
             <Form.Item
               name="username"
               rules={[{ required: true, message: 'Vui lòng nhập tên người dùng!' }]}>

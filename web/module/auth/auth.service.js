@@ -1,8 +1,8 @@
-import RequestApi from '../api/request.api';
+import ApiRequest from '../api/api.request';
 import { JwtService } from './jwt.service';
 
 export async function postLogin(inputs) {
-  const request = new RequestApi();
+  const request = new ApiRequest();
   const data = await request.post('/login', inputs).catch(({ response }) => response);
 
   if (!data) {

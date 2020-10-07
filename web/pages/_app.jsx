@@ -6,7 +6,7 @@ import NProgress from 'nprogress';
 import React from 'react';
 import { SWRConfig } from 'swr';
 
-import RequestApi from '../services/api/request.api';
+import ApiRequest from '../module/api/api.request';
 
 Router.onRouteChangeStart = () => {
   NProgress.start();
@@ -22,7 +22,7 @@ Router.onRouteChangeError = () => {
 
 const MyApp = ({ Component, ...props }) => {
   const Layout = Component.layout || (({ children }) => <>{children}</>);
-  const request = new RequestApi();
+  const request = new ApiRequest();
 
   return (
     <SWRConfig

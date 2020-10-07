@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { JwtService } from '../services/auth/jwt.service';
-import { redirectToLogin } from '../services/auth/redirect.service';
+import { JwtService } from '../module/auth/jwt.service';
+import { redirectToLogin } from '../module/auth/redirect.service';
 
 function withAuth(WrappedComponent) {
   const Wrapper = (props) => {

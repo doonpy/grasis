@@ -6,14 +6,10 @@ import LecturerFormItem from '../../../components/Lecturer/LecturerFormItem';
 import UserFormItem from '../../../components/User/UserFormItem';
 import withAuth from '../../../hoc/withAuth';
 import Main from '../../../layouts/Main';
-import { SidebarKey } from '../../../resource/sidebar';
-import { USER_TYPE } from '../../../resource/user';
-import { createLecturer, formatLecturerForPost } from '../../../services/lecturer/lecturer.service';
-import {
-  formatUserForPost,
-  isAdminCheck,
-  userTypeCheck
-} from '../../../services/user/user.service';
+import { SidebarKey } from '../../../module/common/sidebar';
+import { createLecturer, formatLecturerForPost } from '../../../module/lecturer/lecturer.service';
+import { USER_TYPE } from '../../../module/user/user.resource';
+import { formatUserForPost, isAdminCheck, userTypeCheck } from '../../../module/user/user.service';
 
 function Create() {
   const router = useRouter();
