@@ -1,10 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createHmac } from 'crypto';
 import { EntityManager, Repository } from 'typeorm';
 
 import { User } from './user.entity';
-import { USER_ERROR_RESOURCE, UserRequestBody } from './user.resource';
+import { IsAdmin, USER_ERROR_RESOURCE, UserRequestBody, UserType } from './user.resource';
 
 @Injectable()
 export class UserService {
@@ -139,25 +139,6 @@ export class UserService {
       .digest('hex');
   }
 
-  public async findByUsername(username: string): Promise<User | undefined> {
-    return this.usersRepository.findOne({
-      select: [
-        'id',
-        'username',
-        'firstname',
-        'lastname',
-        'gender',
-        'email',
-        'address',
-        'phone',
-        'status',
-        'isAdmin',
-        'userType'
-      ],
-      where: { username }
-    });
-  }
-
   public async findByUsernameForAuth(username: string): Promise<User | undefined> {
     return this.usersRepository.findOne({
       select: [
@@ -182,5 +163,42 @@ export class UserService {
     if (!(await this.isUserExistById(id))) {
       throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_1);
     }
+  }
+
+  public async checkUserIsAdminById(id: number): Promise<boolean> {
+    const user = await this.usersRepository.findOne(id, { select: ['isAdmin'] });
+    if (!user || user.isAdmin === IsAdmin.FALSE) {
+      throw new UnauthorizedException(USER_ERROR_RESOURCE.USER_ERR_5);
+    }
+
+    return true;
+  }
+
+  public async checkUserHasPermission(id: number, targetId: number): Promise<boolean> {
+    const user = await this.usersRepository.findOne(id, { select: ['isAdmin'] });
+    if (!user || user.isAdmin === IsAdmin.FALSE || user.id !== targetId) {
+      throw new UnauthorizedException(USER_ERROR_RESOURCE.USER_ERR_5);
+    }
+
+    return true;
+  }
+
+  public async checkUserTypeById(id: number, userTypes: UserType[]): Promise<boolean> {
+    const user = await this.usersRepository.findOne(id, { select: ['userType'] });
+    if (!user || !userTypes.includes(user.userType)) {
+      throw new UnauthorizedException(USER_ERROR_RESOURCE.USER_ERR_5);
+    }
+
+    return true;
+  }
+
+  public async isRefreshTokenExist(id: number, refreshToken: string): Promise<boolean> {
+    return (await this.usersRepository.count({ where: { id, refreshToken } })) > 0;
+  }
+
+  public async updateRefreshToken(id: number, refreshToken: string): Promise<void> {
+    const currentUser: User = await this.findById(id);
+
+    await this.usersRepository.save({ ...currentUser, refreshToken });
   }
 }

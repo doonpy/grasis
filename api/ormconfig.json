@@ -4,7 +4,7 @@
   "username": "sa",
   "password": "GrasisRoot13579@",
   "database": "grasis",
-  "entities": ["src/**/*.entity.ts"],
+  "entities": ["dist/**/*.entity.js"],
   "migrations": ["src/migration/*.ts"],
   "cli": {
     "migrationsDir": "migration"

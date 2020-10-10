@@ -1,22 +1,18 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
-import { IsAdmin } from '../../user/user.resource';
+import { Payload } from '../../auth/strategies/jwt.strategy';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class UserPermissionGuard implements CanActivate {
+  constructor(private readonly userService: UserService) {}
+
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    const { user } = request.user;
-    const id = request.params.id;
-    if (user.isAdmin === IsAdmin.TRUE) {
-      return true;
-    }
+    const { userId } = request.user as Payload;
+    const targetId = request.params.id;
 
-    if (user.id === id) {
-      return true;
-    }
-
-    throw new UnauthorizedException('Bạn không có quyền thực hiện tác vụ này.');
+    return this.userService.checkUserHasPermission(userId, targetId);
   }
 }

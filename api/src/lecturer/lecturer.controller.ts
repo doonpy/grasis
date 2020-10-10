@@ -11,9 +11,11 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
 
+import { LoggingInterceptor } from '../auth/auth.interceptor';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
 import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/common.resource';
@@ -52,6 +54,7 @@ export class LecturerController {
 
   @Get()
   @UseGuards(AdminGuard)
+  @UseInterceptors(LoggingInterceptor)
   public async findAll(
     @Query(
       COMMON_QUERIES.OFFSET,

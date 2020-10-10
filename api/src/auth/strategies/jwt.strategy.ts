@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { User } from '../../user/user.entity';
 import { UserService } from '../../user/user.service';
 
-interface Payload {
-  user: User;
+export interface Payload {
+  userId: number;
   iat: number;
   exp: number;
 }
@@ -21,11 +20,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  public async validate(tokenDecoded: Payload): Promise<Payload | null> {
-    if (!(await this.userService.isUserExistById(tokenDecoded.user.id))) {
+  public async validate(payload: Payload): Promise<Payload | null> {
+    if (!(await this.userService.isUserExistById(payload.userId))) {
       return null;
     }
 
-    return tokenDecoded;
+    return payload;
   }
 }

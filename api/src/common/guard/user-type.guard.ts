@@ -1,10 +1,13 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 
+import { Payload } from '../../auth/strategies/jwt.strategy';
+import { UserService } from '../../user/user.service';
+
 @Injectable()
 export class UserTypeGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector, private readonly userService: UserService) {}
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const userTypes = this.reflector.get<number[]>('userTypes', context.getHandler());
@@ -12,12 +15,8 @@ export class UserTypeGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    const { user } = request.user;
+    const { userId } = request.user as Payload;
 
-    if (!userTypes.includes(user.userType)) {
-      throw new UnauthorizedException('Bạn không có quyền truy cập tài nguyên này.');
-    }
-
-    return true;
+    return this.userService.checkUserTypeById(userId, userTypes);
   }
 }

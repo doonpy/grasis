@@ -1,18 +1,17 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
-import { IsAdmin } from '../../user/user.resource';
+import { Payload } from '../../auth/strategies/jwt.strategy';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
+  constructor(private readonly userService: UserService) {}
+
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    const { user } = request.user;
+    const { userId } = request.user as Payload;
 
-    if (user.isAdmin !== IsAdmin.TRUE) {
-      throw new UnauthorizedException('Bạn không có quyền truy cập tài nguyên này.');
-    }
-
-    return true;
+    return this.userService.checkUserIsAdminById(userId);
   }
 }
