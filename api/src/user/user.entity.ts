@@ -5,7 +5,7 @@ import { COMMON_ENTITY_OPTIONS } from '../common/common.resource';
 import { Gender, IsAdmin, USER_ENTITY_RESOURCE, UserStatus } from './user.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: USER_ENTITY_RESOURCE.TABLE_NAME })
-export class User extends CommonEntity {
+export class UserEntity extends CommonEntity {
   @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
 

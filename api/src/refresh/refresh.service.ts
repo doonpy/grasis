@@ -20,7 +20,7 @@ export class RefreshService {
 
     const { userId } = payload;
     if (!(await this.userService.isRefreshTokenExist(userId, refreshToken))) {
-      throw new UnauthorizedException('1Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.');
+      throw new UnauthorizedException('Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.');
     }
   }
 
@@ -32,5 +32,9 @@ export class RefreshService {
     await this.userService.updateRefreshToken(userId, token);
 
     return token;
+  }
+
+  public async getPayloadFromRefreshToken(refreshToken: string): Promise<Payload> {
+    return this.jwtService.decode(refreshToken) as Payload;
   }
 }

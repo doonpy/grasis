@@ -20,3 +20,5 @@ export const LEC_ERROR_RESOURCE = {
   ERR_2: 'Mã giảng viên đã tồn tại.',
   ERR_3: 'Giảng viên không tồn tại.'
 };
+
+export const LECTURER_LEVELS = ['Tiến sĩ', 'Thạc sĩ', 'Phó giáo sư', 'Giáo sư'];

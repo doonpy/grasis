@@ -2,30 +2,33 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, Repository } from 'typeorm';
 
-import { User } from '../user/user.entity';
+import { User, UserRequestBody } from '../user/user.interface';
 import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
-import { Lecturer } from './lecturer.entity';
+import { LecturerEntity } from './lecturer.entity';
+import { Lecturer, LecturerRequestBody, LecturerView } from './lecturer.interface';
 import { LEC_ERROR_RESOURCE } from './lecturer.resource';
 
 @Injectable()
 export class LecturerService {
   constructor(
-    @InjectRepository(Lecturer) private lecturerRepository: Repository<Lecturer>,
+    @InjectRepository(LecturerEntity) private lecturerRepository: Repository<Lecturer>,
     private userService: UserService,
     private connection: Connection
   ) {}
 
-  public async findAll(offset: number, limit: number): Promise<Lecturer[]> {
-    return this.lecturerRepository.find({
+  public async findAll(offset: number, limit: number): Promise<LecturerView[]> {
+    const lecturers = await this.lecturerRepository.find({
       relations: ['id'],
       skip: offset,
       take: limit,
       cache: true
     });
+
+    return lecturers.map((lecturer) => this.convertToView({ lecturer }));
   }
 
-  public async findById(id: number): Promise<Lecturer> {
+  public async findById(id: number): Promise<LecturerView> {
     const lecturer: Lecturer | undefined = await this.lecturerRepository.findOne(id, {
       relations: ['id'],
       cache: true
@@ -35,11 +38,11 @@ export class LecturerService {
       throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_3);
     }
 
-    return lecturer;
+    return this.convertToView({ lecturer });
   }
 
   public async findByIdTransaction(manager: EntityManager, id: number): Promise<Lecturer> {
-    const lecturer: Lecturer | undefined = await manager.findOne(Lecturer, id, {
+    const lecturer: Lecturer | undefined = await manager.findOne<Lecturer>(LecturerEntity, id, {
       relations: ['id'],
       cache: true
     });
@@ -48,7 +51,7 @@ export class LecturerService {
       throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_3);
     }
 
-    return lecturer;
+    return this.convertToView({ lecturer });
   }
 
   public async isLecturerExistByLecturerId(lecturerId: string): Promise<boolean> {
@@ -63,16 +66,7 @@ export class LecturerService {
     manager: EntityManager,
     lecturerId: string
   ): Promise<boolean> {
-    return (await manager.count<Lecturer>(Lecturer, { where: { lecturerId } })) > 0;
-  }
-
-  public async checkLecturerExistByLecturerIdTransaction(
-    manager: EntityManager,
-    lecturerId: string
-  ): Promise<void> {
-    if (!(await this.isLecturerExistByLecturerIdTransaction(manager, lecturerId))) {
-      throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_1);
-    }
+    return (await manager.count<Lecturer>(LecturerEntity, { where: { lecturerId } })) > 0;
   }
 
   public async checkLecturerNotExistByLecturerIdTransaction(
@@ -84,17 +78,44 @@ export class LecturerService {
     }
   }
 
-  public async create(user: Partial<User>, lecturer: Partial<Lecturer>): Promise<Lecturer> {
+  public async create(data: LecturerRequestBody): Promise<LecturerView> {
     try {
       return await this.connection.transaction(async (manager) => {
-        user.userType = UserType.LECTURER;
-        const createdUser: User = await this.userService.createTransaction(manager, user);
-        if (!lecturer) {
-          lecturer = {};
+        data.userType = UserType.LECTURER;
+        const user = await this.userService.createTransaction(manager, data);
+
+        if (data.lecturerId) {
+          await this.checkLecturerNotExistByLecturerIdTransaction(manager, data.lecturerId);
         }
 
-        lecturer.id = createdUser.id;
-        if (lecturer.lecturerId) {
+        if (data.level) {
+          data.level = this.sanitizeLevel(data.level);
+        }
+
+        const createObject = manager.create<Lecturer>(LecturerEntity, {
+          ...this.filterNullProperties(data),
+          id: user.id
+        });
+        const lecturer = await manager.save<Lecturer>(createObject);
+
+        return this.convertToView({ lecturer, user });
+      });
+    } catch ({ message }) {
+      throw new InternalServerErrorException(message);
+    }
+  }
+
+  public async updateById(id: number, data: LecturerRequestBody): Promise<void> {
+    try {
+      await this.connection.transaction(async (manager) => {
+        await this.userService.checkUserExistByIdTransaction(manager, id);
+        const currentLecturer = await this.findByIdTransaction(manager, id);
+
+        data.userType = UserType.LECTURER;
+        const { user, remain: lecturer } = this.userService.splitUserFromRequestBody(data);
+        await this.userService.updateByIdTransaction(manager, id, user);
+
+        if (lecturer.lecturerId && data.lecturerId !== currentLecturer.lecturerId) {
           await this.checkLecturerNotExistByLecturerIdTransaction(manager, lecturer.lecturerId);
         }
 
@@ -102,40 +123,7 @@ export class LecturerService {
           lecturer.level = this.sanitizeLevel(lecturer.level);
         }
 
-        const createdLecturer: Lecturer = await manager.create<Lecturer>(Lecturer, lecturer);
-        return await manager.save<Lecturer>(createdLecturer);
-      });
-    } catch ({ message }) {
-      throw new InternalServerErrorException(message);
-    }
-  }
-
-  public async updateById(
-    id: number,
-    user: Partial<User> | undefined,
-    lecturer: Partial<Lecturer> | undefined
-  ): Promise<void> {
-    try {
-      await this.connection.transaction(async (manager) => {
-        await this.userService.checkUserExistByIdTransaction(manager, id);
-        const currentLecturer = await this.findByIdTransaction(manager, id);
-
-        if (user) {
-          user.userType = UserType.LECTURER;
-          await this.userService.updateByIdTransaction(manager, id, user);
-        }
-
-        if (lecturer) {
-          if (lecturer.lecturerId && lecturer.lecturerId !== currentLecturer.lecturerId) {
-            await this.checkLecturerNotExistByLecturerIdTransaction(manager, lecturer.lecturerId);
-          }
-
-          if (lecturer.level) {
-            lecturer.level = this.sanitizeLevel(lecturer.level);
-          }
-
-          await manager.save(Lecturer, { ...currentLecturer, ...lecturer });
-        }
+        await manager.update<Lecturer>(LecturerEntity, id, this.filterNullProperties(lecturer));
       });
     } catch ({ message }) {
       throw new InternalServerErrorException(message);
@@ -146,7 +134,7 @@ export class LecturerService {
     try {
       await this.connection.transaction(async (manager) => {
         await this.userService.checkUserExistByIdTransaction(manager, id);
-        await manager.softDelete<Lecturer>(Lecturer, id);
+        await manager.softDelete<Lecturer>(LecturerEntity, id);
         await this.userService.deleteByIdTransaction(manager, id);
       });
     } catch ({ message }) {
@@ -165,7 +153,47 @@ export class LecturerService {
     }
 
     if (result.startsWith(';')) {
-      result = result.slice(1, result.length);
+      result = result.slice(1, result.length - 1);
+    }
+
+    return result;
+  }
+
+  public convertToView({ lecturer }: { lecturer: Lecturer }): LecturerView;
+  public convertToView({ lecturer, user }: { lecturer: Lecturer; user?: User }): LecturerView;
+  public convertToView({ lecturer, user }: any): any {
+    const { lecturerId, level, position, createdAt, updatedAt } = lecturer;
+    if (user) {
+      return {
+        ...this.userService.convertToView(user),
+        lecturerId,
+        level,
+        position,
+        createdAt,
+        updatedAt
+      };
+    } else {
+      return {
+        ...this.userService.convertToView(lecturer.id as User),
+        lecturerId,
+        level,
+        position,
+        createdAt,
+        updatedAt
+      };
+    }
+  }
+
+  public filterNullProperties(lecturer: LecturerRequestBody): LecturerRequestBody {
+    const result: LecturerRequestBody = {};
+    if (typeof lecturer.lecturerId !== 'undefined' && lecturer.lecturerId !== null) {
+      result.lecturerId = lecturer.lecturerId;
+    }
+    if (typeof lecturer.level !== 'undefined' && lecturer.level !== null) {
+      result.level = lecturer.level;
+    }
+    if (typeof lecturer.position !== 'undefined' && lecturer.position !== null) {
+      result.position = lecturer.position;
     }
 
     return result;

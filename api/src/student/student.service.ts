@@ -2,7 +2,8 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, Repository } from 'typeorm';
 
-import { User } from '../user/user.entity';
+import { UserEntity } from '../user/user.entity';
+import { User, UserRequestBody } from '../user/user.interface';
 import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { Student } from './student.entity';
@@ -79,7 +80,7 @@ export class StudentService {
     return (await this.studentRepository.count({ where: { studentId } })) > 0;
   }
 
-  public async create(user: Partial<User>, student: Partial<Student>): Promise<void> {
+  public async create(user: Partial<UserRequestBody>, student: Partial<Student>): Promise<void> {
     try {
       await this.connection.transaction(async (manager) => {
         user.userType = UserType.STUDENT;
@@ -100,7 +101,7 @@ export class StudentService {
 
   public async updateById(
     id: number,
-    user: Partial<User> | undefined,
+    user: Partial<UserRequestBody> | undefined,
     student: Partial<Student> | undefined
   ): Promise<void> {
     try {

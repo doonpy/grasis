@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { RefreshService } from '../refresh/refresh.service';
-import { User } from '../user/user.entity';
+import { UserAuth } from '../user/user.interface';
 import { UserStatus } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 
@@ -20,7 +20,7 @@ export class AuthService {
   ) {}
 
   public async validateUser(username: string, inputPassword: string): Promise<number | null> {
-    const user: User | undefined = await this.userService.findByUsernameForAuth(username);
+    const user: UserAuth | undefined = await this.userService.findByUsernameForAuth(username);
     const hashPassword: string = this.userService.hashPassword(inputPassword, username);
     if (user && user.password === hashPassword && user.status === UserStatus.ACTIVE) {
       return user.id;
@@ -34,8 +34,8 @@ export class AuthService {
     const refreshToken = await this.refreshService.getNewToken(userId);
 
     return {
-      accessToken,
-      refreshToken
+      accessToken: accessToken,
+      refreshToken: refreshToken
     };
   }
 }

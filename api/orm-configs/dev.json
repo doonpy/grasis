@@ -1,0 +1,17 @@
+{
+  "type": "mssql",
+  "host": "27.74.243.88",
+  "port": 1433,
+  "username": "ute02_sa",
+  "password": "6aG@p5FaVrB",
+  "database": "ute_002_dev",
+  "entities": [
+    "dist/**/*.entity.js"
+  ],
+  "migrations": [
+    "src/migration/*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "migration"
+  }
+}

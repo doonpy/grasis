@@ -3,13 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { createHmac } from 'crypto';
 import { EntityManager, Repository } from 'typeorm';
 
-import { User } from './user.entity';
-import { IsAdmin, USER_ERROR_RESOURCE, UserRequestBody, UserType } from './user.resource';
+import { Lecturer, LecturerRequestBody, LecturerView } from '../lecturer/lecturer.interface';
+import { UserEntity } from './user.entity';
+import { User, UserAuth, UserRequestBody, UserView } from './user.interface';
+import { IsAdmin, USER_ERROR_RESOURCE, UserType } from './user.resource';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
+    @InjectRepository(UserEntity)
     private usersRepository: Repository<User>
   ) {}
 
@@ -23,7 +25,7 @@ export class UserService {
   }
 
   public async findByIdTransaction(manager: EntityManager, id: number): Promise<User> {
-    const user: User | undefined = await manager.findOne<User>(User, id);
+    const user: User | undefined = await manager.findOne<User>(UserEntity, id);
     if (!user) {
       throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_1);
     }
@@ -54,7 +56,7 @@ export class UserService {
   }
 
   public async isUserExistByIdTransaction(manager: EntityManager, id: number): Promise<boolean> {
-    return (await manager.count<User>(User, { where: { id } })) > 0;
+    return (await manager.count<User>(UserEntity, { where: { id } })) > 0;
   }
 
   public async checkUserExistByIdTransaction(manager: EntityManager, id: number): Promise<void> {
@@ -68,7 +70,7 @@ export class UserService {
     username: string
   ): Promise<boolean> {
     return (
-      (await manager.count<User>(User, {
+      (await manager.count<User>(UserEntity, {
         where: { username }
       })) > 0
     );
@@ -83,10 +85,7 @@ export class UserService {
     }
   }
 
-  public checkPasswordConfirm(
-    password: string | undefined,
-    confirmPassword: string | undefined
-  ): void {
+  public checkPasswordConfirm(password?: string, confirmPassword?: string): void {
     if (!password || !confirmPassword || password !== confirmPassword) {
       throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_3);
     }
@@ -100,9 +99,9 @@ export class UserService {
     await this.checkUserNotExistByUsernameTransaction(manager, username!);
     this.checkPasswordConfirm(password, confirmPassword);
     user.password = this.hashPassword(password, username!);
-    const createdUser = await manager.create<User>(User, user);
+    const createdUser = manager.create<User>(UserEntity, user);
 
-    return manager.save<User>(createdUser);
+    return manager.save(createdUser);
   }
 
   public async updateByIdTransaction(
@@ -122,11 +121,12 @@ export class UserService {
       user.password = this.hashPassword(password, username ? username : currentUser.username);
     }
 
-    await manager.save(User, { ...currentUser, ...user });
+    delete user.confirmPassword;
+    await manager.update<User>(UserEntity, id, this.filterNullProperties(user));
   }
 
   public async deleteByIdTransaction(manager: EntityManager, id: number): Promise<void> {
-    await manager.softDelete<User>(User, id);
+    await manager.softDelete<User>(UserEntity, id);
   }
 
   public hashPassword(password: string | undefined, secret: string): string {
@@ -139,22 +139,9 @@ export class UserService {
       .digest('hex');
   }
 
-  public async findByUsernameForAuth(username: string): Promise<User | undefined> {
+  public async findByUsernameForAuth(username: string): Promise<UserAuth | undefined> {
     return this.usersRepository.findOne({
-      select: [
-        'id',
-        'username',
-        'password',
-        'firstname',
-        'lastname',
-        'gender',
-        'email',
-        'address',
-        'phone',
-        'status',
-        'isAdmin',
-        'userType'
-      ],
+      select: ['id', 'username', 'password', 'status'],
       where: { username }
     });
   }
@@ -176,7 +163,15 @@ export class UserService {
 
   public async checkUserHasPermission(id: number, targetId: number): Promise<boolean> {
     const user = await this.usersRepository.findOne(id, { select: ['isAdmin'] });
-    if (!user || user.isAdmin === IsAdmin.FALSE || user.id !== targetId) {
+    if (!user) {
+      return false;
+    }
+
+    if (user.isAdmin === IsAdmin.TRUE) {
+      return true;
+    }
+
+    if (user.id !== targetId) {
       throw new UnauthorizedException(USER_ERROR_RESOURCE.USER_ERR_5);
     }
 
@@ -199,6 +194,96 @@ export class UserService {
   public async updateRefreshToken(id: number, refreshToken: string): Promise<void> {
     const currentUser: User = await this.findById(id);
 
-    await this.usersRepository.save({ ...currentUser, refreshToken });
+    await this.usersRepository.update(id, { refreshToken });
+  }
+
+  public convertToView(user: User): UserView {
+    const { password, refreshToken, ...result } = user;
+
+    return result;
+  }
+
+  public splitUserFromRequestBody(
+    body: LecturerRequestBody
+  ): { user: UserRequestBody; remain: LecturerRequestBody } {
+    const {
+      username,
+      password,
+      confirmPassword,
+      firstname,
+      lastname,
+      gender,
+      email,
+      address,
+      phone,
+      status,
+      userType,
+      isAdmin,
+      ...remain
+    } = body;
+
+    const user: UserRequestBody = {
+      username,
+      password,
+      confirmPassword,
+      firstname,
+      lastname,
+      gender,
+      email,
+      address,
+      phone,
+      status,
+      userType,
+      isAdmin
+    };
+
+    return { user, remain };
+  }
+
+  public filterNullProperties({
+    password,
+    firstname,
+    lastname,
+    gender,
+    email,
+    address,
+    phone,
+    status,
+    userType,
+    isAdmin
+  }: UserRequestBody): UserRequestBody {
+    const result: UserRequestBody = {};
+    if (typeof password !== 'undefined' && password !== null) {
+      result.password = password;
+    }
+    if (typeof firstname !== 'undefined' && firstname !== null) {
+      result.firstname = firstname;
+    }
+    if (typeof lastname !== 'undefined' && lastname !== null) {
+      result.lastname = lastname;
+    }
+    if (typeof gender !== 'undefined' && gender !== null) {
+      result.gender = gender;
+    }
+    if (typeof email !== 'undefined' && email !== null) {
+      result.email = email;
+    }
+    if (typeof address !== 'undefined' && address !== null) {
+      result.address = address;
+    }
+    if (typeof phone !== 'undefined' && phone !== null) {
+      result.phone = phone;
+    }
+    if (typeof status !== 'undefined' && status !== null) {
+      result.status = status;
+    }
+    if (typeof userType !== 'undefined' && userType !== null) {
+      result.userType = userType;
+    }
+    if (typeof isAdmin !== 'undefined' && isAdmin !== null) {
+      result.isAdmin = isAdmin;
+    }
+
+    return result;
   }
 }

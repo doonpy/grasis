@@ -10,13 +10,13 @@ import {
 
 import { CommonEntity } from '../common/common.entity';
 import { COMMON_ENTITY_OPTIONS } from '../common/common.resource';
-import { User } from '../user/user.entity';
+import { UserEntity } from '../user/user.entity';
 import { STD_ENTITY_RESOURCE } from './student.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: STD_ENTITY_RESOURCE.TABLE_NAME })
 export class Student extends CommonEntity {
   @PrimaryColumn({ type: 'int' })
-  @OneToOne(() => User, (user) => user.id, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @OneToOne(() => UserEntity, (user) => user.id, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'id', referencedColumnName: 'id' })
   id!: number;
 

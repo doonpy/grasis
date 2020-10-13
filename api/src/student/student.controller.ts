@@ -23,7 +23,7 @@ import {
   commonOffsetValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
-import { UserRequestBody } from '../user/user.resource';
+import { UserRequestBody } from '../user/user.interface';
 import { userUpdateValidationSchema } from '../user/user.validation';
 import { Student } from './student.entity';
 import { STD_CONTROLLER_RESOURCE } from './student.resource';
