@@ -1,181 +1,127 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  Checkbox,
-  CssBaseline,
-  FormControlLabel,
-  Grid,
-  Paper,
-  Snackbar,
-  TextField,
-  Typography
-} from '@material-ui/core';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Alert from '@material-ui/lab/Alert';
-import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
-import React, { useState } from 'react';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Checkbox, Form, Image, Input, Layout, Space, Typography } from 'antd';
+import { GetServerSideProps, NextPage } from 'next';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import React, { CSSProperties, useState } from 'react';
 
+import logo from '../assets/img/hcmute-logo.png';
+import loginBg from '../assets/img/login-bg.jpg';
 import Copyright from '../components/Copyright/Copyright';
-import Header from '../components/Header/Header';
-import {
-  LOGIN_1,
-  LOGIN_2,
-  LOGIN_3,
-  LOGIN_4,
-  LOGIN_5,
-  LOGIN_6,
-  loginUseStyles
-} from '../libs/resource/login.resource';
-import { JwtService } from '../services/auth/jwt.service';
-import {
-  getRememberMeValue,
-  LoginInputs,
-  postLogin,
-  setRememberMeValue
-} from '../services/auth/login.service';
-import { redirectToIndex } from '../services/redirect.service';
+import { COMMON_PATH } from '../libs/common/common.resource';
+import CommonServer from '../libs/common/common.server';
+import UserClient from '../libs/user/user.client';
+import { LoginInputs } from '../libs/user/user.interface';
 
-const Login: React.FunctionComponent = () => {
-  const classes = loginUseStyles();
-  const initialRememberMe = getRememberMeValue();
-  const initialValues: LoginInputs = {
-    username: initialRememberMe.username,
-    password: ''
-  };
+const styles: Record<string, CSSProperties> = {
+  background: {
+    height: '100vh',
+    backgroundImage: `url(${loginBg})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'auto',
+    backgroundPosition: 'center'
+  },
+  form: {
+    padding: '15%'
+  },
+  forgot: { float: 'right' },
+  button: { width: '100%' },
+  brand: { textAlign: 'center', width: '100%' }
+};
 
-  const [inputs, setInputs] = useState(initialValues);
-  const [rememberMe, setRememberMe] = useState(initialRememberMe.status ?? false);
-  const [snackBar, setSnackBar] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [errorInputs, setErrorInputs] = useState({
-    username: initialValues.username.length === 0,
-    password: initialValues.password.length === 0
-  });
+const Login: NextPage = () => {
+  const router = useRouter();
+  const userClient = UserClient.getInstance();
+  const [loading, setLoading] = useState(false);
+  const { username } = userClient.getRememberValue();
 
-  const handleSubmit = async (e: React.ChangeEvent<any>) => {
-    e.preventDefault();
-    const message: string | undefined = await postLogin(inputs);
-    if (message) {
-      setErrorMessage(message);
-      setSnackBar(true);
+  const handleSubmit = async (values: LoginInputs) => {
+    setLoading(true);
+    const { remember, ...inputs } = values;
+    if (remember) {
+      userClient.setRememberValue({ username: inputs.username });
+    }
+
+    try {
+      await userClient.login(values);
+      setLoading(false);
+    } catch (error) {
+      await userClient.requestErrorHandler(error);
+      setLoading(false);
       return;
     }
 
-    if (rememberMe) {
-      setRememberMeValue({ status: rememberMe, username: inputs.username });
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.persist();
-    setInputs({
-      ...inputs,
-      [e.target.name]: e.target.value
-    });
-    if (e.target.value.length === 0) {
-      setErrorInputs({ ...errorInputs, [e.target.name]: true });
+    if (router.query.redirectUrl) {
+      await userClient.redirectService.redirectTo(router.query.redirectUrl as string);
     } else {
-      setErrorInputs({ ...errorInputs, [e.target.name]: false });
+      await userClient.redirectService.redirectTo(COMMON_PATH.INDEX);
     }
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackBar(false);
   };
 
   return (
     <div>
-      <Header title={LOGIN_1} />
-      <Snackbar
-        open={snackBar}
-        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
-        autoHideDuration={5000}
-        onClose={handleSnackbarClose}>
-        <Alert severity="error">{errorMessage}</Alert>
-      </Snackbar>
-      <Grid container component="main" className={classes.root}>
-        <CssBaseline />
-        <Grid item xs={false} sm={4} md={7} className={classes.image} />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <div className={classes.paper}>
-            <Avatar className={classes.avatar}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              {LOGIN_1}
-            </Typography>
-            <form className={classes.form} noValidate action={'#'}>
-              <TextField
-                error={errorInputs.username}
-                helperText={errorInputs.username && LOGIN_5}
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label={LOGIN_2}
-                name="username"
-                autoComplete="username"
-                onChange={handleInputChange}
-                value={inputs.username}
+      <Head>
+        <title>Đăng nhập</title>
+      </Head>
+      <Layout>
+        <Layout.Content style={styles.background} />
+        <Layout.Sider theme="light" width={'40%'}>
+          <Form
+            name="normal_login"
+            initialValues={{ remember: true, username }}
+            style={styles.form}
+            onFinish={handleSubmit}>
+            <Space direction="vertical" size="large" style={styles.brand}>
+              <Image preview={false} src={logo} width={170} />
+              <Typography.Title level={2}>GRASIS</Typography.Title>
+            </Space>
+            <Form.Item
+              name="username"
+              rules={[{ required: true, message: 'Vui lòng nhập tên người dùng!' }]}>
+              <Input
+                prefix={<UserOutlined className="site-form-item-icon" />}
+                placeholder="Tên người dùng"
               />
-              <TextField
-                error={errorInputs.password}
-                helperText={errorInputs.password && LOGIN_6}
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label={LOGIN_3}
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}>
+              <Input
+                prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
-                id="password"
-                autoComplete="current-password"
-                onChange={handleInputChange}
-                value={inputs.password}
+                placeholder="Mật khẩu"
               />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="rememberMe"
-                    onChange={() => setRememberMe(!rememberMe)}
-                    color="primary"
-                    checked={rememberMe}
-                  />
-                }
-                label={LOGIN_4}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                disabled={errorInputs.username || errorInputs.password}
-                onClick={handleSubmit}>
-                {LOGIN_1}
+            </Form.Item>
+            <Form.Item>
+              <Form.Item name="remember" valuePropName="checked" noStyle>
+                <Checkbox>Ghi nhớ</Checkbox>
+              </Form.Item>
+            </Form.Item>
+            <Form.Item>
+              <Button loading={loading} type="primary" htmlType="submit" style={styles.button}>
+                Đăng nhập
               </Button>
-              <Box mt={5}>
-                <Copyright />
-              </Box>
-            </form>
-          </div>
-        </Grid>
-      </Grid>
+            </Form.Item>
+            <Copyright />
+          </Form>
+        </Layout.Sider>
+      </Layout>
     </div>
   );
 };
 
-export default Login;
-
-export async function getServerSideProps(
-  ctx: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<any>> {
-  const auth = JwtService.fromNext(ctx);
-  if (!auth.isExpired()) {
-    await redirectToIndex(ctx.res);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const commonServer = new CommonServer(ctx);
+  try {
+    await commonServer.jwtService.checkTokenExpire();
+    if (!commonServer.jwtService.isAccessTokenExpired()) {
+      await commonServer.redirectService.redirectTo(COMMON_PATH.INDEX);
+    }
+  } catch (error) {
+    await commonServer.requestErrorHandler(error);
   }
 
   return { props: {} };
-}
+};
+
+export default Login;

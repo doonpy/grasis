@@ -1,19 +1,37 @@
 import Joi from '@hapi/joi';
-import { Lecturer } from './lecturer.model';
 
-export const lecturerUpdateValidationSchema = Joi.object<Lecturer>({
-  lecturerId: Joi.string().length(4).message('Mã giảng viên không hợp lệ.'),
-  positionId: Joi.number().integer().min(1).message('Mã chức vụ giảng viên không hợp lệ.'),
-  level: Joi.string().max(255).message('Trình độ giảng viên không hợp lệ.')
+import { userCreateValidationSchema, userUpdateValidationSchema } from '../user/user.validation';
+import { LecturerRequestBody } from './lecturer.interface';
+import { LECTURER_LEVELS } from './lecturer.resource';
+
+const LEVEL_PATTERN = new RegExp(`^((${LECTURER_LEVELS.join('|')});?)*$`);
+
+const lecturerValidationSchema = Joi.object<LecturerRequestBody>({
+  lecturerId: Joi.string()
+    .allow(null, '')
+    .optional()
+    .length(4)
+    .message('Mã giảng viên phải có độ dài là 4 kí tự.')
+    .pattern(/^[0-9]{4}$/)
+    .message('Mã giảng viên phải là kí tự số.'),
+  position: Joi.string()
+    .allow(null, '')
+    .optional()
+    .max(255)
+    .message('Chức vụ có độ dài vượt quá quy định (tối đa 255 kí tự).'),
+  level: Joi.string()
+    .allow(null, '')
+    .optional()
+    .max(255)
+    .message('Chức vụ có độ dài vượt quá quy định (tối đa 255 kí tự).')
+    .pattern(LEVEL_PATTERN)
+    .message('Trình độ giảng viên không hợp lệ.')
 });
 
-export const lecturerCreateValidationSchema = lecturerUpdateValidationSchema.concat(
-  Joi.object<Lecturer>({
-    lecturerId: Joi.required().messages({
-      'any.required': 'Mã giảng viên là thông tin bắt buộc.'
-    }),
-    positionId: Joi.required().messages({
-      'any.required': 'Mã chức vụ giảng viên là thông tin bắt buộc.'
-    })
-  })
+export const lecturerCreateValidationSchema = userCreateValidationSchema.concat(
+  lecturerValidationSchema
+);
+
+export const lecturerUpdateValidationSchema = userUpdateValidationSchema.concat(
+  lecturerValidationSchema
 );

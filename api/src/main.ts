@@ -1,18 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { Sequelize } from 'sequelize-typescript';
-import { getDatabaseConfig } from './mysql/mysql.helper';
-import morgan from 'morgan';
 import chalk from 'chalk';
-import { isProductionMode } from './common/common.helper';
+import morgan from 'morgan';
 
-async function prependDatabase(): Promise<void> {
-  const client = new Sequelize(getDatabaseConfig(false));
-  const queryStr = `CREATE DATABASE IF NOT EXISTS ${process.env.DB_MYSQL_DATABASE};`;
-  await client.authenticate();
-  await client.query(queryStr);
-  await client.close();
-}
+import { AppModule } from './app.module';
+import { isProductionMode } from './common/common.helper';
+import { prependDatabase } from './mssql/mssql.helper';
 
 async function bootstrap() {
   try {

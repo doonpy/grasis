@@ -1,17 +1,26 @@
-import { Controller, Get, Post, UseGuards, Request } from '@nestjs/common';
-import { AppService } from './app.service';
-import { Request as ExRequest } from 'express-serve-static-core';
-import { User } from './user/user.model';
-import { LocalAuthGuard } from './auth/guards/local-auth.guard';
-import { AuthService, JwtToken } from './auth/auth.service';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Request,
+  UseGuards
+} from '@nestjs/common';
 
-interface LoginRequest extends ExRequest {
-  user: User;
-}
+import { AppService } from './app.service';
+import { AuthService, JwtToken } from './auth/auth.service';
+import { LocalAuthGuard } from './auth/guards/local-auth.guard';
+import { RefreshService } from './refresh/refresh.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService, private authService: AuthService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly authService: AuthService,
+    private readonly refreshService: RefreshService
+  ) {}
 
   @Get()
   getHello(): string {
@@ -20,7 +29,19 @@ export class AppController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  public async login(@Request() req: LoginRequest): Promise<JwtToken> {
-    return this.authService.login(req.user);
+  @HttpCode(HttpStatus.OK)
+  public async login(@Request() req: Express.Request): Promise<JwtToken> {
+    return this.authService.login(req.user as number);
+  }
+
+  @Post('/refresh')
+  @HttpCode(HttpStatus.OK)
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  public async refresh(@Req() req: any): Promise<JwtToken> {
+    const oldRefreshToken: string = req.headers['refresh'];
+    await this.refreshService.validateRefreshToken(oldRefreshToken);
+    const { userId } = await this.refreshService.getPayloadFromRefreshToken(oldRefreshToken);
+
+    return this.authService.login(userId);
   }
 }

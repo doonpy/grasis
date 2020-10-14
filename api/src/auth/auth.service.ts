@@ -1,48 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from '../user/user.service';
-import { User, UserType } from '../user/user.model';
-import { Lecturer } from '../lecturer/lecturer.model';
-import { Student } from '../student/student.model';
-import { LecturerService } from '../lecturer/lecturer.service';
-import { StudentService } from '../student/student.service';
 import { JwtService } from '@nestjs/jwt';
+
+import { RefreshService } from '../refresh/refresh.service';
+import { UserAuth } from '../user/user.interface';
+import { UserStatus } from '../user/user.resource';
+import { UserService } from '../user/user.service';
 
 export interface JwtToken {
   accessToken: string;
+  refreshToken: string;
 }
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
-    private lecturerService: LecturerService,
-    private studentService: StudentService,
-    private jwtService: JwtService
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly refreshService: RefreshService
   ) {}
 
-  public async validateUser(
-    username: string,
-    inputPassword: string
-  ): Promise<Lecturer | Student | null> {
-    const user: User | null = await this.userService.findByUsername(username);
+  public async validateUser(username: string, inputPassword: string): Promise<number | null> {
+    const user: UserAuth | undefined = await this.userService.findByUsernameForAuth(username);
     const hashPassword: string = this.userService.hashPassword(inputPassword, username);
-
-    if (user && user.password === hashPassword) {
-      if (user.userType === UserType.LECTURER) {
-        return this.lecturerService.findById(user.id);
-      }
-
-      if (user.userType === UserType.STUDENT) {
-        return this.studentService.findById(user.id);
-      }
+    if (user && user.password === hashPassword && user.status === UserStatus.ACTIVE) {
+      return user.id;
     }
 
     return null;
   }
 
-  public login(user: Lecturer | User): JwtToken {
+  public async login(userId: number): Promise<JwtToken> {
+    const accessToken = this.jwtService.sign({ userId });
+    const refreshToken = await this.refreshService.getNewToken(userId);
+
     return {
-      accessToken: this.jwtService.sign({ user })
+      accessToken: accessToken,
+      refreshToken: refreshToken
     };
   }
 }

@@ -1,0 +1,4 @@
+api/dist
+web/.next
+web-remove
+*/**/node_modules

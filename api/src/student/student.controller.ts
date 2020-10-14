@@ -13,21 +13,22 @@ import {
   Query,
   UseGuards
 } from '@nestjs/common';
-import { Student } from './student.model';
-import { StudentService } from './student.service';
-import { STD_CONTROLLER_RESOURCE } from './student.resource';
-import { User } from '../user/user.model';
-import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
+
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
+import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/common.resource';
 import {
   commonIdValidateSchema,
   commonLimitValidateSchema,
   commonOffsetValidateSchema
 } from '../common/common.validation';
-import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/common.resource';
-import { studentCreateValidationSchema, studentUpdateValidationSchema } from './student.validation';
-import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
-import { userCreateValidationSchema, userUpdateValidationSchema } from '../user/user.validation';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
+import { UserRequestBody } from '../user/user.interface';
+import { userUpdateValidationSchema } from '../user/user.validation';
+import { Student } from './student.entity';
+import { STD_CONTROLLER_RESOURCE } from './student.resource';
+import { StudentService } from './student.service';
+import { studentUpdateValidationSchema } from './student.validation';
 
 interface StudentFindAllResponse extends CommonFindAllResponse {
   students: Student[];
@@ -60,13 +61,12 @@ export class StudentController {
     limit: number
   ): Promise<StudentFindAllResponse> {
     const students: Student[] = await this.studentService.findAll(offset, limit);
-    const currentAmount: number = await this.studentService.getStudentAmount();
-    const isNext = currentAmount - students.length - offset > 0;
+    const total: number = await this.studentService.getStudentAmount();
 
     return {
       statusCode: HttpStatus.OK,
       students,
-      isNext
+      total
     };
   }
 
@@ -91,13 +91,10 @@ export class StudentController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public async create(
-    @Body(STD_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userCreateValidationSchema))
-    user: User,
-    @Body(
-      STD_CONTROLLER_RESOURCE.PARAM.STUDENT,
-      new JoiValidationPipe(studentCreateValidationSchema)
-    )
-    student: Student
+    @Body(STD_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userUpdateValidationSchema))
+    user: Partial<UserRequestBody>,
+    @Body(STD_CONTROLLER_RESOURCE.PARAM.STUDENT)
+    student: Partial<Student>
   ): Promise<void> {
     await this.studentService.create(user, student);
   }
@@ -113,7 +110,7 @@ export class StudentController {
     )
     id: number,
     @Body(STD_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userUpdateValidationSchema))
-    user: Partial<User>,
+    user: Partial<UserRequestBody>,
     @Body(
       STD_CONTROLLER_RESOURCE.PARAM.STUDENT,
       new JoiValidationPipe(studentUpdateValidationSchema)

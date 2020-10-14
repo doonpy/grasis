@@ -1,16 +1,22 @@
-import Link from '@material-ui/core/Link';
-import Typography from '@material-ui/core/Typography';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
-const Copyright: React.FunctionComponent = () => (
-  <Typography variant="body2" color="textSecondary" align="center">
+const styles: Record<string, CSSProperties> = {
+  copyright: {
+    width: '100%',
+    textAlign: 'center'
+  }
+};
+
+const Copyright: React.FC = () => (
+  <div style={styles.copyright}>
     {'Copyright © '}
-    <Link color="inherit" href="https://github.com/doonpy" target={'_blank'}>
+    {/* eslint-disable-next-line react/jsx-no-target-blank */}
+    <a href="https://github.com/doonpy" target={'_blank'}>
       Poon Nguyen
-    </Link>{' '}
+    </a>{' '}
     {new Date().getFullYear()}
     {' - HCMUTE'}
-  </Typography>
+  </div>
 );
 
 export default Copyright;

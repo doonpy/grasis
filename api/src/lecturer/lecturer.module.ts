@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { LecturerService } from './lecturer.service';
-import { LecturerController } from './lecturer.controller';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { Lecturer } from './lecturer.model';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { UserModule } from '../user/user.module';
-import { LecturerPositionModule } from '../lecturer-position/lecturer-position.module';
+import { LecturerController } from './lecturer.controller';
+import { LecturerEntity } from './lecturer.entity';
+import { LecturerService } from './lecturer.service';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Lecturer]), UserModule, LecturerPositionModule],
+  imports: [TypeOrmModule.forFeature([LecturerEntity]), UserModule],
   providers: [LecturerService],
   controllers: [LecturerController],
   exports: [LecturerService]

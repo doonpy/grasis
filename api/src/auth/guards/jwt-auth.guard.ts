@@ -1,15 +1,15 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Lecturer } from '../../lecturer/lecturer.model';
-import { User } from '../../user/user.model';
+
+import { Payload } from '../strategies/jwt.strategy';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  public handleRequest(error: Error | any, user: User | Lecturer | any): User | Lecturer | any {
-    if (error || !user) {
+  public handleRequest(error: Error | any, payload: Payload): Payload | any {
+    if (error || !payload) {
       throw error || new UnauthorizedException('Phiên làm việc không hợp lệ.');
     }
 
-    return user;
+    return payload;
   }
 }
