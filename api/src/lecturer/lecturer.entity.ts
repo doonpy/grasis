@@ -10,13 +10,13 @@ import {
 
 import { CommonEntity } from '../common/common.entity';
 import { COMMON_ENTITY_OPTIONS } from '../common/common.resource';
-import { User } from '../user/user.entity';
+import { UserEntity } from '../user/user.entity';
 import { LEC_ENTITY_RESOURCE } from './lecturer.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: LEC_ENTITY_RESOURCE.TABLE_NAME })
-export class Lecturer extends CommonEntity {
+export class LecturerEntity extends CommonEntity {
   @PrimaryColumn({ type: 'int' })
-  @OneToOne(() => User, (user) => user.id, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @OneToOne(() => UserEntity, (user) => user.id, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'id', referencedColumnName: 'id' })
   id!: number;
 

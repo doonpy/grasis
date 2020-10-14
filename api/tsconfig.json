@@ -15,5 +15,8 @@
     "sourceRoot": "./src",
     "baseUrl": "./",
     "incremental": true
-  }
+  },
+  "exclude": [
+    "files"
+  ]
 }

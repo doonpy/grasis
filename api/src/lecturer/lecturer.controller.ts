@@ -11,7 +11,8 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
+  UsePipes
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -22,28 +23,32 @@ import {
   commonLimitValidateSchema,
   commonOffsetValidateSchema
 } from '../common/common.validation';
-import { AdminGuard } from '../guard/admin.guard';
-import { UserTypes } from '../guard/decorator/user-type.decorator';
-import { UserTypeGuard } from '../guard/user-type.guard';
+import { UserTypes } from '../common/decorator/user-type.decorator';
+import { AdminGuard } from '../common/guard/admin.guard';
+import { UserPermissionGuard } from '../common/guard/user-permission.guard';
+import { UserTypeGuard } from '../common/guard/user-type.guard';
 import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
-import { UserRequestBody, UserType } from '../user/user.resource';
-import { userCreateValidationSchema, userUpdateValidationSchema } from '../user/user.validation';
-import { Lecturer } from './lecturer.entity';
+import { UserType } from '../user/user.resource';
+import { LecturerRequestBody, LecturerView } from './lecturer.interface';
 import { LEC_CONTROLLER_RESOURCE } from './lecturer.resource';
 import { LecturerService } from './lecturer.service';
-import { lecturerValidationSchema } from './lecturer.validation';
+import {
+  lecturerCreateValidationSchema,
+  lecturerUpdateValidationSchema
+} from './lecturer.validation';
 
 interface LecturerFindAllResponse extends CommonFindAllResponse {
-  lecturers: Lecturer[];
+  lecturers: LecturerView[];
 }
 
 interface LecturerFindByIdResponse extends CommonResponse {
-  lecturer: Lecturer;
+  lecturer: LecturerView;
 }
 
 interface LecturerCreateOrUpdateResponse extends CommonResponse {
   id: number;
 }
+
 @UseGuards(JwtAuthGuard)
 @Controller(LEC_CONTROLLER_RESOURCE.PATH.ROOT)
 export class LecturerController {
@@ -67,7 +72,7 @@ export class LecturerController {
     )
     limit: number
   ): Promise<LecturerFindAllResponse> {
-    const lecturers: Lecturer[] = await this.lecturerService.findAll(offset, limit);
+    const lecturers: LecturerView[] = await this.lecturerService.findAll(offset, limit);
     const total: number = await this.lecturerService.getLecturerAmount();
 
     return {
@@ -89,7 +94,7 @@ export class LecturerController {
     )
     id: number
   ): Promise<LecturerFindByIdResponse> {
-    const lecturer: Lecturer = await this.lecturerService.findById(id);
+    const lecturer: LecturerView = await this.lecturerService.findById(id);
 
     return {
       statusCode: HttpStatus.OK,
@@ -98,26 +103,24 @@ export class LecturerController {
   }
 
   @Post()
+  @UserTypes(UserType.LECTURER)
   @UseGuards(AdminGuard)
-  @HttpCode(HttpStatus.CREATED)
-  public async createForAdmin(
-    @Body(LEC_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userCreateValidationSchema))
-    user: UserRequestBody,
-    @Body(LEC_CONTROLLER_RESOURCE.PARAM.LECTURER, new JoiValidationPipe(lecturerValidationSchema))
-    lecturer: Lecturer
-  ): Promise<LecturerCreateOrUpdateResponse> {
-    const createdLecturer: Lecturer = await this.lecturerService.create(user, lecturer);
-
+  @UseGuards(UserTypeGuard)
+  @UsePipes(new JoiValidationPipe(lecturerCreateValidationSchema))
+  public async create(@Body() body: LecturerRequestBody): Promise<LecturerCreateOrUpdateResponse> {
+    const createdLecturer: LecturerView = await this.lecturerService.create(body);
+    console.log(createdLecturer);
     return {
       statusCode: HttpStatus.CREATED,
-      id: createdLecturer.id
+      id: createdLecturer.id as number
     };
   }
 
   @Patch(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
-  @UseGuards(AdminGuard)
-  @HttpCode(HttpStatus.OK)
-  public async updateByIdForAdmin(
+  @UserTypes(UserType.LECTURER)
+  @UseGuards(UserTypeGuard)
+  @UseGuards(UserPermissionGuard)
+  public async updateById(
     @Param(
       COMMON_PARAMS.ID,
       new JoiValidationPipe(commonIdValidateSchema),
@@ -125,12 +128,9 @@ export class LecturerController {
       ParseIntPipe
     )
     id: number,
-    @Body(LEC_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userUpdateValidationSchema))
-    user: Partial<UserRequestBody>,
-    @Body(LEC_CONTROLLER_RESOURCE.PARAM.LECTURER, new JoiValidationPipe(lecturerValidationSchema))
-    lecturer: Partial<Lecturer>
+    @Body(new JoiValidationPipe(lecturerUpdateValidationSchema)) body: LecturerRequestBody
   ): Promise<LecturerCreateOrUpdateResponse> {
-    await this.lecturerService.updateById(id, user, lecturer);
+    await this.lecturerService.updateById(id, body);
 
     return {
       statusCode: HttpStatus.OK,
@@ -141,7 +141,7 @@ export class LecturerController {
   @Delete(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
   @UseGuards(AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async deleteByIdForAdmin(
+  public async deleteById(
     @Param(
       COMMON_PARAMS.ID,
       new JoiValidationPipe(commonIdValidateSchema),

@@ -2,14 +2,14 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist/interfaces/typeorm-op
 import { ConnectionOptions, createConnection } from 'typeorm';
 
 import { isProductionMode } from '../common/common.helper';
-import { Lecturer } from '../lecturer/lecturer.entity';
+import { LecturerEntity } from '../lecturer/lecturer.entity';
 import { Student } from '../student/student.entity';
-import { User } from '../user/user.entity';
+import { UserEntity } from '../user/user.entity';
 
 export function getDatabaseConfig(): TypeOrmModuleOptions {
   return {
     type: 'mssql',
-    entities: [User, Lecturer, Student],
+    entities: [UserEntity, LecturerEntity, Student],
     host: process.env.DB_MSSQL_HOST,
     port: parseInt(process.env.DB_MSSQL_PORT || '1433'),
     username: process.env.DB_MSSQL_USERNAME,
@@ -17,7 +17,8 @@ export function getDatabaseConfig(): TypeOrmModuleOptions {
     logging: !isProductionMode(),
     synchronize: !isProductionMode(),
     database: process.env.DB_MSSQL_DATABASE,
-    autoLoadEntities: !isProductionMode(),
+    autoLoadEntities: true,
+    keepConnectionAlive: true,
     cache: true
   };
 }
