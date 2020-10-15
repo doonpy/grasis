@@ -78,4 +78,21 @@ export default class LecturerClient extends CommonClient {
 
     return levels.filter((level, index) => levels.lastIndexOf(level) === index).join(';');
   }
+
+  public async getInitialForEdit(id): Promise<LecturerRequestBody> {
+    await this.apiService.bindAuthorizationForClient();
+    const { data } = await this.apiService.get<FindOneLecturerResponse>(
+      `${LECTURER_API.ROOT}/${id}`
+    );
+    if (data && data.lecturer.level && typeof data.lecturer.level === 'string') {
+      const levels = data.lecturer.level.split(';');
+      data.lecturer.level = levels.filter(
+        (level, index) => levels.lastIndexOf(level) === index && level !== ''
+      );
+    } else {
+      data.lecturer.level = [];
+    }
+
+    return data.lecturer;
+  }
 }

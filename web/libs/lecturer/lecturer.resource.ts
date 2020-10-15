@@ -3,9 +3,7 @@ import { LecturerViewType } from './lecturer.interface';
 
 export const LECTURER_ADMIN_PATH_ROOT = '/admin/lecturer';
 export const LECTURER_PATH = {
-  CREATE: `${LECTURER_ADMIN_PATH_ROOT}/create`,
-  EDIT: `${LECTURER_ADMIN_PATH_ROOT}/edit`,
-  DETAIL: `${LECTURER_ADMIN_PATH_ROOT}/detail?id=`
+  CREATE: `${LECTURER_ADMIN_PATH_ROOT}/create`
 };
 
 export const LECTURER_API = {

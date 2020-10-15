@@ -84,7 +84,7 @@ export default class UserClient extends CommonClient {
     const { data } = useSWR<FindUserByIdResponse>(`${USER_API.ROOT}/${userId}`, {
       onSuccess: async () => {
         this.jwtService.initialValue();
-
+        this.redirectService.resetCurrentPathForClient();
         if (userId && currentPath === COMMON_PATH.LOGIN) {
           await this.redirectService.redirectTo(COMMON_PATH.INDEX);
           return;

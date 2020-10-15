@@ -1,6 +1,6 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Image, Input, Layout, Space, Typography } from 'antd';
-import { GetServerSideProps, NextPage } from 'next';
+import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { CSSProperties, useState } from 'react';
@@ -8,8 +8,8 @@ import React, { CSSProperties, useState } from 'react';
 import logo from '../assets/img/hcmute-logo.png';
 import loginBg from '../assets/img/login-bg.jpg';
 import Copyright from '../components/Copyright/Copyright';
+import CommonClient from '../libs/common/common.client';
 import { COMMON_PATH } from '../libs/common/common.resource';
-import CommonServer from '../libs/common/common.server';
 import UserClient from '../libs/user/user.client';
 import { LoginInputs } from '../libs/user/user.interface';
 
@@ -57,6 +57,18 @@ const Login: NextPage = () => {
       await userClient.redirectService.redirectTo(COMMON_PATH.INDEX);
     }
   };
+
+  (async () => {
+    const commonClient = new CommonClient();
+    try {
+      await commonClient.jwtService.checkTokenExpire();
+      if (!commonClient.jwtService.isAccessTokenExpired()) {
+        await commonClient.redirectService.redirectTo(COMMON_PATH.INDEX);
+      }
+    } catch (error) {
+      await commonClient.requestErrorHandler(error);
+    }
+  })();
 
   return (
     <div>
@@ -108,20 +120,6 @@ const Login: NextPage = () => {
       </Layout>
     </div>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const commonServer = new CommonServer(ctx);
-  try {
-    await commonServer.jwtService.checkTokenExpire();
-    if (!commonServer.jwtService.isAccessTokenExpired()) {
-      await commonServer.redirectService.redirectTo(COMMON_PATH.INDEX);
-    }
-  } catch (error) {
-    await commonServer.requestErrorHandler(error);
-  }
-
-  return { props: {} };
 };
 
 export default Login;

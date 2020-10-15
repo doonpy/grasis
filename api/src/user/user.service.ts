@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { createHmac } from 'crypto';
 import { EntityManager, Repository } from 'typeorm';
 
-import { Lecturer, LecturerRequestBody, LecturerView } from '../lecturer/lecturer.interface';
+import { LecturerRequestBody } from '../lecturer/lecturer.interface';
 import { UserEntity } from './user.entity';
 import { User, UserAuth, UserRequestBody, UserView } from './user.interface';
 import { IsAdmin, USER_ERROR_RESOURCE, UserType } from './user.resource';
@@ -126,6 +126,11 @@ export class UserService {
   }
 
   public async deleteByIdTransaction(manager: EntityManager, id: number): Promise<void> {
+    const isAdmin = await this.isUserIsAdminByIdTransaction(manager, id);
+    if (isAdmin) {
+      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_6);
+    }
+
     await manager.softDelete<User>(UserEntity, id);
   }
 
@@ -192,12 +197,11 @@ export class UserService {
   }
 
   public async updateRefreshToken(id: number, refreshToken: string): Promise<void> {
-    const currentUser: User = await this.findById(id);
-
     await this.usersRepository.update(id, { refreshToken });
   }
 
   public convertToView(user: User): UserView {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, refreshToken, ...result } = user;
 
     return result;
@@ -285,5 +289,9 @@ export class UserService {
     }
 
     return result;
+  }
+
+  public async isUserIsAdminByIdTransaction(manager: EntityManager, id: number): Promise<boolean> {
+    return (await manager.count(UserEntity, { where: { id, isAdmin: IsAdmin.TRUE } })) > 0;
   }
 }
