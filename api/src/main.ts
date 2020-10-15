@@ -4,6 +4,7 @@ import morgan from 'morgan';
 
 import { AppModule } from './app.module';
 import { isProductionMode } from './common/common.helper';
+import { CORS_OPTIONS } from './common/common.resource';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,9 +14,11 @@ async function bootstrap() {
       ':url :status :res[content-length]'
     )} ${chalk.red('+:response-time ms')}`;
     app.use(morgan(logFormat));
+    app.enableCors();
+  } else {
+    app.enableCors(CORS_OPTIONS);
   }
 
-  app.enableCors();
   await app.listen(process.env.PORT || 3000);
 }
 
