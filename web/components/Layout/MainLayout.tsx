@@ -1,5 +1,7 @@
-import { BackTop, Layout, Spin } from 'antd';
+import { SmileOutlined } from '@ant-design/icons';
+import { BackTop, Layout, Result, Spin } from 'antd';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import React, { CSSProperties } from 'react';
 
 import { CommonPageProps } from '../../libs/common/common.interface';
@@ -35,6 +37,10 @@ const MainLayout: React.FC<MainLayoutProps> = (props) => {
     allowUserTypes: props.allowUserTypes,
     isAdminCheck: props.isAdminCheck
   });
+  const router = useRouter();
+  if (router.isFallback) {
+    return <Result icon={<SmileOutlined />} title="Đang tải dữ liệu..." />;
+  }
 
   return (
     <Spin spinning={!data} tip="Đang tải dữ liệu..." size="large">

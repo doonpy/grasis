@@ -5,13 +5,13 @@ import Link from 'next/link';
 import React from 'react';
 
 import { Lecturer } from '../../libs/lecturer/lecturer.interface';
-import { LECTURER_PATH } from '../../libs/lecturer/lecturer.resource';
+import { LECTURER_ADMIN_PATH_ROOT } from '../../libs/lecturer/lecturer.resource';
 import TextData from '../Common/TextData';
 import { USER_COLUMNS } from '../User/UserColumns';
 
 function idRender(id: number): JSX.Element {
   return (
-    <Link href={`${LECTURER_PATH.DETAIL}${id}`}>
+    <Link href={`${LECTURER_ADMIN_PATH_ROOT}/${id}`}>
       <Button ghost type="primary" shape="circle" icon={<FileTextTwoTone />} />
     </Link>
   );

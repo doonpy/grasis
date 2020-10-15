@@ -9,7 +9,7 @@ export enum RenderSide {
 }
 
 export default class CommonRedirect {
-  public readonly currentPath: string;
+  public currentPath: string;
   private readonly res?: ServerResponse;
 
   constructor(private readonly renderSide: RenderSide, context?: GetServerSidePropsContext) {
@@ -21,6 +21,10 @@ export default class CommonRedirect {
         this.res = context.res;
       }
     }
+  }
+
+  public resetCurrentPathForClient(): void {
+    this.currentPath = Router.pathname;
   }
 
   private async redirectForServer(url: string): Promise<void> {

@@ -11,16 +11,19 @@
   },
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "afterbuild": "node afterbuild",
+    "build": "nest build && npm run afterbuild",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node ./dist/main",
     "install:dependencies": "npm i",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
-    "typeorm:migrate-local": "npm run typeorm -- migration:run -f orm-configs/local.json",
-    "typeorm:migrate-dev": "npm run typeorm -- migration:run -f orm-configs/dev.json",
-    "typeorm:migrate-prod": "npm run typeorm -- migration:run -f orm-configs/prod.json"
+    "typeorm:migrate": "npm run typeorm -- migration:run",
+    "typeorm:generate": "npm run typeorm -- migration:generate",
+    "typeorm:sync-local": "npm run typeorm -- schema:sync -f src/orm-configs/local.json",
+    "typeorm:sync-dev": "npm run typeorm -- schema:sync -f src/orm-configs/dev.json",
+    "typeorm:sync-prod": "npm run typeorm -- schema:sync -f src/orm-configs/prod.json"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
@@ -66,9 +69,9 @@
     "supertest": "^4.0.2",
     "ts-jest": "26.1.0",
     "ts-loader": "^6.2.1",
-    "ts-node": "^8.6.2",
+    "ts-node": "^8.10.2",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.7.4"
+    "typescript": "^3.9.7"
   },
   "jest": {
     "moduleFileExtensions": [

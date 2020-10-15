@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AvatarModule } from './avatar/avatar.module';
+import { DatabaseType, EnvFileName } from './common/common.resource';
 import { LecturerModule } from './lecturer/lecturer.module';
 import { getDatabaseConfig } from './mssql/mssql.helper';
 import { RefreshModule } from './refresh/refresh.module';
@@ -13,25 +14,9 @@ import { StudentModule } from './student/student.module';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
 
-enum DatabaseType {
-  REVIEW = 'review',
-  STAGING = 'staging',
-  PRODUCTION = 'production'
-}
-
-enum EnvFileName {
-  LOCAL = 'local.env',
-  REVIEW = 'review.env',
-  STAGING = 'staging.env',
-  PRODUCTION = 'production.env'
-}
-
 function getEnvFilePath(): string {
   let configFolderPath = './config/';
   switch (process.env.DB_TYPE) {
-    case DatabaseType.REVIEW:
-      configFolderPath += EnvFileName.REVIEW;
-      break;
     case DatabaseType.STAGING:
       configFolderPath += EnvFileName.STAGING;
       break;

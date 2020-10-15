@@ -1,8 +1,8 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, Repository } from 'typeorm';
 
-import { User, UserRequestBody } from '../user/user.interface';
+import { User } from '../user/user.interface';
 import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { LecturerEntity } from './lecturer.entity';
@@ -79,67 +79,55 @@ export class LecturerService {
   }
 
   public async create(data: LecturerRequestBody): Promise<LecturerView> {
-    try {
-      return await this.connection.transaction(async (manager) => {
-        data.userType = UserType.LECTURER;
-        const user = await this.userService.createTransaction(manager, data);
+    return await this.connection.transaction(async (manager) => {
+      data.userType = UserType.LECTURER;
+      const user = await this.userService.createTransaction(manager, data);
 
-        if (data.lecturerId) {
-          await this.checkLecturerNotExistByLecturerIdTransaction(manager, data.lecturerId);
-        }
+      if (data.lecturerId) {
+        await this.checkLecturerNotExistByLecturerIdTransaction(manager, data.lecturerId);
+      }
 
-        if (data.level) {
-          data.level = this.sanitizeLevel(data.level);
-        }
+      if (data.level) {
+        data.level = this.sanitizeLevel(data.level);
+      }
 
-        const createObject = manager.create<Lecturer>(LecturerEntity, {
-          ...this.filterNullProperties(data),
-          id: user.id
-        });
-        const lecturer = await manager.save<Lecturer>(createObject);
-
-        return this.convertToView({ lecturer, user });
+      const createObject = manager.create<Lecturer>(LecturerEntity, {
+        ...this.filterNullProperties(data),
+        id: user.id
       });
-    } catch ({ message }) {
-      throw new InternalServerErrorException(message);
-    }
+      const lecturer = await manager.save<Lecturer>(createObject);
+
+      return this.convertToView({ lecturer, user });
+    });
   }
 
   public async updateById(id: number, data: LecturerRequestBody): Promise<void> {
-    try {
-      await this.connection.transaction(async (manager) => {
-        await this.userService.checkUserExistByIdTransaction(manager, id);
-        const currentLecturer = await this.findByIdTransaction(manager, id);
+    await this.connection.transaction(async (manager) => {
+      await this.userService.checkUserExistByIdTransaction(manager, id);
+      const currentLecturer = await this.findByIdTransaction(manager, id);
 
-        data.userType = UserType.LECTURER;
-        const { user, remain: lecturer } = this.userService.splitUserFromRequestBody(data);
-        await this.userService.updateByIdTransaction(manager, id, user);
+      data.userType = UserType.LECTURER;
+      const { user, remain: lecturer } = this.userService.splitUserFromRequestBody(data);
+      await this.userService.updateByIdTransaction(manager, id, user);
 
-        if (lecturer.lecturerId && data.lecturerId !== currentLecturer.lecturerId) {
-          await this.checkLecturerNotExistByLecturerIdTransaction(manager, lecturer.lecturerId);
-        }
+      if (lecturer.lecturerId && data.lecturerId !== currentLecturer.lecturerId) {
+        await this.checkLecturerNotExistByLecturerIdTransaction(manager, lecturer.lecturerId);
+      }
 
-        if (lecturer.level) {
-          lecturer.level = this.sanitizeLevel(lecturer.level);
-        }
+      if (lecturer.level) {
+        lecturer.level = this.sanitizeLevel(lecturer.level);
+      }
 
-        await manager.update<Lecturer>(LecturerEntity, id, this.filterNullProperties(lecturer));
-      });
-    } catch ({ message }) {
-      throw new InternalServerErrorException(message);
-    }
+      await manager.update<Lecturer>(LecturerEntity, id, this.filterNullProperties(lecturer));
+    });
   }
 
   public async deleteById(id: number): Promise<void> {
-    try {
-      await this.connection.transaction(async (manager) => {
-        await this.userService.checkUserExistByIdTransaction(manager, id);
-        await manager.softDelete<Lecturer>(LecturerEntity, id);
-        await this.userService.deleteByIdTransaction(manager, id);
-      });
-    } catch ({ message }) {
-      throw new InternalServerErrorException(message);
-    }
+    await this.connection.transaction(async (manager) => {
+      await this.userService.checkUserExistByIdTransaction(manager, id);
+      await manager.softDelete<Lecturer>(LecturerEntity, id);
+      await this.userService.deleteByIdTransaction(manager, id);
+    });
   }
 
   public async getLecturerAmount(): Promise<number> {

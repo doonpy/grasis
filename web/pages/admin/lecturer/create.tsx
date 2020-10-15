@@ -10,7 +10,7 @@ import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common
 import { SIDER_KEYS } from '../../../libs/common/common.resource';
 import LecturerClient from '../../../libs/lecturer/lecturer.client';
 import { LecturerRequestBody } from '../../../libs/lecturer/lecturer.interface';
-import { LECTURER_ADMIN_PATH_ROOT, LECTURER_PATH } from '../../../libs/lecturer/lecturer.resource';
+import { LECTURER_ADMIN_PATH_ROOT } from '../../../libs/lecturer/lecturer.resource';
 import { UserType } from '../../../libs/user/user.resource';
 
 const Create: NextPageWithLayout = () => {
@@ -18,11 +18,11 @@ const Create: NextPageWithLayout = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmitButton = async (formValues: LecturerRequestBody) => {
+    setLoading(true);
     const lecturerClient = new LecturerClient();
     try {
-      setLoading(true);
       const { data } = await lecturerClient.createLecturer(formValues);
-      await lecturerClient.redirectService.redirectTo(`${LECTURER_PATH.DETAIL}${data.id}`);
+      await lecturerClient.redirectService.redirectTo(`${LECTURER_ADMIN_PATH_ROOT}/${data.id}`);
       return;
     } catch (error) {
       await lecturerClient.requestErrorHandler(error);
@@ -54,7 +54,7 @@ const Create: NextPageWithLayout = () => {
                   loading={loading}>
                   Xác nhận
                 </Button>
-                <Button type="primary" danger size="large" onClick={router.back}>
+                <Button type="primary" danger size="large" onClick={router.back} disabled={loading}>
                   Hủy
                 </Button>
               </Col>

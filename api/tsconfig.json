@@ -14,9 +14,14 @@
     "outDir": "./dist",
     "sourceRoot": "./src",
     "baseUrl": "./",
-    "incremental": true
+    "incremental": true,
+    "resolveJsonModule": true
   },
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
-    "files"
+    "files",
+    "src/migration/**/*"
   ]
 }

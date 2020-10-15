@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, Repository } from 'typeorm';
 
-import { UserEntity } from '../user/user.entity';
 import { User, UserRequestBody } from '../user/user.interface';
 import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';

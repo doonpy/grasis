@@ -1,41 +1,31 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist/interfaces/typeorm-options.interface';
-import { ConnectionOptions, createConnection } from 'typeorm';
+import { ConnectionOptions } from 'typeorm';
 
 import { isProductionMode } from '../common/common.helper';
-import { LecturerEntity } from '../lecturer/lecturer.entity';
-import { Student } from '../student/student.entity';
-import { UserEntity } from '../user/user.entity';
+import { DatabaseType } from '../common/common.resource';
+import devOrmConfigs from '../orm-configs/dev.json';
+import localOrmConfigs from '../orm-configs/local.json';
+import prodOrmConfigs from '../orm-configs/prod.json';
 
-export function getDatabaseConfig(): TypeOrmModuleOptions {
+export function getDatabaseConfig(): TypeOrmModuleOptions | ConnectionOptions {
+  let configs: Record<string, any>;
+  switch (process.env.DB_TYPE) {
+    case DatabaseType.STAGING:
+      configs = devOrmConfigs;
+      break;
+    case DatabaseType.PRODUCTION:
+      configs = prodOrmConfigs;
+      break;
+    default:
+      configs = localOrmConfigs;
+      break;
+  }
+
   return {
-    type: 'mssql',
-    entities: [UserEntity, LecturerEntity, Student],
-    host: process.env.DB_MSSQL_HOST,
-    port: parseInt(process.env.DB_MSSQL_PORT || '1433'),
-    username: process.env.DB_MSSQL_USERNAME,
-    password: process.env.DB_MSSQL_PASSWORD,
+    ...configs,
     logging: !isProductionMode(),
     synchronize: !isProductionMode(),
-    database: process.env.DB_MSSQL_DATABASE,
     autoLoadEntities: true,
-    keepConnectionAlive: true,
-    cache: true
+    keepConnectionAlive: true
   };
-}
-
-export function getDatabaseConfigsForPrepend(): ConnectionOptions {
-  return {
-    type: 'mssql',
-    host: process.env.DB_MSSQL_HOST,
-    port: parseInt(process.env.DB_MSSQL_PORT || '1433'),
-    username: process.env.DB_MSSQL_USERNAME,
-    password: process.env.DB_MSSQL_PASSWORD
-  };
-}
-
-export async function prependDatabase(): Promise<void> {
-  const client = await createConnection(getDatabaseConfigsForPrepend());
-  const queryStr = `IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = '${process.env.DB_MSSQL_DATABASE}') BEGIN CREATE DATABASE ${process.env.DB_MSSQL_DATABASE}; END;`;
-  await client.query(queryStr);
-  await client.close();
 }

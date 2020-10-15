@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, Card, Table } from 'antd';
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import MainLayout from '../../../components/Layout/MainLayout';
 import { LECTURER_TABLE_COLUMNS } from '../../../components/Lecturer/LecturerColumns';
@@ -24,6 +24,12 @@ const Index: NextPageWithLayout = () => {
   const handleTableChange = (paginationValues) => {
     setPagination({ ...pagination, ...paginationValues });
   };
+
+  useEffect(() => {
+    if (data) {
+      setPagination({ ...pagination, total: data.total });
+    }
+  }, [data]);
 
   return (
     <Card
