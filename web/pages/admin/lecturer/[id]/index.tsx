@@ -1,20 +1,30 @@
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Modal, Row } from 'antd';
-import { GetServerSideProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { ParsedUrlQuery } from 'querystring';
 import React, { CSSProperties } from 'react';
 
-import AvatarView from '../../../components/Avatar/AvatarView';
-import MainLayout from '../../../components/Layout/MainLayout';
-import LecturerView from '../../../components/Lecturer/LecturerView';
-import UserView from '../../../components/User/UserView';
-import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
-import { SIDER_KEYS } from '../../../libs/common/common.resource';
-import LecturerClient from '../../../libs/lecturer/lecturer.client';
-import { LECTURER_ADMIN_PATH_ROOT } from '../../../libs/lecturer/lecturer.resource';
-import { UserType } from '../../../libs/user/user.resource';
+import AvatarView from '../../../../components/Avatar/AvatarView';
+import MainLayout from '../../../../components/Layout/MainLayout';
+import LecturerView from '../../../../components/Lecturer/LecturerView';
+import UserView from '../../../../components/User/UserView';
+import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
+import { SIDER_KEYS } from '../../../../libs/common/common.resource';
+import LecturerClient from '../../../../libs/lecturer/lecturer.client';
+import { LecturerRequestBody } from '../../../../libs/lecturer/lecturer.interface';
+import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
+import { UserType } from '../../../../libs/user/user.resource';
 const { confirm } = Modal;
+
+interface PageProps extends CommonPageProps {
+  currentLecturer: LecturerRequestBody;
+  params: PageParams;
+}
+
+interface PageParams extends ParsedUrlQuery {
+  id?: string;
+}
 
 const styles: Record<string, CSSProperties> = {
   rowContentBox: {
@@ -32,10 +42,9 @@ const styles: Record<string, CSSProperties> = {
   avatar: { textAlign: 'center' }
 };
 
-const Detail: NextPageWithLayout = () => {
+const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const lecturerClient = LecturerClient.getInstance();
-  const router = useRouter();
-  const lecturerId = parseInt(router.query.id as string);
+  const lecturerId = parseInt(params.id);
   const { data, isLoading } = lecturerClient.useLecturer(lecturerId);
 
   const showDeleteConfirm = () => {
@@ -63,7 +72,7 @@ const Detail: NextPageWithLayout = () => {
       loading={isLoading}
       extra={
         <div>
-          <Link href={`/admin/lecturer/${router.query.id}/edit`}>
+          <Link href={`${LECTURER_ADMIN_PATH_ROOT}/${lecturerId}/edit`}>
             <Button
               type="primary"
               shape="circle"
@@ -100,9 +109,17 @@ const Detail: NextPageWithLayout = () => {
   );
 };
 
-export const getStaticProps: GetServerSideProps<CommonPageProps> = async () => {
+export const getStaticPaths: GetStaticPaths<PageParams> = async () => {
+  return {
+    paths: [],
+    fallback: true
+  };
+};
+
+export const getStaticProps: GetStaticProps<CommonPageProps> = async ({ params }) => {
   return {
     props: {
+      params,
       title: 'Chi tiết giảng viên',
       selectedMenu: SIDER_KEYS.ADMIN_LECTURER,
       breadcrumbs: [
@@ -113,10 +130,11 @@ export const getStaticProps: GetServerSideProps<CommonPageProps> = async () => {
       ],
       isAdminCheck: true,
       allowUserTypes: [UserType.LECTURER]
-    }
+    },
+    revalidate: 1
   };
 };
 
-Detail.Layout = MainLayout;
+Index.Layout = MainLayout;
 
-export default Detail;
+export default Index;
