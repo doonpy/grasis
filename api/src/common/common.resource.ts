@@ -16,3 +16,14 @@ export const COMMON_ENTITY_OPTIONS: EntityOptions = {
   database: process.env.DB_MSSQL_DATABASE,
   engine: 'InnoDB'
 };
+
+export enum DatabaseType {
+  STAGING = 'staging',
+  PRODUCTION = 'production'
+}
+
+export enum EnvFileName {
+  LOCAL = 'local.env',
+  STAGING = 'staging.env',
+  PRODUCTION = 'production.env'
+}

@@ -18,9 +18,9 @@ const Create: NextPageWithLayout = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmitButton = async (formValues: LecturerRequestBody) => {
+    setLoading(true);
     const lecturerClient = new LecturerClient();
     try {
-      setLoading(true);
       const { data } = await lecturerClient.createLecturer(formValues);
       await lecturerClient.redirectService.redirectTo(`${LECTURER_ADMIN_PATH_ROOT}/${data.id}`);
       return;
@@ -54,7 +54,7 @@ const Create: NextPageWithLayout = () => {
                   loading={loading}>
                   Xác nhận
                 </Button>
-                <Button type="primary" danger size="large" onClick={router.back}>
+                <Button type="primary" danger size="large" onClick={router.back} disabled={loading}>
                   Hủy
                 </Button>
               </Col>

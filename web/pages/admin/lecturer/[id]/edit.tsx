@@ -30,15 +30,15 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const [form] = Form.useForm();
 
   const handleSubmitButton = async (formValues: LecturerRequestBody) => {
+    setLoading(true);
     const lecturerClient = new LecturerClient();
-
     try {
       await lecturerClient.updateById(lecturerId, formValues);
       await router.push(`${LECTURER_ADMIN_PATH_ROOT}/${lecturerId}`);
-      setLoading(false);
     } catch (error) {
       await lecturerClient.requestErrorHandler(error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
                   loading={loading}>
                   Xác nhận
                 </Button>
-                <Button type="primary" danger size="large" onClick={router.back}>
+                <Button type="primary" danger size="large" onClick={router.back} disabled={loading}>
                   Hủy
                 </Button>
               </Col>

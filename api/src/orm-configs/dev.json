@@ -1,0 +1,18 @@
+{
+  "type": "mssql",
+  "host": "poonnguyen.database.windows.net",
+  "port": 1433,
+  "username": "doonpy",
+  "password": "PoonPu13579",
+  "database": "grasis_dev",
+  "entities": [
+    "dist/**/*.entity.js"
+  ],
+  "migrations": [
+    "../migration/**/*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "migration"
+  },
+  "cache": true
+}

@@ -109,7 +109,7 @@ export class LecturerController {
   @UsePipes(new JoiValidationPipe(lecturerCreateValidationSchema))
   public async create(@Body() body: LecturerRequestBody): Promise<LecturerCreateOrUpdateResponse> {
     const createdLecturer: LecturerView = await this.lecturerService.create(body);
-    console.log(createdLecturer);
+
     return {
       statusCode: HttpStatus.CREATED,
       id: createdLecturer.id as number

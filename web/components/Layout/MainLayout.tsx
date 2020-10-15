@@ -39,7 +39,7 @@ const MainLayout: React.FC<MainLayoutProps> = (props) => {
   });
   const router = useRouter();
   if (router.isFallback) {
-    return <Result icon={<SmileOutlined />} title="Great, we have done all the operations!" />;
+    return <Result icon={<SmileOutlined />} title="Đang tải dữ liệu..." />;
   }
 
   return (
