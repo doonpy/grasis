@@ -1,3 +1,4 @@
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { EntityOptions } from 'typeorm';
 
 export const COMMON_QUERIES_VALUE = {
@@ -27,3 +28,8 @@ export enum EnvFileName {
   STAGING = 'staging.env',
   PRODUCTION = 'production.env'
 }
+
+export const CORS_OPTIONS: CorsOptions = {
+  origin: /https:\/\/grasis-web.*\.vercel\.app/,
+  optionsSuccessStatus: 200
+};
