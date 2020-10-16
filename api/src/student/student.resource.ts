@@ -5,7 +5,8 @@ export const STD_ENTITY_RESOURCE = {
 export const STD_CONTROLLER_RESOURCE = {
   PATH: {
     ROOT: 'students',
-    SPECIFY: '/:id'
+    SPECIFY: '/:id',
+    ADMIN_ROOT: 'admin/students'
   },
   PARAM: {
     USER: 'user',
@@ -18,3 +19,8 @@ export const STD_ERROR_RESOURCE = {
   ERR_2: 'Mã sinh viên không tồn tại.',
   ERR_3: 'Sinh viên không tồn tại.'
 };
+
+export enum IsGraduate {
+  FALSE = 0,
+  TRUE = 1
+}

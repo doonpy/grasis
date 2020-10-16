@@ -2,41 +2,37 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
-  Delete,
   Get,
-  HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
-  Post,
   Query,
   UseGuards
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
 import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/common.resource';
 import {
   commonIdValidateSchema,
   commonLimitValidateSchema,
   commonOffsetValidateSchema
 } from '../common/common.validation';
+import { UserTypes } from '../common/decorator/user-type.decorator';
+import { UserPermissionGuard } from '../common/guard/user-permission.guard';
+import { UserTypeGuard } from '../common/guard/user-type.guard';
 import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
-import { UserRequestBody } from '../user/user.interface';
-import { userUpdateValidationSchema } from '../user/user.validation';
-import { Student } from './student.entity';
+import { UserType } from '../user/user.resource';
+import {
+  StudentCreateOrUpdateResponse,
+  StudentFindAllResponse,
+  StudentFindByIdResponse,
+  StudentRequestBody,
+  StudentView
+} from './student.interface';
 import { STD_CONTROLLER_RESOURCE } from './student.resource';
 import { StudentService } from './student.service';
-import { studentUpdateValidationSchema } from './student.validation';
-
-interface StudentFindAllResponse extends CommonFindAllResponse {
-  students: Student[];
-}
-
-interface StudentFindByIdResponse extends CommonResponse {
-  student: Student;
-}
+import { studentUpdateValidationSchemaForUser } from './student.validation';
 
 @UseGuards(JwtAuthGuard)
 @Controller(STD_CONTROLLER_RESOURCE.PATH.ROOT)
@@ -44,6 +40,8 @@ export class StudentController {
   constructor(private studentService: StudentService) {}
 
   @Get()
+  @UserTypes(UserType.LECTURER)
+  @UseGuards(UserTypeGuard)
   public async findAll(
     @Query(
       COMMON_QUERIES.OFFSET,
@@ -60,7 +58,7 @@ export class StudentController {
     )
     limit: number
   ): Promise<StudentFindAllResponse> {
-    const students: Student[] = await this.studentService.findAll(offset, limit);
+    const students: StudentView[] = await this.studentService.findAll(offset, limit);
     const total: number = await this.studentService.getStudentAmount();
 
     return {
@@ -71,6 +69,8 @@ export class StudentController {
   }
 
   @Get(STD_CONTROLLER_RESOURCE.PATH.SPECIFY)
+  @UserTypes(UserType.LECTURER, UserType.STUDENT)
+  @UseGuards(UserTypeGuard)
   public async findById(
     @Param(
       COMMON_PARAMS.ID,
@@ -80,7 +80,7 @@ export class StudentController {
     )
     id: number
   ): Promise<StudentFindByIdResponse> {
-    const student: Student = await this.studentService.findById(id);
+    const student: StudentView = await this.studentService.findById(id);
 
     return {
       statusCode: HttpStatus.OK,
@@ -88,19 +88,10 @@ export class StudentController {
     };
   }
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  public async create(
-    @Body(STD_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userUpdateValidationSchema))
-    user: Partial<UserRequestBody>,
-    @Body(STD_CONTROLLER_RESOURCE.PARAM.STUDENT)
-    student: Partial<Student>
-  ): Promise<void> {
-    await this.studentService.create(user, student);
-  }
-
   @Patch(STD_CONTROLLER_RESOURCE.PATH.SPECIFY)
-  @HttpCode(HttpStatus.OK)
+  @UserTypes(UserType.STUDENT)
+  @UseGuards(UserTypeGuard)
+  @UseGuards(UserPermissionGuard)
   public async updateById(
     @Param(
       COMMON_PARAMS.ID,
@@ -109,28 +100,14 @@ export class StudentController {
       ParseIntPipe
     )
     id: number,
-    @Body(STD_CONTROLLER_RESOURCE.PARAM.USER, new JoiValidationPipe(userUpdateValidationSchema))
-    user: Partial<UserRequestBody>,
-    @Body(
-      STD_CONTROLLER_RESOURCE.PARAM.STUDENT,
-      new JoiValidationPipe(studentUpdateValidationSchema)
-    )
-    student: Partial<Student>
-  ): Promise<void> {
-    await this.studentService.updateById(id, user, student);
-  }
+    @Body(new JoiValidationPipe(studentUpdateValidationSchemaForUser))
+    body: StudentRequestBody
+  ): Promise<StudentCreateOrUpdateResponse> {
+    await this.studentService.updateById(id, body);
 
-  @Delete(STD_CONTROLLER_RESOURCE.PATH.SPECIFY)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  public async deleteById(
-    @Param(
-      COMMON_PARAMS.ID,
-      new JoiValidationPipe(commonIdValidateSchema),
-      new DefaultValuePipe(COMMON_QUERIES_VALUE.FAILED_ID),
-      ParseIntPipe
-    )
-    id: number
-  ): Promise<void> {
-    await this.studentService.deleteById(id);
+    return {
+      statusCode: HttpStatus.OK,
+      id
+    };
   }
 }

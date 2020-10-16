@@ -83,7 +83,7 @@ export class LecturerController {
   }
 
   @Get(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
-  @UserTypes(UserType.LECTURER)
+  @UserTypes(UserType.LECTURER, UserType.STUDENT)
   @UseGuards(UserTypeGuard)
   public async findById(
     @Param(
@@ -103,9 +103,7 @@ export class LecturerController {
   }
 
   @Post()
-  @UserTypes(UserType.LECTURER)
   @UseGuards(AdminGuard)
-  @UseGuards(UserTypeGuard)
   @UsePipes(new JoiValidationPipe(lecturerCreateValidationSchema))
   public async create(@Body() body: LecturerRequestBody): Promise<LecturerCreateOrUpdateResponse> {
     const createdLecturer: LecturerView = await this.lecturerService.create(body);
