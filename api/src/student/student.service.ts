@@ -145,12 +145,21 @@ export class StudentService {
   public convertToView({ student }: { student: Student }): StudentView;
   public convertToView({ student, user }: { student: Student; user?: User }): StudentView;
   public convertToView({ student, user }: any): any {
-    const { studentId, schoolYear, createdAt, updatedAt } = student;
+    const {
+      studentId,
+      schoolYear,
+      studentClass,
+      isGraduate,
+      createdAt,
+      updatedAt
+    } = student as Student;
     if (user) {
       return {
         ...this.userService.convertToView(user),
         studentId,
         schoolYear,
+        studentClass,
+        isGraduate,
         createdAt,
         updatedAt
       };
@@ -159,6 +168,8 @@ export class StudentService {
         ...this.userService.convertToView(student.id as User),
         studentId,
         schoolYear,
+        studentClass,
+        isGraduate,
         createdAt,
         updatedAt
       };
@@ -172,6 +183,12 @@ export class StudentService {
     }
     if (typeof student.schoolYear !== 'undefined' && student.schoolYear !== null) {
       result.schoolYear = student.schoolYear;
+    }
+    if (typeof student.studentClass !== 'undefined' && student.studentClass !== null) {
+      result.studentClass = student.studentClass;
+    }
+    if (typeof student.isGraduate !== 'undefined' && student.isGraduate !== null) {
+      result.isGraduate = student.isGraduate;
     }
 
     return result;

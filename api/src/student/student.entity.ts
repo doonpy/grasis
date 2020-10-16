@@ -39,7 +39,7 @@ export class StudentEntity extends CommonEntity {
     length: 20,
     nullable: true
   })
-  class!: string;
+  studentClass!: string;
 
   @Column({
     type: 'tinyint',

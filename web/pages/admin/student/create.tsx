@@ -4,34 +4,34 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 import MainLayout from '../../../components/Layout/MainLayout';
-import LecturerFormItem from '../../../components/Lecturer/LecturerFormItem';
+import StudentFormItem from '../../../components/Student/StudentFormItem';
 import UserFormItem from '../../../components/User/UserFormItem';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../libs/common/common.resource';
-import { LecturerRequestBody } from '../../../libs/lecturer/lecturer.interface';
-import { LECTURER_ADMIN_PATH_ROOT } from '../../../libs/lecturer/lecturer.resource';
-import LecturerService from '../../../libs/lecturer/lecturer.service';
+import { StudentRequestBody } from '../../../libs/student/student.interface';
+import { STUDENT_ADMIN_PATH_ROOT } from '../../../libs/student/student.resource';
+import StudentService from '../../../libs/student/student.service';
 import { UserType } from '../../../libs/user/user.resource';
 
 const Create: NextPageWithLayout = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmitButton = async (formValues: LecturerRequestBody) => {
+  const handleSubmitButton = async (formValues: StudentRequestBody) => {
     setLoading(true);
-    const lecturerService = LecturerService.getInstance();
+    const studentService = new StudentService();
     try {
-      const { data } = await lecturerService.createLecturer(formValues);
-      await lecturerService.redirectService.redirectTo(`${LECTURER_ADMIN_PATH_ROOT}/${data.id}`);
+      const { data } = await studentService.createStudent(formValues);
+      await studentService.redirectService.redirectTo(`${STUDENT_ADMIN_PATH_ROOT}/${data.id}`);
       return;
     } catch (error) {
-      await lecturerService.requestErrorHandler(error);
+      await studentService.requestErrorHandler(error);
     }
     setLoading(false);
   };
 
   return (
-    <Card title="Thêm giảng viên">
+    <Card title="Thêm sinh viên">
       <Form
         requiredMark={true}
         layout="horizontal"
@@ -43,7 +43,7 @@ const Create: NextPageWithLayout = () => {
             <UserFormItem isEdit={false} />
           </Col>
           <Col span={12}>
-            <LecturerFormItem />
+            <StudentFormItem />
             <Row>
               <Col span={24} style={{ textAlign: 'center' }}>
                 <Button
@@ -69,10 +69,10 @@ const Create: NextPageWithLayout = () => {
 export const getStaticProps: GetStaticProps<CommonPageProps> = async () => {
   return {
     props: {
-      title: 'Thêm giảng viên',
-      selectedMenu: SIDER_KEYS.ADMIN_LECTURER,
+      title: 'Thêm sinh viên',
+      selectedMenu: SIDER_KEYS.ADMIN_STUDENT,
       breadcrumbs: [
-        { text: 'Danh sách giảng viên', href: LECTURER_ADMIN_PATH_ROOT },
+        { text: 'Danh sách sinh viên', href: STUDENT_ADMIN_PATH_ROOT },
         { text: 'Thêm giảng viên' }
       ],
       isAdminCheck: true,

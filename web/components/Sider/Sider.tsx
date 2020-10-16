@@ -67,8 +67,8 @@ const Sider: React.FC<SiderProps> = ({ isAdmin, userType, selectedMenu }) => {
         </Link>
       </div>
       <Menu theme="dark" mode="inline" defaultSelectedKeys={[selectedMenu]}>
-        {SIDER_ITEMS.map(({ key, icon, text, href, adminPermission, userTypes }) => {
-          if (userTypes.indexOf(userType) === -1) {
+        {SIDER_ITEMS.map(({ key, icon, text, href, adminPermission, allowUserTypes }) => {
+          if (allowUserTypes.indexOf(userType) === -1) {
             return;
           }
 

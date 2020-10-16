@@ -1,8 +1,8 @@
 import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
-import CommonClient from '../common/common.client';
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
+import CommonService from '../common/common.service';
 import {
   CreateLecturerResponse,
   FindAllLecturerResponse,
@@ -13,16 +13,16 @@ import {
 } from './lecturer.interface';
 import { LECTURER_API } from './lecturer.resource';
 
-export default class LecturerClient extends CommonClient {
-  private static instance: LecturerClient;
+export default class LecturerService extends CommonService {
+  private static instance: LecturerService;
 
   constructor() {
     super();
   }
 
-  public static getInstance(): LecturerClient {
+  public static getInstance(): LecturerService {
     if (!this.instance) {
-      this.instance = new LecturerClient();
+      this.instance = new LecturerService();
     }
 
     return this.instance;

@@ -6,7 +6,7 @@ export interface Student extends CommonColumns {
   studentId: string;
   schoolYear: string;
   isGraduate: number;
-  class: string;
+  studentClass: string;
 }
 
 export type StudentView = Student & UserView;

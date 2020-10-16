@@ -12,11 +12,11 @@ export const LECTURER_API = {
 
 export const INITIAL_LECTURER: LecturerViewType = {
   ...INITIAL_USER,
-  lecturerId: 'NULL',
+  lecturerId: null,
   level: [],
-  position: 'NULL',
-  createdAt: 'NULL',
-  updatedAt: 'NULL'
+  position: null,
+  createdAt: null,
+  updatedAt: null
 };
 
 export const LECTURER_LEVELS = ['Tiến sĩ', 'Thạc sĩ', 'Phó giáo sư', 'Giáo sư'];

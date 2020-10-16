@@ -9,9 +9,9 @@ import LecturerFormItem from '../../../../components/Lecturer/LecturerFormItem';
 import UserFormItem from '../../../../components/User/UserFormItem';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import LecturerClient from '../../../../libs/lecturer/lecturer.client';
 import { LecturerRequestBody } from '../../../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
+import LecturerService from '../../../../libs/lecturer/lecturer.service';
 import { UserType } from '../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
@@ -31,12 +31,12 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
 
   const handleSubmitButton = async (formValues: LecturerRequestBody) => {
     setLoading(true);
-    const lecturerClient = new LecturerClient();
+    const lecturerService = new LecturerService();
     try {
-      await lecturerClient.updateById(lecturerId, formValues);
+      await lecturerService.updateById(lecturerId, formValues);
       await router.push(`${LECTURER_ADMIN_PATH_ROOT}/${lecturerId}`);
     } catch (error) {
-      await lecturerClient.requestErrorHandler(error);
+      await lecturerService.requestErrorHandler(error);
     }
     setLoading(false);
   };
@@ -44,7 +44,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   useEffect(() => {
     (async () => {
       let currentLecturer: LecturerRequestBody = null;
-      const lecturerServer = new LecturerClient();
+      const lecturerServer = new LecturerService();
       try {
         currentLecturer = await lecturerServer.getInitialForEdit(params.id);
       } catch (error) {

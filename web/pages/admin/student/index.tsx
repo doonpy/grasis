@@ -5,11 +5,11 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 import MainLayout from '../../../components/Layout/MainLayout';
-import { LECTURER_TABLE_COLUMNS } from '../../../components/Lecturer/LecturerColumns';
+import { STUDENT_TABLE_COLUMNS } from '../../../components/Student/StudentColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../libs/common/common.resource';
-import { LECTURER_PATH } from '../../../libs/lecturer/lecturer.resource';
-import LecturerService from '../../../libs/lecturer/lecturer.service';
+import { STUDENT_PATH } from '../../../libs/student/student.resource';
+import StudentService from '../../../libs/student/student.service';
 import { UserType } from '../../../libs/user/user.resource';
 
 const Index: NextPageWithLayout = () => {
@@ -19,8 +19,8 @@ const Index: NextPageWithLayout = () => {
     total: 0,
     showSizeChanger: false
   });
-  const lecturerService = LecturerService.getInstance();
-  const { data, isLoading } = lecturerService.useLecturers(pagination.current, pagination.pageSize);
+  const studentService = StudentService.getInstance();
+  const { data, isLoading } = studentService.useStudents(pagination.current, pagination.pageSize);
   const handleTableChange = (paginationValues) => {
     setPagination({ ...pagination, ...paginationValues });
   };
@@ -33,9 +33,9 @@ const Index: NextPageWithLayout = () => {
 
   return (
     <Card
-      title="Danh sách giảng viên"
+      title="Danh sách sinh viên"
       extra={
-        <Link href={LECTURER_PATH.CREATE}>
+        <Link href={STUDENT_PATH.CREATE}>
           <Button
             type="primary"
             shape="circle"
@@ -47,8 +47,8 @@ const Index: NextPageWithLayout = () => {
       }>
       <Table
         bordered
-        columns={LECTURER_TABLE_COLUMNS}
-        dataSource={data && data.lecturers}
+        columns={STUDENT_TABLE_COLUMNS}
+        dataSource={data && data.students}
         loading={isLoading}
         pagination={pagination}
         size="middle"
@@ -61,9 +61,9 @@ const Index: NextPageWithLayout = () => {
 export const getStaticProps: GetStaticProps<CommonPageProps> = async () => {
   return {
     props: {
-      title: 'Danh sách giảng viên',
-      selectedMenu: SIDER_KEYS.ADMIN_LECTURER,
-      breadcrumbs: [{ text: 'Danh sách giảng viên' }],
+      title: 'Danh sách sinh viên',
+      selectedMenu: SIDER_KEYS.ADMIN_STUDENT,
+      breadcrumbs: [{ text: 'Danh sách sinh viên' }],
       isAdminCheck: true,
       allowUserTypes: [UserType.LECTURER]
     }

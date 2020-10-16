@@ -6,7 +6,7 @@ const devConnectionOptions: ConnectionOptions = {
   port: 1433,
   username: 'doonpy',
   password: 'PoonPu13579',
-  database: 'grasis_dev',
+  database: 'grasis_prod',
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../migration/**/*{.ts,.js}'],
   cli: {

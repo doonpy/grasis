@@ -1,7 +1,7 @@
 import { CommonColumns, CommonResponse } from '../common/common.interface';
 import { User, UserRequestBody, UserViewType } from '../user/user.interface';
 
-export interface Lecturer extends CommonColumns {
+export interface Student extends CommonColumns {
   id: number | User;
   lecturerId: string | null;
   level: string | string[] | null;
@@ -25,14 +25,11 @@ export interface FindAllLecturerResponse extends CommonResponse {
 
 export interface FindOneLecturerResponse extends CommonResponse {
   lecturer: LecturerViewType;
-  total: number;
 }
 
 export interface CreateLecturerResponse extends CommonResponse {
   id: number;
 }
 
-export type LecturerViewType = Omit<Lecturer, 'id'> & UserViewType;
-export type LecturerRequestBody = Partial<
-  Omit<Lecturer, keyof CommonColumns | 'id'> & UserRequestBody
->;
+export type LecturerViewType = Student & UserViewType;
+export type LecturerRequestBody = Partial<Omit<Student, keyof CommonColumns> & UserRequestBody>;

@@ -2,8 +2,8 @@ import { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 
-import CommonClient from '../common/common.client';
 import { COMMON_PATH, COOKIES } from '../common/common.resource';
+import CommonService from '../common/common.service';
 import { TokenResponse } from '../jwt/jwt.base';
 import {
   FindUserByIdResponse,
@@ -13,16 +13,16 @@ import {
 } from './user.interface';
 import { IsAdmin, USER_API } from './user.resource';
 
-export default class UserClient extends CommonClient {
-  private static instance: UserClient;
+export default class UserService extends CommonService {
+  private static instance: UserService;
 
   constructor() {
     super();
   }
 
-  public static getInstance(): UserClient {
+  public static getInstance(): UserService {
     if (!this.instance) {
-      this.instance = new UserClient();
+      this.instance = new UserService();
     }
 
     return this.instance;

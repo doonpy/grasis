@@ -17,7 +17,7 @@ const studentValidationSchema = Joi.object<StudentRequestBody>({
     .message('Tình trạng tốt nghiệp có giá trị nhỏ nhất là 0.')
     .max(1)
     .message('Tình trạng tốt nghiệp có giá trị lớn nhất là 1.'),
-  class: Joi.string().max(20).message('Lớp có độ dài tối đa là 20.')
+  studentClass: Joi.string().max(20).message('Lớp có độ dài tối đa là 20.')
 });
 
 export const studentCreateValidationSchema = userCreateValidationSchema.concat(

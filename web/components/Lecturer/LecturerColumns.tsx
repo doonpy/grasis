@@ -4,7 +4,7 @@ import { ColumnsType } from 'antd/es/table';
 import Link from 'next/link';
 import React from 'react';
 
-import { Lecturer } from '../../libs/lecturer/lecturer.interface';
+import { Student } from '../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../libs/lecturer/lecturer.resource';
 import TextData from '../Common/TextData';
 import { USER_COLUMNS } from '../User/UserColumns';
@@ -17,7 +17,7 @@ function idRender(id: number): JSX.Element {
   );
 }
 
-function sortByLecturerId(a: Lecturer, b: Lecturer): number {
+function sortByLecturerId(a: Student, b: Student): number {
   if (a.lecturerId < b.lecturerId) {
     return -1;
   }
@@ -27,7 +27,7 @@ function sortByLecturerId(a: Lecturer, b: Lecturer): number {
   return 0;
 }
 
-function sortByPosition(a: Lecturer, b: Lecturer): number {
+function sortByPosition(a: Student, b: Student): number {
   if (a.position < b.position) {
     return -1;
   }

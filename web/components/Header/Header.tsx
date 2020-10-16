@@ -2,7 +2,7 @@ import { BellOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Badge, Button, Dropdown, Layout, Menu, Row, Space } from 'antd';
 import React from 'react';
 
-import UserClient from '../../libs/user/user.client';
+import UserService from '../../libs/user/user.service';
 
 const { Header: AntHeader } = Layout;
 
@@ -11,7 +11,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ username }) => {
-  const userClient = UserClient.getInstance();
+  const userClient = UserService.getInstance();
   const handleLogout = async () => {
     await userClient.logout();
   };

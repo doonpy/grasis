@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import React, { CSSProperties } from 'react';
 
 import { CommonPageProps } from '../../libs/common/common.interface';
-import UserClient from '../../libs/user/user.client';
+import UserService from '../../libs/user/user.service';
 import { Breadcrumb } from '../Breadcrumb/Breadcrumb';
 import Copyright from '../Copyright/Copyright';
 import Header from '../Header/Header';
@@ -32,7 +32,7 @@ const styles: Record<string, CSSProperties> = {
 };
 
 const MainLayout: React.FC<MainLayoutProps> = (props) => {
-  const userClient = UserClient.getInstance();
+  const userClient = UserService.getInstance();
   const data = userClient.useAuthorization({
     allowUserTypes: props.allowUserTypes,
     isAdminCheck: props.isAdminCheck
@@ -53,11 +53,11 @@ const MainLayout: React.FC<MainLayoutProps> = (props) => {
           isAdmin={data && data.user.isAdmin}
           userType={data && data.user.userType}
         />
-        <Layout className="site-layout" style={styles.layout}>
+        <Layout style={styles.layout}>
           <Header username={data && data.user.username} />
           <Layout.Content style={styles.content}>
             <Breadcrumb breadcrumbs={props.breadcrumbs} />
-            <div className="site-layout-background">
+            <div>
               {props.children}
               <BackTop>
                 <div style={styles.upButton}>UP</div>
