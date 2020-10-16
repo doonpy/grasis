@@ -17,7 +17,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { COMMON_PARAMS, COMMON_QUERIES_VALUE } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { AdminGuard } from '../common/guard/admin.guard';
-import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
+import { JoiValidationPipe } from '../common/pipe/joi-validation.pipe';
 import { StudentCreateOrUpdateResponse, StudentRequestBody } from './student.interface';
 import { STD_CONTROLLER_RESOURCE } from './student.resource';
 import { StudentService } from './student.service';

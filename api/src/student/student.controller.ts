@@ -21,7 +21,7 @@ import {
 import { UserTypes } from '../common/decorator/user-type.decorator';
 import { UserPermissionGuard } from '../common/guard/user-permission.guard';
 import { UserTypeGuard } from '../common/guard/user-type.guard';
-import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
+import { JoiValidationPipe } from '../common/pipe/joi-validation.pipe';
 import { UserType } from '../user/user.resource';
 import {
   StudentCreateOrUpdateResponse,
