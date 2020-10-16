@@ -15,7 +15,7 @@ export const INITIAL_STUDENT: StudentViewType = {
   ...INITIAL_USER,
   studentId: null,
   schoolYear: null,
-  class: null,
+  studentClass: null,
   isGraduate: null,
   createdAt: null,
   updatedAt: null
