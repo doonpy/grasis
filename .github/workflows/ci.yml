@@ -1,10 +1,12 @@
 name: CI
 
 on:
-    push:
-        branches: [1.0.0]
-    pull_request:
-        branches: [1.0.0]
+  push:
+    branches:
+      - '1.0.0'
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
     lint:
@@ -96,3 +98,23 @@ jobs:
 
             - name: Build
               run: npm run build
+
+            - name: Archive Grasis API artifacts
+              uses: actions/upload-artifact@v2
+              with:
+                name: grasis-1.0.0-api
+                path: |
+                  api/dist
+                  api/package*
+                  api/ormconfig.js
+                  api/config
+
+            - name: Archive Grasis Web artifacts
+              uses: actions/upload-artifact@v2
+              with:
+                name: grasis-1.0.0-web
+                path: |
+                  web/.next
+                  web/.package*
+                  web/next.config.js
+                  web/.env.local
