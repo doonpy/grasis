@@ -12,3 +12,8 @@ export type LecturerView = Lecturer & UserView;
 export type LecturerRequestBody = Partial<
   Omit<Lecturer, keyof CommonColumns | 'id'> & UserRequestBody
 >;
+
+export interface SplitUserFromRequestBody {
+  user: UserRequestBody;
+  remain: LecturerRequestBody;
+}

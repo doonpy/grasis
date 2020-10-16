@@ -4,8 +4,15 @@ import { createHmac } from 'crypto';
 import { EntityManager, Repository } from 'typeorm';
 
 import { LecturerRequestBody } from '../lecturer/lecturer.interface';
+import { StudentRequestBody } from '../student/student.interface';
 import { UserEntity } from './user.entity';
-import { User, UserAuth, UserRequestBody, UserView } from './user.interface';
+import {
+  SplitUserFromRequestBody,
+  User,
+  UserAuth,
+  UserRequestBody,
+  UserView
+} from './user.interface';
 import { IsAdmin, USER_ERROR_RESOURCE, UserType } from './user.resource';
 
 @Injectable()
@@ -167,13 +174,9 @@ export class UserService {
   }
 
   public async checkUserHasPermission(id: number, targetId: number): Promise<boolean> {
-    const user = await this.usersRepository.findOne(id, { select: ['isAdmin'] });
+    const user = await this.usersRepository.findOne(id, { select: ['id'] });
     if (!user) {
       return false;
-    }
-
-    if (user.isAdmin === IsAdmin.TRUE) {
-      return true;
     }
 
     if (user.id !== targetId) {
@@ -208,8 +211,8 @@ export class UserService {
   }
 
   public splitUserFromRequestBody(
-    body: LecturerRequestBody
-  ): { user: UserRequestBody; remain: LecturerRequestBody } {
+    body: LecturerRequestBody | StudentRequestBody
+  ): SplitUserFromRequestBody {
     const {
       username,
       password,

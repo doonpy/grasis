@@ -21,7 +21,6 @@
     "src/**/*"
   ],
   "exclude": [
-    "files",
-    "src/migration/**/*"
+    "files"
   ]
 }

@@ -7,7 +7,10 @@ import { UserService } from './user/user.service';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
-  constructor(private userService: UserService, private lecturerService: LecturerService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly lecturerService: LecturerService
+  ) {}
 
   getHello(): string {
     return "Hello World! I'm Groot";
