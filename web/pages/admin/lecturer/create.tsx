@@ -8,9 +8,9 @@ import LecturerFormItem from '../../../components/Lecturer/LecturerFormItem';
 import UserFormItem from '../../../components/User/UserFormItem';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../libs/common/common.resource';
+import AdminLecturerService from '../../../libs/lecturer/admin/admin.lecturer.service';
 import { StudentRequestBody } from '../../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../libs/lecturer/lecturer.resource';
-import LecturerService from '../../../libs/lecturer/lecturer.service';
 import { UserType } from '../../../libs/user/user.resource';
 
 const Create: NextPageWithLayout = () => {
@@ -19,13 +19,15 @@ const Create: NextPageWithLayout = () => {
 
   const handleSubmitButton = async (formValues: StudentRequestBody) => {
     setLoading(true);
-    const lecturerService = LecturerService.getInstance();
+    const adminLecturerService = AdminLecturerService.getInstance();
     try {
-      const { data } = await lecturerService.createLecturer(formValues);
-      await lecturerService.redirectService.redirectTo(`${LECTURER_ADMIN_PATH_ROOT}/${data.id}`);
+      const { data } = await adminLecturerService.createLecturer(formValues);
+      await adminLecturerService.redirectService.redirectTo(
+        `${LECTURER_ADMIN_PATH_ROOT}/${data.id}`
+      );
       return;
     } catch (error) {
-      await lecturerService.requestErrorHandler(error);
+      await adminLecturerService.requestErrorHandler(error);
     }
     setLoading(false);
   };

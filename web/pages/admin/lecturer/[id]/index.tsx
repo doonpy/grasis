@@ -11,9 +11,9 @@ import LecturerView from '../../../../components/Lecturer/LecturerView';
 import UserView from '../../../../components/User/UserView';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
+import AdminLecturerService from '../../../../libs/lecturer/admin/admin.lecturer.service';
 import { StudentRequestBody } from '../../../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
-import LecturerService from '../../../../libs/lecturer/lecturer.service';
 import { UserType } from '../../../../libs/user/user.resource';
 const { confirm } = Modal;
 
@@ -43,9 +43,9 @@ const styles: Record<string, CSSProperties> = {
 };
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
-  const lecturerService = LecturerService.getInstance();
+  const adminLecturerService = AdminLecturerService.getInstance();
   const lecturerId = parseInt(params.id);
-  const { data, isLoading } = lecturerService.useLecturer(lecturerId);
+  const { data, isLoading } = adminLecturerService.useLecturer(lecturerId, true);
 
   const showDeleteConfirm = () => {
     confirm({
@@ -57,10 +57,10 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       cancelButtonProps: { type: 'primary', danger: true },
       async onOk() {
         try {
-          await lecturerService.deleteLecturer(lecturerId);
-          await lecturerService.redirectService.redirectTo(LECTURER_ADMIN_PATH_ROOT);
+          await adminLecturerService.deleteLecturer(lecturerId);
+          await adminLecturerService.redirectService.redirectTo(LECTURER_ADMIN_PATH_ROOT);
         } catch (error) {
-          await lecturerService.requestErrorHandler(error);
+          await adminLecturerService.requestErrorHandler(error);
         }
       }
     });

@@ -2,53 +2,48 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
+  HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   Query,
-  UseGuards
+  UseGuards,
+  UsePipes
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonFindAllResponse, CommonResponse } from '../common/common.interface';
-import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/common.resource';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../../common/common.resource';
 import {
   commonIdValidateSchema,
   commonLimitValidateSchema,
   commonOffsetValidateSchema
-} from '../common/common.validation';
-import { UserTypes } from '../common/decorator/user-type.decorator';
-import { UserPermissionGuard } from '../common/guard/user-permission.guard';
-import { UserTypeGuard } from '../common/guard/user-type.guard';
-import { JoiValidationPipe } from '../common/pipe/joi-validation.pipe';
-import { UserType } from '../user/user.resource';
-import { LecturerRequestBody, LecturerView } from './lecturer.interface';
-import { LEC_CONTROLLER_RESOURCE } from './lecturer.resource';
-import { LecturerService } from './lecturer.service';
-import { lecturerUpdateValidationSchema } from './lecturer.validation';
+} from '../../common/common.validation';
+import { AdminGuard } from '../../common/guard/admin.guard';
+import { JoiValidationPipe } from '../../common/pipe/joi-validation.pipe';
+import {
+  LecturerCreateOrUpdateResponse,
+  LecturerFindAllResponse,
+  LecturerFindByIdResponse,
+  LecturerRequestBody,
+  LecturerView
+} from '../lecturer.interface';
+import { LEC_CONTROLLER_RESOURCE } from '../lecturer.resource';
+import { LecturerService } from '../lecturer.service';
+import {
+  lecturerCreateValidationSchema,
+  lecturerUpdateValidationSchema
+} from '../lecturer.validation';
 
-interface LecturerFindAllResponse extends CommonFindAllResponse {
-  lecturers: LecturerView[];
-}
-
-interface LecturerFindByIdResponse extends CommonResponse {
-  lecturer: LecturerView;
-}
-
-interface LecturerCreateOrUpdateResponse extends CommonResponse {
-  id: number;
-}
-
-@UseGuards(JwtAuthGuard)
-@Controller(LEC_CONTROLLER_RESOURCE.PATH.ROOT)
-export class LecturerController {
+@UseGuards(JwtAuthGuard, AdminGuard)
+@Controller(LEC_CONTROLLER_RESOURCE.PATH.ADMIN_ROOT)
+export class AdminLecturerController {
   constructor(private lecturerService: LecturerService) {}
 
   @Get()
-  @UserTypes(UserType.LECTURER, UserType.STUDENT)
-  @UseGuards(UserTypeGuard)
   public async findAll(
     @Query(
       COMMON_QUERIES.OFFSET,
@@ -76,8 +71,6 @@ export class LecturerController {
   }
 
   @Get(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
-  @UserTypes(UserType.LECTURER, UserType.STUDENT)
-  @UseGuards(UserTypeGuard)
   public async findById(
     @Param(
       COMMON_PARAMS.ID,
@@ -95,10 +88,18 @@ export class LecturerController {
     };
   }
 
+  @Post()
+  @UsePipes(new JoiValidationPipe(lecturerCreateValidationSchema))
+  public async create(@Body() body: LecturerRequestBody): Promise<LecturerCreateOrUpdateResponse> {
+    const createdLecturer: LecturerView = await this.lecturerService.create(body);
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      id: createdLecturer.id as number
+    };
+  }
+
   @Patch(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
-  @UserTypes(UserType.LECTURER)
-  @UseGuards(UserTypeGuard)
-  @UseGuards(UserPermissionGuard)
   public async updateById(
     @Param(
       COMMON_PARAMS.ID,
@@ -115,5 +116,19 @@ export class LecturerController {
       statusCode: HttpStatus.OK,
       id
     };
+  }
+
+  @Delete(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async deleteById(
+    @Param(
+      COMMON_PARAMS.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(COMMON_QUERIES_VALUE.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number
+  ): Promise<void> {
+    await this.lecturerService.deleteById(id);
   }
 }

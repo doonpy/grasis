@@ -9,9 +9,9 @@ import LecturerFormItem from '../../../../components/Lecturer/LecturerFormItem';
 import UserFormItem from '../../../../components/User/UserFormItem';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
+import AdminLecturerService from '../../../../libs/lecturer/admin/admin.lecturer.service';
 import { StudentRequestBody } from '../../../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
-import LecturerService from '../../../../libs/lecturer/lecturer.service';
 import { UserType } from '../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
@@ -25,18 +25,18 @@ interface PageParams extends ParsedUrlQuery {
 
 const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const router = useRouter();
+  const adminLecturerService = AdminLecturerService.getInstance();
   const [loading, setLoading] = useState(false);
-  const lecturerId: number = parseInt(router.query.id as string);
+  const lecturerId = parseInt(router.query.id as string);
   const [form] = Form.useForm();
 
   const handleSubmitButton = async (formValues: StudentRequestBody) => {
     setLoading(true);
-    const lecturerService = LecturerService.getInstance();
     try {
-      await lecturerService.updateById(lecturerId, formValues);
+      await adminLecturerService.updateById(lecturerId, formValues, true);
       await router.push(`${LECTURER_ADMIN_PATH_ROOT}/${lecturerId}`);
     } catch (error) {
-      await lecturerService.requestErrorHandler(error);
+      await adminLecturerService.requestErrorHandler(error);
     }
     setLoading(false);
   };
@@ -44,11 +44,10 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   useEffect(() => {
     (async () => {
       let currentLecturer: StudentRequestBody = null;
-      const lecturerService = LecturerService.getInstance();
       try {
-        currentLecturer = await lecturerService.getInitialForEdit(params.id);
+        currentLecturer = await adminLecturerService.getInitialForEdit(lecturerId, true);
       } catch (error) {
-        await lecturerService.requestErrorHandler(error);
+        await adminLecturerService.requestErrorHandler(error);
         return;
       }
       form.setFieldsValue(currentLecturer);

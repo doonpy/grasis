@@ -7,7 +7,8 @@ export const LECTURER_PATH = {
 };
 
 export const LECTURER_API = {
-  ROOT: '/lecturers'
+  ROOT: '/lecturers',
+  ADMIN: '/admin/lecturers'
 };
 
 export const INITIAL_LECTURER: LecturerViewType = {

@@ -5,7 +5,8 @@ export const LEC_ENTITY_RESOURCE = {
 export const LEC_CONTROLLER_RESOURCE = {
   PATH: {
     ROOT: 'lecturers',
-    SPECIFY: '/:id'
+    SPECIFY: '/:id',
+    ADMIN_ROOT: 'admin/lecturers'
   },
   PARAM: {
     ID: 'id',
