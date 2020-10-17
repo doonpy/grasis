@@ -99,13 +99,16 @@ jobs:
             - name: Build
               run: npm run build
 
+            - name: Prune development dependencies
+              run: npm run prune
+
             - name: Archive Grasis API artifacts
               uses: actions/upload-artifact@v2
               with:
                 name: grasis-1.0.0-api
                 path: |
                   api/dist
-                  api/package*
+                  api/node_modules
                   api/ormconfig.js
                   api/config
 
@@ -115,6 +118,6 @@ jobs:
                 name: grasis-1.0.0-web
                 path: |
                   web/.next
-                  web/.package*
+                  web/node_modules
                   web/next.config.js
                   web/.env.local
