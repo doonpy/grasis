@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start:dev": "NODE_OPTIONS=--max_old_space_size=4096 next dev -p 3001",
-    "build": "next build",
+    "build": "next build .",
     "start:prod": "next start -p 3001",
     "install:dependencies": "npm i",
     "test": "",
@@ -19,6 +19,7 @@
     "http-status-codes": "^2.1.4",
     "js-cookie": "^2.2.1",
     "jwt-decode": "^3.0.0-beta.2",
+    "moment": "^2.29.1",
     "next": "^9.5.5",
     "next-compose-plugins": "2.2.0",
     "next-cookies": "^2.0.3",

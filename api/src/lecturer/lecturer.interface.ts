@@ -1,4 +1,4 @@
-import { CommonColumns } from '../common/common.interface';
+import { CommonColumns, CommonFindAllResponse, CommonResponse } from '../common/common.interface';
 import { User, UserRequestBody, UserView } from '../user/user.interface';
 
 export interface Lecturer extends CommonColumns {
@@ -16,4 +16,16 @@ export type LecturerRequestBody = Partial<
 export interface SplitUserFromRequestBody {
   user: UserRequestBody;
   remain: LecturerRequestBody;
+}
+
+export interface LecturerFindAllResponse extends CommonFindAllResponse {
+  lecturers: LecturerView[];
+}
+
+export interface LecturerFindByIdResponse extends CommonResponse {
+  lecturer: LecturerView;
+}
+
+export interface LecturerCreateOrUpdateResponse extends CommonResponse {
+  id: number;
 }

@@ -1,50 +1,12 @@
-import { Layout, Menu } from 'antd';
+import { Image, Layout, Menu, Space, Typography } from 'antd';
 import Link from 'next/link';
-import React, { CSSProperties } from 'react';
+import React from 'react';
 
+import styles from '../../assets/css/components/sider/sider.module.css';
 import logo from '../../assets/img/hcmute-logo.png';
 import { IsAdmin, UserType } from '../../libs/user/user.resource';
 import { SIDER_ITEMS } from './SiderItems';
-
 const { Sider: AntSider } = Layout;
-const styles: Record<string, CSSProperties> = {
-  sidebar: {
-    overflow: 'auto',
-    height: '100vh',
-    position: 'fixed',
-    left: 0
-  },
-  logo: {
-    position: 'relative',
-    padding: '15px 0px 15px 0px'
-  },
-  logoLink: {
-    textTransform: 'uppercase',
-    padding: '5px 0',
-    display: 'block',
-    fontSize: '35px',
-    color: 'white',
-    textAlign: 'left',
-    fontWeight: 500,
-    lineHeight: '30px',
-    textDecoration: 'none',
-    backgroundColor: 'transparent'
-  },
-  logoImage: {
-    width: '40px',
-    display: 'inline-block',
-    maxHeight: '40px',
-    marginLeft: '10px',
-    marginRight: '15px'
-  },
-  img: {
-    width: '40px',
-    top: '10px',
-    position: 'absolute',
-    verticalAlign: 'middle',
-    border: '0'
-  }
-};
 
 interface SiderProps {
   isAdmin: IsAdmin;
@@ -54,18 +16,17 @@ interface SiderProps {
 
 const Sider: React.FC<SiderProps> = ({ isAdmin, userType, selectedMenu }) => {
   return (
-    <AntSider style={styles.sidebar}>
-      <div className="logo" />
-      <div style={styles.logo}>
+    <AntSider className={styles.sidebar}>
+      <Layout.Header className={styles.logo}>
         <Link href={'/'}>
-          <div style={styles.logoLink}>
-            <div style={styles.logoImage}>
-              <img src={logo} alt="logo" style={styles.img} />
-            </div>
-            GRASIS
-          </div>
+          <a>
+            <Space>
+              <Image src={logo} alt="logo" width={40} />
+              <Typography.Text className={styles.logoText}>GRASIS</Typography.Text>
+            </Space>
+          </a>
         </Link>
-      </div>
+      </Layout.Header>
       <Menu theme="dark" mode="inline" defaultSelectedKeys={[selectedMenu]}>
         {SIDER_ITEMS.map(({ key, icon, text, href, adminPermission, allowUserTypes }) => {
           if (allowUserTypes.indexOf(userType) === -1) {

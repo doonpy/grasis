@@ -1,0 +1,23 @@
+.layout {
+    margin-left: 200px;
+}
+
+.content {
+    margin: 24px 24px 0 24px;
+    overflow: initial;
+}
+
+.footer {
+    text-align: center;
+}
+
+.upButton {
+    height: 40px;
+    width: 40px;
+    line-height: 40px;
+    border-radius: 4px;
+    background-color: #1088e9;
+    color: #fff;
+    text-align: center;
+    font-size: 14px;
+}

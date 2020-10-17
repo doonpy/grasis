@@ -47,7 +47,7 @@ const LecturerView: React.FC<ComponentProps> = ({
               <LecturerLevelRender level={level as string[]} />
               <TextData text={position} />
               <DateData date={createdAt} />
-              <DateData date={updatedAt} />
+              <DateData date={updatedAt} isRelative={true} />
             </Space>
           </Col>
         </Space>

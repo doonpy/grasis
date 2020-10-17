@@ -8,8 +8,8 @@ import MainLayout from '../../../components/Layout/MainLayout';
 import { LECTURER_TABLE_COLUMNS } from '../../../components/Lecturer/LecturerColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../libs/common/common.resource';
+import AdminLecturerService from '../../../libs/lecturer/admin/admin.lecturer.service';
 import { LECTURER_PATH } from '../../../libs/lecturer/lecturer.resource';
-import LecturerService from '../../../libs/lecturer/lecturer.service';
 import { UserType } from '../../../libs/user/user.resource';
 
 const Index: NextPageWithLayout = () => {
@@ -19,8 +19,12 @@ const Index: NextPageWithLayout = () => {
     total: 0,
     showSizeChanger: false
   });
-  const lecturerService = LecturerService.getInstance();
-  const { data, isLoading } = lecturerService.useLecturers(pagination.current, pagination.pageSize);
+  const adminLecturerService = AdminLecturerService.getInstance();
+  const { data, isLoading } = adminLecturerService.useLecturers(
+    pagination.current,
+    pagination.pageSize,
+    true
+  );
   const handleTableChange = (paginationValues) => {
     setPagination({ ...pagination, ...paginationValues });
   };

@@ -12,7 +12,7 @@ class MyDocument extends Document {
           <meta name="theme-color" content="#000000" />
           <link rel="shortcut icon" href={favicon} />
         </Head>
-        <body>
+        <body style={{ background: '#f0f2f5' }}>
           <Main />
           <NextScript />
         </body>

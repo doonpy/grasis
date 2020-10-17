@@ -1,0 +1,24 @@
+.sidebar{
+    overflow: auto;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+}
+
+.logo {
+    padding: 5px 5px 5px 15px;
+}
+
+.logoText {
+    text-transform: uppercase;
+    padding: 5px 0;
+    display: block;
+    font-size: 35px;
+    color: white;
+    text-align: left;
+    font-weight: 500;
+    line-height: 30px;
+    text-decoration: none;
+    background-color: transparent;
+    letter-spacing: 2px;
+}

@@ -1,15 +1,10 @@
 import { HomeOutlined } from '@ant-design/icons';
-import { Breadcrumb as AntBreadcrumb, Card } from 'antd';
+import { Breadcrumb as AntBreadcrumb } from 'antd';
 import Link from 'next/link';
-import React, { CSSProperties } from 'react';
+import React from 'react';
 
+import styles from '../../assets/css/components/breadcrumb/breadcrumb.module.css';
 import TextData from '../Common/TextData';
-
-const styles: Record<string, CSSProperties> = {
-  breadcrumb: {
-    marginBottom: 30
-  }
-};
 
 export interface BreadcrumbItemType {
   text: string;
@@ -22,27 +17,25 @@ interface BreadcrumbProps {
 
 export const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumbs }) => {
   return (
-    <Card style={styles.breadcrumb}>
-      <AntBreadcrumb>
-        <AntBreadcrumb.Item>
-          <Link href="/">
-            <a>
-              <HomeOutlined />
-            </a>
-          </Link>
+    <AntBreadcrumb className={styles.breadcrumb}>
+      <AntBreadcrumb.Item>
+        <Link href="/">
+          <a>
+            <HomeOutlined />
+          </a>
+        </Link>
+      </AntBreadcrumb.Item>
+      {breadcrumbs.map(({ text, href }, key) => (
+        <AntBreadcrumb.Item key={key}>
+          {key === breadcrumbs.length - 1 ? (
+            <TextData text={text} />
+          ) : (
+            <Link href={href}>
+              <a>{text}</a>
+            </Link>
+          )}
         </AntBreadcrumb.Item>
-        {breadcrumbs.map(({ text, href }, key) => (
-          <AntBreadcrumb.Item key={key}>
-            {key === breadcrumbs.length - 1 ? (
-              <TextData text={text} />
-            ) : (
-              <Link href={href}>
-                <a>{text}</a>
-              </Link>
-            )}
-          </AntBreadcrumb.Item>
-        ))}
-      </AntBreadcrumb>
-    </Card>
+      ))}
+    </AntBreadcrumb>
   );
 };

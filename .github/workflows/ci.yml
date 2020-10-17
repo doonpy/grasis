@@ -114,7 +114,7 @@ jobs:
               with:
                 name: grasis-1.0.0-web
                 path: |
-                  web/.next
+                  web/dist
                   web/package*
                   web/next.config.js
                   web/.env.local
