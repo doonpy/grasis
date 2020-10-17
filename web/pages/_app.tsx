@@ -1,13 +1,12 @@
-import 'antd/dist/antd.css';
-import 'nprogress/nprogress.css';
+import '../assets/css/styles.css';
 
 import Router from 'next/router';
 import NProgress from 'nprogress';
 import React from 'react';
 import { SWRConfig } from 'swr';
 
-import CommonClient from '../libs/common/common.client';
 import { CommonPageProps, NextPageWithLayout } from '../libs/common/common.interface';
+import CommonService from '../libs/common/common.service';
 
 NProgress.configure({ showSpinner: false });
 
@@ -30,13 +29,13 @@ const MyApp = ({
   Component: NextPageWithLayout;
   pageProps: CommonPageProps;
 }) => {
-  const commonClient = new CommonClient();
+  const commonClient = new CommonService();
   const Layout = Component.Layout ? Component.Layout : React.Fragment;
 
   return (
     <SWRConfig
       value={{
-        refreshInterval: 1000,
+        // refreshInterval: 1000,
         fetcher: commonClient.apiService.hooksFetcher.bind(commonClient.apiService),
         onError: commonClient.requestErrorHandler.bind(commonClient)
       }}>

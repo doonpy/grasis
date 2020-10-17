@@ -1,34 +1,35 @@
 import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
-import CommonClient from '../common/common.client';
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
+import CommonService from '../common/common.service';
 import {
   CreateLecturerResponse,
   FindAllLecturerResponse,
   FindOneLecturerResponse,
-  LecturerRequestBody,
+  LecturerViewType,
+  StudentRequestBody,
   UseLecturer,
   UseLecturers
 } from './lecturer.interface';
 import { LECTURER_API } from './lecturer.resource';
 
-export default class LecturerClient extends CommonClient {
-  private static instance: LecturerClient;
+export default class LecturerService extends CommonService {
+  private static instance: LecturerService;
 
   constructor() {
     super();
   }
 
-  public static getInstance(): LecturerClient {
+  public static getInstance(): LecturerService {
     if (!this.instance) {
-      this.instance = new LecturerClient();
+      this.instance = new LecturerService();
     }
 
     return this.instance;
   }
 
-  public async updateById(id: number, body: LecturerRequestBody): Promise<void> {
+  public async updateById(id: number, body: StudentRequestBody): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
     if (body.level && Array.isArray(body.level)) {
       body.level = this.convertLevelToString(body.level);
@@ -61,7 +62,7 @@ export default class LecturerClient extends CommonClient {
   }
 
   public async createLecturer(
-    body: LecturerRequestBody
+    body: StudentRequestBody
   ): Promise<AxiosResponse<CreateLecturerResponse>> {
     await this.apiService.bindAuthorizationForClient();
     if (body.level && Array.isArray(body.level)) {
@@ -79,7 +80,7 @@ export default class LecturerClient extends CommonClient {
     return levels.filter((level, index) => levels.lastIndexOf(level) === index).join(';');
   }
 
-  public async getInitialForEdit(id): Promise<LecturerRequestBody> {
+  public async getInitialForEdit(id): Promise<LecturerViewType> {
     await this.apiService.bindAuthorizationForClient();
     const { data } = await this.apiService.get<FindOneLecturerResponse>(
       `${LECTURER_API.ROOT}/${id}`

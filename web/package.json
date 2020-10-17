@@ -3,17 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start:dev": "next dev -p 3001",
+    "start:dev": "NODE_OPTIONS=--max_old_space_size=4096 next dev -p 3001",
     "build": "next build",
     "start:prod": "next start -p 3001",
     "install:dependencies": "npm i",
     "test": "",
-    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && rm -rf .next/ && npm install && npm run dev"
+    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && rm -rf .next/ && npm install && npm run dev",
+    "prune:dependencies": "npm prune --production"
   },
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
-    "@types/jwt-decode": "^2.2.1",
-    "@zeit/next-css": "1.0.1",
     "antd": "^4.6.6",
     "antd-img-crop": "^3.12.0",
     "axios": "^0.20.0",
@@ -25,12 +24,10 @@
     "next-cookies": "^2.0.3",
     "next-images": "1.3.1",
     "nprogress": "^0.2.0",
-    "path": "0.12.7",
     "react": "16.13.1",
     "react-chartist": "0.14.3",
     "react-dom": "16.13.1",
-    "swr": "^0.3.5",
-    "webpack": "4.44.1"
+    "swr": "^0.3.5"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -51,6 +48,7 @@
   "devDependencies": {
     "@svgr/webpack": "^5.4.0",
     "@types/js-cookie": "^2.2.6",
+    "@types/jwt-decode": "^2.2.1",
     "@types/node": "^14.11.8",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^16.9.51",
@@ -63,6 +61,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.21.2",
     "eslint-plugin-simple-import-sort": "^5.0.3",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.3",
+    "webpack": "^4.44.1"
   }
 }

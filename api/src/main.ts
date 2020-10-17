@@ -8,7 +8,6 @@ import { CORS_OPTIONS } from './common/common.resource';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
   if (!isProductionMode()) {
     const logFormat = `${chalk.magenta(`[:method] ${process.pid}`)}   - ${chalk.white(
       ':url :status :res[content-length]'

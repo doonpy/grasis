@@ -9,10 +9,11 @@
     "dist/**/*.entity.js"
   ],
   "migrations": [
-    "./migration/**/*.ts"
+    "dist/migration/**/*.js"
   ],
   "cli": {
-    "migrationsDir": "migration"
+    "migrationsDir": "src/migration"
   },
-  "cache": true
+  "cache": true,
+  "logging": true
 }

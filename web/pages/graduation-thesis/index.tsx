@@ -16,8 +16,8 @@ export const getStaticProps: GetStaticProps<CommonPageProps> = async () => {
       title: 'Danh sách khóa luận',
       selectedMenu: SIDER_KEYS.GRADUATION_THESIS,
       breadcrumbs: [{ text: 'Danh sách khóa luận', href: '/graduation-thesis' }],
-      isAdminCheck: true,
-      allowUserTypes: [UserType.LECTURER]
+      isAdminCheck: false,
+      allowUserTypes: [UserType.LECTURER, UserType.STUDENT]
     }
   };
 };

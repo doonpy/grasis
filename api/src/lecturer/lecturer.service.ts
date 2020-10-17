@@ -6,7 +6,12 @@ import { User } from '../user/user.interface';
 import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { LecturerEntity } from './lecturer.entity';
-import { Lecturer, LecturerRequestBody, LecturerView } from './lecturer.interface';
+import {
+  Lecturer,
+  LecturerRequestBody,
+  LecturerView,
+  SplitUserFromRequestBody
+} from './lecturer.interface';
 import { LEC_ERROR_RESOURCE } from './lecturer.resource';
 
 @Injectable()
@@ -107,7 +112,9 @@ export class LecturerService {
       const currentLecturer = await this.findByIdTransaction(manager, id);
 
       data.userType = UserType.LECTURER;
-      const { user, remain: lecturer } = this.userService.splitUserFromRequestBody(data);
+      const { user, remain: lecturer } = this.userService.splitUserFromRequestBody(
+        data
+      ) as SplitUserFromRequestBody;
       await this.userService.updateByIdTransaction(manager, id, user);
 
       if (lecturer.lecturerId && data.lecturerId !== currentLecturer.lecturerId) {

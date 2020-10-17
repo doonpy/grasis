@@ -2,27 +2,24 @@ import { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 
-import CommonClient from '../common/common.client';
+import { LecturerRequestBody } from '../../../api/src/lecturer/lecturer.interface';
 import { COMMON_PATH, COOKIES } from '../common/common.resource';
+import CommonService from '../common/common.service';
 import { TokenResponse } from '../jwt/jwt.base';
-import {
-  FindUserByIdResponse,
-  LoginInputs,
-  Remember,
-  UseAuthorizationParams
-} from './user.interface';
-import { IsAdmin, USER_API } from './user.resource';
+import { StudentRequestBody } from '../student/student.interface';
+import { FindUserByIdResponse, LoginInputs, Remember, UserRequestBody } from './user.interface';
+import { IsAdmin, USER_API, UserStatus } from './user.resource';
 
-export default class UserClient extends CommonClient {
-  private static instance: UserClient;
+export default class UserService extends CommonService {
+  private static instance: UserService;
 
   constructor() {
     super();
   }
 
-  public static getInstance(): UserClient {
+  public static getInstance(): UserService {
     if (!this.instance) {
-      this.instance = new UserClient();
+      this.instance = new UserService();
     }
 
     return this.instance;
@@ -63,22 +60,15 @@ export default class UserClient extends CommonClient {
     await this.redirectService.redirectTo(COMMON_PATH.LOGIN);
   }
 
-  public async isAdminCheck(isAdmin: IsAdmin): Promise<void> {
-    if (isAdmin === IsAdmin.FALSE) {
-      await this.redirectService.redirectTo(COMMON_PATH.ERROR.ERR_403);
-    }
+  public isAdminCheck(isAdmin: IsAdmin): boolean {
+    return isAdmin === IsAdmin.TRUE;
   }
 
-  public async userTypeCheck(allowUserTypes, userType): Promise<void> {
-    if (allowUserTypes.indexOf(userType) === -1) {
-      await this.redirectService.redirectTo(COMMON_PATH.ERROR.ERR_403);
-    }
+  public isAllowUserType(allowUserTypes, userType): boolean {
+    return allowUserTypes.indexOf(userType) !== -1;
   }
 
-  public useAuthorization({
-    isAdminCheck,
-    allowUserTypes
-  }: UseAuthorizationParams): FindUserByIdResponse {
+  public useAuthorization(): FindUserByIdResponse {
     const userId = this.jwtService.accessTokenPayload.userId;
     const currentPath = this.redirectService.currentPath;
     const { data } = useSWR<FindUserByIdResponse>(`${USER_API.ROOT}/${userId}`, {
@@ -87,21 +77,24 @@ export default class UserClient extends CommonClient {
         this.redirectService.resetCurrentPathForClient();
         if (userId && currentPath === COMMON_PATH.LOGIN) {
           await this.redirectService.redirectTo(COMMON_PATH.INDEX);
-          return;
-        }
-
-        if (data) {
-          if (isAdminCheck) {
-            await this.isAdminCheck(data.user.isAdmin);
-          }
-
-          if (allowUserTypes) {
-            await this.userTypeCheck(allowUserTypes, data.user.isAdmin);
-          }
         }
       }
     });
 
     return data;
+  }
+
+  public convertToRequestBody(user: StudentRequestBody | LecturerRequestBody): UserRequestBody {
+    const result = user;
+    const { isAdmin, status } = user;
+    if (typeof isAdmin !== 'undefined' && isAdmin !== null) {
+      result.isAdmin = isAdmin ? IsAdmin.TRUE : IsAdmin.FALSE;
+    }
+
+    if (typeof status !== 'undefined' && status !== null) {
+      result.status = status ? UserStatus.ACTIVE : UserStatus.INACTIVE;
+    }
+
+    return result;
   }
 }

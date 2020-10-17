@@ -9,13 +9,13 @@ import LecturerFormItem from '../../../../components/Lecturer/LecturerFormItem';
 import UserFormItem from '../../../../components/User/UserFormItem';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import LecturerClient from '../../../../libs/lecturer/lecturer.client';
-import { LecturerRequestBody } from '../../../../libs/lecturer/lecturer.interface';
+import { StudentRequestBody } from '../../../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
+import LecturerService from '../../../../libs/lecturer/lecturer.service';
 import { UserType } from '../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
-  currentLecturer: LecturerRequestBody;
+  currentLecturer: StudentRequestBody;
   params: PageParams;
 }
 
@@ -29,26 +29,26 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const lecturerId: number = parseInt(router.query.id as string);
   const [form] = Form.useForm();
 
-  const handleSubmitButton = async (formValues: LecturerRequestBody) => {
+  const handleSubmitButton = async (formValues: StudentRequestBody) => {
     setLoading(true);
-    const lecturerClient = new LecturerClient();
+    const lecturerService = LecturerService.getInstance();
     try {
-      await lecturerClient.updateById(lecturerId, formValues);
+      await lecturerService.updateById(lecturerId, formValues);
       await router.push(`${LECTURER_ADMIN_PATH_ROOT}/${lecturerId}`);
     } catch (error) {
-      await lecturerClient.requestErrorHandler(error);
+      await lecturerService.requestErrorHandler(error);
     }
     setLoading(false);
   };
 
   useEffect(() => {
     (async () => {
-      let currentLecturer: LecturerRequestBody = null;
-      const lecturerServer = new LecturerClient();
+      let currentLecturer: StudentRequestBody = null;
+      const lecturerService = LecturerService.getInstance();
       try {
-        currentLecturer = await lecturerServer.getInitialForEdit(params.id);
+        currentLecturer = await lecturerService.getInitialForEdit(params.id);
       } catch (error) {
-        await lecturerServer.requestErrorHandler(error);
+        await lecturerService.requestErrorHandler(error);
         return;
       }
       form.setFieldsValue(currentLecturer);
@@ -58,7 +58,6 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   return (
     <Card title="Sửa thông tin giảng viên">
       <Form
-        // initialValues={currentLecturer}
         form={form}
         requiredMark={true}
         layout="horizontal"

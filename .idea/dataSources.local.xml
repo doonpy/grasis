@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="grasis-local" uuid="d54a85b0-a97f-4fb9-a5c8-c3c07c538c3f">
+      <database-info product="Microsoft SQL Server" version="14.00.3356" jdbc-version="4.2" driver-name="Microsoft JDBC Driver 8.2 for SQL Server" driver-version="8.2.2.0" dbms="MSSQL" exact-version="14.0.3356" exact-driver-version="8.2">
+        <extra-name-characters>$#@</extra-name-characters>
+        <identifier-quote-string>&quot;</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>sa</user-name>
+      <schema-mapping>
+        <introspection-scope>
+          <node kind="database" qname="grasis">
+            <node kind="schema" qname="dbo" />
+          </node>
+        </introspection-scope>
+      </schema-mapping>
+    </data-source>
+    <data-source name="grasis-azure" uuid="436d108a-0eb0-46e1-92bc-4d5823801c01">
+      <database-info product="Microsoft SQL Server" version="12.00.2000" jdbc-version="4.2" driver-name="Microsoft JDBC Driver 8.2 for SQL Server" driver-version="8.2.2.0" dbms="AZURE" exact-version="12.0.2000" exact-driver-version="8.2">
+        <extra-name-characters>$#@</extra-name-characters>
+        <identifier-quote-string>&quot;</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>doonpy</user-name>
+      <schema-mapping>
+        <introspection-scope>
+          <node kind="database" qname="@">
+            <node kind="schema" qname="@" />
+          </node>
+        </introspection-scope>
+      </schema-mapping>
+    </data-source>
+  </component>
+</project>

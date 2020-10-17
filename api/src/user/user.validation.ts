@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi';
 
-import { UserRequestBody } from './user.interface';
+import { UserRequestBody, UserRequestBodyForUser } from './user.interface';
 
 export const userUpdateValidationSchema = Joi.object<UserRequestBody>({
   username: Joi.string()
@@ -76,3 +76,33 @@ export const userCreateValidationSchema = userUpdateValidationSchema.concat(
     })
   })
 );
+
+export const userUpdateValidationSchemaForUser = Joi.object<UserRequestBodyForUser>({
+  password: Joi.string()
+    .allow(null)
+    .max(50)
+    .message('Mật khẩu không có độ dài không đúng quy định (tối đa 50 kí tự).'),
+  confirmPassword: Joi.string()
+    .allow(null)
+    .max(50)
+    .message('Mật khẩu có độ dài không đúng quy định (tối đa 50 kí tự).'),
+  email: Joi.string()
+    .allow(null)
+    .optional()
+    .email({ allowUnicode: true })
+    .message('Email không đúng định dạng.')
+    .max(100)
+    .message('Email có độ dài không đúng quy định (tối đa 100 kí tự).'),
+  address: Joi.string()
+    .allow(null)
+    .optional()
+    .max(100)
+    .message('Địa chỉ có độ dài không đúng quy định (tối đa 100 kí tự).'),
+  phone: Joi.string()
+    .allow(null)
+    .optional()
+    .length(10)
+    .message('Số điện thoại phải có độ dài là 10.')
+    .pattern(/^[0-9]*$/)
+    .message('Số điện thoại phải là số.')
+});

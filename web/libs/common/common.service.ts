@@ -6,7 +6,7 @@ import JwtClient from '../jwt/jwt.client';
 import CommonRedirect, { RenderSide } from './common.redirect';
 import { COMMON_PATH } from './common.resource';
 
-export default class CommonClient {
+export default class CommonService {
   public readonly apiService: ApiService;
   public readonly jwtService: JwtClient;
   public readonly redirectService: CommonRedirect;

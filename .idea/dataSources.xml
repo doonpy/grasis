@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="grasis-local" uuid="d54a85b0-a97f-4fb9-a5c8-c3c07c538c3f">
+      <driver-ref>sqlserver.ms</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
+      <jdbc-url>jdbc:sqlserver://localhost:1433;database=grasis</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="grasis-azure" uuid="436d108a-0eb0-46e1-92bc-4d5823801c01">
+      <driver-ref>azure.ms</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
+      <jdbc-url>jdbc:sqlserver://poonnguyen.database.windows.net:1433;database=grasis_prod</jdbc-url>
+    </data-source>
+  </component>
+</project>

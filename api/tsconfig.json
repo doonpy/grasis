@@ -18,10 +18,11 @@
     "resolveJsonModule": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/orm-configs/**/*"
   ],
   "exclude": [
     "files",
-    "src/migration/**/*"
+    "node_modules"
   ]
 }

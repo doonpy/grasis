@@ -1,10 +1,12 @@
 name: CI
 
 on:
-    push:
-        branches: [1.0.0]
-    pull_request:
-        branches: [1.0.0]
+  push:
+    branches:
+      - '1.0.0'
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
     lint:
@@ -97,39 +99,22 @@ jobs:
             - name: Build
               run: npm run build
 
-    database-migration:
-      runs-on: ubuntu-latest
-      if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+            - name: Archive Grasis API artifacts
+              uses: actions/upload-artifact@v2
+              with:
+                name: grasis-1.0.0-api
+                path: |
+                  api/dist
+                  api/package*
+                  api/ormconfig.js
+                  api/config
 
-      steps:
-        - uses: actions/checkout@v2
-
-        - name: Use Node.js 12.x
-          uses: actions/setup-node@v1
-          env:
-            CI: true
-          with:
-            node-version: 12.x
-
-        - name: Cache node modules
-          uses: actions/cache@v2
-          env:
-            cache-name: cache-node-modules
-          with:
-            path: '**/node_modules'
-            key: ${{ runner.os }}-checking-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: |
-              ${{ runner.os }}-checking-${{ env.cache-name }}-
-
-        - name: Install dependencies
-          run: npm ci
-
-        - name: On development database
-          run: npm run --prefix api typeorm:migrate
-          env:
-            DB_TYPE: staging
-
-        - name: On production database
-          run: npm run --prefix api typeorm:migrate
-          env:
-            DB_TYPE: production
+            - name: Archive Grasis Web artifacts
+              uses: actions/upload-artifact@v2
+              with:
+                name: grasis-1.0.0-web
+                path: |
+                  web/.next
+                  web/package*
+                  web/next.config.js
+                  web/.env.local

@@ -8,10 +8,10 @@ import React, { CSSProperties, useState } from 'react';
 import logo from '../assets/img/hcmute-logo.png';
 import loginBg from '../assets/img/login-bg.jpg';
 import Copyright from '../components/Copyright/Copyright';
-import CommonClient from '../libs/common/common.client';
 import { COMMON_PATH } from '../libs/common/common.resource';
-import UserClient from '../libs/user/user.client';
+import CommonService from '../libs/common/common.service';
 import { LoginInputs } from '../libs/user/user.interface';
+import UserService from '../libs/user/user.service';
 
 const styles: Record<string, CSSProperties> = {
   background: {
@@ -31,7 +31,7 @@ const styles: Record<string, CSSProperties> = {
 
 const Login: NextPage = () => {
   const router = useRouter();
-  const userClient = UserClient.getInstance();
+  const userClient = UserService.getInstance();
   const [loading, setLoading] = useState(false);
   const { username } = userClient.getRememberValue();
 
@@ -59,7 +59,7 @@ const Login: NextPage = () => {
   };
 
   (async () => {
-    const commonClient = new CommonClient();
+    const commonClient = new CommonService();
     try {
       await commonClient.jwtService.checkTokenExpire();
       if (!commonClient.jwtService.isAccessTokenExpired()) {

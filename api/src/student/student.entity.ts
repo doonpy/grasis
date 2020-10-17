@@ -11,10 +11,10 @@ import {
 import { CommonEntity } from '../common/common.entity';
 import { COMMON_ENTITY_OPTIONS } from '../common/common.resource';
 import { UserEntity } from '../user/user.entity';
-import { STD_ENTITY_RESOURCE } from './student.resource';
+import { IsGraduate, STD_ENTITY_RESOURCE } from './student.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: STD_ENTITY_RESOURCE.TABLE_NAME })
-export class Student extends CommonEntity {
+export class StudentEntity extends CommonEntity {
   @PrimaryColumn({ type: 'int' })
   @OneToOne(() => UserEntity, (user) => user.id, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'id', referencedColumnName: 'id' })
@@ -33,6 +33,20 @@ export class Student extends CommonEntity {
     nullable: true
   })
   schoolYear!: string;
+
+  @Column({
+    type: 'nvarchar',
+    length: 20,
+    nullable: true
+  })
+  studentClass!: string;
+
+  @Column({
+    type: 'tinyint',
+    default: IsGraduate.FALSE,
+    nullable: true
+  })
+  isGraduate!: string;
 
   @CreateDateColumn()
   createdAt!: Date;

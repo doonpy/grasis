@@ -7,8 +7,8 @@ import devOrmConfigs from '../orm-configs/dev.json';
 import localOrmConfigs from '../orm-configs/local.json';
 import prodOrmConfigs from '../orm-configs/prod.json';
 
-export function getDatabaseConfig(): TypeOrmModuleOptions | ConnectionOptions {
-  let configs: Record<string, any>;
+export function getDatabaseConfig(): TypeOrmModuleOptions & ConnectionOptions {
+  let configs: any;
   switch (process.env.DB_TYPE) {
     case DatabaseType.STAGING:
       configs = devOrmConfigs;

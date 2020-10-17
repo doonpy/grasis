@@ -27,7 +27,7 @@ import { UserTypes } from '../common/decorator/user-type.decorator';
 import { AdminGuard } from '../common/guard/admin.guard';
 import { UserPermissionGuard } from '../common/guard/user-permission.guard';
 import { UserTypeGuard } from '../common/guard/user-type.guard';
-import { JoiValidationPipe } from '../pipe/joi-validation.pipe';
+import { JoiValidationPipe } from '../common/pipe/joi-validation.pipe';
 import { UserType } from '../user/user.resource';
 import { LecturerRequestBody, LecturerView } from './lecturer.interface';
 import { LEC_CONTROLLER_RESOURCE } from './lecturer.resource';
@@ -83,7 +83,7 @@ export class LecturerController {
   }
 
   @Get(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
-  @UserTypes(UserType.LECTURER)
+  @UserTypes(UserType.LECTURER, UserType.STUDENT)
   @UseGuards(UserTypeGuard)
   public async findById(
     @Param(
@@ -103,9 +103,7 @@ export class LecturerController {
   }
 
   @Post()
-  @UserTypes(UserType.LECTURER)
   @UseGuards(AdminGuard)
-  @UseGuards(UserTypeGuard)
   @UsePipes(new JoiValidationPipe(lecturerCreateValidationSchema))
   public async create(@Body() body: LecturerRequestBody): Promise<LecturerCreateOrUpdateResponse> {
     const createdLecturer: LecturerView = await this.lecturerService.create(body);

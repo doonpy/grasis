@@ -1,27 +1,23 @@
-const dev = require('./src/orm-configs/dev.json');
-const product = require('./src/orm-configs/prod.json');
-const local = require('./src/orm-configs/local.json');
-
 const DatabaseType = {
   STAGING: 'staging',
   PRODUCTION: 'production'
 };
 
-let envFile;
-function getConfigsFile() {
+let configs;
+function getConfigs() {
   switch (process.env.DB_TYPE) {
     case DatabaseType.STAGING:
-      envFile = dev;
+      configs = require('./dist/orm-configs/dev.json');
       break;
     case DatabaseType.PRODUCTION:
-      envFile = product;
+      configs = require('./dist/orm-configs/prod.json');
       break;
     default:
-      envFile = local;
+      configs = require('./src/orm-configs/local.json');
       break;
   }
 
-  return envFile;
+  return configs;
 }
 
-module.exports = getConfigsFile();
+module.exports = getConfigs();

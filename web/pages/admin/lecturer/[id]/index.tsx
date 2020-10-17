@@ -11,14 +11,14 @@ import LecturerView from '../../../../components/Lecturer/LecturerView';
 import UserView from '../../../../components/User/UserView';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import LecturerClient from '../../../../libs/lecturer/lecturer.client';
-import { LecturerRequestBody } from '../../../../libs/lecturer/lecturer.interface';
+import { StudentRequestBody } from '../../../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
+import LecturerService from '../../../../libs/lecturer/lecturer.service';
 import { UserType } from '../../../../libs/user/user.resource';
 const { confirm } = Modal;
 
 interface PageProps extends CommonPageProps {
-  currentLecturer: LecturerRequestBody;
+  currentLecturer: StudentRequestBody;
   params: PageParams;
 }
 
@@ -43,9 +43,9 @@ const styles: Record<string, CSSProperties> = {
 };
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
-  const lecturerClient = LecturerClient.getInstance();
+  const lecturerService = LecturerService.getInstance();
   const lecturerId = parseInt(params.id);
-  const { data, isLoading } = lecturerClient.useLecturer(lecturerId);
+  const { data, isLoading } = lecturerService.useLecturer(lecturerId);
 
   const showDeleteConfirm = () => {
     confirm({
@@ -57,10 +57,10 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       cancelButtonProps: { type: 'primary', danger: true },
       async onOk() {
         try {
-          await lecturerClient.deleteLecturer(lecturerId);
-          await lecturerClient.redirectService.redirectTo(LECTURER_ADMIN_PATH_ROOT);
+          await lecturerService.deleteLecturer(lecturerId);
+          await lecturerService.redirectService.redirectTo(LECTURER_ADMIN_PATH_ROOT);
         } catch (error) {
-          await lecturerClient.requestErrorHandler(error);
+          await lecturerService.requestErrorHandler(error);
         }
       }
     });
