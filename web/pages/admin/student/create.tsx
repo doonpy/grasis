@@ -73,7 +73,7 @@ export const getStaticProps: GetStaticProps<CommonPageProps> = async () => {
       selectedMenu: SIDER_KEYS.ADMIN_STUDENT,
       breadcrumbs: [
         { text: 'Danh sách sinh viên', href: STUDENT_ADMIN_PATH_ROOT },
-        { text: 'Thêm giảng viên' }
+        { text: 'Thêm sinh viên' }
       ],
       isAdminCheck: true,
       allowUserTypes: [UserType.LECTURER]

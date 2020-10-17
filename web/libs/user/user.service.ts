@@ -2,11 +2,13 @@ import { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 
+import { LecturerRequestBody } from '../../../api/src/lecturer/lecturer.interface';
 import { COMMON_PATH, COOKIES } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { TokenResponse } from '../jwt/jwt.base';
-import { FindUserByIdResponse, LoginInputs, Remember } from './user.interface';
-import { IsAdmin, USER_API } from './user.resource';
+import { StudentRequestBody } from '../student/student.interface';
+import { FindUserByIdResponse, LoginInputs, Remember, UserRequestBody } from './user.interface';
+import { IsAdmin, USER_API, UserStatus } from './user.resource';
 
 export default class UserService extends CommonService {
   private static instance: UserService;
@@ -80,5 +82,19 @@ export default class UserService extends CommonService {
     });
 
     return data;
+  }
+
+  public convertToRequestBody(user: StudentRequestBody | LecturerRequestBody): UserRequestBody {
+    const result = user;
+    const { isAdmin, status } = user;
+    if (typeof isAdmin !== 'undefined' && isAdmin !== null) {
+      result.isAdmin = isAdmin ? IsAdmin.TRUE : IsAdmin.FALSE;
+    }
+
+    if (typeof status !== 'undefined' && status !== null) {
+      result.status = status ? UserStatus.ACTIVE : UserStatus.INACTIVE;
+    }
+
+    return result;
   }
 }

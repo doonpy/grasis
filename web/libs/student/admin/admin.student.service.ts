@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
 import { DEFAULT_PAGE_SIZE } from '../../common/common.resource';
-import CommonService from '../../common/common.service';
+import StudentBase from '../student.base';
 import {
   CreateStudentResponse,
   FindAllStudentResponse,
@@ -14,7 +14,7 @@ import {
 } from '../student.interface';
 import { STUDENT_API } from '../student.resource';
 
-export default class AdminStudentService extends CommonService {
+export default class AdminStudentService extends StudentBase {
   private static instance: AdminStudentService;
 
   constructor() {
@@ -53,7 +53,7 @@ export default class AdminStudentService extends CommonService {
   public async updateById(id: number, body: StudentRequestBody): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
 
-    await this.apiService.patch(`${STUDENT_API.ADMIN}/${id}`, body);
+    await this.apiService.patch(`${STUDENT_API.ADMIN}/${id}`, this.convertToRequestBody(body));
   }
 
   public async createStudent(
@@ -61,7 +61,10 @@ export default class AdminStudentService extends CommonService {
   ): Promise<AxiosResponse<CreateStudentResponse>> {
     await this.apiService.bindAuthorizationForClient();
 
-    return this.apiService.post<CreateStudentResponse>(STUDENT_API.ADMIN, body);
+    return this.apiService.post<CreateStudentResponse>(
+      STUDENT_API.ADMIN,
+      this.convertToRequestBody(body)
+    );
   }
 
   public async getInitialForEdit(id): Promise<StudentViewType> {

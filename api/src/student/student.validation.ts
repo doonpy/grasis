@@ -9,7 +9,12 @@ import { StudentRequestBody } from './student.interface';
 
 const studentValidationSchema = Joi.object<StudentRequestBody>({
   studentId: Joi.string().allow(null).length(8).message('Mã sinh viên phải có 8 kí tự.'),
-  schoolYear: Joi.string().allow(null).length(4).message('Niên khóa phải có 4 kí tự.'),
+  schoolYear: Joi.string()
+    .allow(null)
+    .length(4)
+    .message('Niên khóa phải có tối thiểu 4 kí tự.')
+    .pattern(/[0-9]+/)
+    .message('Niên khóa phải là số.'),
   isGraduate: Joi.number()
     .allow(null)
     .integer()

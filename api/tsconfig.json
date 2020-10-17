@@ -22,6 +22,7 @@
     "src/orm-configs/**/*"
   ],
   "exclude": [
-    "files"
+    "files",
+    "node_modules"
   ]
 }

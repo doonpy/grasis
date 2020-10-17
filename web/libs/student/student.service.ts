@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
-import CommonService from '../common/common.service';
+import StudentBase from './student.base';
 import {
   FindAllStudentResponse,
   FindOneStudentResponse,
@@ -12,7 +12,7 @@ import {
 } from './student.interface';
 import { STUDENT_API } from './student.resource';
 
-export default class StudentService extends CommonService {
+export default class StudentService extends StudentBase {
   private static instance: StudentService;
 
   constructor() {
@@ -46,7 +46,7 @@ export default class StudentService extends CommonService {
   public async updateById(id: number, body: StudentRequestBody): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
 
-    await this.apiService.patch(`${STUDENT_API.ROOT}/${id}`, body);
+    await this.apiService.patch(`${STUDENT_API.ROOT}/${id}`, this.convertToRequestBody(body));
   }
 
   public async getInitialForEdit(id): Promise<StudentViewType> {

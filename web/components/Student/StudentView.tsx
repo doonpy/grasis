@@ -18,7 +18,7 @@ const StudentView: React.FC<ComponentProps> = ({
     <Space direction="vertical">
       <Typography.Title level={4}>
         <InfoCircleOutlined />
-        &nbsp;&nbsp;Thông tin giảng viên
+        &nbsp;&nbsp;Thông tin sinh viên
       </Typography.Title>
       <Row style={{ paddingLeft: 30 }}>
         <Space size="large">
