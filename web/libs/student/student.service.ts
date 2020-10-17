@@ -1,13 +1,12 @@
-import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import {
-  CreateStudentResponse,
   FindAllStudentResponse,
   FindOneStudentResponse,
   StudentRequestBody,
+  StudentViewType,
   UseStudent,
   UseStudents
 } from './student.interface';
@@ -38,22 +37,22 @@ export default class StudentService extends CommonService {
     return { data, isLoading: !data };
   }
 
-  public async createStudent(
-    body: StudentRequestBody
-  ): Promise<AxiosResponse<CreateStudentResponse>> {
-    await this.apiService.bindAuthorizationForClient();
-
-    return this.apiService.post<CreateStudentResponse>(STUDENT_API.ADMIN, body);
-  }
-
   public useStudent(id: number): UseStudent {
     const { data } = useSWR<FindOneStudentResponse>(id && `${STUDENT_API.ROOT}/${id}`);
 
     return { data, isLoading: !data };
   }
 
-  public async deleteStudent(id: number): Promise<void> {
+  public async updateById(id: number, body: StudentRequestBody): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.delete(`${STUDENT_API.ADMIN}/${id}`);
+
+    await this.apiService.patch(`${STUDENT_API.ROOT}/${id}`, body);
+  }
+
+  public async getInitialForEdit(id): Promise<StudentViewType> {
+    await this.apiService.bindAuthorizationForClient();
+    const { data } = await this.apiService.get<FindOneStudentResponse>(`${STUDENT_API.ROOT}/${id}`);
+
+    return data.student;
   }
 }

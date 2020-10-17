@@ -16,8 +16,8 @@ const Error403: NextPage = () => {
       title={title || '403'}
       subTitle={message || 'Xin lỗi, bạn không có quyền truy cập vào trang này.'}
       extra={
-        <Link href={COMMON_PATH.LOGIN}>
-          <Button type="primary">Quay lại đăng nhập</Button>
+        <Link href={COMMON_PATH.INDEX}>
+          <Button type="primary">Quay lại trang chủ</Button>
         </Link>
       }
     />

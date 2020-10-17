@@ -5,12 +5,7 @@ import useSWR from 'swr';
 import { COMMON_PATH, COOKIES } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { TokenResponse } from '../jwt/jwt.base';
-import {
-  FindUserByIdResponse,
-  LoginInputs,
-  Remember,
-  UseAuthorizationParams
-} from './user.interface';
+import { FindUserByIdResponse, LoginInputs, Remember } from './user.interface';
 import { IsAdmin, USER_API } from './user.resource';
 
 export default class UserService extends CommonService {
@@ -63,22 +58,15 @@ export default class UserService extends CommonService {
     await this.redirectService.redirectTo(COMMON_PATH.LOGIN);
   }
 
-  public async isAdminCheck(isAdmin: IsAdmin): Promise<void> {
-    if (isAdmin === IsAdmin.FALSE) {
-      await this.redirectService.redirectTo(COMMON_PATH.ERROR.ERR_403);
-    }
+  public isAdminCheck(isAdmin: IsAdmin): boolean {
+    return isAdmin === IsAdmin.TRUE;
   }
 
-  public async userTypeCheck(allowUserTypes, userType): Promise<void> {
-    if (allowUserTypes.indexOf(userType) === -1) {
-      await this.redirectService.redirectTo(COMMON_PATH.ERROR.ERR_403);
-    }
+  public isAllowUserType(allowUserTypes, userType): boolean {
+    return allowUserTypes.indexOf(userType) !== -1;
   }
 
-  public useAuthorization({
-    isAdminCheck,
-    allowUserTypes
-  }: UseAuthorizationParams): FindUserByIdResponse {
+  public useAuthorization(): FindUserByIdResponse {
     const userId = this.jwtService.accessTokenPayload.userId;
     const currentPath = this.redirectService.currentPath;
     const { data } = useSWR<FindUserByIdResponse>(`${USER_API.ROOT}/${userId}`, {
@@ -87,17 +75,6 @@ export default class UserService extends CommonService {
         this.redirectService.resetCurrentPathForClient();
         if (userId && currentPath === COMMON_PATH.LOGIN) {
           await this.redirectService.redirectTo(COMMON_PATH.INDEX);
-          return;
-        }
-
-        if (data) {
-          if (isAdminCheck) {
-            await this.isAdminCheck(data.user.isAdmin);
-          }
-
-          if (allowUserTypes) {
-            await this.userTypeCheck(allowUserTypes, data.user.isAdmin);
-          }
         }
       }
     });

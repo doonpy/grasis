@@ -1,10 +1,11 @@
-import { SmileOutlined } from '@ant-design/icons';
-import { BackTop, Layout, Result, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import { BackTop, Layout, Result } from 'antd';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { CSSProperties } from 'react';
 
 import { CommonPageProps } from '../../libs/common/common.interface';
+import { COMMON_PATH } from '../../libs/common/common.resource';
 import UserService from '../../libs/user/user.service';
 import { Breadcrumb } from '../Breadcrumb/Breadcrumb';
 import Copyright from '../Copyright/Copyright';
@@ -33,43 +34,56 @@ const styles: Record<string, CSSProperties> = {
 
 const MainLayout: React.FC<MainLayoutProps> = (props) => {
   const userClient = UserService.getInstance();
-  const data = userClient.useAuthorization({
-    allowUserTypes: props.allowUserTypes,
-    isAdminCheck: props.isAdminCheck
-  });
+  const data = userClient.useAuthorization();
+
+  const { isAdminCheck, allowUserTypes } = props;
+  if (data) {
+    if (isAdminCheck) {
+      if (!userClient.isAdminCheck(data.user.isAdmin)) {
+        userClient.redirectService.redirectTo(COMMON_PATH.ERROR.ERR_403);
+        return <div />;
+      }
+    }
+
+    if (allowUserTypes) {
+      if (!userClient.isAllowUserType(allowUserTypes, data.user.userType)) {
+        userClient.redirectService.redirectTo(COMMON_PATH.ERROR.ERR_403);
+        return <div />;
+      }
+    }
+  }
+
   const router = useRouter();
-  if (router.isFallback) {
-    return <Result icon={<SmileOutlined />} title="Đang tải dữ liệu..." />;
+  if (router.isFallback || !data) {
+    return <Result icon={<LoadingOutlined />} title="Đang tải dữ liệu..." />;
   }
 
   return (
-    <Spin spinning={!data} tip="Đang tải dữ liệu..." size="large">
-      <Layout>
-        <Head>
-          <title>{props.title}</title>
-        </Head>
-        <Sider
-          selectedMenu={props.selectedMenu}
-          isAdmin={data && data.user.isAdmin}
-          userType={data && data.user.userType}
-        />
-        <Layout style={styles.layout}>
-          <Header username={data && data.user.username} />
-          <Layout.Content style={styles.content}>
-            <Breadcrumb breadcrumbs={props.breadcrumbs} />
-            <div>
-              {props.children}
-              <BackTop>
-                <div style={styles.upButton}>UP</div>
-              </BackTop>
-            </div>
-          </Layout.Content>
-          <Layout.Footer style={styles.footer}>
-            <Copyright />
-          </Layout.Footer>
-        </Layout>
+    <Layout>
+      <Head>
+        <title>{props.title}</title>
+      </Head>
+      <Sider
+        selectedMenu={props.selectedMenu}
+        isAdmin={data && data.user.isAdmin}
+        userType={data && data.user.userType}
+      />
+      <Layout style={styles.layout}>
+        <Header username={data && data.user.username} />
+        <Layout.Content style={styles.content}>
+          <Breadcrumb breadcrumbs={props.breadcrumbs} />
+          <div>
+            {props.children}
+            <BackTop>
+              <div style={styles.upButton}>UP</div>
+            </BackTop>
+          </div>
+        </Layout.Content>
+        <Layout.Footer style={styles.footer}>
+          <Copyright />
+        </Layout.Footer>
       </Layout>
-    </Spin>
+    </Layout>
   );
 };
 

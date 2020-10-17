@@ -10,7 +10,7 @@ const prodConnectionOptions: ConnectionOptions = {
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../migration/**/*{.ts,.js}'],
   cli: {
-    migrationsDir: 'src/migration'
+    migrationsDir: 'dist/migration'
   },
   cache: true
 };

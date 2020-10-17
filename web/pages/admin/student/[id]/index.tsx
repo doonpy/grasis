@@ -1,9 +1,9 @@
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Modal, Row } from 'antd';
+import { Button, Card, Col, Modal, Row, Space } from 'antd';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
-import React, { CSSProperties } from 'react';
+import React from 'react';
 
 import AvatarView from '../../../../components/Avatar/AvatarView';
 import MainLayout from '../../../../components/Layout/MainLayout';
@@ -11,11 +11,12 @@ import StudentView from '../../../../components/Student/StudentView';
 import UserView from '../../../../components/User/UserView';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
+import AdminStudentService from '../../../../libs/student/admin/admin.student.service';
 import { StudentRequestBody } from '../../../../libs/student/student.interface';
 import { STUDENT_ADMIN_PATH_ROOT } from '../../../../libs/student/student.resource';
-import StudentService from '../../../../libs/student/student.service';
 import { UserType } from '../../../../libs/user/user.resource';
 const { confirm } = Modal;
+import styles from '../../../../assets/css/pages/admin/student/index.module.css';
 
 interface PageProps extends CommonPageProps {
   currentStudent: StudentRequestBody;
@@ -26,26 +27,10 @@ interface PageParams extends ParsedUrlQuery {
   id?: string;
 }
 
-const styles: Record<string, CSSProperties> = {
-  rowContentBox: {
-    paddingLeft: 10
-  },
-  colContentBox: {
-    marginLeft: 20
-  },
-  rowContentItem: {
-    margin: 20
-  },
-  controlButton: {
-    marginRight: 20
-  },
-  avatar: { textAlign: 'center' }
-};
-
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
-  const studentService = StudentService.getInstance();
+  const adminsStudentService = AdminStudentService.getInstance();
   const studentId = parseInt(params.id);
-  const { data, isLoading } = studentService.useStudent(studentId);
+  const { data, isLoading } = adminsStudentService.useStudent(studentId);
 
   const showDeleteConfirm = () => {
     confirm({
@@ -57,10 +42,10 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       cancelButtonProps: { type: 'primary', danger: true },
       async onOk() {
         try {
-          await studentService.deleteStudent(studentId);
-          await studentService.redirectService.redirectTo(STUDENT_ADMIN_PATH_ROOT);
+          await adminsStudentService.deleteStudent(studentId);
+          await adminsStudentService.redirectService.redirectTo(STUDENT_ADMIN_PATH_ROOT);
         } catch (error) {
-          await studentService.requestErrorHandler(error);
+          await adminsStudentService.requestErrorHandler(error);
         }
       }
     });
@@ -71,14 +56,13 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       title="Chi tiết sinh viên"
       loading={isLoading}
       extra={
-        <div>
+        <Space>
           <Link href={`${STUDENT_ADMIN_PATH_ROOT}/${studentId}/edit`}>
             <Button
               type="primary"
               shape="circle"
               icon={<EditOutlined />}
               size="large"
-              style={styles.controlButton}
               disabled={isLoading}
             />
           </Link>
@@ -88,14 +72,13 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
             shape="circle"
             icon={<DeleteOutlined />}
             size="large"
-            style={styles.controlButton}
             onClick={showDeleteConfirm}
             disabled={isLoading}
           />
-        </div>
+        </Space>
       }>
       <Row>
-        <Col span={4} style={styles.avatar}>
+        <Col span={4} className={styles.avatar}>
           <AvatarView userId={studentId} />
         </Col>
         <Col offset={1} span={9}>

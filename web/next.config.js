@@ -1,6 +1,5 @@
 const withPlugins = require('next-compose-plugins');
 const withImages = require('next-images');
-const withCSS = require('@zeit/next-css');
 const path = require('path');
 
 module.exports = withPlugins([
@@ -16,6 +15,5 @@ module.exports = withPlugins([
         return config;
       }
     })
-  ],
-  [withCSS]
+  ]
 ]);

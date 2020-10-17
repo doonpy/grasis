@@ -1,5 +1,4 @@
-import 'antd/dist/antd.css';
-import 'nprogress/nprogress.css';
+import '../assets/css/styles.css';
 
 import Router from 'next/router';
 import NProgress from 'nprogress';

@@ -9,7 +9,9 @@ import { runMigrations } from './mssql/mssql.helper';
 
 async function bootstrap() {
   if (isProductionMode()) {
+    console.log(chalk.yellow(`=> Run migrations...`));
     await runMigrations();
+    console.log(chalk.yellow(`=> Run migrations... Done!`));
   }
 
   const app = await NestFactory.create(AppModule);

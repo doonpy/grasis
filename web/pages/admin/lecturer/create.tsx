@@ -8,7 +8,7 @@ import LecturerFormItem from '../../../components/Lecturer/LecturerFormItem';
 import UserFormItem from '../../../components/User/UserFormItem';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../libs/common/common.resource';
-import { LecturerRequestBody } from '../../../libs/lecturer/lecturer.interface';
+import { StudentRequestBody } from '../../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../libs/lecturer/lecturer.resource';
 import LecturerService from '../../../libs/lecturer/lecturer.service';
 import { UserType } from '../../../libs/user/user.resource';
@@ -17,7 +17,7 @@ const Create: NextPageWithLayout = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmitButton = async (formValues: LecturerRequestBody) => {
+  const handleSubmitButton = async (formValues: StudentRequestBody) => {
     setLoading(true);
     const lecturerService = LecturerService.getInstance();
     try {

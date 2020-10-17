@@ -32,4 +32,4 @@ export interface CreateLecturerResponse extends CommonResponse {
 }
 
 export type LecturerViewType = Student & UserViewType;
-export type LecturerRequestBody = Partial<Omit<Student, keyof CommonColumns> & UserRequestBody>;
+export type StudentRequestBody = Partial<Omit<Student, keyof CommonColumns> & UserRequestBody>;
