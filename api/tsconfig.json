@@ -18,7 +18,8 @@
     "resolveJsonModule": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/orm-configs/**/*"
   ],
   "exclude": [
     "files"

@@ -1,0 +1,19 @@
+{
+  "type": "mssql",
+  "host": "127.0.0.1",
+  "port": 1433,
+  "username": "sa",
+  "password": "GrasisRoot13579@",
+  "database": "grasis",
+  "entities": [
+    "dist/**/*.entity.js"
+  ],
+  "migrations": [
+    "dist/migration/**/*.js"
+  ],
+  "cli": {
+    "migrationsDir": "src/migration"
+  },
+  "cache": true,
+  "logging": true
+}

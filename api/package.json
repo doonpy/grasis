@@ -20,11 +20,9 @@
     "install:dependencies": "npm i",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
     "typeorm:staging": "DB_TYPE=staging node --require ts-node/register ./node_modules/typeorm/cli.js",
-    "typeorm:migrate": "npm run typeorm -- migration:run",
-    "typeorm:revert": "npm run typeorm -- migration:revert",
-    "typeorm:sync-local": "npm run typeorm -- schema:sync -f src/orm-configs/local.ts",
-    "typeorm:sync-dev": "npm run typeorm -- schema:sync -f src/orm-configs/dev.ts",
-    "typeorm:sync-prod": "npm run typeorm -- schema:sync -f src/orm-configs/prod.ts"
+    "typeorm:sync-local": "npm run typeorm -- schema:sync -f src/orm-configs/local.json",
+    "typeorm:sync-dev": "npm run typeorm -- schema:sync -f src/orm-configs/dev.json",
+    "typeorm:sync-prod": "npm run typeorm -- schema:sync -f src/orm-configs/prod.json"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",

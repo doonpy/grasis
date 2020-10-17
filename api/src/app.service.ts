@@ -1,5 +1,8 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import chalk from 'chalk';
+import { Connection } from 'typeorm';
 
+import { isProductionMode } from './common/common.helper';
 import { LecturerService } from './lecturer/lecturer.service';
 import { UserRequestBody } from './user/user.interface';
 import { IsAdmin, UserType } from './user/user.resource';
@@ -9,7 +12,8 @@ import { UserService } from './user/user.service';
 export class AppService implements OnApplicationBootstrap {
   constructor(
     private readonly userService: UserService,
-    private readonly lecturerService: LecturerService
+    private readonly lecturerService: LecturerService,
+    private readonly connection: Connection
   ) {}
 
   getHello(): string {
@@ -17,6 +21,12 @@ export class AppService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap(): Promise<void> {
+    if (isProductionMode()) {
+      console.log(chalk.yellow(`=> Run migrations...`));
+      await this.connection.runMigrations({ transaction: 'all' });
+      console.log(chalk.yellow(`=> Run migrations... Done!`));
+    }
+
     if (!(await this.userService.isUserExistById(1))) {
       const user: Partial<UserRequestBody & { id: number }> = {
         id: 1,
