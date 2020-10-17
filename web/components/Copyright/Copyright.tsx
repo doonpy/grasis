@@ -1,14 +1,10 @@
-import React, { CSSProperties } from 'react';
+import { Typography } from 'antd';
+import React from 'react';
 
-const styles: Record<string, CSSProperties> = {
-  copyright: {
-    width: '100%',
-    textAlign: 'center'
-  }
-};
+import styles from '../../assets/css/components/copyright/copyright.module.css';
 
 const Copyright: React.FC = () => (
-  <div style={styles.copyright}>
+  <Typography.Text className={styles.copyright}>
     {'Copyright © '}
     {/* eslint-disable-next-line react/jsx-no-target-blank */}
     <a href="https://github.com/doonpy" target={'_blank'}>
@@ -16,7 +12,7 @@ const Copyright: React.FC = () => (
     </a>{' '}
     {new Date().getFullYear()}
     {' - HCMUTE'}
-  </div>
+  </Typography.Text>
 );
 
 export default Copyright;
