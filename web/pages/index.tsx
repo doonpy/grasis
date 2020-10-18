@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import CommonRedirect, { RenderSide } from '../libs/common/common.redirect';
+import { COMMON_PATH } from '../libs/common/common.resource';
+import CommonService from '../libs/common/common.service';
 
-class Index extends React.Component {
-  async componentDidMount() {
-    const commonRedirect = new CommonRedirect(RenderSide.CLIENT);
-    await commonRedirect.redirectTo('/graduation-thesis');
-  }
-
-  render() {
-    return <div />;
-  }
-}
+const Index: React.FC = () => {
+  const commonService = new CommonService();
+  useEffect(() => {
+    (async () => {
+      if (!Number.isNaN(commonService.jwtService.accessTokenPayload.userId)) {
+        await commonService.redirectService.redirectTo('/graduation-thesis');
+      } else {
+        await commonService.redirectService.redirectTo(COMMON_PATH.LOGIN);
+      }
+    })();
+  });
+  return <div />;
+};
 
 export default Index;
