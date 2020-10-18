@@ -248,6 +248,7 @@ export class UserService {
   }
 
   public filterNullProperties({
+    username,
     password,
     firstname,
     lastname,
@@ -260,6 +261,10 @@ export class UserService {
     isAdmin
   }: UserRequestBody): UserRequestBody {
     const result: UserRequestBody = {};
+    if (typeof username !== 'undefined' && username !== null) {
+      result.username = username;
+    }
+
     if (typeof password !== 'undefined' && password !== null) {
       result.password = password;
     }

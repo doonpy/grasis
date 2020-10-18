@@ -13,14 +13,11 @@
     "sourceMap": true,
     "outDir": "./dist",
     "sourceRoot": "./src",
-    "baseUrl": "./",
     "incremental": true,
     "resolveJsonModule": true
   },
   "include": [
-    "src/**/*",
-    "src/orm-configs/**/*"
-  ],
+    "./src/**/*"],
   "exclude": [
     "files",
     "node_modules"
