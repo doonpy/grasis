@@ -17,7 +17,7 @@ export default class CommonService {
     this.redirectService = new CommonRedirect(RenderSide.CLIENT);
   }
 
-  public async requestErrorHandler(error): Promise<void> {
+  public async requestErrorHandler(error: any): Promise<void> {
     if (error.response) {
       const { data } = error.response;
       if (
@@ -25,7 +25,7 @@ export default class CommonService {
         this.redirectService.currentPath !== COMMON_PATH.LOGIN
       ) {
         this.jwtService.deleteAllToken();
-        message.loading(`[${data.statusCode}] ${data.message}`, 2.5).then(
+        message.error(`[${data.statusCode}] ${data.message}`, 2.5).then(
           async () => await this.redirectService.redirectTo(COMMON_PATH.LOGIN),
           () => undefined
         );
