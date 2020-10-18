@@ -26,6 +26,9 @@ module.exports = withPlugins(
       // your project has type errors.
       // !! WARN !!
       ignoreBuildErrors: true
+    },
+    env: {
+      NEXT_PUBLIC_HEROKU_PR_NUMBER: process.env.HEROKU_PR_NUMBER
     }
   }
 );

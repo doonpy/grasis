@@ -120,14 +120,4 @@ jobs:
 #                  web/package*
 #                  web/next.config.js
 #                  web/.env.local
-#
-            - name: Prune development dependencies
-              run: cd api && npm prune --production
 
-            - name: Deploy to Azure Web App
-              uses: azure/webapps-deploy@v2
-              with:
-                app-name: grasis
-                slot-name: production
-                publish-profile: ${{ secrets.AZURE_PUBLIC_SETTINGS }}
-                package: api

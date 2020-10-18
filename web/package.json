@@ -2,10 +2,14 @@
   "name": "grasis-web",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": "12.x",
+    "npm": "6.x"
+  },
   "scripts": {
     "start:dev": "NODE_OPTIONS=--max_old_space_size=4096 next dev -p 3001",
-    "build": "next build .",
-    "start:prod": "next start -p 3001",
+    "build": "next build",
+    "start:prod": "next start -p $PORT",
     "install:dependencies": "npm i",
     "test": "",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && rm -rf .next/ && npm install && npm run dev",

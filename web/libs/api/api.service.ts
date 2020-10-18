@@ -1,20 +1,27 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import JwtClient from '../jwt/jwt.client';
-import JwtServer from '../jwt/jwt.server';
 
 export default class ApiService {
   private baseConfigs: AxiosRequestConfig;
 
   constructor() {
     this.baseConfigs = {
-      baseURL: process.env.NEXT_PUBLIC_API_SERVER,
+      baseURL: this.getBaseUrl(),
       timeout: 10000,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json'
       }
     };
+  }
+
+  private getBaseUrl(): string {
+    if (process.env.NEXT_PUBLIC_HEROKU_PR_NUMBER) {
+      return `https://grasis-api-pr-${process.env.NEXT_PUBLIC_HEROKU_PR_NUMBER}.herokuapp.com`;
+    }
+
+    return process.env.NEXT_PUBLIC_API_SERVER;
   }
 
   public setConfigs(configs: AxiosRequestConfig): void {
@@ -25,12 +32,6 @@ export default class ApiService {
     const jwtClient = JwtClient.getInstance();
     await jwtClient.checkTokenExpire();
     this.setConfigs({ headers: { Authorization: jwtClient.getAccessTokenForAuth() } });
-  }
-
-  public async bindAuthorizationForServer(ctx): Promise<void> {
-    const jwtServer = new JwtServer(ctx);
-    await jwtServer.checkTokenExpire();
-    this.setConfigs({ headers: { Authorization: jwtServer.getAccessTokenForAuth() } });
   }
 
   public async delete<T = Record<string, any>>(url: string): Promise<AxiosResponse<T>> {
