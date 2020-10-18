@@ -17,7 +17,7 @@ function getUsernameRules(isEdit: boolean) {
     : [
         {
           required: true,
-          message: 'Vui lòng nhập tên người dùng!'
+          message: 'Vui lòng nhập tên đăng nhập!'
         }
       ];
 }
@@ -47,7 +47,7 @@ function getConfirmPasswordRules(isEdit: boolean) {
 const UserFormItem: React.FC<ComponentProps> = ({ isEdit }) => {
   return (
     <div>
-      <Form.Item required name="username" label="Tên người dùng" rules={getUsernameRules(isEdit)}>
+      <Form.Item required name="username" label="Tên đăng nhập" rules={getUsernameRules(isEdit)}>
         <Input name="username" />
       </Form.Item>
       <Form.Item required name="password" label="Mật khẩu" rules={getPasswordRules(isEdit)}>

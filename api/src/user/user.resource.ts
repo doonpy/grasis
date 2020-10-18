@@ -34,7 +34,7 @@ export const USER_CONTROLLER_RESOURCE = {
 
 export const USER_ERROR_RESOURCE = {
   USER_ERR_1: 'Người dùng không tồn tại.',
-  USER_ERR_2: 'Tên người dùng đã tồn tại.',
+  USER_ERR_2: 'Tên đăng nhập đã tồn tại.',
   USER_ERR_3: 'Mật khẩu xác nhận không chính xác.',
   USER_ERR_4: 'Mật khẩu không hợp lệ.',
   USER_ERR_5: 'Bạn không có quyền thực hiện tác vụ này.',

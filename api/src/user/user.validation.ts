@@ -5,7 +5,7 @@ import { UserRequestBody, UserRequestBodyForUser } from './user.interface';
 export const userUpdateValidationSchema = Joi.object<UserRequestBody>({
   username: Joi.string()
     .max(50)
-    .message('Tên người dùng có độ dài không đúng quy định (tối đa 50 kí tự).'),
+    .message('Tên đăng nhập có độ dài không đúng quy định (tối đa 50 kí tự).'),
   password: Joi.string()
     .allow(null)
     .max(50)
@@ -66,7 +66,7 @@ export const userUpdateValidationSchema = Joi.object<UserRequestBody>({
 export const userCreateValidationSchema = userUpdateValidationSchema.concat(
   Joi.object<UserRequestBody>({
     username: Joi.required().messages({
-      'any.required': 'Tên người dùng là thông tin bắt buộc.'
+      'any.required': 'Tên đăng nhập là thông tin bắt buộc.'
     }),
     password: Joi.required().messages({
       'any.required': 'Mật khẩu là thông tin bắt buộc.'
