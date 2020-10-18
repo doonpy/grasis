@@ -78,7 +78,4 @@ export class UserEntity extends CommonEntity {
     nullable: true
   })
   userType!: number;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  refreshToken!: string;
 }

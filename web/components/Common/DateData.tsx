@@ -11,15 +11,20 @@ interface ComponentProps {
 }
 
 const DateData: React.FC<ComponentProps> = ({ date, isRelative }) => {
+  const UTC_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+  const LOCAL_FORMAT = 'LTS, L';
   moment.updateLocale('vi', localization);
-  const convertDate = moment(date).format('LTS, L');
+  const utcDate = moment(date).format(UTC_FORMAT);
+  const convertDate = moment.utc(utcDate).local().format(LOCAL_FORMAT);
+  const utcRelativeDate = moment(date).format(UTC_FORMAT);
+  const convertRelativeDate = moment.utc(utcRelativeDate).local().fromNow();
 
   return (
     <Typography.Text disabled={!date}>
-      {convertDate ?? 'NULL'}&nbsp;
+      {convertDate}&nbsp;
       {isRelative && (
         <Typography.Text type="secondary">
-          <i>{moment(date).fromNow()}</i>
+          <i>{`(${convertRelativeDate})`}</i>
         </Typography.Text>
       )}
     </Typography.Text>

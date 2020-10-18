@@ -89,10 +89,10 @@ const Login: NextPage = () => {
             </Space>
             <Form.Item
               name="username"
-              rules={[{ required: true, message: 'Vui lòng nhập tên người dùng!' }]}>
+              rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}>
               <Input
                 prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="Tên người dùng"
+                placeholder="Tên đăng nhập"
               />
             </Form.Item>
             <Form.Item

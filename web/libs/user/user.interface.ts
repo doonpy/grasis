@@ -14,7 +14,6 @@ export interface User {
   status: UserStatus;
   isAdmin: IsAdmin;
   userType: UserType;
-  refreshToken: string | null;
   deletedAt: string | null;
 }
 
@@ -22,7 +21,7 @@ export interface UserRequestBody extends Partial<Omit<User, 'id'>> {
   confirmPassword?: string;
 }
 
-export type UserViewType = Omit<User, 'password' | 'refreshToken' | 'deletedAt' | 'userType'>;
+export type UserViewType = Omit<User, 'password' | 'deletedAt' | 'userType'>;
 export interface FindUserByIdResponse extends CommonResponse {
   user: User;
 }

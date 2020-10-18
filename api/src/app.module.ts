@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import ExpressUserAgent from 'express-useragent';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AvatarModule } from './avatar/avatar.module';
-import { DatabaseType, EnvFileName } from './common/common.resource';
+import { COMMON_PATH, DatabaseType, EnvFileName } from './common/common.resource';
 import { LecturerModule } from './lecturer/lecturer.module';
 import { getDatabaseConfig } from './mssql/mssql.helper';
 import { RefreshModule } from './refresh/refresh.module';
@@ -46,4 +47,13 @@ function getEnvFilePath(): string {
   controllers: [AppController],
   providers: [AppService]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer
+      .apply(ExpressUserAgent.express())
+      .forRoutes(
+        { path: COMMON_PATH.LOGIN, method: RequestMethod.POST },
+        { path: COMMON_PATH.REFRESH_TOKEN, method: RequestMethod.POST }
+      );
+  }
+}

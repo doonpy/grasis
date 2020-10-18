@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class LocalAuthGuard extends AuthGuard('local') {
   public handleRequest(error: Error | any, userId: number): number | any {
     if (error || !userId) {
-      throw error || new UnauthorizedException('Tài khoản hoặc mật khẩu không chính xác.');
+      throw error || new UnauthorizedException();
     }
 
     return userId;

@@ -54,7 +54,7 @@ function sortByStatus(a: User, b: User): number {
 
 export const USER_COLUMNS = [
   {
-    title: 'Tên người dùng',
+    title: 'Tên đăng nhập',
     dataIndex: 'username',
     key: 'username',
     sorter: {

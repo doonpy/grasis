@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Modal, Row, Space } from 'antd';
+import { Button, Card, Modal, Space } from 'antd';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
@@ -77,17 +77,13 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
           />
         </Space>
       }>
-      <Row>
-        <Col span={4} className={styles.avatar}>
+      <Space size={48} align={'start'}>
+        <div className={styles.avatar}>
           <AvatarView userId={studentId} />
-        </Col>
-        <Col offset={1} span={9}>
-          <UserView user={data && data.student} />
-        </Col>
-        <Col offset={1} span={9}>
-          <StudentView student={data && data.student} />
-        </Col>
-      </Row>
+        </div>
+        <UserView user={data && data.student} />
+        <StudentView student={data && data.student} />
+      </Space>
     </Card>
   );
 };

@@ -26,7 +26,7 @@ const UserView: React.FC<ComponentProps> = ({
           <Col>
             <Space direction="vertical" size="middle">
               <Typography.Text strong type="secondary">
-                Tên người dùng
+                Tên đăng nhập
               </Typography.Text>
               <Typography.Text strong type="secondary">
                 Họ và tên đệm

@@ -15,18 +15,17 @@ export interface User {
   status: UserStatus;
   isAdmin: IsAdmin;
   userType: UserType;
-  refreshToken: string | null;
   deletedAt: string | null;
 }
 
-export interface UserRequestBody extends Partial<Omit<User, 'id' | 'deletedAt' | 'refreshToken'>> {
+export interface UserRequestBody extends Partial<Omit<User, 'id' | 'deletedAt'>> {
   confirmPassword?: string;
 }
 
-export type UserView = Omit<User, 'password' | 'refreshToken'>;
+export type UserView = Omit<User, 'password'>;
 export type UserAuth = Omit<
   User,
-  'firstname' | 'lastname' | 'gender' | 'email' | 'address' | 'phone' | 'userType' | 'refreshToken'
+  'firstname' | 'lastname' | 'gender' | 'email' | 'address' | 'phone' | 'userType'
 >;
 
 export interface SplitUserFromRequestBody {

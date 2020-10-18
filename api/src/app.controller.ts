@@ -8,10 +8,12 @@ import {
   Request,
   UseGuards
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express-serve-static-core';
 
 import { AppService } from './app.service';
 import { AuthService, JwtToken } from './auth/auth.service';
 import { LocalAuthGuard } from './auth/guards/local-auth.guard';
+import { COMMON_PATH } from './common/common.resource';
 import { RefreshService } from './refresh/refresh.service';
 
 @Controller()
@@ -28,20 +30,19 @@ export class AppController {
   }
 
   @UseGuards(LocalAuthGuard)
-  @Post('/login')
+  @Post(COMMON_PATH.LOGIN)
   @HttpCode(HttpStatus.OK)
-  public async login(@Request() req: Express.Request): Promise<JwtToken> {
-    return this.authService.login(req.user as number);
+  public async login(@Request() req: ExpressRequest): Promise<JwtToken> {
+    return this.authService.login(req.user as number, req.useragent);
   }
 
-  @Post('/refresh')
+  @Post(COMMON_PATH.REFRESH_TOKEN)
   @HttpCode(HttpStatus.OK)
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public async refresh(@Req() req: any): Promise<JwtToken> {
-    const oldRefreshToken: string = req.headers['refresh'];
-    await this.refreshService.validateRefreshToken(oldRefreshToken);
-    const { userId } = await this.refreshService.getPayloadFromRefreshToken(oldRefreshToken);
+  public async refresh(@Req() req: ExpressRequest): Promise<JwtToken> {
+    const refreshToken = req.headers['refresh'] as string;
+    await this.refreshService.validateRefreshToken(refreshToken);
+    const { userId } = await this.refreshService.getPayloadFromRefreshToken(refreshToken);
 
-    return this.authService.login(userId);
+    return this.authService.login(userId, req.useragent);
   }
 }

@@ -33,3 +33,8 @@ export const CORS_OPTIONS: CorsOptions = {
   origin: /https:\/\/grasis-web.*\.vercel\.app/,
   optionsSuccessStatus: 200
 };
+
+export const COMMON_PATH = {
+  LOGIN: '/login',
+  REFRESH_TOKEN: '/refresh'
+};

@@ -51,7 +51,7 @@ const StudentView: React.FC<ComponentProps> = ({
               <TextData text={studentClass} />
               <StudentIsGraduate isGraduate={isGraduate} />
               <DateData date={createdAt} />
-              <DateData date={updatedAt} />
+              <DateData date={updatedAt} isRelative={true} />
             </Space>
           </Col>
         </Space>

@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { UserModule } from '../user/user.module';
+import { RefreshEntity } from './refresh.entity';
+import { REFRESH_EXPIRE_TIME } from './refresh.resource';
 import { RefreshService } from './refresh.service';
 
 @Module({
@@ -9,10 +11,10 @@ import { RefreshService } from './refresh.service';
     JwtModule.registerAsync({
       useFactory: (): JwtModuleOptions => ({
         secret: process.env.REFRESH_SECRET,
-        signOptions: { expiresIn: '1d' }
+        signOptions: { expiresIn: REFRESH_EXPIRE_TIME }
       })
     }),
-    UserModule
+    TypeOrmModule.forFeature([RefreshEntity])
   ],
   providers: [RefreshService],
   exports: [RefreshService]
