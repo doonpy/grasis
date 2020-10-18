@@ -4,6 +4,7 @@ import { createHmac } from 'crypto';
 import { EntityManager, Repository } from 'typeorm';
 
 import { LecturerRequestBody } from '../lecturer/lecturer.interface';
+import { RefreshService } from '../refresh/refresh.service';
 import { StudentRequestBody } from '../student/student.interface';
 import { UserEntity } from './user.entity';
 import {
@@ -19,7 +20,8 @@ import { IsAdmin, USER_ERROR_RESOURCE, UserType } from './user.resource';
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    private usersRepository: Repository<User>
+    private readonly usersRepository: Repository<User>,
+    private readonly refreshService: RefreshService
   ) {}
 
   public async findById(id: number): Promise<User> {
@@ -137,7 +139,7 @@ export class UserService {
     if (isAdmin) {
       throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_6);
     }
-
+    await this.refreshService.deleteByUserIdTransaction(manager, id);
     await manager.softDelete<User>(UserEntity, id);
   }
 
@@ -199,13 +201,9 @@ export class UserService {
     return (await this.usersRepository.count({ where: { id, refreshToken } })) > 0;
   }
 
-  public async updateRefreshToken(id: number, refreshToken: string): Promise<void> {
-    await this.usersRepository.update(id, { refreshToken });
-  }
-
   public convertToView(user: User): UserView {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, refreshToken, ...result } = user;
+    const { password, ...result } = user;
 
     return result;
   }
