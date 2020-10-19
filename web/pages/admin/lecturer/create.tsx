@@ -42,7 +42,7 @@ const Create: NextPageWithLayout = () => {
         onFinish={handleSubmitButton}>
         <Row>
           <Col span={12}>
-            <UserFormItem isEdit={false} />
+            <UserFormItem isEdit={false} userType={UserType.LECTURER} />
           </Col>
           <Col span={12}>
             <LecturerFormItem />

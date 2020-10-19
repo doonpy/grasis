@@ -81,7 +81,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
         <div className={styles.avatar}>
           <AvatarView userId={studentId} />
         </div>
-        <UserView user={data && data.student} />
+        <UserView user={data && data.student} userType={UserType.STUDENT} />
         <StudentView student={data && data.student} />
       </Space>
     </Card>

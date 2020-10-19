@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 
+import styles from '../../../../assets/css/pages/admin/lecturer/index.module.css';
 import AvatarView from '../../../../components/Avatar/AvatarView';
 import MainLayout from '../../../../components/Layout/MainLayout';
 import LecturerView from '../../../../components/Lecturer/LecturerView';
@@ -15,8 +16,8 @@ import AdminLecturerService from '../../../../libs/lecturer/admin/admin.lecturer
 import { StudentRequestBody } from '../../../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
 import { UserType } from '../../../../libs/user/user.resource';
+
 const { confirm } = Modal;
-import styles from '../../../../assets/css/pages/admin/lecturer/index.module.css';
 
 interface PageProps extends CommonPageProps {
   currentLecturer: StudentRequestBody;
@@ -81,7 +82,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
         <div className={styles.avatar}>
           <AvatarView userId={lecturerId} />
         </div>
-        <UserView user={data && data.lecturer} />
+        <UserView user={data && data.lecturer} userType={UserType.LECTURER} />
         <LecturerView lecturer={data && data.lecturer} />
       </Space>
     </Card>

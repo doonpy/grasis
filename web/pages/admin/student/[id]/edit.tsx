@@ -65,7 +65,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
         onFinish={handleSubmitButton}>
         <Row>
           <Col span={12}>
-            <UserFormItem isEdit={true} />
+            <UserFormItem isEdit={true} userType={UserType.STUDENT} />
           </Col>
           <Col span={12}>
             <StudentFormItem />

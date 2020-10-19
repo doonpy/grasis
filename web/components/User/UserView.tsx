@@ -3,17 +3,20 @@ import { Col, Row, Space, Typography } from 'antd';
 import React from 'react';
 
 import { UserViewType } from '../../libs/user/user.interface';
+import { UserType } from '../../libs/user/user.resource';
 import TextData from '../Common/TextData';
 import UserGenderRender from './UserGenderRender';
 import UserIsAdminRender from './UserIsAdmin';
 import UserStatusRender from './UserStatusRender';
 
 interface ComponentProps {
-  user?: UserViewType;
+  user: UserViewType;
+  userType: UserType;
 }
 
 const UserView: React.FC<ComponentProps> = ({
-  user: { username, firstname, lastname, gender, email, address, phone, status, isAdmin }
+  user: { username, firstname, lastname, gender, email, address, phone, status, isAdmin },
+  userType
 }) => {
   return (
     <Space direction="vertical">
@@ -49,9 +52,11 @@ const UserView: React.FC<ComponentProps> = ({
               <Typography.Text strong type="secondary">
                 Trạng thái
               </Typography.Text>
-              <Typography.Text strong type="secondary">
-                Quản trị viên
-              </Typography.Text>
+              {userType === UserType.LECTURER && (
+                <Typography.Text strong type="secondary">
+                  Quản trị viên
+                </Typography.Text>
+              )}
             </Space>
           </Col>
           <Col>
@@ -64,7 +69,7 @@ const UserView: React.FC<ComponentProps> = ({
               <TextData text={address} />
               <TextData text={phone} />
               <UserStatusRender status={status} />
-              <UserIsAdminRender isAdmin={isAdmin} />
+              {userType === UserType.LECTURER && <UserIsAdminRender isAdmin={isAdmin} />}
             </Space>
           </Col>
         </Space>
