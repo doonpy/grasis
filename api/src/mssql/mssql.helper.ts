@@ -26,6 +26,9 @@ export function getDatabaseConfig(): TypeOrmModuleOptions & ConnectionOptions {
     logging: !isProductionMode(),
     synchronize: !isProductionMode(),
     autoLoadEntities: true,
-    keepConnectionAlive: true
+    keepConnectionAlive: true,
+    options: {
+      useUTC: true
+    }
   };
 }

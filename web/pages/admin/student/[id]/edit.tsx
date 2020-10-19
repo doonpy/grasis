@@ -26,19 +26,20 @@ interface PageParams extends ParsedUrlQuery {
 const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const router = useRouter();
   const adminStudentService = AdminStudentService.getInstance();
-  const [loading, setLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [contentLoading, setContentLoading] = useState(true);
   const studentId: number = parseInt(router.query.id as string);
   const [form] = Form.useForm();
 
   const handleSubmitButton = async (formValues: StudentRequestBody) => {
-    setLoading(true);
+    setSubmitLoading(true);
     try {
       await adminStudentService.updateById(studentId, formValues);
       await router.push(`${STUDENT_ADMIN_PATH_ROOT}/${studentId}`);
     } catch (error) {
       await adminStudentService.requestErrorHandler(error);
     }
-    setLoading(false);
+    setSubmitLoading(false);
   };
 
   useEffect(() => {
@@ -46,6 +47,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
       let currentStudent: StudentRequestBody = null;
       try {
         currentStudent = await adminStudentService.getInitialForEdit(params.id);
+        setContentLoading(false);
       } catch (error) {
         await adminStudentService.requestErrorHandler(error);
         return;
@@ -55,7 +57,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   }, [params]);
 
   return (
-    <Card title="Sửa thông tin sinh viên">
+    <Card title="Sửa thông tin sinh viên" loading={contentLoading}>
       <Form
         form={form}
         requiredMark={true}
@@ -76,10 +78,15 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
                   type="primary"
                   size="large"
                   style={{ marginRight: 30 }}
-                  loading={loading}>
+                  loading={submitLoading}>
                   Xác nhận
                 </Button>
-                <Button type="primary" danger size="large" onClick={router.back} disabled={loading}>
+                <Button
+                  type="primary"
+                  danger
+                  size="large"
+                  onClick={router.back}
+                  disabled={submitLoading}>
                   Hủy
                 </Button>
               </Col>
