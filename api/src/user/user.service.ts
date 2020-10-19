@@ -139,10 +139,6 @@ export class UserService {
   }
 
   public async deleteByIdTransaction(manager: EntityManager, id: number): Promise<void> {
-    const isAdmin = await this.isUserIsAdminByIdTransaction(manager, id);
-    if (isAdmin) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_6);
-    }
     await this.refreshService.deleteByUserIdTransaction(manager, id);
     await manager.softDelete<User>(UserEntity, id);
   }
@@ -299,10 +295,6 @@ export class UserService {
     }
 
     return result;
-  }
-
-  public async isUserIsAdminByIdTransaction(manager: EntityManager, id: number): Promise<boolean> {
-    return (await manager.count(UserEntity, { where: { id, isAdmin: IsAdmin.TRUE } })) > 0;
   }
 
   private checkStudentCantNotAdministrator(isAdmin?: IsAdmin, userType?: UserType): void {

@@ -30,6 +30,7 @@ interface PageParams extends ParsedUrlQuery {
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const adminLecturerService = AdminLecturerService.getInstance();
+  const loginUserId = adminLecturerService.jwtService.accessTokenPayload.userId;
   const lecturerId = parseInt(params.id);
   const { data, isLoading } = adminLecturerService.useLecturer(lecturerId, true);
 
@@ -74,7 +75,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
             icon={<DeleteOutlined />}
             size="large"
             onClick={showDeleteConfirm}
-            disabled={isLoading}
+            disabled={isLoading || lecturerId === loginUserId}
           />
         </Space>
       }>
