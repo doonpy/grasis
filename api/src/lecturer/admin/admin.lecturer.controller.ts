@@ -24,6 +24,7 @@ import {
 } from '../../common/common.validation';
 import { AdminGuard } from '../../common/guard/admin.guard';
 import { JoiValidationPipe } from '../../common/pipe/joi-validation.pipe';
+import { ParseUserRequestBodyPipe } from '../../user/pipe/parse-user-request-body.pipe';
 import {
   LecturerCreateOrUpdateResponse,
   LecturerFindAllResponse,
@@ -89,7 +90,7 @@ export class AdminLecturerController {
   }
 
   @Post()
-  @UsePipes(new JoiValidationPipe(lecturerCreateValidationSchema))
+  @UsePipes(new JoiValidationPipe(lecturerCreateValidationSchema), new ParseUserRequestBodyPipe())
   public async create(@Body() body: LecturerRequestBody): Promise<LecturerCreateOrUpdateResponse> {
     const createdLecturer: LecturerView = await this.lecturerService.create(body);
 
@@ -108,7 +109,8 @@ export class AdminLecturerController {
       ParseIntPipe
     )
     id: number,
-    @Body(new JoiValidationPipe(lecturerUpdateValidationSchema)) body: LecturerRequestBody
+    @Body(new JoiValidationPipe(lecturerUpdateValidationSchema), new ParseUserRequestBodyPipe())
+    body: LecturerRequestBody
   ): Promise<LecturerCreateOrUpdateResponse> {
     await this.lecturerService.updateById(id, body);
 

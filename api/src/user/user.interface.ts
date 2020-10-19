@@ -22,6 +22,8 @@ export interface UserRequestBody extends Partial<Omit<User, 'id' | 'deletedAt'>>
   confirmPassword?: string;
 }
 
+export type RawUserRequestBody = { [K in keyof UserRequestBody]?: string | null };
+
 export type UserView = Omit<User, 'password'>;
 export type UserAuth = Omit<
   User,

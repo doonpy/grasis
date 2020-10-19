@@ -104,7 +104,9 @@ export class UserService {
     manager: EntityManager,
     user: Partial<UserRequestBody>
   ): Promise<User> {
-    const { username, password, confirmPassword } = user;
+    const { username, password, confirmPassword, userType, isAdmin } = user;
+    this.checkStudentCantNotAdministrator(isAdmin, userType);
+
     await this.checkUserNotExistByUsernameTransaction(manager, username!);
     this.checkPasswordConfirm(password, confirmPassword);
     user.password = this.hashPassword(password, username!);
@@ -118,7 +120,9 @@ export class UserService {
     id: number,
     user: Partial<UserRequestBody>
   ): Promise<void> {
-    const { username, password, confirmPassword } = user;
+    const { username, password, confirmPassword, userType, isAdmin } = user;
+    this.checkStudentCantNotAdministrator(isAdmin, userType);
+
     const currentUser = await this.findByIdTransaction(manager, id);
 
     if (username && username !== currentUser.username) {
@@ -299,5 +303,16 @@ export class UserService {
 
   public async isUserIsAdminByIdTransaction(manager: EntityManager, id: number): Promise<boolean> {
     return (await manager.count(UserEntity, { where: { id, isAdmin: IsAdmin.TRUE } })) > 0;
+  }
+
+  private checkStudentCantNotAdministrator(isAdmin?: IsAdmin, userType?: UserType): void {
+    if (
+      typeof userType !== 'undefined' &&
+      typeof isAdmin !== 'undefined' &&
+      userType === UserType.STUDENT &&
+      isAdmin === IsAdmin.TRUE
+    ) {
+      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_7);
+    }
   }
 }
