@@ -20,6 +20,10 @@ interface MainLayoutProps extends CommonPageProps {
 const MainLayout: React.FC<MainLayoutProps> = (props) => {
   const userClient = UserService.getInstance();
   const data = userClient.useAuthorization();
+  const router = useRouter();
+  if (router.isFallback || !data) {
+    return <Result icon={<LoadingOutlined />} title="Đang tải dữ liệu..." />;
+  }
 
   const { isAdminCheck, allowUserTypes } = props;
   if (data) {
@@ -38,15 +42,10 @@ const MainLayout: React.FC<MainLayoutProps> = (props) => {
     }
   }
 
-  const router = useRouter();
-  if (router.isFallback || !data) {
-    return <Result icon={<LoadingOutlined />} title="Đang tải dữ liệu..." />;
-  }
-
   return (
     <Layout>
       <Head>
-        <title>{props.title}</title>
+        <title>{props.title} - Grasis</title>
       </Head>
       <Sider
         selectedMenu={props.selectedMenu}

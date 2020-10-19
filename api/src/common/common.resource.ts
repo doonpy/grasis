@@ -30,7 +30,8 @@ export enum EnvFileName {
 }
 
 export const CORS_OPTIONS: CorsOptions = {
-  origin: /https:\/\/grasis-web.*\.vercel\.app/,
+  // origin: /https:\/\/grasis-web.*\.vercel\.app/,
+  origin: '*',
   optionsSuccessStatus: 200
 };
 
