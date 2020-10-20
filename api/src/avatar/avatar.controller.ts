@@ -2,7 +2,7 @@ import { Controller, Get, Param, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 import { commonIdValidateSchema } from '../common/common.validation';
-import { JoiValidationPipe } from '../common/pipe/joi-validation.pipe';
+import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { UserService } from '../user/user.service';
 import { AVATAR_CONTROLLER_RESOURCE, AVATAR_DIRECTORY } from './avatar.resource';
 import { AvatarService } from './avatar.service';

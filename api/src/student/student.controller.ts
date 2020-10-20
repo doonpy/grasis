@@ -18,10 +18,10 @@ import {
   commonLimitValidateSchema,
   commonOffsetValidateSchema
 } from '../common/common.validation';
-import { UserTypes } from '../common/decorator/user-type.decorator';
-import { UserPermissionGuard } from '../common/guard/user-permission.guard';
-import { UserTypeGuard } from '../common/guard/user-type.guard';
-import { JoiValidationPipe } from '../common/pipe/joi-validation.pipe';
+import { UserTypes } from '../common/decorators/user-type.decorator';
+import { UserPermissionGuard } from '../common/guards/user-permission.guard';
+import { UserTypeGuard } from '../common/guards/user-type.guard';
+import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { UserType } from '../user/user.resource';
 import {
   StudentCreateOrUpdateResponse,

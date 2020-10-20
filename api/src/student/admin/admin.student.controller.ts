@@ -22,10 +22,10 @@ import {
   commonLimitValidateSchema,
   commonOffsetValidateSchema
 } from '../../common/common.validation';
-import { AdminGuard } from '../../common/guard/admin.guard';
-import { JoiValidationPipe } from '../../common/pipe/joi-validation.pipe';
-import { DeleteUserGuard } from '../../user/guard/delete-user.guard';
-import { ParseUserRequestBodyPipe } from '../../user/pipe/parse-user-request-body.pipe';
+import { AdminGuard } from '../../common/guards/admin.guard';
+import { JoiValidationPipe } from '../../common/pipes/joi-validation.pipe';
+import { DeleteUserGuard } from '../../user/guards/delete-user.guard';
+import { ParseUserRequestBodyPipe } from '../../user/pipes/parse-user-request-body.pipe';
 import {
   StudentCreateOrUpdateResponse,
   StudentFindAllResponse,
