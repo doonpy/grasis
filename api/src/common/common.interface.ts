@@ -15,4 +15,5 @@ export interface CommonRequest extends Express.Request {
   params?: {
     id?: string;
   };
+  body?: Record<string, string>;
 }

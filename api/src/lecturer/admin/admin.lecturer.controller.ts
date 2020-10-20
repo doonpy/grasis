@@ -25,6 +25,7 @@ import {
 import { AdminGuard } from '../../common/guard/admin.guard';
 import { JoiValidationPipe } from '../../common/pipe/joi-validation.pipe';
 import { DeleteUserGuard } from '../../user/guard/delete-user.guard';
+import { UpdateUserGuard } from '../../user/guard/update-user.guard';
 import { ParseUserRequestBodyPipe } from '../../user/pipe/parse-user-request-body.pipe';
 import {
   LecturerCreateOrUpdateResponse,
@@ -102,6 +103,7 @@ export class AdminLecturerController {
   }
 
   @Patch(LEC_CONTROLLER_RESOURCE.PATH.SPECIFY)
+  @UseGuards(UpdateUserGuard)
   public async updateById(
     @Param(
       COMMON_PARAMS.ID,

@@ -33,11 +33,12 @@ export const USER_CONTROLLER_RESOURCE = {
 };
 
 export const USER_ERROR_RESOURCE = {
-  USER_ERR_1: 'Người dùng không tồn tại.',
-  USER_ERR_2: 'Tên đăng nhập đã tồn tại.',
-  USER_ERR_3: 'Mật khẩu xác nhận không chính xác.',
-  USER_ERR_4: 'Mật khẩu không hợp lệ.',
-  USER_ERR_5: 'Bạn không có quyền thực hiện tác vụ này.',
-  USER_ERR_6: 'Bạn không thể xóa chính mình.',
-  USER_ERR_7: 'Sinh viên không thể là quản trị viên.'
+  ERR_1: 'Người dùng không tồn tại.',
+  ERR_2: 'Tên đăng nhập đã tồn tại.',
+  ERR_3: 'Mật khẩu xác nhận không chính xác.',
+  ERR_4: 'Mật khẩu không hợp lệ.',
+  ERR_5: 'Bạn không có quyền thực hiện tác vụ này.',
+  ERR_6: 'Bạn không thể xóa chính mình.',
+  ERR_7: 'Sinh viên không thể là quản trị viên.',
+  ERR_8: 'Bạn không thể chỉnh sửa quyền quản trị của chính mình.'
 };

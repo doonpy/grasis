@@ -14,10 +14,14 @@ export class DeleteUserGuard implements CanActivate {
       return false;
     }
 
-    if (userId === parseInt(request.params.id)) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_6);
-    }
+    this.checkDeleteIsAdmin(userId, parseInt(request.params.id));
 
     return true;
+  }
+
+  private checkDeleteIsAdmin(userId: number, targetId: number): void {
+    if (userId === targetId) {
+      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_6);
+    }
   }
 }

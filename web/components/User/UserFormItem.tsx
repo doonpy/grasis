@@ -2,11 +2,13 @@ import { CheckOutlined, CloseOutlined, EyeInvisibleOutlined, EyeTwoTone } from '
 import { Form, Input, Radio, Switch } from 'antd';
 import React from 'react';
 
+import AdminLecturerService from '../../libs/lecturer/admin/admin.lecturer.service';
 import { UserType } from '../../libs/user/user.resource';
 
 interface ComponentProps {
   isEdit: boolean;
   userType: UserType;
+  userId?: number;
 }
 
 const genderOptions = [
@@ -47,7 +49,23 @@ function getConfirmPasswordRules(isEdit: boolean) {
       ];
 }
 
-const UserFormItem: React.FC<ComponentProps> = ({ isEdit, userType }) => {
+const UserFormItem: React.FC<ComponentProps> = ({ isEdit, userType, userId }) => {
+  const adminLecturerService = AdminLecturerService.getInstance();
+  const loginUserId = adminLecturerService.jwtService.accessTokenPayload.userId;
+  const isAdminFormInput = () => {
+    if (userType === UserType.LECTURER) {
+      if (isEdit && userId === loginUserId) {
+        return <></>;
+      }
+
+      return (
+        <Form.Item name="isAdmin" label="Quản trị viên" valuePropName="checked">
+          <Switch checkedChildren={<CheckOutlined />} unCheckedChildren={<CloseOutlined />} />
+        </Form.Item>
+      );
+    }
+  };
+
   return (
     <div>
       <Form.Item required name="username" label="Tên đăng nhập" rules={getUsernameRules(isEdit)}>
@@ -94,11 +112,7 @@ const UserFormItem: React.FC<ComponentProps> = ({ isEdit, userType }) => {
           unCheckedChildren={<CloseOutlined />}
         />
       </Form.Item>
-      {userType === UserType.LECTURER && (
-        <Form.Item name="isAdmin" label="Quản trị viên" valuePropName="checked">
-          <Switch checkedChildren={<CheckOutlined />} unCheckedChildren={<CloseOutlined />} />
-        </Form.Item>
-      )}
+      {isAdminFormInput()}
     </div>
   );
 };
