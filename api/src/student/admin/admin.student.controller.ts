@@ -24,6 +24,8 @@ import {
 } from '../../common/common.validation';
 import { AdminGuard } from '../../common/guard/admin.guard';
 import { JoiValidationPipe } from '../../common/pipe/joi-validation.pipe';
+import { DeleteUserGuard } from '../../user/guard/delete-user.guard';
+import { ParseUserRequestBodyPipe } from '../../user/pipe/parse-user-request-body.pipe';
 import {
   StudentCreateOrUpdateResponse,
   StudentFindAllResponse,
@@ -91,7 +93,7 @@ export class AdminStudentController {
   @Post()
   @UsePipes(new JoiValidationPipe(studentCreateValidationSchema))
   public async create(
-    @Body()
+    @Body(new ParseUserRequestBodyPipe())
     body: StudentRequestBody
   ): Promise<StudentCreateOrUpdateResponse> {
     const createdStudent = await this.studentService.create(body);
@@ -112,7 +114,7 @@ export class AdminStudentController {
       ParseIntPipe
     )
     id: number,
-    @Body(new JoiValidationPipe(studentUpdateValidationSchema))
+    @Body(new JoiValidationPipe(studentUpdateValidationSchema), new ParseUserRequestBodyPipe())
     body: StudentRequestBody
   ): Promise<StudentCreateOrUpdateResponse> {
     await this.studentService.updateById(id, body);
@@ -125,6 +127,7 @@ export class AdminStudentController {
 
   @Delete(STD_CONTROLLER_RESOURCE.PATH.SPECIFY)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(DeleteUserGuard)
   public async deleteById(
     @Param(
       COMMON_PARAMS.ID,

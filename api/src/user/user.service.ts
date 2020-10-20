@@ -27,7 +27,7 @@ export class UserService {
   public async findById(id: number): Promise<User> {
     const user: User | undefined = await this.usersRepository.findOne(id);
     if (!user) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_1);
+      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_1);
     }
 
     return user;
@@ -36,7 +36,7 @@ export class UserService {
   public async findByIdTransaction(manager: EntityManager, id: number): Promise<User> {
     const user: User | undefined = await manager.findOne<User>(UserEntity, id);
     if (!user) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_1);
+      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_1);
     }
 
     return user;
@@ -60,7 +60,7 @@ export class UserService {
 
   public async checkUserNotExistByUsername(username: string): Promise<void> {
     if (await this.isUserExistByUsername(username)) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_2);
+      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_2);
     }
   }
 
@@ -70,7 +70,7 @@ export class UserService {
 
   public async checkUserExistByIdTransaction(manager: EntityManager, id: number): Promise<void> {
     if (!(await this.isUserExistByIdTransaction(manager, id))) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_1);
+      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_1);
     }
   }
 
@@ -90,13 +90,13 @@ export class UserService {
     username: string
   ): Promise<void> {
     if (await this.isUserExistByUsernameTransaction(manager, username)) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_2);
+      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_2);
     }
   }
 
   public checkPasswordConfirm(password?: string, confirmPassword?: string): void {
     if (!password || !confirmPassword || password !== confirmPassword) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_3);
+      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_3);
     }
   }
 
@@ -104,7 +104,9 @@ export class UserService {
     manager: EntityManager,
     user: Partial<UserRequestBody>
   ): Promise<User> {
-    const { username, password, confirmPassword } = user;
+    const { username, password, confirmPassword, userType, isAdmin } = user;
+    this.checkStudentCantNotAdministrator(isAdmin, userType);
+
     await this.checkUserNotExistByUsernameTransaction(manager, username!);
     this.checkPasswordConfirm(password, confirmPassword);
     user.password = this.hashPassword(password, username!);
@@ -118,7 +120,9 @@ export class UserService {
     id: number,
     user: Partial<UserRequestBody>
   ): Promise<void> {
-    const { username, password, confirmPassword } = user;
+    const { username, password, confirmPassword, userType, isAdmin } = user;
+    this.checkStudentCantNotAdministrator(isAdmin, userType);
+
     const currentUser = await this.findByIdTransaction(manager, id);
 
     if (username && username !== currentUser.username) {
@@ -135,17 +139,13 @@ export class UserService {
   }
 
   public async deleteByIdTransaction(manager: EntityManager, id: number): Promise<void> {
-    const isAdmin = await this.isUserIsAdminByIdTransaction(manager, id);
-    if (isAdmin) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_6);
-    }
     await this.refreshService.deleteByUserIdTransaction(manager, id);
     await manager.softDelete<User>(UserEntity, id);
   }
 
   public hashPassword(password: string | undefined, secret: string): string {
     if (!password) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_4);
+      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_4);
     }
 
     return createHmac('sha1', password + secret.toUpperCase())
@@ -162,14 +162,14 @@ export class UserService {
 
   public async checkUserExistById(id: number): Promise<void> {
     if (!(await this.isUserExistById(id))) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.USER_ERR_1);
+      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_1);
     }
   }
 
   public async checkUserIsAdminById(id: number): Promise<boolean> {
     const user = await this.usersRepository.findOne(id, { select: ['isAdmin'] });
     if (!user || user.isAdmin === IsAdmin.FALSE) {
-      throw new UnauthorizedException(USER_ERROR_RESOURCE.USER_ERR_5);
+      throw new UnauthorizedException(USER_ERROR_RESOURCE.ERR_5);
     }
 
     return true;
@@ -182,7 +182,7 @@ export class UserService {
     }
 
     if (user.id !== targetId) {
-      throw new UnauthorizedException(USER_ERROR_RESOURCE.USER_ERR_5);
+      throw new UnauthorizedException(USER_ERROR_RESOURCE.ERR_5);
     }
 
     return true;
@@ -191,7 +191,7 @@ export class UserService {
   public async checkUserTypeById(id: number, userTypes: UserType[]): Promise<boolean> {
     const user = await this.usersRepository.findOne(id, { select: ['userType'] });
     if (!user || !userTypes.includes(user.userType)) {
-      throw new UnauthorizedException(USER_ERROR_RESOURCE.USER_ERR_5);
+      throw new UnauthorizedException(USER_ERROR_RESOURCE.ERR_5);
     }
 
     return true;
@@ -297,7 +297,14 @@ export class UserService {
     return result;
   }
 
-  public async isUserIsAdminByIdTransaction(manager: EntityManager, id: number): Promise<boolean> {
-    return (await manager.count(UserEntity, { where: { id, isAdmin: IsAdmin.TRUE } })) > 0;
+  private checkStudentCantNotAdministrator(isAdmin?: IsAdmin, userType?: UserType): void {
+    if (
+      typeof userType !== 'undefined' &&
+      typeof isAdmin !== 'undefined' &&
+      userType === UserType.STUDENT &&
+      isAdmin === IsAdmin.TRUE
+    ) {
+      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_7);
+    }
   }
 }

@@ -24,5 +24,9 @@ export function beforeUpload(file) {
 }
 
 export function getAvatarUrl(userId) {
+  if (process.env.NEXT_PUBLIC_HEROKU_PR_NUMBER) {
+    return `https://grasis-api-pr-${process.env.NEXT_PUBLIC_HEROKU_PR_NUMBER}.herokuapp.com/avatar/${userId}`;
+  }
+
   return `${process.env.NEXT_PUBLIC_API_SERVER}/avatar/${userId}`;
 }
