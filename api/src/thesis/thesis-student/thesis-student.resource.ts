@@ -4,7 +4,7 @@ export enum THESIS_STUDENT_COLUMN {
   THESIS = 'thesis',
   STUDENT = 'student',
   TOPIC = 'topic',
-  INSTRUCTOR_RESULT = 'instructorResult',
-  REVIEW_RESULT = 'reviewResult',
-  DEFENSE_RESULT = 'defenseResult'
+  INSTRUCTOR_RESULT = 'instructor_result',
+  REVIEW_RESULT = 'review_result',
+  DEFENSE_RESULT = 'defense_result'
 }
