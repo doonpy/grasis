@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, Repository } from 'typeorm';
 
+import { COMMON_COLUMN } from '../common/common.resource';
 import { User } from '../user/user.interface';
 import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -65,15 +66,6 @@ export class StudentService {
   public async checkStudentExistById(id: number): Promise<void> {
     if (!(await this.isStudentExistById(id))) {
       throw new BadRequestException(STD_ERROR_RESOURCE.ERR_3);
-    }
-  }
-
-  public async checkStudentExistByStudentIdTransaction(
-    manager: EntityManager,
-    studentId: string
-  ): Promise<void> {
-    if (!(await this.isStudentExistByStudentIdTransaction(manager, studentId))) {
-      throw new BadRequestException(STD_ERROR_RESOURCE.ERR_1);
     }
   }
 
@@ -192,5 +184,19 @@ export class StudentService {
     }
 
     return result;
+  }
+
+  public async isStudentExistByIdTransaction(manager: EntityManager, id: number): Promise<boolean> {
+    return (await manager.count(StudentEntity, { where: { id } })) > 0;
+  }
+
+  public async checkStudentExistByIdTransaction(manager: EntityManager, id: number): Promise<void> {
+    if (!(await this.isStudentExistByIdTransaction(manager, id))) {
+      throw new BadRequestException(STD_ERROR_RESOURCE.ERR_3);
+    }
+  }
+
+  public async getByIds(ids: number[]): Promise<Student[]> {
+    return this.studentRepository.findByIds(ids, { cache: true, relations: [COMMON_COLUMN.ID] });
   }
 }

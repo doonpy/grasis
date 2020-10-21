@@ -38,3 +38,10 @@ export const COMMON_PATH = {
   LOGIN: '/login',
   REFRESH_TOKEN: '/refresh'
 };
+
+export enum COMMON_COLUMN {
+  ID = 'id',
+  CREATED_AT = 'created_at',
+  UPDATED_AT = 'updated_at',
+  DELETED_AT = 'deleted_at'
+}

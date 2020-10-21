@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, Repository } from 'typeorm';
 
+import { COMMON_COLUMN } from '../common/common.resource';
 import { User } from '../user/user.interface';
 import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -192,5 +193,25 @@ export class LecturerService {
     }
 
     return result;
+  }
+
+  public async isLecturerExistByIdTransaction(
+    manager: EntityManager,
+    id: number
+  ): Promise<boolean> {
+    return (await manager.count(LecturerEntity, { where: { id } })) > 0;
+  }
+
+  public async checkLecturerExistByIdTransaction(
+    manager: EntityManager,
+    id: number
+  ): Promise<void> {
+    if (!(await this.isLecturerExistByIdTransaction(manager, id))) {
+      throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_3);
+    }
+  }
+
+  public async getByIds(ids: number[]): Promise<Lecturer[]> {
+    return this.lecturerRepository.findByIds(ids, { cache: true, relations: [COMMON_COLUMN.ID] });
   }
 }
