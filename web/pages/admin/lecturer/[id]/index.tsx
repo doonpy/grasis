@@ -15,6 +15,7 @@ import { SIDER_KEYS } from '../../../../libs/common/common.resource';
 import AdminLecturerService from '../../../../libs/lecturer/admin/admin.lecturer.service';
 import { StudentRequestBody } from '../../../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
+import LoginUser from '../../../../libs/user/instance/LoginUser';
 import { UserType } from '../../../../libs/user/user.resource';
 
 const { confirm } = Modal;
@@ -30,9 +31,9 @@ interface PageParams extends ParsedUrlQuery {
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const adminLecturerService = AdminLecturerService.getInstance();
-  const loginUserId = adminLecturerService.jwtService.accessTokenPayload.userId;
   const lecturerId = parseInt(params.id);
   const { data, isLoading } = adminLecturerService.useLecturer(lecturerId, true);
+  const loginUserId = LoginUser.getInstance().getId();
 
   const showDeleteConfirm = () => {
     confirm({

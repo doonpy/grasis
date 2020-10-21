@@ -2,13 +2,13 @@ import { CheckOutlined, CloseOutlined, EyeInvisibleOutlined, EyeTwoTone } from '
 import { Form, Input, Radio, Switch } from 'antd';
 import React from 'react';
 
-import AdminLecturerService from '../../libs/lecturer/admin/admin.lecturer.service';
 import { UserType } from '../../libs/user/user.resource';
 
 interface ComponentProps {
   isEdit: boolean;
   userType: UserType;
   userId?: number;
+  loginUserId?: number;
 }
 
 const genderOptions = [
@@ -49,9 +49,7 @@ function getConfirmPasswordRules(isEdit: boolean) {
       ];
 }
 
-const UserFormItem: React.FC<ComponentProps> = ({ isEdit, userType, userId }) => {
-  const adminLecturerService = AdminLecturerService.getInstance();
-  const loginUserId = adminLecturerService.jwtService.accessTokenPayload.userId;
+const UserFormItem: React.FC<ComponentProps> = ({ isEdit, userType, userId, loginUserId }) => {
   const isAdminFormInput = () => {
     if (userType === UserType.LECTURER) {
       if (isEdit && userId === loginUserId) {

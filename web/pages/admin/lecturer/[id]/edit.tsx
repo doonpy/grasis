@@ -12,6 +12,7 @@ import { SIDER_KEYS } from '../../../../libs/common/common.resource';
 import AdminLecturerService from '../../../../libs/lecturer/admin/admin.lecturer.service';
 import { StudentRequestBody } from '../../../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
+import LoginUser from '../../../../libs/user/instance/LoginUser';
 import { UserType } from '../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
@@ -30,6 +31,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const [contentLoading, setContentLoading] = useState(true);
   const lecturerId = parseInt(router.query.id as string);
   const [form] = Form.useForm();
+  const loginUserId = LoginUser.getInstance().getId();
 
   const handleSubmitButton = async (formValues: StudentRequestBody) => {
     setSubmitLoading(true);
@@ -67,7 +69,12 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
         onFinish={handleSubmitButton}>
         <Row>
           <Col span={12}>
-            <UserFormItem isEdit={true} userType={UserType.LECTURER} userId={lecturerId} />
+            <UserFormItem
+              isEdit={true}
+              userType={UserType.LECTURER}
+              userId={lecturerId}
+              loginUserId={loginUserId}
+            />
           </Col>
           <Col span={12}>
             <LecturerFormItem />
