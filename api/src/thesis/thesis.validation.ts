@@ -2,78 +2,75 @@ import Joi from '@hapi/joi';
 
 import { commonIdValidateSchema } from '../common/common.validation';
 import { ThesisRequestBody } from './thesis.interface';
-import { THESIS_STATE, THESIS_STATUS } from './thesis.resource';
+import { ThesisState, ThesisStatus } from './thesis.resource';
 
 const thesisValidationSchema = Joi.object<ThesisRequestBody>({
-  creator: commonIdValidateSchema,
   startTime: Joi.string().isoDate().invalid('', null).messages({
-    'string.base': 'Thời gian bắt đầu không hợp lệ (STRING).',
-    'string.isoDate': 'Thời gian bắt đầu không hợp lệ (ISO DATE).',
-    'any.invalid': 'Thời gian bắt đầu không hợp lệ (INVALID).'
+    'string.base': 'Thời gian bắt đầu phải là chuỗi.',
+    'string.isoDate': 'Thời gian bắt đầu có định dạng không hợp lệ.',
+    'any.invalid': 'Thời gian bắt đầu có giá trị không hợp lệ.'
   }),
   endTime: Joi.string().isoDate().invalid('', null).messages({
-    'string.base': 'Thời gian kết thúc không hợp lệ (STRING).',
-    'string.isoDate': 'Thời gian kết thúc không hợp lệ (ISO DATE).',
-    'any.invalid': 'Thời gian kết thúc không hợp lệ (INVALID).'
+    'string.base': 'Thời gian kết thúc phải là chuỗi.',
+    'string.isoDate': 'Thời gian kết thúc có định dạng không hợp lệ.',
+    'any.invalid': 'Thời gian kết thúc có giá trị không hợp lệ.'
   }),
   lecturerTopicRegister: Joi.string().isoDate().invalid('', null).messages({
-    'string.base': 'Thời gian hạn cuối giảng viên đăng ký đề tài không hợp lệ (STRING).',
-    'string.isoDate': 'Thời gian hạn cuối giảng viên đăng ký đề tài không hợp lệ (ISO DATE).',
-    'any.invalid': 'Thời gian hạn cuối giảng viên đăng ký đề tài không hợp lệ (INVALID).'
+    'string.base': 'Thời gian hạn cuối giảng viên đăng ký đề tài phải là chuỗi.',
+    'string.isoDate': 'Thời gian hạn cuối giảng viên đăng ký đề tài có định dạng không hợp lệ.',
+    'any.invalid': 'Thời gian hạn cuối giảng viên đăng ký đề tài có giá trị không hợp lệ.'
   }),
   studentTopicRegister: Joi.string().isoDate().invalid('', null).messages({
-    'string.base': 'Thời gian hạn cuối sinh viên đăng ký đề tài không hợp lệ (STRING).',
-    'string.isoDate': 'Thời gian hạn cuối sinh viên đăng ký đề tài không hợp lệ (ISO DATE).',
-    'any.invalid': 'Thời gian hạn cuối sinh viên đăng ký đề tài không hợp lệ (INVALID).'
+    'string.base': 'Thời gian hạn cuối sinh viên đăng ký đề tài phải là chuỗi.',
+    'string.isoDate': 'Thời gian hạn cuối sinh viên đăng ký đề tài có định dạng không hợp lệ.',
+    'any.invalid': 'Thời gian hạn cuối sinh viên đăng ký đề tài có giá trị không hợp lệ.'
   }),
   progressReport: Joi.string().isoDate().invalid('', null).messages({
-    'string.base': 'Thời gian hạn cuối báo cáo tiến độ không hợp lệ (STRING).',
-    'string.isoDate': 'Thời gian hạn cuối báo cáo tiến độ không hợp lệ (ISO DATE).',
-    'any.invalid': 'Thời gian hạn cuối báo cáo tiến độ không hợp lệ (INVALID).'
+    'string.base': 'Thời gian hạn cuối báo cáo tiến độ phải là chuỗi.',
+    'string.isoDate': 'Thời gian hạn cuối báo cáo tiến độ có định dạng không hợp lệ.',
+    'any.invalid': 'Thời gian hạn cuối báo cáo tiến độ có giá trị không hợp lệ.'
   }),
   review: Joi.string().isoDate().invalid('', null).messages({
-    'string.base': 'Thời gian hạn cuối phản biện không hợp lệ (STRING).',
-    'string.isoDate': 'Thời gian hạn cuối phản biện không hợp lệ (ISO DATE).',
-    'any.invalid': 'Thời gian hạn cuối phản biện không hợp lệ (INVALID).'
+    'string.base': 'Thời gian hạn cuối phản biện phải là chuỗi.',
+    'string.isoDate': 'Thời gian hạn cuối phản biện có định dạng không hợp lệ.',
+    'any.invalid': 'Thời gian hạn cuối phản biện có giá trị không hợp lệ.'
   }),
   defense: Joi.string().isoDate().invalid('', null).messages({
-    'string.base': 'Thời gian hạn cuối bảo vệ không hợp lệ (STRING).',
-    'string.isoDate': 'Thời gian hạn cuối bảo vệ không hợp lệ (ISO DATE).',
-    'any.invalid': 'Thời gian hạn cuối bảo vệ không hợp lệ (INVALID).'
+    'string.base': 'Thời gian hạn cuối bảo vệ phải là chuỗi.',
+    'string.isoDate': 'Thời gian hạn cuối bảo vệ có định dạng không hợp lệ.',
+    'any.invalid': 'Thời gian hạn cuối bảo vệ có giá trị không hợp lệ.'
   }),
   state: Joi.number()
     .integer()
-    .min(THESIS_STATE.LECTURER_TOPIC_REGISTER)
-    .max(THESIS_STATE.FINISH)
+    .min(ThesisState.LECTURER_TOPIC_REGISTER)
+    .max(ThesisState.FINISH)
     .messages({
-      'number.base': 'Giai đoạn của khóa luận không hợp lệ (NUMBER).',
-      'number.integer': 'Giai đoạn của khóa luận không hợp lệ (INTEGER).',
-      'number.min': `Giai đoạn của khóa luận không hợp lệ (MIN: ${THESIS_STATE.LECTURER_TOPIC_REGISTER}).`,
-      'number.max': `Giai đoạn của khóa luận không hợp lệ (MAX: ${THESIS_STATE.FINISH}).`
+      'number.base': 'Giai đoạn của khóa luận không hợp lệ.',
+      'number.integer': 'Giai đoạn của khóa luận không hợp lệ.',
+      'number.min': 'Giai đoạn của khóa luận không hợp lệ.',
+      'number.max': 'Giai đoạn của khóa luận không hợp lệ.'
     }),
-  status: Joi.number()
-    .integer()
-    .min(THESIS_STATUS.INACTIVE)
-    .max(THESIS_STATUS.ACTIVE)
-    .messages({
-      'number.base': 'Trạng thái của khóa luận không hợp lệ (NUMBER).',
-      'number.integer': 'Trạng thái của khóa luận không hợp lệ (INTEGER).',
-      'number.min': `Trạng thái của khóa luận không hợp lệ (MIN: ${THESIS_STATUS.INACTIVE}).`,
-      'number.max': `Trạng thái của khóa luận không hợp lệ (MAX: ${THESIS_STATUS.ACTIVE}).`
-    }),
-  lecturers: Joi.array().items(commonIdValidateSchema).messages({
-    'array.base': 'Danh sách giảng viên hướng dẫn không hợp lệ (ARRAY).'
+  status: Joi.number().integer().min(ThesisStatus.INACTIVE).max(ThesisStatus.ACTIVE).messages({
+    'number.base': 'Trạng thái của khóa luận không hợp lệ.',
+    'number.integer': 'Trạng thái của khóa luận không hợp lệ.',
+    'number.min': 'Trạng thái của khóa luận không hợp lệ.',
+    'number.max': 'Trạng thái của khóa luận không hợp lệ.'
   }),
-  students: Joi.array().items(commonIdValidateSchema).messages({
-    'array.base': 'Danh sách sinh viên không hợp lệ (ARRAY).'
+  attendees: Joi.object({
+    lecturers: Joi.array().items(commonIdValidateSchema).messages({
+      'array.base': 'Danh sách giảng viên hướng dẫn không hợp lệ.'
+    }),
+    students: Joi.array().items(commonIdValidateSchema).messages({
+      'array.base': 'Danh sách sinh viên không hợp lệ.'
+    })
+  }),
+  creatorId: Joi.forbidden().messages({
+    'any.unknown': 'Tham số không hợp lệ.'
   })
 });
 
 export const thesisCreateValidationSchema = thesisValidationSchema.concat(
   Joi.object<ThesisRequestBody>({
-    creator: Joi.required().messages({
-      'any.required': 'ID người tạo là thông tin bắt buộc.'
-    }),
     startTime: Joi.required().messages({
       'any.required': 'Thời gian bắt đầu là thông tin bắt buộc.'
     }),
@@ -94,13 +91,19 @@ export const thesisCreateValidationSchema = thesisValidationSchema.concat(
     }),
     defense: Joi.required().messages({
       'any.required': 'Hạn chót bảo vệ là thông tin bắt buộc.'
+    }),
+    status: Joi.forbidden().messages({
+      'any.unknown': 'Tạo khóa luận thất bại (tham số không hợp lệ).'
+    }),
+    state: Joi.forbidden().messages({
+      'any.unknown': 'Tạo khóa luận thất bại (tham số không hợp lệ).'
     })
   })
 );
 
 export const thesisUpdateValidationSchema = thesisValidationSchema.concat(
   Joi.object<ThesisRequestBody>({
-    creator: Joi.optional(),
+    creatorId: Joi.optional(),
     startTime: Joi.optional(),
     endTime: Joi.optional(),
     lecturerTopicRegister: Joi.optional(),
@@ -110,7 +113,6 @@ export const thesisUpdateValidationSchema = thesisValidationSchema.concat(
     defense: Joi.optional(),
     state: Joi.optional(),
     status: Joi.optional(),
-    lecturers: Joi.optional(),
-    students: Joi.optional()
+    attendees: Joi.optional()
   })
 );

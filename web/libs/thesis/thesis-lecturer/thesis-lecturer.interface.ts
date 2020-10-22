@@ -1,10 +1,10 @@
-import { Lecturer } from '../../lecturer/lecturer.interface';
-import { UserView } from '../../user/user.interface';
+import { LecturerViewType } from '../../lecturer/lecturer.interface';
+import { UserViewType } from '../../user/user.interface';
 import { Thesis } from '../thesis.interface';
 
 export interface ThesisLecturer {
   thesis: number | Thesis;
-  lecturer: number | Lecturer;
+  lecturer: number | LecturerViewType;
 }
 
 export interface ThesisLecturerRequestBody {
@@ -12,7 +12,7 @@ export interface ThesisLecturerRequestBody {
 }
 
 export type ThesisLecturerViewItem = Omit<
-  UserView,
+  UserViewType,
   'username' | 'gender' | 'email' | 'address' | 'phone' | 'isAdmin' | 'userType' | 'deletedAt'
 >;
 

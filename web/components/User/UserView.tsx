@@ -2,15 +2,15 @@ import { UserOutlined } from '@ant-design/icons';
 import { Col, Row, Space, Typography } from 'antd';
 import React from 'react';
 
-import { UserViewType } from '../../libs/user/user.interface';
-import { UserType } from '../../libs/user/user.resource';
+import { User } from '../../libs/user/user.interface';
+import { IsAdmin, UserStatus, UserType } from '../../libs/user/user.resource';
 import TextData from '../Common/TextData';
 import UserGenderRender from './UserGenderRender';
 import UserIsAdminRender from './UserIsAdmin';
 import UserStatusRender from './UserStatusRender';
 
 interface ComponentProps {
-  user: UserViewType;
+  user: User;
   userType: UserType;
 }
 
@@ -68,8 +68,8 @@ const UserView: React.FC<ComponentProps> = ({
               <TextData text={email} />
               <TextData text={address} />
               <TextData text={phone} />
-              <UserStatusRender status={status} />
-              {userType === UserType.LECTURER && <UserIsAdminRender isAdmin={isAdmin} />}
+              <UserStatusRender status={status as UserStatus} />
+              {userType === UserType.LECTURER && <UserIsAdminRender isAdmin={isAdmin as IsAdmin} />}
             </Space>
           </Col>
         </Space>

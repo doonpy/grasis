@@ -18,7 +18,9 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "allowSyntheticDefaultImports": true,
-    "removeComments": true
+    "removeComments": true,
+    "sourceRoot": ".",
+    "baseUrl": "."
   },
   "include": [
     "next-env.d.ts",

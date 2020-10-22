@@ -32,3 +32,5 @@ export type NextPageWithLayout<
   LP extends CommonPageProps = CommonPageProps,
   Q extends ParsedUrlQuery = Record<string, any>
 > = NextPage<P, Q> & Layout<LP>;
+
+export type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

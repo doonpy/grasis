@@ -8,7 +8,7 @@ import MainLayout from '../../../components/Layout/MainLayout';
 import { STUDENT_TABLE_COLUMNS } from '../../../components/Student/StudentColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../libs/common/common.resource';
-import AdminStudentService from '../../../libs/student/admin/admin.student.service';
+import StudentAdminService from '../../../libs/student/admin.service';
 import { STUDENT_PATH } from '../../../libs/student/student.resource';
 import { UserType } from '../../../libs/user/user.resource';
 
@@ -19,11 +19,8 @@ const Index: NextPageWithLayout = () => {
     total: 0,
     showSizeChanger: false
   });
-  const adminStudentService = AdminStudentService.getInstance();
-  const { data, isLoading } = adminStudentService.useStudents(
-    pagination.current,
-    pagination.pageSize
-  );
+  const adminService = StudentAdminService.getInstance();
+  const { data, isLoading } = adminService.useStudents(pagination.current, pagination.pageSize);
   const handleTableChange = (paginationValues) => {
     setPagination({ ...pagination, ...paginationValues });
   };

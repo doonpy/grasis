@@ -1,81 +1,49 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { CommonEntity } from '../common/common.entity';
-import { COMMON_ENTITY_OPTIONS } from '../common/common.resource';
-import { Gender, IsAdmin, USER_ENTITY_RESOURCE, UserStatus } from './user.resource';
+import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
+import { StudentEntity } from '../student/student.entity';
+import { Student } from '../student/student.interface';
+import { Gender, IsAdmin, USER_TABLE, UserColumn, UserStatus, UserType } from './user.resource';
 
-@Entity({ ...COMMON_ENTITY_OPTIONS, name: USER_ENTITY_RESOURCE.TABLE_NAME })
+@Entity({ ...COMMON_ENTITY_OPTIONS, name: USER_TABLE })
 export class UserEntity extends CommonEntity {
-  @PrimaryGeneratedColumn({ type: 'int' })
-  id!: number;
+  @PrimaryGeneratedColumn({ name: CommonColumn.ID, type: 'int' })
+  public id!: number;
 
-  @Column({ type: 'nvarchar', length: 50 })
-  username!: string;
+  @Column({ name: UserColumn.USERNAME, type: 'nvarchar', length: 50 })
+  public username!: string;
 
-  @Column({
-    type: 'nchar',
-    length: 40
-  })
-  password!: string;
+  @Column({ name: UserColumn.PASSWORD, type: 'nchar', length: 40, select: false })
+  public password!: string;
 
-  @Column({
-    type: 'nvarchar',
-    length: 50,
-    nullable: true
-  })
-  firstname!: string;
+  @Column({ name: UserColumn.FIRSTNAME, type: 'nvarchar', length: 50, nullable: true })
+  public firstname!: string | null;
 
-  @Column({
-    type: 'nvarchar',
-    length: 50,
-    nullable: true
-  })
-  lastname!: string;
+  @Column({ name: UserColumn.LASTNAME, type: 'nvarchar', length: 50, nullable: true })
+  public lastname!: string | null;
 
-  @Column({
-    type: 'tinyint',
-    nullable: true
-  })
-  gender!: Gender;
+  @Column({ name: UserColumn.GENDER, type: 'tinyint', nullable: true })
+  public gender!: Gender;
 
-  @Column({
-    type: 'nvarchar',
-    length: 100,
-    nullable: true
-  })
-  email!: string;
+  @Column({ name: UserColumn.EMAIL, type: 'nvarchar', length: 100, nullable: true })
+  public email!: string | null;
 
-  @Column({
-    type: 'nvarchar',
-    length: 100,
-    nullable: true
-  })
-  address!: string;
+  @Column({ name: UserColumn.ADDRESS, type: 'nvarchar', length: 100, nullable: true })
+  public address!: string | null;
 
-  @Column({
-    type: 'nchar',
-    length: 10,
-    nullable: true
-  })
-  phone!: string;
+  @Column({ name: UserColumn.PHONE, type: 'nchar', length: 10, nullable: true })
+  public phone!: string | null;
 
-  @Column({
-    type: 'tinyint',
-    default: UserStatus.ACTIVE,
-    nullable: true
-  })
-  status!: UserStatus;
+  @Column({ name: UserColumn.STATUS, type: 'tinyint', default: UserStatus.ACTIVE })
+  public status!: UserStatus;
 
-  @Column({
-    type: 'tinyint',
-    default: IsAdmin.FALSE,
-    nullable: true
-  })
-  isAdmin!: IsAdmin;
+  @Column({ name: UserColumn.IS_ADMIN, type: 'tinyint', default: IsAdmin.FALSE })
+  public isAdmin!: IsAdmin;
 
-  @Column({
-    type: 'tinyint',
-    nullable: true
-  })
-  userType!: number;
+  @Column({ name: UserColumn.USER_TYPE, type: 'tinyint' })
+  public userType!: UserType;
+
+  @OneToOne(() => StudentEntity, ({ user }) => user)
+  public student!: Student;
 }

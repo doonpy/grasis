@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { Payload } from '../../auth/strategies/jwt.strategy';
 import { CommonRequest } from '../../common/common.interface';
-import { USER_ERROR_RESOURCE } from '../user.resource';
+import { UserError } from '../user.resource';
 
 @Injectable()
 export class DeleteUserGuard implements CanActivate {
@@ -21,7 +21,7 @@ export class DeleteUserGuard implements CanActivate {
 
   private checkDeleteIsAdmin(userId: number, targetId: number): void {
     if (userId === targetId) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_6);
+      throw new BadRequestException(UserError.ERR_6);
     }
   }
 }

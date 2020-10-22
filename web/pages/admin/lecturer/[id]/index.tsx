@@ -12,8 +12,7 @@ import LecturerView from '../../../../components/Lecturer/LecturerView';
 import UserView from '../../../../components/User/UserView';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import AdminLecturerService from '../../../../libs/lecturer/admin/admin.lecturer.service';
-import { StudentRequestBody } from '../../../../libs/lecturer/lecturer.interface';
+import LecturerAdminService from '../../../../libs/lecturer/admin.service';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
 import { UserType } from '../../../../libs/user/user.resource';
@@ -21,7 +20,6 @@ import { UserType } from '../../../../libs/user/user.resource';
 const { confirm } = Modal;
 
 interface PageProps extends CommonPageProps {
-  currentLecturer: StudentRequestBody;
   params: PageParams;
 }
 
@@ -30,9 +28,9 @@ interface PageParams extends ParsedUrlQuery {
 }
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
-  const adminLecturerService = AdminLecturerService.getInstance();
+  const adminService = LecturerAdminService.getInstance();
   const lecturerId = parseInt(params.id);
-  const { data, isLoading } = adminLecturerService.useLecturer(lecturerId, true);
+  const { data, isLoading } = adminService.useLecturer(lecturerId);
   const loginUserId = LoginUser.getInstance().getId();
 
   const showDeleteConfirm = () => {
@@ -45,10 +43,10 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       cancelButtonProps: { type: 'primary', danger: true },
       async onOk() {
         try {
-          await adminLecturerService.deleteLecturer(lecturerId);
-          await adminLecturerService.redirectService.redirectTo(LECTURER_ADMIN_PATH_ROOT);
+          await adminService.deleteLecturer(lecturerId);
+          await adminService.redirectService.redirectTo(LECTURER_ADMIN_PATH_ROOT);
         } catch (error) {
-          await adminLecturerService.requestErrorHandler(error);
+          await adminService.requestErrorHandler(error);
         }
       }
     });
@@ -82,9 +80,9 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       }>
       <Space size={48} align={'start'}>
         <div className={styles.avatar}>
-          <AvatarView userId={lecturerId} />
+          <AvatarView userId={lecturerId} width={250} height={250} />
         </div>
-        <UserView user={data && data.lecturer} userType={UserType.LECTURER} />
+        <UserView user={data && data.lecturer.user} userType={UserType.LECTURER} />
         <LecturerView lecturer={data && data.lecturer} />
       </Space>
     </Card>

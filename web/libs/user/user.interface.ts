@@ -11,8 +11,8 @@ export interface User {
   email: string | null;
   address: string | null;
   phone: string | null;
-  status: UserStatus;
-  isAdmin: IsAdmin;
+  status: UserStatus | boolean;
+  isAdmin: IsAdmin | boolean;
   userType: UserType;
   deletedAt: string | null;
 }

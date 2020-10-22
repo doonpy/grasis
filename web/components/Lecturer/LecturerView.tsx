@@ -2,13 +2,13 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { Col, Row, Space, Typography } from 'antd';
 import React from 'react';
 
-import { LecturerViewType } from '../../libs/lecturer/lecturer.interface';
+import { Lecturer } from '../../libs/lecturer/lecturer.interface';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import LecturerLevelRender from './LecturerLevelRender';
 
 interface ComponentProps {
-  lecturer?: LecturerViewType;
+  lecturer?: Lecturer;
 }
 
 const LecturerView: React.FC<ComponentProps> = ({

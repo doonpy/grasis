@@ -11,15 +11,13 @@ import StudentView from '../../../../components/Student/StudentView';
 import UserView from '../../../../components/User/UserView';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import AdminStudentService from '../../../../libs/student/admin/admin.student.service';
-import { StudentRequestBody } from '../../../../libs/student/student.interface';
+import StudentAdminService from '../../../../libs/student/admin.service';
 import { STUDENT_ADMIN_PATH_ROOT } from '../../../../libs/student/student.resource';
 import { UserType } from '../../../../libs/user/user.resource';
 const { confirm } = Modal;
 import styles from '../../../../assets/css/pages/admin/student/index.module.css';
 
 interface PageProps extends CommonPageProps {
-  currentStudent: StudentRequestBody;
   params: PageParams;
 }
 
@@ -28,9 +26,9 @@ interface PageParams extends ParsedUrlQuery {
 }
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
-  const adminsStudentService = AdminStudentService.getInstance();
+  const adminService = StudentAdminService.getInstance();
   const studentId = parseInt(params.id);
-  const { data, isLoading } = adminsStudentService.useStudent(studentId);
+  const { data, isLoading } = adminService.useStudent(studentId);
 
   const showDeleteConfirm = () => {
     confirm({
@@ -42,10 +40,10 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       cancelButtonProps: { type: 'primary', danger: true },
       async onOk() {
         try {
-          await adminsStudentService.deleteStudent(studentId);
-          await adminsStudentService.redirectService.redirectTo(STUDENT_ADMIN_PATH_ROOT);
+          await adminService.deleteStudent(studentId);
+          await adminService.redirectService.redirectTo(STUDENT_ADMIN_PATH_ROOT);
         } catch (error) {
-          await adminsStudentService.requestErrorHandler(error);
+          await adminService.requestErrorHandler(error);
         }
       }
     });
@@ -79,9 +77,9 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       }>
       <Space size={48} align={'start'}>
         <div className={styles.avatar}>
-          <AvatarView userId={studentId} />
+          <AvatarView userId={studentId} width={250} height={250} />
         </div>
-        <UserView user={data && data.student} userType={UserType.STUDENT} />
+        <UserView user={data && data.student.user} userType={UserType.STUDENT} />
         <StudentView student={data && data.student} />
       </Space>
     </Card>

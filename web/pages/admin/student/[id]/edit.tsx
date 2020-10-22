@@ -9,8 +9,8 @@ import StudentFormItem from '../../../../components/Student/StudentFormItem';
 import UserFormItem from '../../../../components/User/UserFormItem';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import AdminStudentService from '../../../../libs/student/admin/admin.student.service';
-import { StudentRequestBody } from '../../../../libs/student/student.interface';
+import StudentAdminService from '../../../../libs/student/admin.service';
+import { StudentForm, StudentRequestBody } from '../../../../libs/student/student.interface';
 import { STUDENT_ADMIN_PATH_ROOT } from '../../../../libs/student/student.resource';
 import { UserType } from '../../../../libs/user/user.resource';
 
@@ -25,19 +25,19 @@ interface PageParams extends ParsedUrlQuery {
 
 const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const router = useRouter();
-  const adminStudentService = AdminStudentService.getInstance();
+  const adminService = StudentAdminService.getInstance();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [contentLoading, setContentLoading] = useState(true);
   const studentId: number = parseInt(router.query.id as string);
   const [form] = Form.useForm();
 
-  const handleSubmitButton = async (formValues: StudentRequestBody) => {
+  const handleSubmitButton = async (formValues: StudentForm) => {
     setSubmitLoading(true);
     try {
-      await adminStudentService.updateById(studentId, formValues);
+      await adminService.updateById(studentId, formValues);
       await router.push(`${STUDENT_ADMIN_PATH_ROOT}/${studentId}`);
     } catch (error) {
-      await adminStudentService.requestErrorHandler(error);
+      await adminService.requestErrorHandler(error);
     }
     setSubmitLoading(false);
   };
@@ -46,10 +46,10 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
     (async () => {
       let currentStudent: StudentRequestBody = null;
       try {
-        currentStudent = await adminStudentService.getInitialForEdit(params.id);
+        currentStudent = await adminService.getInitialForEdit(studentId);
         setContentLoading(false);
       } catch (error) {
-        await adminStudentService.requestErrorHandler(error);
+        await adminService.requestErrorHandler(error);
         return;
       }
       form.setFieldsValue(currentStudent);

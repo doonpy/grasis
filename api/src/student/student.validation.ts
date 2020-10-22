@@ -1,37 +1,32 @@
 import Joi from '@hapi/joi';
 
-import {
-  userCreateValidationSchema,
-  userUpdateValidationSchema,
-  userUpdateValidationSchemaForUser
-} from '../user/user.validation';
+import { userUpdateValidationSchemaForUser } from '../user/user.validation';
 import { StudentRequestBody } from './student.interface';
+import { IsGraduate } from './student.resource';
 
-const studentValidationSchema = Joi.object<StudentRequestBody>({
-  studentId: Joi.string().allow(null).length(8).message('Mã sinh viên phải có 8 kí tự.'),
+export const studentValidationSchema = Joi.object<StudentRequestBody>({
+  studentId: Joi.string().allow(null).length(8).messages({
+    'string.base': 'Mã sinh viên phải là chuỗi',
+    'string.length': 'Mã sinh viên phải có 8 kí tự.'
+  }),
   schoolYear: Joi.string()
     .allow(null)
     .length(4)
-    .message('Niên khóa phải có tối thiểu 4 kí tự.')
     .pattern(/[0-9]+/)
-    .message('Niên khóa phải là số.'),
-  isGraduate: Joi.number()
-    .allow(null)
-    .integer()
-    .message('Tình trạng tốt nghiệp phải là số nguyên.')
-    .min(0)
-    .message('Tình trạng tốt nghiệp có giá trị nhỏ nhất là 0.')
-    .max(1)
-    .message('Tình trạng tốt nghiệp có giá trị lớn nhất là 1.'),
-  studentClass: Joi.string().allow(null).max(20).message('Lớp có độ dài tối đa là 20.')
+    .messages({
+      'string.base': 'Niên khóa phải là chuỗi.',
+      'string.length': 'Niên khóa phải có 4 kí tự.',
+      'string.pattern.base': 'Niên khóa có kí tự bị cấm.'
+    }),
+  isGraduate: Joi.number().allow(null).integer().valid(IsGraduate.FALSE, IsGraduate.TRUE).messages({
+    'number.base': 'Tình trạng tốt nghiệp không hợp lệ.',
+    'number.integer': 'Tình trạng tốt nghiệp không hợp lệ.',
+    'any.only': 'Tình trạng tốt nghiệp có kí tự bị cấm.'
+  }),
+  studentClass: Joi.string().allow(null).max(20).messages({
+    'string.base': 'Lớp phải là chuỗi.',
+    'string.max': 'Lớp không quá 20 kí tự.'
+  })
 });
-
-export const studentCreateValidationSchema = userCreateValidationSchema.concat(
-  studentValidationSchema
-);
-
-export const studentUpdateValidationSchema = userUpdateValidationSchema.concat(
-  studentValidationSchema
-);
 
 export const studentUpdateValidationSchemaForUser = userUpdateValidationSchemaForUser;

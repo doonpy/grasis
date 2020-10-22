@@ -4,10 +4,10 @@ import React from 'react';
 const LecturerFormItem: React.FC = () => {
   return (
     <div>
-      <Form.Item name="lecturerId" label="Mã giảng viên">
-        <Input name="lecturerId" maxLength={4} />
+      <Form.Item name={['lecturer', 'lecturerId']} label="Mã giảng viên">
+        <Input maxLength={4} />
       </Form.Item>
-      <Form.Item name="level" label="Trình độ học vấn">
+      <Form.Item name={['lecturer', 'level']} label="Trình độ học vấn">
         <Select mode="multiple" optionLabelProp="label">
           <Select.Option value="Thạc sĩ" label="Thạc sĩ">
             Thạc sĩ
@@ -23,8 +23,8 @@ const LecturerFormItem: React.FC = () => {
           </Select.Option>
         </Select>
       </Form.Item>
-      <Form.Item name="position" label="Chức vụ">
-        <Input name="position" />
+      <Form.Item name={['lecturer', 'position']} label="Chức vụ">
+        <Input />
       </Form.Item>
     </div>
   );

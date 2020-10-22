@@ -1,7 +1,9 @@
 export const THESIS_TABLE = 'thesis';
 
-export enum THESIS_COLUMN {
-  CREATOR = 'creator',
+export const THESIS_LECTURER_TABLE = `${THESIS_TABLE}_lecturer`;
+
+export enum ThesisColumn {
+  CREATOR_ID = 'creator_id',
   START_TIME = 'start_time',
   END_TIME = 'end_time',
   STATE = 'state',
@@ -13,13 +15,13 @@ export enum THESIS_COLUMN {
   STATUS = 'status'
 }
 
-export enum THESIS_PATH {
-  ROOT = 'thesis',
+export enum ThesisPath {
+  ROOT = 'theses',
   SPECIFY = '/:id',
-  ADMIN_ROOT = 'admin/thesis'
+  ADMIN_ROOT = 'admin/theses'
 }
 
-export enum THESIS_ERROR {
+export enum ThesisError {
   ERR_1 = 'Thời gian đăng ký đề tài của giảng viên không hợp lệ.',
   ERR_2 = 'Thời gian đăng ký đề tài của sinh viên không hợp lệ.',
   ERR_3 = 'Thời gian báo cáo tiến độ không hợp lệ.',
@@ -29,7 +31,7 @@ export enum THESIS_ERROR {
   ERR_7 = 'Khóa luận không tồn tại.'
 }
 
-export enum THESIS_STATE {
+export enum ThesisState {
   LECTURER_TOPIC_REGISTER = 1,
   STUDENT_TOPIC_REGISTER = 2,
   PROGRESS_REPORT = 3,
@@ -38,7 +40,13 @@ export enum THESIS_STATE {
   FINISH = 6
 }
 
-export enum THESIS_STATUS {
+export enum ThesisStatus {
   INACTIVE = 1,
   ACTIVE = 2
+}
+
+export enum ThesisRelation {
+  CREATOR = 'creator',
+  STUDENTS = 'students',
+  LECTURERS = 'lecturers'
 }

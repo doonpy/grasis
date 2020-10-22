@@ -2,12 +2,16 @@ import { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 
-import { LecturerRequestBody } from '../../../api/src/lecturer/lecturer.interface';
 import { COMMON_PATH, COOKIES } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { TokenResponse } from '../jwt/jwt.base';
-import { StudentRequestBody } from '../student/student.interface';
-import { FindUserByIdResponse, LoginInputs, Remember, UserRequestBody } from './user.interface';
+import {
+  FindUserByIdResponse,
+  LoginInputs,
+  Remember,
+  User,
+  UserRequestBody
+} from './user.interface';
 import { IsAdmin, USER_API, UserStatus } from './user.resource';
 
 export default class UserService extends CommonService {
@@ -84,7 +88,7 @@ export default class UserService extends CommonService {
     return data;
   }
 
-  public convertToRequestBody(user: StudentRequestBody | LecturerRequestBody): UserRequestBody {
+  public convertToRequestBody(user: UserRequestBody): UserRequestBody {
     const result = user;
     const { isAdmin, status } = user;
     if (typeof isAdmin !== 'undefined' && isAdmin !== null) {
@@ -96,5 +100,12 @@ export default class UserService extends CommonService {
     }
 
     return result;
+  }
+
+  public getInitialForEdit(user: User): User {
+    user.status = user.status && user.status === UserStatus.ACTIVE;
+    user.isAdmin = user.isAdmin && user.isAdmin === IsAdmin.TRUE;
+
+    return user;
   }
 }

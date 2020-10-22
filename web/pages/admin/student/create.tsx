@@ -8,8 +8,8 @@ import StudentFormItem from '../../../components/Student/StudentFormItem';
 import UserFormItem from '../../../components/User/UserFormItem';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../libs/common/common.resource';
-import AdminStudentService from '../../../libs/student/admin/admin.student.service';
-import { StudentRequestBody } from '../../../libs/student/student.interface';
+import StudentAdminService from '../../../libs/student/admin.service';
+import { StudentForm } from '../../../libs/student/student.interface';
 import { STUDENT_ADMIN_PATH_ROOT } from '../../../libs/student/student.resource';
 import { UserType } from '../../../libs/user/user.resource';
 
@@ -17,15 +17,15 @@ const Create: NextPageWithLayout = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmitButton = async (formValues: StudentRequestBody) => {
+  const handleSubmitButton = async (formValues: StudentForm) => {
     setLoading(true);
-    const adminStudentService = AdminStudentService.getInstance();
+    const adminService = StudentAdminService.getInstance();
     try {
-      const { data } = await adminStudentService.createStudent(formValues);
-      await adminStudentService.redirectService.redirectTo(`${STUDENT_ADMIN_PATH_ROOT}/${data.id}`);
+      const { data } = await adminService.createStudent(formValues);
+      await adminService.redirectService.redirectTo(`${STUDENT_ADMIN_PATH_ROOT}/${data.id}`);
       return;
     } catch (error) {
-      await adminStudentService.requestErrorHandler(error);
+      await adminService.requestErrorHandler(error);
     }
     setLoading(false);
   };

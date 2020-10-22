@@ -1,62 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
-import { Student } from '../../student/student.interface';
-import { StudentService } from '../../student/student.service';
+import { ThesisStatus } from '../thesis.resource';
 import { ThesisStudentEntity } from './thesis-student.entity';
-import { ThesisStudent, ThesisStudentView } from './thesis-student.interface';
+import { ThesisStudent } from './thesis-student.interface';
 
 @Injectable()
 export class ThesisStudentService {
   constructor(
     @InjectRepository(ThesisStudentEntity)
-    private readonly thesisStudentRepository: Repository<ThesisStudent>,
-    private readonly studentService: StudentService
+    private readonly thesisStudentRepository: Repository<ThesisStudent>
   ) {}
 
-  public async createWithTransaction(
-    manager: EntityManager,
-    thesisId: number,
-    studentIds: number[]
-  ): Promise<void> {
-    if (!Array.isArray(studentIds)) {
-      return;
-    }
-
-    studentIds = studentIds.filter(
-      (studentId, index) => index === studentIds.lastIndexOf(studentId)
-    );
-    for (const studentId of studentIds) {
-      await this.studentService.checkStudentExistByIdTransaction(manager, studentId);
-      const thesisStudentEntity = manager.create<ThesisStudent>(ThesisStudentEntity, {
-        thesis: thesisId,
-        student: studentId
-      });
-      await manager.save<ThesisStudent>(thesisStudentEntity);
-    }
+  public createEntity(data: Partial<ThesisStudent>): ThesisStudent {
+    return this.thesisStudentRepository.create(data);
   }
 
-  public async findByThesisId(thesisId: number): Promise<ThesisStudentView> {
-    const thesisStudents = await this.thesisStudentRepository.find({
-      where: { thesis: thesisId },
+  public async getStudentParticipatedThesisByIds(ids: number[]): Promise<ThesisStudent[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    return this.thesisStudentRepository.find({
+      where: { studentId: In(ids), thesis: { status: ThesisStatus.ACTIVE } },
       cache: true
-    });
-    const lecturerIds = thesisStudents.map((thesisStudent) => thesisStudent.student as number);
-    const lecturers = await this.studentService.getByIds(lecturerIds);
-
-    return this.convertToView(lecturers);
-  }
-
-  public convertToView(students: Student[]): ThesisStudentView {
-    return students.map((student) => {
-      const { id, firstname, lastname, status } = this.studentService.convertToView({ student });
-      return {
-        id,
-        firstname,
-        lastname,
-        status
-      };
     });
   }
 }

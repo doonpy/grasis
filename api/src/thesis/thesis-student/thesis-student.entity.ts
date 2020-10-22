@@ -1,37 +1,38 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
-import { COMMON_COLUMN, COMMON_ENTITY_OPTIONS } from '../../common/common.resource';
+import { CommonEntity } from '../../common/common.entity';
+import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../../common/common.resource';
 import { StudentEntity } from '../../student/student.entity';
+import { Student } from '../../student/student.interface';
 import { ThesisEntity } from '../thesis.entity';
-import { THESIS_STUDENT_COLUMN, THESIS_STUDENT_TABLE } from './thesis-student.resource';
+import { Thesis } from '../thesis.interface';
+import { THESIS_STUDENT_TABLE, ThesisStudentColumn } from './thesis-student.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: THESIS_STUDENT_TABLE })
-export class ThesisStudentEntity {
-  @PrimaryColumn({ name: THESIS_STUDENT_COLUMN.THESIS, type: 'int' })
-  @ManyToOne(() => ThesisEntity, (thesis) => thesis.id, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
-  })
-  @JoinColumn({ name: THESIS_STUDENT_COLUMN.THESIS, referencedColumnName: COMMON_COLUMN.ID })
-  private thesis!: number;
+export class ThesisStudentEntity extends CommonEntity {
+  @PrimaryColumn({ name: ThesisStudentColumn.THESIS_ID, type: 'int' })
+  public thesisId!: number;
 
-  @PrimaryColumn({ name: THESIS_STUDENT_COLUMN.STUDENT, type: 'int' })
-  @ManyToOne(() => StudentEntity, (student) => student.id, {
-    onDelete: 'NO ACTION',
-    onUpdate: 'NO ACTION'
-  })
-  @JoinColumn({ name: THESIS_STUDENT_COLUMN.STUDENT, referencedColumnName: COMMON_COLUMN.ID })
-  private student!: number;
+  @PrimaryColumn({ name: ThesisStudentColumn.STUDENT_ID, type: 'int' })
+  public studentId!: number;
 
-  @Column({ name: THESIS_STUDENT_COLUMN.TOPIC, type: 'int', nullable: true })
-  private topic!: number;
+  @Column({ name: ThesisStudentColumn.TOPIC, type: 'int', nullable: true })
+  public topic!: number | null;
 
-  @Column({ name: THESIS_STUDENT_COLUMN.INSTRUCTOR_RESULT, type: 'float', nullable: true })
-  private instructorResult!: number;
+  @Column({ name: ThesisStudentColumn.INSTRUCTOR_RESULT, type: 'float', nullable: true })
+  public instructorResult!: number | null;
 
-  @Column({ name: THESIS_STUDENT_COLUMN.REVIEW_RESULT, type: 'float', nullable: true })
-  private reviewResult!: number;
+  @Column({ name: ThesisStudentColumn.REVIEW_RESULT, type: 'float', nullable: true })
+  public reviewResult!: number | null;
 
-  @Column({ name: THESIS_STUDENT_COLUMN.DEFENSE_RESULT, type: 'float', nullable: true })
-  private defenseResult!: number;
+  @Column({ name: ThesisStudentColumn.DEFENSE_RESULT, type: 'float', nullable: true })
+  public defenseResult!: number | null;
+
+  @ManyToOne(() => ThesisEntity, ({ students }) => students)
+  @JoinColumn({ name: ThesisStudentColumn.THESIS_ID, referencedColumnName: CommonColumn.ID })
+  public thesis!: Thesis;
+
+  @ManyToOne(() => StudentEntity, ({ theses }) => theses)
+  @JoinColumn({ name: ThesisStudentColumn.STUDENT_ID, referencedColumnName: CommonColumn.ID })
+  public student!: Student;
 }

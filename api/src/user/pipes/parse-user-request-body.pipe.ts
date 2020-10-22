@@ -3,11 +3,15 @@ import { Injectable, PipeTransform } from '@nestjs/common';
 import { RawUserRequestBody, UserRequestBody } from '../user.interface';
 
 @Injectable()
-export class ParseUserRequestBodyPipe implements PipeTransform {
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public transform(value: RawUserRequestBody): UserRequestBody {
+export class ParseUserRequestBodyPipe
+  implements PipeTransform<RawUserRequestBody, UserRequestBody | undefined> {
+  public transform(value?: RawUserRequestBody): UserRequestBody | undefined {
+    if (!value) {
+      return;
+    }
+
     const { gender, isAdmin, status } = value;
-    const result: UserRequestBody = {};
+    const result: UserRequestBody = value;
     if (gender && !Number.isNaN(Number.parseInt(gender))) {
       result.gender = parseInt(gender);
     }
@@ -20,6 +24,6 @@ export class ParseUserRequestBodyPipe implements PipeTransform {
       result.status = parseInt(status);
     }
 
-    return <UserRequestBody>{ ...value, ...result };
+    return { ...value, ...result };
   }
 }

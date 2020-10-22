@@ -1,54 +1,44 @@
 import {
-  Body,
   Controller,
   DefaultValuePipe,
   Get,
   HttpStatus,
   Param,
   ParseIntPipe,
-  Post,
   Query,
   UseGuards
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { COMMON_PARAMS, COMMON_QUERIES, COMMON_QUERIES_VALUE } from '../common/common.resource';
+import { CommonParam, CommonQuery, CommonQueryValue } from '../common/common.resource';
 import {
   commonIdValidateSchema,
   commonLimitValidateSchema,
   commonOffsetValidateSchema
 } from '../common/common.validation';
-import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import {
-  Thesis,
-  ThesisCreateOrUpdateResponse,
-  ThesisGetByIdResponse,
-  ThesisGetManyResponse,
-  ThesisRequestBody
-} from './thesis.interface';
-import { THESIS_PATH } from './thesis.resource';
+import { Thesis, ThesisGetByIdResponse, ThesisGetManyResponse } from './thesis.interface';
+import { ThesisPath } from './thesis.resource';
 import { ThesisService } from './thesis.service';
-import { thesisCreateValidationSchema } from './thesis.validation';
 
 @UseGuards(JwtAuthGuard)
-@Controller(THESIS_PATH.ROOT)
+@Controller(ThesisPath.ROOT)
 export class ThesisController {
   constructor(private readonly thesisService: ThesisService) {}
 
   @Get()
   public async getMany(
     @Query(
-      COMMON_QUERIES.OFFSET,
+      CommonQuery.OFFSET,
       new JoiValidationPipe(commonOffsetValidateSchema),
-      new DefaultValuePipe(COMMON_QUERIES_VALUE.OFFSET),
+      new DefaultValuePipe(CommonQueryValue.OFFSET),
       ParseIntPipe
     )
     offset: number,
     @Query(
-      COMMON_QUERIES.LIMIT,
+      CommonQuery.LIMIT,
       new JoiValidationPipe(commonLimitValidateSchema),
-      new DefaultValuePipe(COMMON_QUERIES_VALUE.LIMIT),
+      new DefaultValuePipe(CommonQueryValue.LIMIT),
       ParseIntPipe
     )
     limit: number
@@ -63,25 +53,12 @@ export class ThesisController {
     };
   }
 
-  @Post()
-  @UseGuards(AdminGuard)
-  public async create(
-    @Body(new JoiValidationPipe(thesisCreateValidationSchema)) body: ThesisRequestBody
-  ): Promise<ThesisCreateOrUpdateResponse> {
-    const createdThesis: Thesis = await this.thesisService.create(body);
-
-    return {
-      statusCode: HttpStatus.CREATED,
-      id: createdThesis.id as number
-    };
-  }
-
-  @Get(THESIS_PATH.SPECIFY)
+  @Get(ThesisPath.SPECIFY)
   public async getById(
     @Param(
-      COMMON_PARAMS.ID,
+      CommonParam.ID,
       new JoiValidationPipe(commonIdValidateSchema),
-      new DefaultValuePipe(COMMON_QUERIES_VALUE.FAILED_ID),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
     )
     id: number

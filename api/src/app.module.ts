@@ -7,7 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AvatarModule } from './avatar/avatar.module';
-import { COMMON_PATH, DatabaseType, EnvFileName } from './common/common.resource';
+import { CommonPath, DatabaseType, EnvFileName } from './common/common.resource';
 import { LecturerModule } from './lecturer/lecturer.module';
 import { getDatabaseConfig } from './mssql/mssql.helper';
 import { RefreshModule } from './refresh/refresh.module';
@@ -54,8 +54,8 @@ export class AppModule implements NestModule {
     consumer
       .apply(ExpressUserAgent.express())
       .forRoutes(
-        { path: COMMON_PATH.LOGIN, method: RequestMethod.POST },
-        { path: COMMON_PATH.REFRESH_TOKEN, method: RequestMethod.POST }
+        { path: CommonPath.LOGIN, method: RequestMethod.POST },
+        { path: CommonPath.REFRESH_TOKEN, method: RequestMethod.POST }
       );
   }
 }

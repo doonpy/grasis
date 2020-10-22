@@ -36,7 +36,7 @@ export class RefreshService {
   }
 
   public async isRefreshTokenExist(userId: number, refreshToken: string): Promise<boolean> {
-    return (await this.refreshRepository.count({ where: { userId, refreshToken } })) > 0;
+    return (await this.refreshRepository.count({ userId, refreshToken })) > 0;
   }
 
   public async getNewToken(userId: number): Promise<string> {

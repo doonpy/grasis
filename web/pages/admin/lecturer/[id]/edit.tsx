@@ -9,14 +9,12 @@ import LecturerFormItem from '../../../../components/Lecturer/LecturerFormItem';
 import UserFormItem from '../../../../components/User/UserFormItem';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import AdminLecturerService from '../../../../libs/lecturer/admin/admin.lecturer.service';
-import { StudentRequestBody } from '../../../../libs/lecturer/lecturer.interface';
+import LecturerAdminService from '../../../../libs/lecturer/admin.service';
+import { LecturerForm } from '../../../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
-import LoginUser from '../../../../libs/user/instance/LoginUser';
 import { UserType } from '../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
-  currentLecturer: StudentRequestBody;
   params: PageParams;
 }
 
@@ -26,35 +24,35 @@ interface PageParams extends ParsedUrlQuery {
 
 const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const router = useRouter();
-  const adminLecturerService = AdminLecturerService.getInstance();
+  const adminService = LecturerAdminService.getInstance();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [contentLoading, setContentLoading] = useState(true);
   const lecturerId = parseInt(router.query.id as string);
   const [form] = Form.useForm();
-  const loginUserId = LoginUser.getInstance().getId();
 
-  const handleSubmitButton = async (formValues: StudentRequestBody) => {
+  const handleSubmitButton = async (formValues: LecturerForm) => {
     setSubmitLoading(true);
     try {
-      await adminLecturerService.updateById(lecturerId, formValues, true);
+      await adminService.updateById(lecturerId, formValues);
       await router.push(`${LECTURER_ADMIN_PATH_ROOT}/${lecturerId}`);
     } catch (error) {
-      await adminLecturerService.requestErrorHandler(error);
+      await adminService.requestErrorHandler(error);
     }
     setSubmitLoading(false);
   };
 
   useEffect(() => {
     (async () => {
-      let currentLecturer: StudentRequestBody = null;
+      let initForm: LecturerForm = null;
       try {
-        currentLecturer = await adminLecturerService.getInitialForEdit(lecturerId, true);
+        initForm = await adminService.getInitialForEdit(lecturerId, true);
         setContentLoading(false);
       } catch (error) {
-        await adminLecturerService.requestErrorHandler(error);
+        await adminService.requestErrorHandler(error);
         return;
       }
-      form.setFieldsValue(currentLecturer);
+
+      form.setFieldsValue(initForm);
     })();
   }, [params]);
 
@@ -69,12 +67,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
         onFinish={handleSubmitButton}>
         <Row>
           <Col span={12}>
-            <UserFormItem
-              isEdit={true}
-              userType={UserType.LECTURER}
-              userId={lecturerId}
-              loginUserId={loginUserId}
-            />
+            <UserFormItem isEdit={true} userType={UserType.LECTURER} userId={lecturerId} />
           </Col>
           <Col span={12}>
             <LecturerFormItem />

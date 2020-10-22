@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { Payload } from '../../auth/strategies/jwt.strategy';
 import { CommonRequest } from '../../common/common.interface';
-import { IsAdmin, USER_ERROR_RESOURCE } from '../user.resource';
+import { IsAdmin, UserError } from '../user.resource';
 
 @Injectable()
 export class UpdateUserGuard implements CanActivate {
@@ -27,7 +27,7 @@ export class UpdateUserGuard implements CanActivate {
 
   private checkUpdateIsAdmin(userId: number, targetId: number, isAdmin: IsAdmin): void {
     if (!Number.isNaN(isAdmin) && userId === targetId) {
-      throw new BadRequestException(USER_ERROR_RESOURCE.ERR_8);
+      throw new BadRequestException(UserError.ERR_8);
     }
   }
 }

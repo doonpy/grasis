@@ -3,15 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment';
 import { Connection, Repository } from 'typeorm';
 
-import { COMMON_COLUMN } from '../common/common.resource';
-import { Lecturer } from '../lecturer/lecturer.interface';
+import { LecturerError } from '../lecturer/lecturer.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
+import { StudentError } from '../student/student.resource';
 import { StudentService } from '../student/student.service';
-import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
+import { ThesisStudent } from './thesis-student/thesis-student.interface';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
 import { ThesisEntity } from './thesis.entity';
-import { CreatorView, Thesis, ThesisRequestBody, ThesisView } from './thesis.interface';
-import { THESIS_COLUMN, THESIS_ERROR } from './thesis.resource';
+import { Thesis, ThesisRequestBody } from './thesis.interface';
+import { ThesisError, ThesisRelation } from './thesis.resource';
 
 @Injectable()
 export class ThesisService {
@@ -20,12 +20,12 @@ export class ThesisService {
     private readonly connection: Connection,
     private readonly lecturerService: LecturerService,
     private readonly studentService: StudentService,
-    private readonly thesisLecturerService: ThesisLecturerService,
     private readonly thesisStudentService: ThesisStudentService
   ) {}
 
   public async getMany(offset: number, limit: number): Promise<Thesis[]> {
     return this.thesisRepository.find({
+      relations: [ThesisRelation.CREATOR],
       skip: offset,
       take: limit,
       cache: true
@@ -37,44 +37,78 @@ export class ThesisService {
   }
 
   public async create(data: ThesisRequestBody): Promise<Thesis> {
-    return this.connection.transaction(async (manager) => {
-      const { lecturers, students, ...thesis } = data;
-      this.validateThesisStateDate(thesis as Thesis);
-      const creator = data.creator;
-      await this.lecturerService.checkLecturerExistByIdTransaction(manager, creator as number);
+    const { attendees, ...thesis } = data;
+    this.validateThesisStateDate(thesis as Thesis);
+    const thesisEntity = this.thesisRepository.create(thesis);
+    thesisEntity.creator = await this.lecturerService.findById(data.creatorId);
 
-      const thesisEntity = manager.create<Thesis>(ThesisEntity, thesis);
-      const createdThesis = await manager.save<Thesis>(thesisEntity);
-      await this.thesisLecturerService.createWithTransaction(manager, createdThesis.id, lecturers);
-      await this.thesisStudentService.createWithTransaction(manager, createdThesis.id, students);
+    if (attendees && attendees.lecturers) {
+      const { lecturers } = attendees;
+      const lecturerEntities = await this.lecturerService.findByIds(lecturers);
+      for (const lecturer of lecturers) {
+        const lecturerEntity = lecturerEntities.find(({ id }) => id === lecturer);
+        if (!lecturerEntity) {
+          throw new BadRequestException(LecturerError.ERR_3);
+        }
 
-      return createdThesis;
-    });
+        await this.lecturerService.checkIsActive(lecturerEntity);
+      }
+
+      thesisEntity.lecturers = lecturerEntities;
+    }
+
+    if (attendees && attendees.students) {
+      const { students } = attendees;
+      const participatedThesisStudentIds = (
+        await this.thesisStudentService.getStudentParticipatedThesisByIds(students)
+      ).map(({ studentId }) => studentId);
+      const studentEntities = await this.studentService.findByIdsForThesis(students);
+      const thesisStudent: ThesisStudent[] = [];
+      for (const student of students) {
+        const studentEntity = studentEntities.find(({ id }) => id === student);
+        if (!studentEntity) {
+          throw new BadRequestException(StudentError.ERR_3);
+        }
+
+        this.studentService.checkIsActive(studentEntity);
+        this.studentService.checkHasParticipatedThesis(studentEntity, participatedThesisStudentIds);
+        thesisStudent.push(
+          this.thesisStudentService.createEntity({
+            thesisId: thesisEntity.id,
+            studentId: studentEntity.id
+          })
+        );
+      }
+
+      thesisEntity.students = thesisStudent;
+    }
+
+    return await this.thesisRepository.save(thesisEntity);
   }
 
   private validateThesisStateDate(thesis: Thesis): void {
     if (!this.isValidStartAndEndTime(thesis)) {
-      throw new BadRequestException(THESIS_ERROR.ERR_6);
+      throw new BadRequestException(ThesisError.ERR_6);
     }
 
     if (!this.isValidLecturerTopicRegister(thesis)) {
-      throw new BadRequestException(THESIS_ERROR.ERR_1);
+      throw new BadRequestException(ThesisError.ERR_1);
     }
 
     if (!this.isValidStudentTopicRegister(thesis)) {
-      throw new BadRequestException(THESIS_ERROR.ERR_2);
+      throw new BadRequestException(ThesisError.ERR_2);
     }
 
     if (!this.isValidProgressReport(thesis)) {
-      throw new BadRequestException(THESIS_ERROR.ERR_3);
+      throw new BadRequestException(ThesisError.ERR_3);
     }
 
     if (!this.isValidReview(thesis)) {
-      throw new BadRequestException(THESIS_ERROR.ERR_4);
+      throw new BadRequestException(ThesisError.ERR_4);
     }
 
     if (!this.isValidDefense(thesis)) {
-      throw new BadRequestException(THESIS_ERROR.ERR_5);
+      throw new BadRequestException(ThesisError.ERR_5);
     }
   }
 
@@ -88,143 +122,53 @@ export class ThesisService {
     const {
       lecturerTopicRegister,
       studentTopicRegister,
-      progressReport,
-      review,
-      defense,
-      startTime,
-      endTime
+
+      startTime
     } = thesis;
 
     return !(
       moment.utc(lecturerTopicRegister).unix() < moment.utc(startTime).unix() ||
-      moment.utc(lecturerTopicRegister).unix() >= moment.utc(endTime).unix() ||
-      moment.utc(lecturerTopicRegister).unix() >= moment.utc(studentTopicRegister).unix() ||
-      moment.utc(lecturerTopicRegister).unix() >= moment.utc(progressReport).unix() ||
-      moment.utc(lecturerTopicRegister).unix() >= moment.utc(review).unix() ||
-      moment.utc(lecturerTopicRegister).unix() >= moment.utc(defense).unix()
+      moment.utc(lecturerTopicRegister).unix() >= moment.utc(studentTopicRegister).unix()
     );
   }
 
   private isValidStudentTopicRegister(thesis: Thesis): boolean {
-    const {
-      lecturerTopicRegister,
-      studentTopicRegister,
-      progressReport,
-      review,
-      defense,
-      startTime,
-      endTime
-    } = thesis;
+    const { lecturerTopicRegister, studentTopicRegister, progressReport } = thesis;
 
     return !(
-      moment.utc(studentTopicRegister).unix() < moment.utc(startTime).unix() ||
-      moment.utc(studentTopicRegister).unix() >= moment.utc(endTime).unix() ||
       moment.utc(studentTopicRegister).unix() < moment.utc(lecturerTopicRegister).unix() ||
-      moment.utc(studentTopicRegister).unix() >= moment.utc(progressReport).unix() ||
-      moment.utc(studentTopicRegister).unix() >= moment.utc(review).unix() ||
-      moment.utc(studentTopicRegister).unix() >= moment.utc(defense).unix()
+      moment.utc(studentTopicRegister).unix() >= moment.utc(progressReport).unix()
     );
   }
 
   private isValidProgressReport(thesis: Thesis): boolean {
-    const {
-      lecturerTopicRegister,
-      studentTopicRegister,
-      progressReport,
-      review,
-      defense,
-      startTime,
-      endTime
-    } = thesis;
+    const { studentTopicRegister, progressReport, review } = thesis;
 
     return !(
-      moment.utc(progressReport).unix() < moment.utc(startTime).unix() ||
-      moment.utc(progressReport).unix() >= moment.utc(endTime).unix() ||
-      moment.utc(progressReport).unix() < moment.utc(lecturerTopicRegister).unix() ||
       moment.utc(progressReport).unix() < moment.utc(studentTopicRegister).unix() ||
-      moment.utc(progressReport).unix() >= moment.utc(review).unix() ||
-      moment.utc(progressReport).unix() >= moment.utc(defense).unix()
+      moment.utc(progressReport).unix() >= moment.utc(review).unix()
     );
   }
 
   private isValidReview(thesis: Thesis): boolean {
-    const {
-      lecturerTopicRegister,
-      studentTopicRegister,
-      progressReport,
-      review,
-      defense,
-      startTime,
-      endTime
-    } = thesis;
+    const { progressReport, review, defense } = thesis;
 
     return !(
-      moment.utc(review).unix() < moment.utc(startTime).unix() ||
-      moment.utc(review).unix() >= moment.utc(endTime).unix() ||
-      moment.utc(review).unix() < moment.utc(lecturerTopicRegister).unix() ||
-      moment.utc(review).unix() < moment.utc(studentTopicRegister).unix() ||
       moment.utc(review).unix() < moment.utc(progressReport).unix() ||
       moment.utc(review).unix() >= moment.utc(defense).unix()
     );
   }
 
   private isValidDefense(thesis: Thesis): boolean {
-    const {
-      lecturerTopicRegister,
-      studentTopicRegister,
-      progressReport,
-      review,
-      defense,
-      startTime,
-      endTime
-    } = thesis;
+    const { review, defense, endTime } = thesis;
 
     return !(
-      moment.utc(defense).unix() < moment.utc(startTime).unix() ||
       moment.utc(defense).unix() >= moment.utc(endTime).unix() ||
-      moment.utc(defense).unix() < moment.utc(lecturerTopicRegister).unix() ||
-      moment.utc(defense).unix() < moment.utc(studentTopicRegister).unix() ||
-      moment.utc(defense).unix() < moment.utc(progressReport).unix() ||
       moment.utc(defense).unix() < moment.utc(review).unix()
     );
   }
 
-  public async getById(id: number): Promise<any> {
-    const findThesis = this.thesisRepository.findOne(id, {
-      cache: true,
-      relations: [THESIS_COLUMN.CREATOR, `${THESIS_COLUMN.CREATOR}.${COMMON_COLUMN.ID}`]
-    });
-    const findThesisLecturer = this.thesisLecturerService.findByThesisId(id);
-    const findThesisStudent = this.thesisStudentService.findByThesisId(id);
-    const [thesis, lecturers, students] = await Promise.all([
-      findThesis,
-      findThesisLecturer,
-      findThesisStudent
-    ]);
-
-    if (!thesis) {
-      throw new BadRequestException(THESIS_ERROR.ERR_7);
-    }
-
-    const thesisView = this.convertToView(thesis);
-
-    return { thesis: thesisView, lecturers, students };
-  }
-
-  public convertToView(thesis: Thesis): ThesisView {
-    const { id, firstname, lastname, status } = this.lecturerService.convertToView({
-      lecturer: thesis.creator as Lecturer
-    });
-    const creatorView: CreatorView = {
-      id,
-      firstname,
-      lastname,
-      status
-    };
-
-    const thesisView: ThesisView = { ...thesis, creatorView };
-    delete thesisView?.creator;
-
-    return thesisView;
+  public async getById(id: number): Promise<Thesis | undefined> {
+    return this.thesisRepository.findOne(id);
   }
 }

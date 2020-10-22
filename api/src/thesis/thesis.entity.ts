@@ -3,62 +3,84 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 
-import { COMMON_COLUMN, COMMON_ENTITY_OPTIONS } from '../common/common.resource';
+import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
 import { LecturerEntity } from '../lecturer/lecturer.entity';
-import { THESIS_COLUMN, THESIS_STATE, THESIS_STATUS, THESIS_TABLE } from './thesis.resource';
+import { Lecturer } from '../lecturer/lecturer.interface';
+import { ThesisStudentEntity } from './thesis-student/thesis-student.entity';
+import { ThesisStudent } from './thesis-student/thesis-student.interface';
+import { ThesisStudentColumn } from './thesis-student/thesis-student.resource';
+import {
+  THESIS_LECTURER_TABLE,
+  THESIS_TABLE,
+  ThesisColumn,
+  ThesisState,
+  ThesisStatus
+} from './thesis.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: THESIS_TABLE })
 export class ThesisEntity {
-  @PrimaryGeneratedColumn({ name: COMMON_COLUMN.ID, type: 'int' })
-  public readonly id!: number;
+  @PrimaryGeneratedColumn({ name: CommonColumn.ID, type: 'int' })
+  public id!: number;
 
-  @Column({ name: THESIS_COLUMN.CREATOR, type: 'int', nullable: true })
-  @ManyToOne(() => LecturerEntity, (lecturer) => lecturer.id, {
-    onUpdate: 'CASCADE',
-    onDelete: 'SET NULL'
-  })
-  @JoinColumn({ name: THESIS_COLUMN.CREATOR, referencedColumnName: COMMON_COLUMN.ID })
-  private readonly creator!: number;
+  @Column({ name: ThesisColumn.CREATOR_ID, type: 'int' })
+  public creatorId!: number;
 
-  @Column({ name: THESIS_COLUMN.START_TIME, type: 'datetime2' })
-  private readonly startTime!: string;
+  @Column({ name: ThesisColumn.START_TIME, type: 'datetime2' })
+  public startTime!: string;
 
-  @Column({ name: THESIS_COLUMN.END_TIME, type: 'datetime2' })
-  private readonly endTime!: string;
+  @Column({ name: ThesisColumn.END_TIME, type: 'datetime2' })
+  public endTime!: string;
 
   @Column({
-    name: THESIS_COLUMN.STATE,
+    name: ThesisColumn.STATE,
     type: 'tinyint',
-    default: THESIS_STATE.LECTURER_TOPIC_REGISTER
+    default: ThesisState.LECTURER_TOPIC_REGISTER
   })
-  private readonly state!: string;
+  public state!: ThesisState;
 
-  @Column({ name: THESIS_COLUMN.LECTURER_TOPIC_REGISTER, type: 'datetime2' })
-  private readonly lecturerTopicRegister!: string;
+  @Column({ name: ThesisColumn.LECTURER_TOPIC_REGISTER, type: 'datetime2' })
+  public lecturerTopicRegister!: string;
 
-  @Column({ name: THESIS_COLUMN.STUDENT_TOPIC_REGISTER, type: 'datetime2' })
-  private readonly studentTopicRegister!: string;
+  @Column({ name: ThesisColumn.STUDENT_TOPIC_REGISTER, type: 'datetime2' })
+  public studentTopicRegister!: string;
 
-  @Column({ name: THESIS_COLUMN.PROGRESS_REPORT, type: 'datetime2' })
-  private readonly progressReport!: string;
+  @Column({ name: ThesisColumn.PROGRESS_REPORT, type: 'datetime2' })
+  public progressReport!: string;
 
-  @Column({ name: THESIS_COLUMN.REVIEW, type: 'datetime2' })
-  private readonly review!: string;
+  @Column({ name: ThesisColumn.REVIEW, type: 'datetime2' })
+  public review!: string;
 
-  @Column({ name: THESIS_COLUMN.DEFENSE, type: 'datetime2' })
-  private readonly defense!: string;
+  @Column({ name: ThesisColumn.DEFENSE, type: 'datetime2' })
+  public defense!: string;
 
-  @Column({ name: THESIS_COLUMN.STATUS, type: 'int', default: THESIS_STATUS.ACTIVE })
-  private readonly status!: number;
+  @Column({ name: ThesisColumn.STATUS, type: 'int', default: ThesisStatus.INACTIVE })
+  public status!: ThesisStatus;
 
-  @CreateDateColumn({ name: COMMON_COLUMN.CREATED_AT })
-  private readonly createdAt!: string;
+  @CreateDateColumn({ name: CommonColumn.CREATED_AT })
+  public createdAt!: string;
 
-  @UpdateDateColumn({ name: COMMON_COLUMN.UPDATED_AT })
-  private readonly updatedAt!: string;
+  @UpdateDateColumn({ name: CommonColumn.UPDATED_AT })
+  public updatedAt!: string;
+
+  @OneToMany(() => ThesisStudentEntity, ({ thesis }) => thesis, { cascade: true })
+  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ThesisStudentColumn.THESIS_ID })
+  public students!: ThesisStudent[];
+
+  @ManyToMany(() => LecturerEntity, ({ theses }) => theses, { cascade: true })
+  @JoinTable({ ...COMMON_ENTITY_OPTIONS, name: THESIS_LECTURER_TABLE })
+  public lecturers!: Lecturer[];
+
+  @ManyToOne(() => LecturerEntity, ({ theses }) => theses, {
+    cascade: true
+  })
+  @JoinColumn({ name: ThesisColumn.CREATOR_ID, referencedColumnName: CommonColumn.ID })
+  public creator!: Lecturer | null;
 }

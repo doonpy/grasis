@@ -1,37 +1,22 @@
-import { UserViewType } from './user.interface';
-
 export enum Gender {
-  MALE = 0,
-  FEMALE = 1
+  MALE = 1,
+  FEMALE = 2
 }
 
 export enum UserStatus {
-  INACTIVE = 0,
-  ACTIVE = 1
+  INACTIVE = 1,
+  ACTIVE = 2
 }
 
 export enum IsAdmin {
-  FALSE = 0,
-  TRUE = 1
+  FALSE = 1,
+  TRUE = 2
 }
 
 export enum UserType {
-  STUDENT = 0,
-  LECTURER = 1
+  STUDENT = 1,
+  LECTURER = 2
 }
-
-export const INITIAL_USER: UserViewType = {
-  id: NaN,
-  username: null,
-  firstname: null,
-  lastname: null,
-  gender: null,
-  email: null,
-  address: null,
-  phone: null,
-  status: null,
-  isAdmin: null
-};
 
 export const USER_API = {
   ROOT: '/users'

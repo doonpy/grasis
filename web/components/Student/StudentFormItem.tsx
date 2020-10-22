@@ -5,16 +5,19 @@ import React from 'react';
 const StudentFormItem: React.FC = () => {
   return (
     <div>
-      <Form.Item name="studentId" label="Mã sinh viên">
-        <Input name="studentId" maxLength={8} />
+      <Form.Item name={['student', 'studentId']} label="Mã sinh viên">
+        <Input maxLength={8} />
       </Form.Item>
-      <Form.Item name="schoolYear" label="Niên khóa">
-        <Input name="schoolYear" maxLength={4} />
+      <Form.Item name={['student', 'schoolYear']} label="Niên khóa">
+        <Input maxLength={4} />
       </Form.Item>
-      <Form.Item name="studentClass" label="Lớp">
-        <Input name="studentClass" />
+      <Form.Item name={['student', 'studentClass']} label="Lớp">
+        <Input />
       </Form.Item>
-      <Form.Item name="isGraduate" label="Tình trạng tốt nghiệp" valuePropName="checked">
+      <Form.Item
+        name={['student', 'isGraduate']}
+        label="Tình trạng tốt nghiệp"
+        valuePropName="checked">
         <Switch checkedChildren={<CheckOutlined />} unCheckedChildren={<CloseOutlined />} />
       </Form.Item>
     </div>

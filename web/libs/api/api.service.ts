@@ -1,9 +1,10 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 
 import JwtClient from '../jwt/jwt.client';
 
 export default class ApiService {
   private baseConfigs: AxiosRequestConfig;
+  private cancelSource: CancelTokenSource;
 
   constructor() {
     this.baseConfigs = {
@@ -54,5 +55,14 @@ export default class ApiService {
     await this.bindAuthorizationForClient();
     const { data } = await axios.get(url, this.baseConfigs);
     return data;
+  }
+
+  public cancelPreviousRequest(): void {
+    this.cancelSource.cancel();
+  }
+
+  public bindCancelToken() {
+    this.cancelSource = axios.CancelToken.source();
+    this.setConfigs({ cancelToken: this.cancelSource.token });
   }
 }
