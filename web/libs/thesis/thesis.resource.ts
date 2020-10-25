@@ -1,5 +1,10 @@
 export const THESIS_PATH_ROOT = '/thesis';
 
+export const THESIS_PATH = {
+  CREATE: `${THESIS_PATH_ROOT}/admin/create`,
+  EDIT: `${THESIS_PATH_ROOT}/admin/%id/edit`
+};
+
 export enum ThesisState {
   LECTURER_TOPIC_REGISTER = 1,
   STUDENT_TOPIC_REGISTER = 2,
@@ -9,6 +14,16 @@ export enum ThesisState {
   FINISH = 6
 }
 
+export const ThesisStateTexts = [
+  '',
+  'Giảng viên đăng ký đề tài',
+  'Sinh viên đăng ký đề tài',
+  'Báo cáo tiến độ',
+  'Phản biện',
+  'Bảo vệ',
+  'Kết thúc'
+];
+
 export enum ThesisStatus {
   INACTIVE = 1,
   ACTIVE = 2
@@ -16,7 +31,9 @@ export enum ThesisStatus {
 
 export enum ThesisApi {
   ROOT = '/theses',
-  ADMIN = '/admin/theses'
+  ADMIN = '/admin/theses',
+  LOAD_MORE_LECTURERS = 'lecturers-load-more',
+  LOAD_MORE_STUDENTS = 'students-load-more'
 }
 
 export enum ThesisAttendeeTarget {
@@ -24,13 +41,7 @@ export enum ThesisAttendeeTarget {
   STUDENT = 2
 }
 
-export const ThesisAttendeeSelectTerminology = {
-  LECTURER: {
-    LABEL: 'Giảng viên hướng dẫn',
-    FIELD_NAME: 'lecturers'
-  },
-  STUDENT: {
-    LABEL: 'Sinh viên thực hiện',
-    FIELD_NAME: 'students'
-  }
-};
+export enum LoadMoreTarget {
+  STUDENT,
+  LECTURER
+}

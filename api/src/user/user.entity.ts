@@ -1,9 +1,7 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 import { CommonEntity } from '../common/common.entity';
 import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
-import { StudentEntity } from '../student/student.entity';
-import { Student } from '../student/student.interface';
 import { Gender, IsAdmin, USER_TABLE, UserColumn, UserStatus, UserType } from './user.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: USER_TABLE })
@@ -43,7 +41,4 @@ export class UserEntity extends CommonEntity {
 
   @Column({ name: UserColumn.USER_TYPE, type: 'tinyint' })
   public userType!: UserType;
-
-  @OneToOne(() => StudentEntity, ({ user }) => user)
-  public student!: Student;
 }

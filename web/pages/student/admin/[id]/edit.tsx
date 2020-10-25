@@ -4,17 +4,19 @@ import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useEffect, useState } from 'react';
 
+import StudentTerminology from '../../../../assets/terminology/student.terminology';
 import MainLayout from '../../../../components/Layout/MainLayout';
-import LecturerFormItem from '../../../../components/Lecturer/LecturerFormItem';
+import StudentFormItem from '../../../../components/Student/StudentFormItem';
 import UserFormItem from '../../../../components/User/UserFormItem';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import LecturerAdminService from '../../../../libs/lecturer/admin.service';
-import { LecturerForm } from '../../../../libs/lecturer/lecturer.interface';
-import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
+import StudentAdminService from '../../../../libs/student/admin.service';
+import { StudentForm, StudentRequestBody } from '../../../../libs/student/student.interface';
+import { STUDENT_ADMIN_PATH_ROOT } from '../../../../libs/student/student.resource';
 import { UserType } from '../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
+  currentStudent: StudentRequestBody;
   params: PageParams;
 }
 
@@ -24,17 +26,17 @@ interface PageParams extends ParsedUrlQuery {
 
 const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const router = useRouter();
-  const adminService = LecturerAdminService.getInstance();
+  const adminService = StudentAdminService.getInstance();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [contentLoading, setContentLoading] = useState(true);
-  const lecturerId = parseInt(router.query.id as string);
+  const studentId: number = parseInt(router.query.id as string);
   const [form] = Form.useForm();
 
-  const handleSubmitButton = async (formValues: LecturerForm) => {
+  const handleSubmitButton = async (formValues: StudentForm) => {
     setSubmitLoading(true);
     try {
-      await adminService.updateById(lecturerId, formValues);
-      await router.push(`${LECTURER_ADMIN_PATH_ROOT}/${lecturerId}`);
+      await adminService.updateById(studentId, formValues);
+      await router.push(`${STUDENT_ADMIN_PATH_ROOT}/${studentId}`);
     } catch (error) {
       await adminService.requestErrorHandler(error);
     }
@@ -43,21 +45,20 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
 
   useEffect(() => {
     (async () => {
-      let initForm: LecturerForm = null;
+      let currentStudent: StudentRequestBody = null;
       try {
-        initForm = await adminService.getInitialForEdit(lecturerId, true);
+        currentStudent = await adminService.getInitialForEdit(studentId);
         setContentLoading(false);
       } catch (error) {
         await adminService.requestErrorHandler(error);
         return;
       }
-
-      form.setFieldsValue(initForm);
+      form.setFieldsValue(currentStudent);
     })();
   }, [params]);
 
   return (
-    <Card title="Sửa thông tin giảng viên" loading={contentLoading}>
+    <Card title={StudentTerminology.STUDENT_12} loading={contentLoading}>
       <Form
         form={form}
         requiredMark={true}
@@ -67,10 +68,10 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
         onFinish={handleSubmitButton}>
         <Row>
           <Col span={12}>
-            <UserFormItem isEdit={true} userType={UserType.LECTURER} userId={lecturerId} />
+            <UserFormItem isEdit={true} userType={UserType.STUDENT} />
           </Col>
           <Col span={12}>
-            <LecturerFormItem />
+            <StudentFormItem />
             <Row>
               <Col span={24} style={{ textAlign: 'center' }}>
                 <Button
@@ -109,15 +110,15 @@ export const getStaticProps: GetStaticProps<CommonPageProps, PageParams> = async
   return {
     props: {
       params,
-      title: 'Sửa thông tin giảng viên',
-      selectedMenu: SIDER_KEYS.ADMIN_LECTURER,
+      title: StudentTerminology.STUDENT_12,
+      selectedMenu: SIDER_KEYS.ADMIN_STUDENT,
       breadcrumbs: [
-        { text: 'Danh sách giảng viên', href: LECTURER_ADMIN_PATH_ROOT },
+        { text: StudentTerminology.STUDENT_1, href: STUDENT_ADMIN_PATH_ROOT },
         {
-          text: 'Chi tiết giảng viên',
-          href: `${LECTURER_ADMIN_PATH_ROOT}/${params.id}`
+          text: StudentTerminology.STUDENT_7,
+          href: `${STUDENT_ADMIN_PATH_ROOT}/${params.id}`
         },
-        { text: 'Sửa thông tin giảng viên' }
+        { text: StudentTerminology.STUDENT_12 }
       ],
       isAdminCheck: true,
       allowUserTypes: [UserType.LECTURER]

@@ -21,6 +21,7 @@ import {
   THESIS_LECTURER_TABLE,
   THESIS_TABLE,
   ThesisColumn,
+  ThesisLecturerColumn,
   ThesisState,
   ThesisStatus
 } from './thesis.resource';
@@ -29,6 +30,9 @@ import {
 export class ThesisEntity {
   @PrimaryGeneratedColumn({ name: CommonColumn.ID, type: 'int' })
   public id!: number;
+
+  @Column({ name: ThesisColumn.SUBJECT, type: 'nvarchar', length: 100 })
+  public subject!: number;
 
   @Column({ name: ThesisColumn.CREATOR_ID, type: 'int' })
   public creatorId!: number;
@@ -75,7 +79,15 @@ export class ThesisEntity {
   public students!: ThesisStudent[];
 
   @ManyToMany(() => LecturerEntity, ({ theses }) => theses, { cascade: true })
-  @JoinTable({ ...COMMON_ENTITY_OPTIONS, name: THESIS_LECTURER_TABLE })
+  @JoinTable({
+    ...COMMON_ENTITY_OPTIONS,
+    name: THESIS_LECTURER_TABLE,
+    joinColumn: { name: ThesisLecturerColumn.THESIS_ID, referencedColumnName: CommonColumn.ID },
+    inverseJoinColumn: {
+      name: ThesisLecturerColumn.LECTURER_ID,
+      referencedColumnName: CommonColumn.ID
+    }
+  })
   public lecturers!: Lecturer[];
 
   @ManyToOne(() => LecturerEntity, ({ theses }) => theses, {

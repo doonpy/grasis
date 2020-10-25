@@ -1,7 +1,7 @@
 import 'moment/locale/vi';
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { DatePicker, Form, Space, Switch } from 'antd';
+import { DatePicker, Form, Input, Space, Switch } from 'antd';
 import moment, { Moment } from 'moment';
 import React, { useState } from 'react';
 
@@ -42,6 +42,12 @@ const ThesisFormItem: React.FC<ComponentProps> = ({ isEdit }) => {
 
   return (
     <Space direction="vertical">
+      <Form.Item
+        name="subject"
+        label="Tiêu đề"
+        rules={[{ required: true, message: 'Vui lòng nhập tiêu đề!' }]}>
+        <Input />
+      </Form.Item>
       <Form.Item
         name="duration"
         label="Thời gian diễn ra"

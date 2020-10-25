@@ -5,6 +5,10 @@ import { ThesisRequestBody } from './thesis.interface';
 import { ThesisState, ThesisStatus } from './thesis.resource';
 
 const thesisValidationSchema = Joi.object<ThesisRequestBody>({
+  subject: Joi.string().max(100).messages({
+    'string.base': 'Tiêu đề phải là chuỗi.',
+    'string.max': 'Tiêu đề không được quá 100 kí tự.'
+  }),
   startTime: Joi.string().isoDate().invalid('', null).messages({
     'string.base': 'Thời gian bắt đầu phải là chuỗi.',
     'string.isoDate': 'Thời gian bắt đầu có định dạng không hợp lệ.',
@@ -71,6 +75,9 @@ const thesisValidationSchema = Joi.object<ThesisRequestBody>({
 
 export const thesisCreateValidationSchema = thesisValidationSchema.concat(
   Joi.object<ThesisRequestBody>({
+    subject: Joi.required().messages({
+      'any.required': 'Tiêu đề là thông tin bắt buộc.'
+    }),
     startTime: Joi.required().messages({
       'any.required': 'Thời gian bắt đầu là thông tin bắt buộc.'
     }),
@@ -103,7 +110,7 @@ export const thesisCreateValidationSchema = thesisValidationSchema.concat(
 
 export const thesisUpdateValidationSchema = thesisValidationSchema.concat(
   Joi.object<ThesisRequestBody>({
-    creatorId: Joi.optional(),
+    subject: Joi.optional(),
     startTime: Joi.optional(),
     endTime: Joi.optional(),
     lecturerTopicRegister: Joi.optional(),

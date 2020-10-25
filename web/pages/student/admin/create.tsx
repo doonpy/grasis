@@ -3,6 +3,7 @@ import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
+import StudentTerminology from '../../../assets/terminology/student.terminology';
 import MainLayout from '../../../components/Layout/MainLayout';
 import StudentFormItem from '../../../components/Student/StudentFormItem';
 import UserFormItem from '../../../components/User/UserFormItem';
@@ -31,7 +32,7 @@ const Create: NextPageWithLayout = () => {
   };
 
   return (
-    <Card title="Thêm sinh viên">
+    <Card title={StudentTerminology.STUDENT_2}>
       <Form
         requiredMark={true}
         layout="horizontal"
@@ -69,11 +70,11 @@ const Create: NextPageWithLayout = () => {
 export const getStaticProps: GetStaticProps<CommonPageProps> = async () => {
   return {
     props: {
-      title: 'Thêm sinh viên',
+      title: StudentTerminology.STUDENT_2,
       selectedMenu: SIDER_KEYS.ADMIN_STUDENT,
       breadcrumbs: [
-        { text: 'Danh sách sinh viên', href: STUDENT_ADMIN_PATH_ROOT },
-        { text: 'Thêm sinh viên' }
+        { text: StudentTerminology.STUDENT_1, href: STUDENT_ADMIN_PATH_ROOT },
+        { text: StudentTerminology.STUDENT_2 }
       ],
       isAdminCheck: true,
       allowUserTypes: [UserType.LECTURER]

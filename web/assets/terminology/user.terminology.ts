@@ -1,0 +1,20 @@
+export default {
+  USER_1: 'Tên đăng nhập',
+  USER_2: 'Mật khẩu',
+  USER_3: 'Mật khẩu xác nhận',
+  USER_4: 'Tên',
+  USER_5: 'Họ và tên đệm',
+  USER_6: 'Giới tính',
+  USER_7: 'Email',
+  USER_8: 'Địa chỉ',
+  USER_9: 'Số điện thoại',
+  USER_10: 'Trạng thái',
+  USER_11: 'Quyền quản trị',
+  USER_12: 'Nam',
+  USER_13: 'Nữ',
+  USER_14: 'Vui lòng nhập tên đăng nhập!',
+  USER_15: 'Vui lòng nhập mật khẩu!',
+  USER_16: 'Vui lòng nhập mật khẩu xác nhận!',
+  USER_17: 'Đang hoạt động',
+  USER_18: 'Ngưng hoạt động'
+};

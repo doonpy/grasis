@@ -27,7 +27,11 @@ export class AppService implements OnApplicationBootstrap {
       Logger.log(chalk.yellow(`=> Run migrations... Done!`));
     }
 
-    if (!(await this.userService.isUserExistById(1))) {
+    if (
+      !(await this.userService.isUserExistById(1)) &&
+      !(await this.userService.isUserExistByUsername(process.env.ADMIN_USERNAME || 'Administrator'))
+    ) {
+      Logger.log('Create administrator account...');
       const user: UserRequestBody = {
         username: process.env.ADMIN_USERNAME as string,
         password: process.env.ADMIN_PASSWORD as string,
@@ -35,6 +39,7 @@ export class AppService implements OnApplicationBootstrap {
         isAdmin: IsAdmin.TRUE
       };
       await this.lecturerService.create(user);
+      Logger.log('Create administrator account.. Done!');
     }
   }
 }

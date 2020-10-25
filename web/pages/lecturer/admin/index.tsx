@@ -4,12 +4,13 @@ import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
+import LecturerTerminology from '../../../assets/terminology/lecturer.terminology';
 import MainLayout from '../../../components/Layout/MainLayout';
-import { STUDENT_TABLE_COLUMNS } from '../../../components/Student/StudentColumns';
+import { LECTURER_TABLE_COLUMNS } from '../../../components/Lecturer/LecturerColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../libs/common/common.resource';
-import StudentAdminService from '../../../libs/student/admin.service';
-import { STUDENT_PATH } from '../../../libs/student/student.resource';
+import LecturerAdminService from '../../../libs/lecturer/admin.service';
+import { LECTURER_PATH } from '../../../libs/lecturer/lecturer.resource';
 import { UserType } from '../../../libs/user/user.resource';
 
 const Index: NextPageWithLayout = () => {
@@ -19,8 +20,8 @@ const Index: NextPageWithLayout = () => {
     total: 0,
     showSizeChanger: false
   });
-  const adminService = StudentAdminService.getInstance();
-  const { data, isLoading } = adminService.useStudents(pagination.current, pagination.pageSize);
+  const adminService = LecturerAdminService.getInstance();
+  const { data, isLoading } = adminService.useLecturers(pagination.current, pagination.pageSize);
   const handleTableChange = (paginationValues) => {
     setPagination({ ...pagination, ...paginationValues });
   };
@@ -33,9 +34,9 @@ const Index: NextPageWithLayout = () => {
 
   return (
     <Card
-      title="Danh sách sinh viên"
+      title={LecturerTerminology.LECTURER_1}
       extra={
-        <Link href={STUDENT_PATH.CREATE}>
+        <Link href={LECTURER_PATH.CREATE}>
           <Button
             type="primary"
             shape="circle"
@@ -47,8 +48,8 @@ const Index: NextPageWithLayout = () => {
       }>
       <Table
         bordered
-        columns={STUDENT_TABLE_COLUMNS}
-        dataSource={data && data.students}
+        columns={LECTURER_TABLE_COLUMNS}
+        dataSource={data && data.lecturers}
         loading={isLoading}
         pagination={pagination}
         size="middle"
@@ -61,9 +62,9 @@ const Index: NextPageWithLayout = () => {
 export const getStaticProps: GetStaticProps<CommonPageProps> = async () => {
   return {
     props: {
-      title: 'Danh sách sinh viên',
-      selectedMenu: SIDER_KEYS.ADMIN_STUDENT,
-      breadcrumbs: [{ text: 'Danh sách sinh viên' }],
+      title: LecturerTerminology.LECTURER_1,
+      selectedMenu: SIDER_KEYS.ADMIN_LECTURER,
+      breadcrumbs: [{ text: LecturerTerminology.LECTURER_1 }],
       isAdminCheck: true,
       allowUserTypes: [UserType.LECTURER]
     }

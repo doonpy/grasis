@@ -53,7 +53,6 @@ export class LecturerEntity extends CommonEntity {
   public updatedAt!: Date;
 
   @ManyToMany(() => ThesisEntity, ({ lecturers }) => lecturers)
-  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: CommonColumn.ID })
   public theses!: Thesis[];
 
   @OneToOne(() => UserEntity, { cascade: true })

@@ -1,9 +1,17 @@
 import { AxiosResponse } from 'axios';
-import { Moment } from 'moment';
+import useSWR from 'swr';
 
+import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import CommonService from '../common/common.service';
-import { CreateThesisResponse, ThesisRequestBody } from './thesis.interface';
-import { ThesisApi } from './thesis.resource';
+import {
+  ThesisFindManyResponse,
+  ThesisGetByIdResponse,
+  ThesisLoadMoreLecturersResponse,
+  ThesisLoadMoreStudentsResponse,
+  UseTheses,
+  UseThesis
+} from './thesis.interface';
+import { LoadMoreTarget, ThesisApi } from './thesis.resource';
 
 export default class ThesisService extends CommonService {
   private static instance: ThesisService;
@@ -20,25 +28,36 @@ export default class ThesisService extends CommonService {
     return this.instance;
   }
 
-  public async createThesis(body: ThesisRequestBody): Promise<AxiosResponse<CreateThesisResponse>> {
-    await this.apiService.bindAuthorizationForClient();
+  public useTheses(pageNumber = 0, pageSize: number = DEFAULT_PAGE_SIZE): UseTheses {
+    const offset = (pageNumber - 1) * pageSize;
+    const { data } = useSWR<ThesisFindManyResponse>(`${ThesisApi.ROOT}?offset=${offset}`);
+    if (data) {
+      data.theses = data.theses.map((thesis) => ({ ...thesis, key: thesis.id.toString() }));
+    }
 
-    return this.apiService.post<CreateThesisResponse>(ThesisApi.ADMIN, body);
+    return { data, isLoading: !data };
   }
 
-  public formatThesisRequestBody(formValues: ThesisRequestBody): ThesisRequestBody {
-    const result: ThesisRequestBody = {};
-    const [startTime, endTime] = formValues.duration;
+  public useThesis(id: number): UseThesis {
+    const { data } = useSWR<ThesisGetByIdResponse>(id && `${ThesisApi.ROOT}/${id}`);
 
-    result.startTime = startTime.startOf('days');
-    result.endTime = endTime.endOf('days');
-    result.lecturerTopicRegister = (formValues.lecturerTopicRegister as Moment).endOf('days');
-    result.studentTopicRegister = (formValues.studentTopicRegister as Moment).endOf('days');
-    result.progressReport = (formValues.progressReport as Moment).endOf('days');
-    result.review = (formValues.review as Moment).endOf('days');
-    result.defense = (formValues.defense as Moment).endOf('days');
-    delete formValues.duration;
+    return { data, isLoading: !data };
+  }
 
-    return { ...formValues, ...result };
+  public async loadMoreAttendees(
+    target: LoadMoreTarget,
+    thesisId: number,
+    offset = 0
+  ): Promise<AxiosResponse<ThesisLoadMoreLecturersResponse | ThesisLoadMoreStudentsResponse>> {
+    await this.apiService.bindAuthorizationForClient();
+    if (target === LoadMoreTarget.LECTURER) {
+      return this.apiService.get<ThesisLoadMoreLecturersResponse>(
+        `${ThesisApi.ROOT}/${thesisId}/${ThesisApi.LOAD_MORE_LECTURERS}?offset=${offset}`
+      );
+    }
+
+    return this.apiService.get<ThesisLoadMoreStudentsResponse>(
+      `${ThesisApi.ROOT}/${thesisId}/${ThesisApi.LOAD_MORE_STUDENTS}?offset=${offset}`
+    );
   }
 }

@@ -53,7 +53,7 @@ export class StudentEntity extends CommonEntity {
     default: IsGraduate.FALSE,
     nullable: true
   })
-  public isGraduate!: string | null;
+  public isGraduate!: IsGraduate | null;
 
   @CreateDateColumn({ name: CommonColumn.CREATED_AT })
   public createdAt!: Date;
@@ -65,7 +65,7 @@ export class StudentEntity extends CommonEntity {
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ThesisStudentColumn.STUDENT_ID })
   public theses!: ThesisStudent[];
 
-  @OneToOne(() => UserEntity, ({ student }) => student, { cascade: true })
+  @OneToOne(() => UserEntity, (user) => user, { cascade: true })
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: CommonColumn.ID })
   public user!: User;
 }

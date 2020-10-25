@@ -5,17 +5,20 @@ import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 
+import styles from '../../../../assets/css/pages/lecturer/admin/index.module.css';
+import LecturerTerminology from '../../../../assets/terminology/lecturer.terminology';
 import AvatarView from '../../../../components/Avatar/AvatarView';
 import MainLayout from '../../../../components/Layout/MainLayout';
-import StudentView from '../../../../components/Student/StudentView';
+import LecturerView from '../../../../components/Lecturer/LecturerView';
 import UserView from '../../../../components/User/UserView';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import StudentAdminService from '../../../../libs/student/admin.service';
-import { STUDENT_ADMIN_PATH_ROOT } from '../../../../libs/student/student.resource';
+import LecturerAdminService from '../../../../libs/lecturer/admin.service';
+import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
+import LoginUser from '../../../../libs/user/instance/LoginUser';
 import { UserType } from '../../../../libs/user/user.resource';
+
 const { confirm } = Modal;
-import styles from '../../../../assets/css/pages/admin/student/index.module.css';
 
 interface PageProps extends CommonPageProps {
   params: PageParams;
@@ -26,22 +29,23 @@ interface PageParams extends ParsedUrlQuery {
 }
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
-  const adminService = StudentAdminService.getInstance();
-  const studentId = parseInt(params.id);
-  const { data, isLoading } = adminService.useStudent(studentId);
+  const adminService = LecturerAdminService.getInstance();
+  const lecturerId = parseInt(params.id);
+  const { data, isLoading } = adminService.useLecturer(lecturerId);
+  const loginUserId = LoginUser.getInstance().getId();
 
   const showDeleteConfirm = () => {
     confirm({
-      title: 'Bạn có muốn xóa sinh viên này?',
+      title: LecturerTerminology.LECTURER_11,
       icon: <ExclamationCircleOutlined />,
-      content: 'Thao tác này không thể phục hồi.',
-      okText: 'Xác nhận',
-      cancelText: 'Hủy',
+      content: LecturerTerminology.LECTURER_12,
+      okText: LecturerTerminology.LECTURER_13,
+      cancelText: LecturerTerminology.LECTURER_14,
       cancelButtonProps: { type: 'primary', danger: true },
       async onOk() {
         try {
-          await adminService.deleteStudent(studentId);
-          await adminService.redirectService.redirectTo(STUDENT_ADMIN_PATH_ROOT);
+          await adminService.deleteLecturer(lecturerId);
+          await adminService.redirectService.redirectTo(LECTURER_ADMIN_PATH_ROOT);
         } catch (error) {
           await adminService.requestErrorHandler(error);
         }
@@ -51,11 +55,11 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
 
   return (
     <Card
-      title="Chi tiết sinh viên"
+      title={LecturerTerminology.LECTURER_10}
       loading={isLoading}
       extra={
         <Space>
-          <Link href={`${STUDENT_ADMIN_PATH_ROOT}/${studentId}/edit`}>
+          <Link href={`${LECTURER_ADMIN_PATH_ROOT}/${lecturerId}/edit`}>
             <Button
               type="primary"
               shape="circle"
@@ -71,16 +75,16 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
             icon={<DeleteOutlined />}
             size="large"
             onClick={showDeleteConfirm}
-            disabled={isLoading}
+            disabled={isLoading || lecturerId === loginUserId}
           />
         </Space>
       }>
       <Space size={48} align={'start'}>
         <div className={styles.avatar}>
-          <AvatarView userId={studentId} width={250} height={250} />
+          <AvatarView userId={lecturerId} width={250} height={250} />
         </div>
-        <UserView user={data && data.student.user} userType={UserType.STUDENT} />
-        <StudentView student={data && data.student} />
+        <UserView user={data && data.lecturer.user} userType={UserType.LECTURER} />
+        <LecturerView lecturer={data && data.lecturer} />
       </Space>
     </Card>
   );
@@ -97,12 +101,12 @@ export const getStaticProps: GetStaticProps<CommonPageProps> = async ({ params }
   return {
     props: {
       params,
-      title: 'Chi tiết sinh viên',
-      selectedMenu: SIDER_KEYS.ADMIN_STUDENT,
+      title: LecturerTerminology.LECTURER_10,
+      selectedMenu: SIDER_KEYS.ADMIN_LECTURER,
       breadcrumbs: [
-        { text: 'Danh sách sinh viên', href: STUDENT_ADMIN_PATH_ROOT },
+        { text: LecturerTerminology.LECTURER_1, href: LECTURER_ADMIN_PATH_ROOT },
         {
-          text: 'Chi tiết sinh viên'
+          text: LecturerTerminology.LECTURER_10
         }
       ],
       isAdminCheck: true,

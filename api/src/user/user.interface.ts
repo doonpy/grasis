@@ -16,7 +16,6 @@ export type UserRequestBody = WithOptional<
   | 'id'
   | 'deletedAt'
   | 'status'
-  | 'student'
 > & {
   confirmPassword?: string;
 };

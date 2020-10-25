@@ -10,6 +10,8 @@ import GraduationCap from '../../assets/svg/regular/graduation-cap.svg';
 // import Shield from '../../assets/svg/regular/shield.svg';
 import UserGraduate from '../../assets/svg/regular/user-graduate.svg';
 import { SIDER_KEYS } from '../../libs/common/common.resource';
+import { LECTURER_ADMIN_PATH_ROOT } from '../../libs/lecturer/lecturer.resource';
+import { STUDENT_ADMIN_PATH_ROOT } from '../../libs/student/student.resource';
 import { THESIS_PATH_ROOT } from '../../libs/thesis/thesis.resource';
 import { IsAdmin, UserType } from '../../libs/user/user.resource';
 
@@ -66,7 +68,7 @@ export const SIDER_ITEMS = [
     key: SIDER_KEYS.ADMIN_LECTURER,
     icon: <Icon component={ChalkBoardTeacher} />,
     text: 'Quản lý giảng viên',
-    href: '/admin/lecturer',
+    href: LECTURER_ADMIN_PATH_ROOT,
     adminPermission: IsAdmin.TRUE,
     allowUserTypes: [UserType.LECTURER, UserType.STUDENT]
   },
@@ -74,7 +76,7 @@ export const SIDER_ITEMS = [
     key: SIDER_KEYS.ADMIN_STUDENT,
     icon: <Icon component={UserGraduate} />,
     text: 'Quản lý sinh viên',
-    href: '/admin/student',
+    href: STUDENT_ADMIN_PATH_ROOT,
     adminPermission: IsAdmin.TRUE,
     allowUserTypes: [UserType.LECTURER, UserType.STUDENT]
   }

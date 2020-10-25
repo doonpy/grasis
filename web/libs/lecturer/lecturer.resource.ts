@@ -1,4 +1,5 @@
-export const LECTURER_ADMIN_PATH_ROOT = '/admin/lecturer';
+export const LECTURER_ADMIN_PATH_ROOT = '/lecturer/admin';
+export const LECTURER_PATH_ROOT = '/lecturer';
 export const LECTURER_PATH = {
   CREATE: `${LECTURER_ADMIN_PATH_ROOT}/create`
 };

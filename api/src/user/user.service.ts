@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { createHmac } from 'crypto';
 import { Repository } from 'typeorm';
 
+import { NOT_DELETE_CONDITION } from '../common/common.resource';
 import { UserEntity } from './user.entity';
 import { User, UserAuth, UserRequestBody } from './user.interface';
 import { IsAdmin, UserError, UserStatus, UserType } from './user.resource';
@@ -15,7 +16,9 @@ export class UserService {
   ) {}
 
   public async findById(id: number): Promise<User> {
-    const user: User | undefined = await this.usersRepository.findOne(id);
+    const user: User | undefined = await this.usersRepository.findOne(id, {
+      where: { ...NOT_DELETE_CONDITION }
+    });
     if (!user) {
       throw new BadRequestException(UserError.ERR_1);
     }
@@ -67,6 +70,7 @@ export class UserService {
         password,
         username ? username : currentUser.username
       );
+      delete userBody.password;
     }
 
     return { ...currentUser, ...userBody };

@@ -2,6 +2,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { Col, Row, Space, Typography } from 'antd';
 import React from 'react';
 
+import UserTerminology from '../../assets/terminology/user.terminology';
 import { User } from '../../libs/user/user.interface';
 import { IsAdmin, UserStatus, UserType } from '../../libs/user/user.resource';
 import TextData from '../Common/TextData';
@@ -29,32 +30,32 @@ const UserView: React.FC<ComponentProps> = ({
           <Col>
             <Space direction="vertical" size="middle">
               <Typography.Text strong type="secondary">
-                Tên đăng nhập
+                {UserTerminology.USER_1}
               </Typography.Text>
               <Typography.Text strong type="secondary">
-                Họ và tên đệm
+                {UserTerminology.USER_5}{' '}
               </Typography.Text>
               <Typography.Text strong type="secondary">
-                Tên
+                {UserTerminology.USER_4}
               </Typography.Text>
               <Typography.Text strong type="secondary">
-                Giới tính
+                {UserTerminology.USER_6}
               </Typography.Text>
               <Typography.Text strong type="secondary">
-                Email
+                {UserTerminology.USER_7}
               </Typography.Text>
               <Typography.Text strong type="secondary">
-                Địa chỉ
+                {UserTerminology.USER_8}
               </Typography.Text>
               <Typography.Text strong type="secondary">
-                Số điện thoại
+                {UserTerminology.USER_9}
               </Typography.Text>
               <Typography.Text strong type="secondary">
-                Trạng thái
+                {UserTerminology.USER_10}
               </Typography.Text>
               {userType === UserType.LECTURER && (
                 <Typography.Text strong type="secondary">
-                  Quản trị viên
+                  {UserTerminology.USER_11}
                 </Typography.Text>
               )}
             </Space>

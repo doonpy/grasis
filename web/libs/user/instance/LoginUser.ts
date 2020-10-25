@@ -1,4 +1,5 @@
 import { User } from '../user.interface';
+import { IsAdmin } from '../user.resource';
 
 export default class LoginUser {
   private static instance: LoginUser;
@@ -18,5 +19,9 @@ export default class LoginUser {
 
   public getId(): number {
     return this.user.id;
+  }
+
+  public isAdmin(): boolean {
+    return this.user.isAdmin === IsAdmin.TRUE;
   }
 }

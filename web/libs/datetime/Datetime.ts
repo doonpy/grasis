@@ -2,8 +2,6 @@ import 'moment/locale/vi';
 
 import moment, { Moment } from 'moment';
 
-import { LOCAL_FORMAT } from './datetime.resource';
-
 export default class Datetime {
   private dateTime: Moment;
 
@@ -12,10 +10,14 @@ export default class Datetime {
   }
 
   public getWithLocalTimezone(): string {
-    return this.dateTime.clone().local().format(LOCAL_FORMAT);
+    return this.dateTime.clone().local().format('LTS, L');
   }
 
   public getRelativeTime(): string {
     return this.dateTime.clone().local().fromNow();
+  }
+
+  public getDate(): string {
+    return this.dateTime.clone().local().format('L');
   }
 }

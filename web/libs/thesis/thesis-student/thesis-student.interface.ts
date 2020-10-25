@@ -3,13 +3,15 @@ import { UserViewType } from '../../user/user.interface';
 import { Thesis } from '../thesis.interface';
 
 export interface ThesisStudent {
-  thesis: number | Thesis;
-  student: number | Student;
+  thesisId: number;
+  studentId: number;
   // TODO: This will be Topic type when Topic was implemented.
   topic: number | null;
   instructorResult: number | null;
   reviewResult: number | null;
   defenseResult: number | null;
+  student: Student;
+  thesis: Thesis;
 }
 
 export interface ThesisStudentRequestBody {

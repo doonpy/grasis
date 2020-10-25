@@ -5,17 +5,16 @@ import { ParsedUrlQuery } from 'querystring';
 import React, { useEffect, useState } from 'react';
 
 import MainLayout from '../../../../components/Layout/MainLayout';
-import StudentFormItem from '../../../../components/Student/StudentFormItem';
+import LecturerFormItem from '../../../../components/Lecturer/LecturerFormItem';
 import UserFormItem from '../../../../components/User/UserFormItem';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import StudentAdminService from '../../../../libs/student/admin.service';
-import { StudentForm, StudentRequestBody } from '../../../../libs/student/student.interface';
-import { STUDENT_ADMIN_PATH_ROOT } from '../../../../libs/student/student.resource';
+import LecturerAdminService from '../../../../libs/lecturer/admin.service';
+import { LecturerForm } from '../../../../libs/lecturer/lecturer.interface';
+import { LECTURER_ADMIN_PATH_ROOT } from '../../../../libs/lecturer/lecturer.resource';
 import { UserType } from '../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
-  currentStudent: StudentRequestBody;
   params: PageParams;
 }
 
@@ -25,17 +24,17 @@ interface PageParams extends ParsedUrlQuery {
 
 const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const router = useRouter();
-  const adminService = StudentAdminService.getInstance();
+  const adminService = LecturerAdminService.getInstance();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [contentLoading, setContentLoading] = useState(true);
-  const studentId: number = parseInt(router.query.id as string);
+  const lecturerId = parseInt(router.query.id as string);
   const [form] = Form.useForm();
 
-  const handleSubmitButton = async (formValues: StudentForm) => {
+  const handleSubmitButton = async (formValues: LecturerForm) => {
     setSubmitLoading(true);
     try {
-      await adminService.updateById(studentId, formValues);
-      await router.push(`${STUDENT_ADMIN_PATH_ROOT}/${studentId}`);
+      await adminService.updateById(lecturerId, formValues);
+      await router.push(`${LECTURER_ADMIN_PATH_ROOT}/${lecturerId}`);
     } catch (error) {
       await adminService.requestErrorHandler(error);
     }
@@ -44,20 +43,21 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
 
   useEffect(() => {
     (async () => {
-      let currentStudent: StudentRequestBody = null;
+      let initForm: LecturerForm = null;
       try {
-        currentStudent = await adminService.getInitialForEdit(studentId);
+        initForm = await adminService.getInitialForEdit(lecturerId);
         setContentLoading(false);
       } catch (error) {
         await adminService.requestErrorHandler(error);
         return;
       }
-      form.setFieldsValue(currentStudent);
+
+      form.setFieldsValue(initForm);
     })();
   }, [params]);
 
   return (
-    <Card title="Sửa thông tin sinh viên" loading={contentLoading}>
+    <Card title="Sửa thông tin giảng viên" loading={contentLoading}>
       <Form
         form={form}
         requiredMark={true}
@@ -67,10 +67,10 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
         onFinish={handleSubmitButton}>
         <Row>
           <Col span={12}>
-            <UserFormItem isEdit={true} userType={UserType.STUDENT} />
+            <UserFormItem isEdit={true} userType={UserType.LECTURER} userId={lecturerId} />
           </Col>
           <Col span={12}>
-            <StudentFormItem />
+            <LecturerFormItem />
             <Row>
               <Col span={24} style={{ textAlign: 'center' }}>
                 <Button
@@ -109,15 +109,15 @@ export const getStaticProps: GetStaticProps<CommonPageProps, PageParams> = async
   return {
     props: {
       params,
-      title: 'Sửa thông tin sinh viên',
-      selectedMenu: SIDER_KEYS.ADMIN_STUDENT,
+      title: 'Sửa thông tin giảng viên',
+      selectedMenu: SIDER_KEYS.ADMIN_LECTURER,
       breadcrumbs: [
-        { text: 'Danh sách sinh viên', href: STUDENT_ADMIN_PATH_ROOT },
+        { text: 'Danh sách giảng viên', href: LECTURER_ADMIN_PATH_ROOT },
         {
-          text: 'Chi tiết sinh viên',
-          href: `${STUDENT_ADMIN_PATH_ROOT}/${params.id}`
+          text: 'Chi tiết giảng viên',
+          href: `${LECTURER_ADMIN_PATH_ROOT}/${params.id}`
         },
-        { text: 'Sửa thông tin sinh viên' }
+        { text: 'Sửa thông tin giảng viên' }
       ],
       isAdminCheck: true,
       allowUserTypes: [UserType.LECTURER]

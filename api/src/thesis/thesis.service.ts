@@ -1,17 +1,21 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment';
-import { Connection, Repository } from 'typeorm';
+import { Connection, FindOptionsWhere, Repository } from 'typeorm';
 
+import { NOT_DELETE_CONDITION } from '../common/common.resource';
 import { LecturerError } from '../lecturer/lecturer.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { StudentError } from '../student/student.resource';
 import { StudentService } from '../student/student.service';
+import { User } from '../user/user.interface';
+import { IsAdmin, UserType } from '../user/user.resource';
+import { UserService } from '../user/user.service';
 import { ThesisStudent } from './thesis-student/thesis-student.interface';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
 import { ThesisEntity } from './thesis.entity';
 import { Thesis, ThesisRequestBody } from './thesis.interface';
-import { ThesisError, ThesisRelation } from './thesis.resource';
+import { ThesisError } from './thesis.resource';
 
 @Injectable()
 export class ThesisService {
@@ -20,12 +24,34 @@ export class ThesisService {
     private readonly connection: Connection,
     private readonly lecturerService: LecturerService,
     private readonly studentService: StudentService,
-    private readonly thesisStudentService: ThesisStudentService
+    private readonly thesisStudentService: ThesisStudentService,
+    private readonly userService: UserService
   ) {}
 
-  public async getMany(offset: number, limit: number): Promise<Thesis[]> {
+  public async getMany(offset: number, limit: number, loginUserId: number): Promise<Thesis[]> {
+    const user = await this.userService.findById(loginUserId);
+
+    if (user.isAdmin === IsAdmin.TRUE) {
+      return this.thesisRepository.find({
+        relations: { creator: { user } },
+        skip: offset,
+        take: limit,
+        cache: true
+      });
+    }
+
+    let conditions: FindOptionsWhere<Thesis> = {};
+    if (user.userType === UserType.LECTURER) {
+      conditions = { lecturers: { id: user.id } };
+    }
+
+    if (user.userType === UserType.STUDENT) {
+      conditions = { students: { studentId: user.id } };
+    }
+
     return this.thesisRepository.find({
-      relations: [ThesisRelation.CREATOR],
+      relations: { creator: { user } },
+      where: conditions,
       skip: offset,
       take: limit,
       cache: true
@@ -71,6 +97,7 @@ export class ThesisService {
         }
 
         this.studentService.checkIsActive(studentEntity);
+        this.studentService.checkGraduated(studentEntity);
         this.studentService.checkHasParticipatedThesis(studentEntity, participatedThesisStudentIds);
         thesisStudent.push(
           this.thesisStudentService.createEntity({
@@ -168,7 +195,64 @@ export class ThesisService {
     );
   }
 
-  public async getById(id: number): Promise<Thesis | undefined> {
-    return this.thesisRepository.findOne(id);
+  public async getById(id: number, loginUserId: number): Promise<Thesis> {
+    const user = await this.userService.findById(loginUserId);
+    let conditions: FindOptionsWhere<Thesis> = {};
+    if (user.isAdmin !== IsAdmin.TRUE) {
+      if (user.userType === UserType.LECTURER) {
+        conditions = { lecturers: { id: user.id } };
+      }
+
+      if (user.userType === UserType.STUDENT) {
+        conditions = { students: { studentId: user.id } };
+      }
+    }
+
+    const thesis = await this.thesisRepository.findOne(id, {
+      relations: { creator: { user } },
+      where: conditions,
+      cache: true
+    });
+    if (!thesis) {
+      throw new BadRequestException(ThesisError.ERR_7);
+    }
+
+    thesis.lecturers = await this.lecturerService.getLecturersOfThesis(thesis.id);
+    thesis.students = await this.thesisStudentService.getStudentsOfThesis(thesis.id);
+
+    return thesis;
+  }
+
+  public async isThesisExistById(id: number, loginUser: User): Promise<boolean> {
+    if (loginUser.isAdmin === IsAdmin.TRUE) {
+      return true;
+    }
+
+    if (loginUser.userType === UserType.LECTURER) {
+      return (
+        (await this.thesisRepository.count({
+          id,
+          lecturers: { id: loginUser.id, user: { ...NOT_DELETE_CONDITION } }
+        })) > 0
+      );
+    }
+
+    if (loginUser.userType === UserType.STUDENT) {
+      return this.thesisStudentService.isThesisExistById(id, loginUser);
+    }
+
+    return false;
+  }
+
+  public async checkThesisExistById(id: number, loginUser: User): Promise<void> {
+    if (!(await this.isThesisExistById(id, loginUser))) {
+      throw new BadRequestException(ThesisError.ERR_7);
+    }
+  }
+
+  public async checkThesisPermission(thesisId: number, loginUser: User): Promise<void> {
+    if (!(await this.isThesisExistById(thesisId, loginUser))) {
+      throw new BadRequestException(ThesisError.ERR_8);
+    }
   }
 }

@@ -2,14 +2,14 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Like, Not, Repository } from 'typeorm';
 
-import { COMMON_FIND_CONDITION } from '../common/common.resource';
+import { NOT_DELETE_CONDITION } from '../common/common.resource';
 import { ThesisStudentService } from '../thesis/thesis-student/thesis-student.service';
 import { UserRequestBody } from '../user/user.interface';
 import { UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { StudentEntity } from './student.entity';
 import { Student, StudentRequestBody, StudentSearchAttendee } from './student.interface';
-import { StudentError, StudentRelation, StudentSearchType } from './student.resource';
+import { IsGraduate, StudentError, StudentRelation, StudentSearchType } from './student.resource';
 
 @Injectable()
 export class StudentService {
@@ -22,7 +22,7 @@ export class StudentService {
   public async findMany(offset: number, limit: number): Promise<Student[]> {
     return await this.studentRepository.find({
       relations: [StudentRelation.USER],
-      where: { ...COMMON_FIND_CONDITION },
+      where: { ...NOT_DELETE_CONDITION },
       skip: offset,
       take: limit,
       cache: true
@@ -32,7 +32,7 @@ export class StudentService {
   public async findById(id: number): Promise<Student> {
     const student: Student | undefined = await this.studentRepository.findOne(id, {
       relations: [StudentRelation.USER],
-      where: { ...COMMON_FIND_CONDITION },
+      where: { ...NOT_DELETE_CONDITION },
       cache: true
     });
 
@@ -44,7 +44,7 @@ export class StudentService {
   }
 
   public async isStudentExistById(id: number): Promise<boolean> {
-    return (await this.studentRepository.count({ ...COMMON_FIND_CONDITION, id })) > 0;
+    return (await this.studentRepository.count({ ...NOT_DELETE_CONDITION, id })) > 0;
   }
 
   public async checkStudentExistById(id: number): Promise<void> {
@@ -62,7 +62,7 @@ export class StudentService {
   public async isStudentExistByStudentId(studentId: string, userId?: number): Promise<boolean> {
     return (
       (await this.studentRepository.count({
-        ...COMMON_FIND_CONDITION,
+        ...NOT_DELETE_CONDITION,
         id: Not(userId || 0),
         studentId
       })) > 0
@@ -137,7 +137,7 @@ export class StudentService {
   }
 
   public async getStudentAmount(): Promise<number> {
-    return this.studentRepository.count({ ...COMMON_FIND_CONDITION });
+    return this.studentRepository.count({ ...NOT_DELETE_CONDITION });
   }
 
   public async searchAttendees(
@@ -152,21 +152,21 @@ export class StudentService {
     if (searchTypes && searchTypes.includes(StudentSearchType.STUDENT_ID)) {
       conditions.push({
         studentId: Like(`%${keyword}%`),
-        user: { ...COMMON_FIND_CONDITION, status: UserStatus.ACTIVE }
+        user: { ...NOT_DELETE_CONDITION, status: UserStatus.ACTIVE }
       });
     }
 
     if (searchTypes && searchTypes.includes(StudentSearchType.FULL_NAME)) {
       conditions.push({
         user: {
-          ...COMMON_FIND_CONDITION,
+          ...NOT_DELETE_CONDITION,
           firstname: Like(`%${keyword}%`),
           status: UserStatus.ACTIVE
         }
       });
       conditions.push({
         user: {
-          ...COMMON_FIND_CONDITION,
+          ...NOT_DELETE_CONDITION,
           lastname: Like(`%${keyword}%`),
           status: UserStatus.ACTIVE
         }
@@ -175,7 +175,7 @@ export class StudentService {
 
     if (searchTypes && searchTypes.includes(StudentSearchType.STUDENT_CLASS)) {
       conditions.push({
-        ...COMMON_FIND_CONDITION,
+        ...NOT_DELETE_CONDITION,
         studentClass: Like(`%${keyword}%`),
         user: { status: UserStatus.ACTIVE }
       });
@@ -183,7 +183,7 @@ export class StudentService {
 
     if (searchTypes && searchTypes.includes(StudentSearchType.SCHOOL_YEAR)) {
       conditions.push({
-        ...COMMON_FIND_CONDITION,
+        ...NOT_DELETE_CONDITION,
         schoolYear: Like(`%${keyword}%`)
       });
     }
@@ -213,7 +213,7 @@ export class StudentService {
   public async findByIdsForThesis(ids: number[]): Promise<Student[]> {
     return await this.studentRepository.findByIds(ids, {
       relations: [StudentRelation.USER, StudentRelation.THESES],
-      where: { ...COMMON_FIND_CONDITION },
+      where: { ...NOT_DELETE_CONDITION },
       cache: true
     });
   }
@@ -239,6 +239,14 @@ export class StudentService {
     if (hasParticipated) {
       throw new BadRequestException(
         StudentError.ERR_4.replace('%s', this.generateErrorInfo(student))
+      );
+    }
+  }
+
+  public checkGraduated(student: Student): void {
+    if (student.isGraduate === IsGraduate.TRUE) {
+      throw new BadRequestException(
+        StudentError.ERR_5.replace('%s', this.generateErrorInfo(student))
       );
     }
   }

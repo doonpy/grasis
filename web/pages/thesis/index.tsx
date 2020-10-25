@@ -1,21 +1,67 @@
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Card, Table } from 'antd';
 import { GetStaticProps } from 'next';
-import React from 'react';
+import Link from 'next/link';
+import React, { useState } from 'react';
 
+import ThesisTerminology from '../../assets/terminology/thesis.terminology';
 import MainLayout from '../../components/Layout/MainLayout';
+import { THESIS_TABLE_COLUMNS } from '../../components/Thesis/ThesisTableColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../libs/common/common.interface';
-import { SIDER_KEYS } from '../../libs/common/common.resource';
+import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../libs/common/common.resource';
+import { THESIS_PATH, THESIS_PATH_ROOT } from '../../libs/thesis/thesis.resource';
+import ThesisService from '../../libs/thesis/thesis.service';
+import LoginUser from '../../libs/user/instance/LoginUser';
 import { UserType } from '../../libs/user/user.resource';
 
 const Index: NextPageWithLayout = () => {
-  return <div>Implementing...</div>;
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    total: 0,
+    showSizeChanger: false
+  });
+  const thesisService = ThesisService.getInstance();
+  const { data, isLoading } = thesisService.useTheses(pagination.current, pagination.pageSize);
+  const handleTableChange = (paginationValues) => {
+    setPagination({ ...pagination, ...paginationValues });
+  };
+
+  return (
+    <Card
+      title={ThesisTerminology.THESIS_3}
+      extra={
+        LoginUser.getInstance().isAdmin() && (
+          <Link href={THESIS_PATH.CREATE}>
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<PlusOutlined />}
+              size="large"
+              disabled={isLoading}
+            />
+          </Link>
+        )
+      }>
+      <Table
+        bordered
+        columns={THESIS_TABLE_COLUMNS}
+        dataSource={data && data.theses}
+        loading={isLoading}
+        pagination={pagination}
+        size="middle"
+        onChange={handleTableChange}
+      />
+    </Card>
+  );
 };
 
 export const getStaticProps: GetStaticProps<CommonPageProps> = async () => {
   return {
     props: {
-      title: 'Danh sách khóa luận',
+      title: ThesisTerminology.THESIS_3,
       selectedMenu: SIDER_KEYS.THESIS,
-      breadcrumbs: [{ text: 'Danh sách khóa luận', href: '/graduation-thesis' }],
+      breadcrumbs: [{ text: ThesisTerminology.THESIS_3, href: THESIS_PATH_ROOT }],
       isAdminCheck: false,
       allowUserTypes: [UserType.LECTURER, UserType.STUDENT]
     }

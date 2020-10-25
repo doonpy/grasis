@@ -54,6 +54,6 @@ export enum CommonHeader {
   REFRESH = 'refresh'
 }
 
-export const COMMON_FIND_CONDITION: FindOptionsWhere<any> = {
+export const NOT_DELETE_CONDITION: FindOptionsWhere<any> = {
   deletedAt: IsNull()
 };

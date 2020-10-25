@@ -1,9 +1,11 @@
 import 'moment/locale/vi';
 
+import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Form, Space, Spin, Transfer } from 'antd';
 import { TransferDirection, TransferItem } from 'antd/lib/transfer';
 import React, { useState } from 'react';
 
+import ThesisTerminology from '../../assets/terminology/thesis.terminology';
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
 import CommonService from '../../libs/common/common.service';
 import { LecturerSearchType } from '../../libs/lecturer/lecturer.resource';
@@ -11,10 +13,7 @@ import LecturerService from '../../libs/lecturer/lecturer.service';
 import { StudentSearchAttendee } from '../../libs/student/student.interface';
 import { StudentSearchType } from '../../libs/student/student.resource';
 import StudentService from '../../libs/student/student.service';
-import {
-  ThesisAttendeeSelectTerminology,
-  ThesisAttendeeTarget
-} from '../../libs/thesis/thesis.resource';
+import { ThesisAttendeeTarget } from '../../libs/thesis/thesis.resource';
 import LecturerSearchTypes from '../Lecturer/LecturerSearchTypes';
 import StudentSearchTypes from '../Student/StudentSearchTypes';
 
@@ -25,8 +24,8 @@ interface ComponentProps {
 const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({ attendeeTarget }) => {
   const terminology =
     attendeeTarget === ThesisAttendeeTarget.LECTURER
-      ? ThesisAttendeeSelectTerminology.LECTURER
-      : ThesisAttendeeSelectTerminology.STUDENT;
+      ? ThesisTerminology.THESIS_1
+      : ThesisTerminology.THESIS_2;
   const service = CommonService.getInstance();
   const studentService = StudentService.getInstance();
   const lecturerService = LecturerService.getInstance();
@@ -144,12 +143,14 @@ const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({ attendeeTarge
   };
 
   const renderItem = ({ fullName, key, attendeeId }) => {
+    const attendeeIdStr = attendeeId ? `(${attendeeId})` : '';
+
     return (
       <Space>
-        <Avatar src={getAvatarUrl(key)} size="small">
+        <Avatar src={getAvatarUrl(key)} size="small" icon={<UserOutlined />}>
           {fullName[0]}
         </Avatar>
-        {`${fullName} (${attendeeId})`}
+        {`${fullName || ''} ${attendeeIdStr}`}
       </Space>
     );
   };
