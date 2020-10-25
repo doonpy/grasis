@@ -1,8 +1,13 @@
 import { AxiosResponse } from 'axios';
-import { Moment } from 'moment';
+import moment, { Moment } from 'moment';
 
 import CommonService from '../common/common.service';
-import { ThesisCreateResponse, ThesisRequestBody } from './thesis.interface';
+import {
+  ThesisCreateOrUpdateResponse,
+  ThesisForEdit,
+  ThesisGetByIdForEditResponse,
+  ThesisRequestBody
+} from './thesis.interface';
 import { ThesisApi } from './thesis.resource';
 
 export default class ThesisAdminService extends CommonService {
@@ -20,10 +25,24 @@ export default class ThesisAdminService extends CommonService {
     return this.instance;
   }
 
-  public async createThesis(body: ThesisRequestBody): Promise<AxiosResponse<ThesisCreateResponse>> {
+  public async create(
+    body: ThesisRequestBody
+  ): Promise<AxiosResponse<ThesisCreateOrUpdateResponse>> {
     await this.apiService.bindAuthorizationForClient();
 
-    return this.apiService.post<ThesisCreateResponse>(ThesisApi.ADMIN, body);
+    return this.apiService.post<ThesisCreateOrUpdateResponse>(ThesisApi.ADMIN, body);
+  }
+
+  public async updateById(
+    id: number,
+    body: ThesisRequestBody
+  ): Promise<AxiosResponse<ThesisCreateOrUpdateResponse>> {
+    await this.apiService.bindAuthorizationForClient();
+
+    return this.apiService.patch<ThesisCreateOrUpdateResponse>(
+      ThesisApi.ADMIN_SPECIFY.replace('@1', id.toString()),
+      body
+    );
   }
 
   public formatThesisRequestBody(formValues: ThesisRequestBody): ThesisRequestBody {
@@ -40,5 +59,46 @@ export default class ThesisAdminService extends CommonService {
     delete formValues.duration;
 
     return { ...formValues, ...result };
+  }
+
+  public async getInitialForEdit(id: number): Promise<ThesisForEdit> {
+    await this.apiService.bindAuthorizationForClient();
+    const { data } = await this.apiService.get<ThesisGetByIdForEditResponse>(
+      ThesisApi.ADMIN_GET_EDIT.replace('@1', id.toString())
+    );
+    if (data) {
+      return data.thesis;
+    }
+  }
+
+  public convertToFormValue({
+    startTime,
+    endTime,
+    lecturerTopicRegister,
+    studentTopicRegister,
+    progressReport,
+    review,
+    defense,
+    lecturerAttendees,
+    studentAttendees,
+    ...remainProps
+  }: ThesisForEdit): ThesisRequestBody {
+    const result: ThesisRequestBody = { attendees: { lecturers: [], students: [] } };
+    result.duration = [moment(startTime), moment(endTime)];
+    result.lecturerTopicRegister = moment(lecturerTopicRegister);
+    result.studentTopicRegister = moment(studentTopicRegister);
+    result.progressReport = moment(progressReport);
+    result.review = moment(review);
+    result.defense = moment(defense);
+    result.attendees.lecturers = lecturerAttendees.map(({ id }) => id.toString());
+    result.attendees.students = studentAttendees.map(({ id }) => id.toString());
+
+    return { ...remainProps, ...result };
+  }
+
+  public async deleteById(id: number): Promise<void> {
+    await this.apiService.bindAuthorizationForClient();
+
+    await this.apiService.delete(ThesisApi.ADMIN_SPECIFY.replace('@1', id.toString()));
   }
 }

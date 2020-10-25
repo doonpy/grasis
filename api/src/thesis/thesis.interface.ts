@@ -1,5 +1,7 @@
 import { CommonColumns, CommonResponse, WithOptional } from '../common/common.interface';
-import { Lecturer } from '../lecturer/lecturer.interface';
+import { LecturerSearchAttendee } from '../lecturer/lecturer.interface';
+import { StudentSearchAttendee } from '../student/student.interface';
+import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.interface';
 import { ThesisStudent } from './thesis-student/thesis-student.interface';
 import { ThesisEntity } from './thesis.entity';
 
@@ -38,11 +40,20 @@ export type RawThesisRequestBody = {
 };
 
 export interface ThesisLoadMoreLecturersResponse extends CommonResponse {
-  lecturers: Lecturer[];
+  lecturers: ThesisLecturer[];
   isMoreLecturers: boolean;
 }
 
 export interface ThesisLoadMoreStudentsResponse extends CommonResponse {
   students: ThesisStudent[];
   isMoreStudents: boolean;
+}
+
+export type ThesisForEdit = Omit<Thesis, 'lecturers' | 'students'> & {
+  lecturerAttendees: LecturerSearchAttendee[];
+  studentAttendees: StudentSearchAttendee[];
+};
+
+export interface ThesisGetByIdForEditResponse extends CommonResponse {
+  thesis: ThesisForEdit;
 }

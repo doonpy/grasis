@@ -11,6 +11,7 @@ import ThesisAttendeesInfo from '../../components/Thesis/ThesisAttendeesInfo';
 import ThesisInfo from '../../components/Thesis/ThesisInfo';
 import { CommonPageProps, NextPageWithLayout } from '../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../libs/common/common.resource';
+import ThesisAdminService from '../../libs/thesis/admin.service';
 import { THESIS_PATH, THESIS_PATH_ROOT } from '../../libs/thesis/thesis.resource';
 import ThesisService from '../../libs/thesis/thesis.service';
 import LoginUser from '../../libs/user/instance/LoginUser';
@@ -30,6 +31,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const thesisService = ThesisService.getInstance();
   const thesisId = parseInt(params.id);
   const { data, isLoading } = thesisService.useThesis(thesisId);
+  const adminService = ThesisAdminService.getInstance();
 
   const showDeleteConfirm = () => {
     confirm({
@@ -40,12 +42,12 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       cancelText: ThesisTerminology.THESIS_24,
       cancelButtonProps: { type: 'primary', danger: true },
       async onOk() {
-        // try {
-        //   await adminService.deleteStudent(studentId);
-        //   await adminService.redirectService.redirectTo(STUDENT_ADMIN_PATH_ROOT);
-        // } catch (error) {
-        //   await adminService.requestErrorHandler(error);
-        // }
+        try {
+          await adminService.deleteById(thesisId);
+          await adminService.redirectService.redirectTo(THESIS_PATH_ROOT);
+        } catch (error) {
+          await adminService.requestErrorHandler(error);
+        }
       }
     });
   };
@@ -112,7 +114,8 @@ export const getStaticProps: GetStaticProps<CommonPageProps> = async ({ params }
       ],
       isAdminCheck: false,
       allowUserTypes: [UserType.LECTURER, UserType.STUDENT]
-    }
+    },
+    revalidate: 1
   };
 };
 

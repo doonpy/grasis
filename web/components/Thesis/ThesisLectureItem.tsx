@@ -4,18 +4,19 @@ import Link from 'next/link';
 import React from 'react';
 
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
-import { Lecturer } from '../../libs/lecturer/lecturer.interface';
 import { LECTURER_PATH_ROOT } from '../../libs/lecturer/lecturer.resource';
+import { ThesisLecturer } from '../../libs/thesis/thesis-lecturer/thesis-lecturer.interface';
 
 interface ComponentProps {
-  lecturer: Lecturer;
+  thesisLecturer: ThesisLecturer;
 }
 
 const ThesisLecturersListItem: React.FC<ComponentProps> = ({
-  lecturer: {
-    id,
-    lecturerId,
-    user: { lastname, firstname }
+  thesisLecturer: {
+    lecturer: {
+      lecturerId,
+      user: { id, lastname, firstname }
+    }
   }
 }) => {
   return (

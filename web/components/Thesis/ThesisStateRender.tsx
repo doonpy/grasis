@@ -8,6 +8,10 @@ interface ComponentProps {
 }
 
 const ThesisStateRender: React.FC<ComponentProps> = ({ state }) => {
+  if (state === ThesisState.NOT_START) {
+    return <Tag color="gray">{ThesisStateTexts[ThesisState.NOT_START]}</Tag>;
+  }
+
   if (state === ThesisState.FINISH) {
     return <Tag color="green">{ThesisStateTexts[ThesisState.FINISH]}</Tag>;
   }

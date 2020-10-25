@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import ExpressUserAgent from 'express-useragent';
 
@@ -37,6 +38,7 @@ function getEnvFilePath(): string {
   imports: [
     ConfigModule.forRoot({ envFilePath: getEnvFilePath() }),
     TypeOrmModule.forRoot(getDatabaseConfig()),
+    ScheduleModule.forRoot(),
     UserModule,
     StudentModule,
     LecturerModule,

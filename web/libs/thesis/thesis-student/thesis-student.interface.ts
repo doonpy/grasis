@@ -1,5 +1,4 @@
 import { Student } from '../../student/student.interface';
-import { UserViewType } from '../../user/user.interface';
 import { Thesis } from '../thesis.interface';
 
 export interface ThesisStudent {
@@ -15,12 +14,5 @@ export interface ThesisStudent {
 }
 
 export interface ThesisStudentRequestBody {
-  students: number[];
+  students: string[];
 }
-
-export type ThesisStudentViewItem = Omit<
-  UserViewType,
-  'username' | 'gender' | 'email' | 'address' | 'phone' | 'isAdmin' | 'userType' | 'deletedAt'
->;
-
-export type ThesisStudentView = ThesisStudentViewItem[];

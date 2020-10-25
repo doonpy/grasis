@@ -90,8 +90,12 @@ export class UserService {
     const hashPassword = this.hashPassword(inputPassword, username);
 
     return this.usersRepository.findOne({
-      select: ['id', 'username', 'password', 'status'],
-      where: { username, password: hashPassword, status: UserStatus.ACTIVE }
+      where: {
+        ...NOT_DELETE_CONDITION,
+        username,
+        password: hashPassword,
+        status: UserStatus.ACTIVE
+      }
     });
   }
 
@@ -102,8 +106,12 @@ export class UserService {
   }
 
   public async checkUserIsAdminById(id: number): Promise<boolean> {
-    const user = await this.usersRepository.findOne(id, { select: ['isAdmin'] });
-    if (!user || user.isAdmin === IsAdmin.FALSE) {
+    if (
+      !(await this.usersRepository.count({
+        id,
+        isAdmin: IsAdmin.TRUE
+      }))
+    ) {
       throw new UnauthorizedException(UserError.ERR_5);
     }
 
@@ -111,7 +119,7 @@ export class UserService {
   }
 
   public async checkUserHasPermission(id: number, targetId: number): Promise<boolean> {
-    const user = await this.usersRepository.findOne(id, { select: ['id'] });
+    const user = await this.findById(id);
     if (!user) {
       return false;
     }
@@ -124,7 +132,7 @@ export class UserService {
   }
 
   public async checkUserTypeById(id: number, userTypes: UserType[]): Promise<boolean> {
-    const user = await this.usersRepository.findOne(id, { select: ['userType'] });
+    const user = await this.findById(id);
     if (!user || !userTypes.includes(user.userType)) {
       throw new UnauthorizedException(UserError.ERR_5);
     }

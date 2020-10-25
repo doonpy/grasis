@@ -1,9 +1,10 @@
 import { Moment } from 'moment';
 
 import { CommonColumns, CommonResponse } from '../common/common.interface';
-import { Lecturer } from '../lecturer/lecturer.interface';
-import { ThesisLecturerRequestBody } from './thesis-lecturer/thesis-lecturer.interface';
-import { ThesisStudent, ThesisStudentRequestBody } from './thesis-student/thesis-student.interface';
+import { Lecturer, LecturerSearchAttendee } from '../lecturer/lecturer.interface';
+import { StudentSearchAttendee } from '../student/student.interface';
+import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.interface';
+import { ThesisStudent } from './thesis-student/thesis-student.interface';
 import { ThesisState, ThesisStatus } from './thesis.resource';
 
 export interface Thesis extends CommonColumns {
@@ -20,18 +21,17 @@ export interface Thesis extends CommonColumns {
   defense: string | Moment;
   status: ThesisStatus;
   creator: Lecturer | null;
-  lecturers: Lecturer[];
+  lecturers: ThesisLecturer[];
   students: ThesisStudent[];
 }
 
 export type ThesisRequestBody = Partial<
-  Omit<Thesis, keyof CommonColumns | 'id'> &
-    ThesisLecturerRequestBody &
-    ThesisStudentRequestBody &
+  Omit<Thesis, keyof CommonColumns | 'id' | 'lecturers' | 'students'> &
+    AttendeesRequestBody &
     ThesisDuration
 >;
 
-export interface ThesisCreateResponse extends CommonResponse {
+export interface ThesisCreateOrUpdateResponse extends CommonResponse {
   id: number;
 }
 
@@ -61,11 +61,27 @@ export interface UseThesis {
 }
 
 export interface ThesisLoadMoreLecturersResponse extends CommonResponse {
-  lecturers: Lecturer[];
+  lecturers: ThesisLecturer[];
   isMoreLecturers: boolean;
 }
 
 export interface ThesisLoadMoreStudentsResponse extends CommonResponse {
   students: ThesisStudent[];
   isMoreStudents: boolean;
+}
+
+export type ThesisForEdit = Omit<Thesis, 'lecturers' | 'students'> & {
+  lecturerAttendees: LecturerSearchAttendee[];
+  studentAttendees: StudentSearchAttendee[];
+};
+
+export interface ThesisGetByIdForEditResponse extends CommonResponse {
+  thesis: ThesisForEdit;
+}
+
+export interface AttendeesRequestBody {
+  attendees: {
+    lecturers: string[];
+    students: string[];
+  };
 }

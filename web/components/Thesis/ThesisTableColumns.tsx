@@ -133,13 +133,13 @@ export const THESIS_TABLE_COLUMNS: ColumnsType = [
     title: 'Ngày bắt đầu',
     dataIndex: 'startTime',
     sorter: { compare: sortByStartTime, multiple: 3 },
-    render: (value: string) => <DateData date={value} />
+    render: (value: string) => <DateData date={value} dateOnly={true} />
   },
   {
     title: 'Ngày kết thúc',
     dataIndex: 'endTime',
     sorter: { compare: sortByEndTime, multiple: 4 },
-    render: (value: string) => <DateData date={value} />
+    render: (value: string) => <DateData date={value} dateOnly={true} />
   },
   {
     title: 'Giai đoạn hiện tại',

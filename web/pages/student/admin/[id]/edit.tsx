@@ -29,14 +29,14 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const adminService = StudentAdminService.getInstance();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [contentLoading, setContentLoading] = useState(true);
-  const studentId: number = parseInt(router.query.id as string);
+  const studentId: number = parseInt(params.id as string);
   const [form] = Form.useForm();
 
   const handleSubmitButton = async (formValues: StudentForm) => {
     setSubmitLoading(true);
     try {
       await adminService.updateById(studentId, formValues);
-      await router.push(`${STUDENT_ADMIN_PATH_ROOT}/${studentId}`);
+      await adminService.redirectService.redirectTo(`${STUDENT_ADMIN_PATH_ROOT}/${studentId}`);
     } catch (error) {
       await adminService.requestErrorHandler(error);
     }

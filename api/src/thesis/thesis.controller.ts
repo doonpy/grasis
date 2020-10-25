@@ -21,6 +21,7 @@ import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { UserService } from '../user/user.service';
 import { ThesisPermissionGuard } from './guards/thesis-permission.guard';
+import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
 import {
   Thesis,
@@ -29,16 +30,17 @@ import {
   ThesisLoadMoreLecturersResponse,
   ThesisLoadMoreStudentsResponse
 } from './thesis.interface';
-import { ThesisPath } from './thesis.resource';
+import { THESIS_ROOT_PATH, ThesisPath } from './thesis.resource';
 import { ThesisService } from './thesis.service';
 
 @UseGuards(JwtAuthGuard)
-@Controller(ThesisPath.ROOT)
+@Controller(THESIS_ROOT_PATH)
 export class ThesisController {
   constructor(
     private readonly thesisService: ThesisService,
     private readonly lecturerService: LecturerService,
     private readonly thesisStudentService: ThesisStudentService,
+    private readonly thesisLecturerService: ThesisLecturerService,
     private readonly userService: UserService
   ) {}
 
@@ -85,7 +87,7 @@ export class ThesisController {
   ): Promise<ThesisGetByIdResponse> {
     const loginUserId = req.user.userId;
     const thesis = await this.thesisService.getById(id, loginUserId);
-    const isMoreLecturers = await this.lecturerService.isLoadMoreLecturersOfThesis(thesis.id);
+    const isMoreLecturers = await this.thesisLecturerService.isLoadMoreLecturersOfThesis(thesis.id);
     const isMoreStudents = await this.thesisStudentService.isLoadMoreStudentsOfThesis(thesis.id);
 
     return {
@@ -117,8 +119,12 @@ export class ThesisController {
   ): Promise<ThesisLoadMoreLecturersResponse> {
     const loginUserId: number = req.user.userId;
     const loginUser = await this.userService.findById(loginUserId);
-    await this.thesisService.checkThesisExistById(id, loginUser);
-    if (!(await this.lecturerService.isLoadMoreLecturersOfThesis(id))) {
+    await this.thesisService.checkThesisPermission(id, loginUser);
+    const isMoreLecturers = await this.thesisLecturerService.isLoadMoreLecturersOfThesis(
+      id,
+      offset
+    );
+    if (!isMoreLecturers) {
       return {
         statusCode: HttpStatus.OK,
         lecturers: [],
@@ -126,8 +132,7 @@ export class ThesisController {
       };
     }
 
-    const lecturers = await this.lecturerService.getLecturersOfThesis(id, offset);
-    const isMoreLecturers = await this.lecturerService.isLoadMoreLecturersOfThesis(id, offset);
+    const lecturers = await this.thesisLecturerService.getThesisLecturersForView(id, offset);
 
     return {
       statusCode: HttpStatus.OK,
@@ -157,7 +162,7 @@ export class ThesisController {
   ): Promise<ThesisLoadMoreStudentsResponse> {
     const loginUserId: number = req.user.userId;
     const loginUser = await this.userService.findById(loginUserId);
-    await this.thesisService.checkThesisExistById(id, loginUser);
+    await this.thesisService.checkThesisPermission(id, loginUser);
     if (!(await this.thesisStudentService.isLoadMoreStudentsOfThesis(id))) {
       return {
         statusCode: HttpStatus.OK,
@@ -166,7 +171,7 @@ export class ThesisController {
       };
     }
 
-    const students = await this.thesisStudentService.getStudentsOfThesis(id, offset);
+    const students = await this.thesisStudentService.getThesisStudentsForView(id, offset);
     const isMoreStudents = await this.thesisStudentService.isLoadMoreStudentsOfThesis(id, offset);
 
     return {

@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 
 import JwtClient from '../jwt/jwt.client';
 
@@ -47,7 +47,7 @@ export default class ApiService {
     return axios.post<T>(url, body, this.baseConfigs);
   }
 
-  public async patch<T>(url: string, body = {}): Promise<AxiosError<T>> {
+  public async patch<T>(url: string, body = {}): Promise<AxiosResponse<T>> {
     return axios.patch(url, body, this.baseConfigs);
   }
 

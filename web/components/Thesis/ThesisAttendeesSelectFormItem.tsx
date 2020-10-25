@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import ThesisTerminology from '../../assets/terminology/thesis.terminology';
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
 import CommonService from '../../libs/common/common.service';
+import { LecturerSearchAttendee } from '../../libs/lecturer/lecturer.interface';
 import { LecturerSearchType } from '../../libs/lecturer/lecturer.resource';
 import LecturerService from '../../libs/lecturer/lecturer.service';
 import { StudentSearchAttendee } from '../../libs/student/student.interface';
@@ -19,9 +20,15 @@ import StudentSearchTypes from '../Student/StudentSearchTypes';
 
 interface ComponentProps {
   attendeeTarget: ThesisAttendeeTarget;
+  initAttendees?: LecturerSearchAttendee[] | StudentSearchAttendee[];
+  initSelectedKey?: string[];
 }
 
-const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({ attendeeTarget }) => {
+const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({
+  attendeeTarget,
+  initAttendees = [],
+  initSelectedKey = []
+}) => {
   const terminology =
     attendeeTarget === ThesisAttendeeTarget.LECTURER
       ? ThesisTerminology.THESIS_1
@@ -29,11 +36,15 @@ const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({ attendeeTarge
   const service = CommonService.getInstance();
   const studentService = StudentService.getInstance();
   const lecturerService = LecturerService.getInstance();
-  const [selectedAttendees, setSelectedAttendees] = useState<string[]>([]);
+  const [selectedAttendees, setSelectedAttendees] = useState<string[]>(initSelectedKey);
   const [searchTypes, setSearchTypes] = useState<(LecturerSearchType | StudentSearchType)[]>([
     LecturerSearchType.FULL_NAME
   ]);
-  const [sourceAttendees, setSourceAttendees] = useState<TransferItem[]>([]);
+  const [sourceAttendees, setSourceAttendees] = useState<TransferItem[]>(
+    attendeeTarget === ThesisAttendeeTarget.LECTURER
+      ? lecturerService.convertToTransferItem(initAttendees)
+      : studentService.convertToTransferItem(initAttendees as StudentSearchAttendee[])
+  );
   const [targetAttendees, setTargetAttendees] = useState<TransferItem[]>([]);
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
@@ -157,7 +168,7 @@ const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({ attendeeTarge
 
   return (
     <Spin spinning={isSearching}>
-      <Form.Item name={terminology.FIELD_NAME} label={terminology.LABEL}>
+      <Form.Item name={['attendees', terminology.FIELD_NAME]} label={terminology.LABEL}>
         <Transfer
           dataSource={sourceAttendees}
           showSearch

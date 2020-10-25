@@ -2,7 +2,7 @@ import { Button, List, Row } from 'antd';
 import React, { useState } from 'react';
 
 import ThesisTerminology from '../../assets/terminology/thesis.terminology';
-import { Lecturer } from '../../libs/lecturer/lecturer.interface';
+import { ThesisLecturer } from '../../libs/thesis/thesis-lecturer/thesis-lecturer.interface';
 import { ThesisLoadMoreLecturersResponse } from '../../libs/thesis/thesis.interface';
 import { LoadMoreTarget } from '../../libs/thesis/thesis.resource';
 import ThesisService from '../../libs/thesis/thesis.service';
@@ -10,13 +10,13 @@ import ThesisLecturersListItem from './ThesisLectureItem';
 
 interface ComponentPros {
   thesisId: number;
-  initLecturers: Lecturer[];
+  initLecturers: ThesisLecturer[];
   initIsMore: boolean;
 }
 
 const ThesisLecturerList: React.FC<ComponentPros> = ({ initLecturers, initIsMore, thesisId }) => {
   const [isMore, setIsMore] = useState<boolean>(initIsMore);
-  const [lecturers, setLecturers] = useState<Lecturer[]>(initLecturers);
+  const [lecturers, setLecturers] = useState<ThesisLecturer[]>(initLecturers);
   const [loadMoreLoading, setLoadMoreLoading] = useState<boolean>(false);
   const thesisService = ThesisService.getInstance();
 
@@ -50,7 +50,9 @@ const ThesisLecturerList: React.FC<ComponentPros> = ({ initLecturers, initIsMore
       itemLayout="horizontal"
       dataSource={lecturers}
       loadMore={isMore && loadMoreButton()}
-      renderItem={(lecturer: Lecturer) => <ThesisLecturersListItem lecturer={lecturer} />}
+      renderItem={(lecturer: ThesisLecturer) => (
+        <ThesisLecturersListItem thesisLecturer={lecturer} />
+      )}
     />
   );
 };

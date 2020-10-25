@@ -4,8 +4,8 @@ export enum StudentError {
   ERR_1 = 'Mã sinh viên đã tồn tại.',
   ERR_2 = 'Mã sinh viên không tồn tại.',
   ERR_3 = 'Sinh viên không tồn tại.',
-  ERR_4 = 'Sinh viên %s đang tham gia một khóa luận khác.',
-  ERR_5 = 'Sinh viên %s đã tốt nghiệp.'
+  ERR_4 = 'Sinh viên @1 đang tham gia một khóa luận khác.',
+  ERR_5 = 'Sinh viên @1 đã tốt nghiệp.'
 }
 
 export enum IsGraduate {

@@ -2,14 +2,14 @@ import { Col, Descriptions, Row } from 'antd';
 import React from 'react';
 
 import ThesisTerminology from '../../assets/terminology/thesis.terminology';
-import { Lecturer } from '../../libs/lecturer/lecturer.interface';
+import { ThesisLecturer } from '../../libs/thesis/thesis-lecturer/thesis-lecturer.interface';
 import { ThesisStudent } from '../../libs/thesis/thesis-student/thesis-student.interface';
 import ThesisLecturerList from './ThesisLecturerList';
 import ThesisStudentList from './ThesisStudentList';
 
 interface ComponentProps {
   thesisId: number;
-  initLecturers: Lecturer[];
+  initLecturers: ThesisLecturer[];
   initStudents: ThesisStudent[];
   initIsMoreLecturers: boolean;
   initIsMoreStudents: boolean;
@@ -24,7 +24,7 @@ const ThesisAttendeesInfo: React.FC<ComponentProps> = ({
 }) => {
   return (
     <Row>
-      <Col span={11} offset={1}>
+      <Col span={11} offset={0}>
         <Descriptions column={1} bordered title={ThesisTerminology.THESIS_6}>
           <Descriptions.Item span={1}>
             <ThesisLecturerList
@@ -35,7 +35,7 @@ const ThesisAttendeesInfo: React.FC<ComponentProps> = ({
           </Descriptions.Item>
         </Descriptions>
       </Col>
-      <Col span={11} offset={1}>
+      <Col span={12} offset={1}>
         <Descriptions column={1} bordered title={ThesisTerminology.THESIS_7}>
           <Descriptions.Item span={1}>
             <ThesisStudentList

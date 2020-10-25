@@ -1,16 +1,37 @@
-import { Body, Controller, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Request,
+  UseGuards
+} from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CommonParam, CommonQueryValue } from '../common/common.resource';
+import { commonIdValidateSchema } from '../common/common.validation';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { ParseThesisRequestBodyPipe } from './pipes/parse-thesis-request-body.pipe';
-import { Thesis, ThesisCreateOrUpdateResponse, ThesisRequestBody } from './thesis.interface';
-import { ThesisPath } from './thesis.resource';
+import {
+  Thesis,
+  ThesisCreateOrUpdateResponse,
+  ThesisGetByIdForEditResponse,
+  ThesisRequestBody
+} from './thesis.interface';
+import { THESIS_ADMIN_ROOT_PATH, ThesisPath } from './thesis.resource';
 import { ThesisService } from './thesis.service';
-import { thesisCreateValidationSchema } from './thesis.validation';
+import { thesisCreateValidationSchema, thesisUpdateValidationSchema } from './thesis.validation';
 
 @UseGuards(JwtAuthGuard, AdminGuard)
-@Controller(ThesisPath.ADMIN_ROOT)
+@Controller(THESIS_ADMIN_ROOT_PATH)
 export class ThesisAdminController {
   constructor(private readonly thesisService: ThesisService) {}
 
@@ -26,6 +47,63 @@ export class ThesisAdminController {
     return {
       statusCode: HttpStatus.CREATED,
       id: createdThesis.id as number
+    };
+  }
+
+  @Get(ThesisPath.ADMIN_EDIT)
+  public async getById(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number
+  ): Promise<ThesisGetByIdForEditResponse> {
+    const thesis = await this.thesisService.getByIdForEdit(id);
+
+    return {
+      statusCode: HttpStatus.OK,
+      thesis
+    };
+  }
+
+  @Patch(ThesisPath.SPECIFY)
+  public async updateById(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number,
+    @Body(new JoiValidationPipe(thesisUpdateValidationSchema), ParseThesisRequestBodyPipe)
+    body: ThesisRequestBody
+  ): Promise<ThesisCreateOrUpdateResponse> {
+    await this.thesisService.updateById(id, body);
+
+    return {
+      statusCode: HttpStatus.OK,
+      id
+    };
+  }
+
+  @Delete(ThesisPath.SPECIFY)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async deleteById(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number
+  ): Promise<ThesisCreateOrUpdateResponse> {
+    await this.thesisService.deleteById(id);
+
+    return {
+      statusCode: HttpStatus.NO_CONTENT,
+      id
     };
   }
 }

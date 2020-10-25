@@ -23,9 +23,7 @@ const Create: NextPageWithLayout = () => {
     const adminService = ThesisAdminService.getInstance();
 
     try {
-      const { data } = await adminService.createThesis(
-        adminService.formatThesisRequestBody(formValues)
-      );
+      const { data } = await adminService.create(adminService.formatThesisRequestBody(formValues));
       await adminService.redirectService.redirectTo(`${THESIS_PATH_ROOT}/${data.id}`);
     } catch (error) {
       await adminService.requestErrorHandler(error);

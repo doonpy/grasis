@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Like, Not, Repository } from 'typeorm';
+import { EntityManager, FindOptionsWhere, Like, Not, Repository } from 'typeorm';
 
 import { NOT_DELETE_CONDITION } from '../common/common.resource';
 import { ThesisStudentService } from '../thesis/thesis-student/thesis-student.service';
@@ -218,6 +218,14 @@ export class StudentService {
     });
   }
 
+  public async findByIdsWithTransaction(manager: EntityManager, ids: number[]): Promise<Student[]> {
+    return await manager.findByIds(StudentEntity, ids, {
+      relations: { user: {} },
+      where: { ...NOT_DELETE_CONDITION },
+      cache: true
+    });
+  }
+
   public generateErrorInfo({ user, studentId }: Student): string {
     const { firstname, lastname } = user;
 
@@ -238,7 +246,7 @@ export class StudentService {
     const hasParticipated = participatedThesisStudentIds.includes(student.id);
     if (hasParticipated) {
       throw new BadRequestException(
-        StudentError.ERR_4.replace('%s', this.generateErrorInfo(student))
+        StudentError.ERR_4.replace('@1', this.generateErrorInfo(student))
       );
     }
   }
@@ -246,7 +254,7 @@ export class StudentService {
   public checkGraduated(student: Student): void {
     if (student.isGraduate === IsGraduate.TRUE) {
       throw new BadRequestException(
-        StudentError.ERR_5.replace('%s', this.generateErrorInfo(student))
+        StudentError.ERR_5.replace('@1', this.generateErrorInfo(student))
       );
     }
   }

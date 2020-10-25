@@ -3,7 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
+  OneToMany,
   OneToOne,
   PrimaryColumn,
   UpdateDateColumn
@@ -11,8 +11,9 @@ import {
 
 import { CommonEntity } from '../common/common.entity';
 import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
-import { ThesisEntity } from '../thesis/thesis.entity';
-import { Thesis } from '../thesis/thesis.interface';
+import { ThesisLecturerEntity } from '../thesis/thesis-lecturer/thesis-lecturer.entity';
+import { ThesisLecturer } from '../thesis/thesis-lecturer/thesis-lecturer.interface';
+import { ThesisLecturerColumn } from '../thesis/thesis.resource';
 import { UserEntity } from '../user/user.entity';
 import { User } from '../user/user.interface';
 import { LECTURER_TABLE, LecturerColumn } from './lecturer.resource';
@@ -52,8 +53,9 @@ export class LecturerEntity extends CommonEntity {
   @UpdateDateColumn({ name: CommonColumn.UPDATED_AT })
   public updatedAt!: Date;
 
-  @ManyToMany(() => ThesisEntity, ({ lecturers }) => lecturers)
-  public theses!: Thesis[];
+  @OneToMany(() => ThesisLecturerEntity, ({ lecturer }) => lecturer)
+  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ThesisLecturerColumn.LECTURER_ID })
+  public theses!: ThesisLecturer[];
 
   @OneToOne(() => UserEntity, { cascade: true })
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: CommonColumn.ID })

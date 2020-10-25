@@ -1,19 +1,13 @@
-import { LecturerViewType } from '../../lecturer/lecturer.interface';
-import { UserViewType } from '../../user/user.interface';
+import { Lecturer } from '../../lecturer/lecturer.interface';
 import { Thesis } from '../thesis.interface';
 
 export interface ThesisLecturer {
-  thesis: number | Thesis;
-  lecturer: number | LecturerViewType;
+  thesisId: number;
+  lecturerId: number;
+  thesis: Thesis;
+  lecturer: Lecturer;
 }
 
 export interface ThesisLecturerRequestBody {
-  lecturers: number[];
+  lecturers: string[];
 }
-
-export type ThesisLecturerViewItem = Omit<
-  UserViewType,
-  'username' | 'gender' | 'email' | 'address' | 'phone' | 'isAdmin' | 'userType' | 'deletedAt'
->;
-
-export type ThesisLecturerView = ThesisLecturerViewItem[];

@@ -6,21 +6,25 @@ export const THESIS_PATH = {
 };
 
 export enum ThesisState {
-  LECTURER_TOPIC_REGISTER = 1,
-  STUDENT_TOPIC_REGISTER = 2,
-  PROGRESS_REPORT = 3,
-  REVIEW = 4,
-  DEFENSE = 5,
-  FINISH = 6
+  NOT_START = 1,
+  LECTURER_TOPIC_REGISTER,
+  STUDENT_TOPIC_REGISTER,
+  PROGRESS_REPORT,
+  REVIEW,
+  DEFENSE,
+  RESULT,
+  FINISH
 }
 
 export const ThesisStateTexts = [
   '',
+  'Chưa bắt đầu',
   'Giảng viên đăng ký đề tài',
   'Sinh viên đăng ký đề tài',
   'Báo cáo tiến độ',
   'Phản biện',
   'Bảo vệ',
+  'Công bố kết quả',
   'Kết thúc'
 ];
 
@@ -32,6 +36,8 @@ export enum ThesisStatus {
 export enum ThesisApi {
   ROOT = '/theses',
   ADMIN = '/admin/theses',
+  ADMIN_GET_EDIT = 'admin/theses/@1/edit',
+  ADMIN_SPECIFY = 'admin/theses/@1',
   LOAD_MORE_LECTURERS = 'lecturers-load-more',
   LOAD_MORE_STUDENTS = 'students-load-more'
 }

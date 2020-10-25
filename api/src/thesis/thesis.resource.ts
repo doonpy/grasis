@@ -16,10 +16,13 @@ export enum ThesisColumn {
   STATUS = 'status'
 }
 
+export const THESIS_ADMIN_ROOT_PATH = 'admin/theses';
+
+export const THESIS_ROOT_PATH = 'theses';
+
 export enum ThesisPath {
-  ROOT = 'theses',
   SPECIFY = '/:id',
-  ADMIN_ROOT = 'admin/theses',
+  ADMIN_EDIT = '/:id/edit',
   LOAD_MORE_LECTURERS = '/:id/lecturers-load-more',
   LOAD_MORE_STUDENTS = '/:id/students-load-more'
 }
@@ -36,12 +39,14 @@ export enum ThesisError {
 }
 
 export enum ThesisState {
-  LECTURER_TOPIC_REGISTER = 1,
-  STUDENT_TOPIC_REGISTER = 2,
-  PROGRESS_REPORT = 3,
-  REVIEW = 4,
-  DEFENSE = 5,
-  FINISH = 6
+  NOT_START = 1,
+  LECTURER_TOPIC_REGISTER,
+  STUDENT_TOPIC_REGISTER,
+  PROGRESS_REPORT,
+  REVIEW,
+  DEFENSE,
+  RESULT,
+  FINISH
 }
 
 export enum ThesisStatus {

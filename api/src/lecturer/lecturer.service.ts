@@ -1,9 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Like, Repository } from 'typeorm';
+import { EntityManager, FindOptionsWhere, Like, Repository } from 'typeorm';
 
 import { NOT_DELETE_CONDITION } from '../common/common.resource';
-import { ATTENDEES_LOAD_LIMIT } from '../thesis/thesis.resource';
 import { UserRequestBody } from '../user/user.interface';
 import { UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -195,6 +194,17 @@ export class LecturerService {
     });
   }
 
+  public async findByIdsWithTransaction(
+    manager: EntityManager,
+    ids: number[]
+  ): Promise<Lecturer[]> {
+    return await manager.findByIds(LecturerEntity, ids, {
+      relations: { user: {} },
+      where: { ...NOT_DELETE_CONDITION },
+      cache: true
+    });
+  }
+
   public generateErrorInfo({ user, lecturerId }: Lecturer): string {
     const { firstname, lastname } = user;
 
@@ -208,28 +218,5 @@ export class LecturerService {
         UserError.ERR_9.replace('%s', this.generateErrorInfo(lecturer))
       );
     }
-  }
-
-  public async getLecturersOfThesis(
-    thesisId: number,
-    offset = 0,
-    limit = ATTENDEES_LOAD_LIMIT
-  ): Promise<Lecturer[]> {
-    return this.lecturerRepository.find({
-      relations: [LecturerRelation.USER],
-      where: { ...NOT_DELETE_CONDITION, theses: { id: thesisId } },
-      skip: offset,
-      take: limit,
-      cache: true
-    });
-  }
-
-  public async isLoadMoreLecturersOfThesis(thesisId: number, offset = 0): Promise<boolean> {
-    const amount = await this.lecturerRepository.count({
-      ...NOT_DELETE_CONDITION,
-      theses: { id: thesisId }
-    });
-
-    return amount - offset - ATTENDEES_LOAD_LIMIT > 0;
   }
 }

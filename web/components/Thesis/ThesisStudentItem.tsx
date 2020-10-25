@@ -29,7 +29,7 @@ const ThesisStudentItem: React.FC<ComponentProps> = ({
             firstname || 'NULL'
           } (${studentId || 'NULL'})`}</Link>
         }
-        description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+        // description="Ant Design, a design language for background applications, is refined by Ant UED Team"
       />
     </List.Item>
   );

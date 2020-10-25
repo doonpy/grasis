@@ -3,8 +3,6 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -14,11 +12,12 @@ import {
 import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
 import { LecturerEntity } from '../lecturer/lecturer.entity';
 import { Lecturer } from '../lecturer/lecturer.interface';
+import { ThesisLecturerEntity } from './thesis-lecturer/thesis-lecturer.entity';
+import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.interface';
 import { ThesisStudentEntity } from './thesis-student/thesis-student.entity';
 import { ThesisStudent } from './thesis-student/thesis-student.interface';
 import { ThesisStudentColumn } from './thesis-student/thesis-student.resource';
 import {
-  THESIS_LECTURER_TABLE,
   THESIS_TABLE,
   ThesisColumn,
   ThesisLecturerColumn,
@@ -46,7 +45,7 @@ export class ThesisEntity {
   @Column({
     name: ThesisColumn.STATE,
     type: 'tinyint',
-    default: ThesisState.LECTURER_TOPIC_REGISTER
+    default: ThesisState.NOT_START
   })
   public state!: ThesisState;
 
@@ -78,17 +77,9 @@ export class ThesisEntity {
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ThesisStudentColumn.THESIS_ID })
   public students!: ThesisStudent[];
 
-  @ManyToMany(() => LecturerEntity, ({ theses }) => theses, { cascade: true })
-  @JoinTable({
-    ...COMMON_ENTITY_OPTIONS,
-    name: THESIS_LECTURER_TABLE,
-    joinColumn: { name: ThesisLecturerColumn.THESIS_ID, referencedColumnName: CommonColumn.ID },
-    inverseJoinColumn: {
-      name: ThesisLecturerColumn.LECTURER_ID,
-      referencedColumnName: CommonColumn.ID
-    }
-  })
-  public lecturers!: Lecturer[];
+  @OneToMany(() => ThesisLecturerEntity, ({ thesis }) => thesis, { cascade: true })
+  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ThesisLecturerColumn.THESIS_ID })
+  public lecturers!: ThesisLecturer[];
 
   @ManyToOne(() => LecturerEntity, ({ theses }) => theses, {
     cascade: true
