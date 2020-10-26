@@ -9,7 +9,7 @@ const TRUNCATE_LIMIT = 50;
 
 function truncateString(str?: string): string {
   if (!str) {
-    return '';
+    return null;
   }
 
   if (str.length <= TRUNCATE_LIMIT) {

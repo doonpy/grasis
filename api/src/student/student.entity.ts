@@ -1,13 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-  UpdateDateColumn
-} from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
 import { CommonEntity } from '../common/common.entity';
 import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
@@ -54,12 +45,6 @@ export class StudentEntity extends CommonEntity {
     nullable: true
   })
   public isGraduate!: IsGraduate | null;
-
-  @CreateDateColumn({ name: CommonColumn.CREATED_AT })
-  public createdAt!: Date;
-
-  @UpdateDateColumn({ name: CommonColumn.UPDATED_AT })
-  public updatedAt!: Date;
 
   @OneToMany(() => ThesisStudentEntity, ({ student }) => student, { cascade: true })
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ThesisStudentColumn.STUDENT_ID })

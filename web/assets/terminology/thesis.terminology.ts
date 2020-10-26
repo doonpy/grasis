@@ -1,4 +1,4 @@
-export default {
+export const ThesisTerminology = {
   THESIS_1: {
     LABEL: 'Giảng viên hướng dẫn',
     FIELD_NAME: 'lecturers'
@@ -30,5 +30,16 @@ export default {
   THESIS_23: 'Xác nhận',
   THESIS_24: 'Hủy',
   THESIS_25: 'Tạo khóa luận',
-  THESIS_26: 'Sửa khóa luận'
+  THESIS_26: 'Sửa khóa luận',
+  THESIS_27: 'Khóa luận',
+  THESIS_28: 'Ngưng kích hoạt',
+  THESIS_29: 'Kích hoạt',
+  THESIS_30: 'Vui lòng nhập tiêu đề!',
+  THESIS_31: 'Thời gian diễn ra',
+  THESIS_32: 'Vui lòng nhập thời gian diễn ra!',
+  THESIS_33: 'Vui lòng nhập hạn chót giảng viên đăng ký đề tài!',
+  THESIS_34: 'Vui lòng nhập hạn chót sinh viên đăng ký đề tài!',
+  THESIS_35: 'Vui lòng nhập hạn chót báo cáo tiến độ!',
+  THESIS_36: 'Vui lòng nhập hạn chót phản biện!',
+  THESIS_37: 'Vui lòng nhập hạn chót bảo vệ!'
 };

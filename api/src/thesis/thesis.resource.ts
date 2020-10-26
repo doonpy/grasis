@@ -20,12 +20,13 @@ export const THESIS_ADMIN_ROOT_PATH = 'admin/theses';
 
 export const THESIS_ROOT_PATH = 'theses';
 
-export enum ThesisPath {
-  SPECIFY = '/:id',
-  ADMIN_EDIT = '/:id/edit',
-  LOAD_MORE_LECTURERS = '/:id/lecturers-load-more',
-  LOAD_MORE_STUDENTS = '/:id/students-load-more'
-}
+export const ThesisPath = {
+  SPECIFY: '/:id',
+  ADMIN_EDIT: '/:id/edit',
+  ADMIN_SWITCH_STATUS: '/:id/switch-status',
+  LOAD_MORE_LECTURERS: '/:id/lecturers-load-more',
+  LOAD_MORE_STUDENTS: '/:id/students-load-more'
+};
 
 export enum ThesisError {
   ERR_1 = 'Thời gian đăng ký đề tài của giảng viên không hợp lệ.',

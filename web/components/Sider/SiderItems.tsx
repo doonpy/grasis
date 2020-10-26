@@ -9,6 +9,7 @@ import GraduationCap from '../../assets/svg/regular/graduation-cap.svg';
 // import PenFancy from '../../assets/svg/regular/pen-fancy.svg';
 // import Shield from '../../assets/svg/regular/shield.svg';
 import UserGraduate from '../../assets/svg/regular/user-graduate.svg';
+import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import { SIDER_KEYS } from '../../libs/common/common.resource';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../libs/lecturer/lecturer.resource';
 import { STUDENT_ADMIN_PATH_ROOT } from '../../libs/student/student.resource';
@@ -19,7 +20,7 @@ export const SIDER_ITEMS = [
   {
     key: SIDER_KEYS.THESIS,
     icon: <Icon component={GraduationCap} />,
-    text: 'Khóa luận',
+    text: ThesisTerminology.THESIS_27,
     href: THESIS_PATH_ROOT,
     adminPermission: IsAdmin.FALSE,
     allowUserTypes: [UserType.LECTURER, UserType.STUDENT]

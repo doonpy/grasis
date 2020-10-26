@@ -5,7 +5,7 @@ import { Avatar, Form, Space, Spin, Transfer } from 'antd';
 import { TransferDirection, TransferItem } from 'antd/lib/transfer';
 import React, { useState } from 'react';
 
-import ThesisTerminology from '../../assets/terminology/thesis.terminology';
+import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
 import CommonService from '../../libs/common/common.service';
 import { LecturerSearchAttendee } from '../../libs/lecturer/lecturer.interface';

@@ -12,7 +12,7 @@ import {
   User,
   UserRequestBody
 } from './user.interface';
-import { IsAdmin, USER_API, UserStatus } from './user.resource';
+import { IsAdmin, UserApi, UserStatus } from './user.resource';
 
 export default class UserService extends CommonService {
   private static instance: UserService;
@@ -42,7 +42,7 @@ export default class UserService extends CommonService {
   public async getUserById(userId: number): Promise<AxiosResponse<FindUserByIdResponse>> {
     await this.apiService.bindAuthorizationForClient();
 
-    return this.apiService.get<FindUserByIdResponse>(`${USER_API}/${userId}`);
+    return this.apiService.get<FindUserByIdResponse>(UserApi.SPECIFY, [userId]);
   }
 
   public getRememberValue(): Remember {
@@ -75,7 +75,7 @@ export default class UserService extends CommonService {
   public useAuthorization(): FindUserByIdResponse {
     const userId = this.jwtService.accessTokenPayload.userId;
     const currentPath = this.redirectService.currentPath;
-    const { data } = useSWR<FindUserByIdResponse>(`${USER_API.ROOT}/${userId}`, {
+    const { data } = useSWR<FindUserByIdResponse>(`${UserApi.ROOT}/${userId}`, {
       onSuccess: async () => {
         this.jwtService.initialValue();
         this.redirectService.resetCurrentPathForClient();

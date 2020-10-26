@@ -12,7 +12,7 @@ import {
   UseStudent,
   UseStudents
 } from './student.interface';
-import { StudentApi } from './student.resource';
+import { STUDENT_API_ADMIN_ROOT, StudentApi } from './student.resource';
 
 export default class StudentAdminService extends StudentBase {
   private static instance: StudentAdminService;
@@ -31,7 +31,7 @@ export default class StudentAdminService extends StudentBase {
 
   public useStudents(pageNumber = 0, pageSize: number = DEFAULT_PAGE_SIZE): UseStudents {
     const offset = (pageNumber - 1) * pageSize;
-    const { data } = useSWR<FindManyStudentResponse>(`${StudentApi.ADMIN}?offset=${offset}`);
+    const { data } = useSWR<FindManyStudentResponse>(`${STUDENT_API_ADMIN_ROOT}?offset=${offset}`);
     if (data) {
       data.students = data.students.map((student, index) => {
         const user = student.user;
@@ -44,23 +44,27 @@ export default class StudentAdminService extends StudentBase {
   }
 
   public useStudent(id: number): UseStudent {
-    const { data } = useSWR<FindOneStudentResponse>(id && `${StudentApi.ADMIN}/${id}`);
+    const { data } = useSWR<FindOneStudentResponse>(id && `${STUDENT_API_ADMIN_ROOT}/${id}`);
 
     return { data, isLoading: !data };
   }
 
   public async deleteStudent(id: number): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.delete(`${StudentApi.ADMIN}/${id}`);
+    await this.apiService.delete(StudentApi.ADMIN_SPECIFY, [id]);
   }
 
   public async updateById(id: number, { user, student }: StudentForm): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
 
-    await this.apiService.patch(`${StudentApi.ADMIN}/${id}`, {
-      student: this.convertToRequestBody(student),
-      user: UserService.getInstance().convertToRequestBody(user)
-    });
+    await this.apiService.patch(
+      StudentApi.ADMIN_SPECIFY,
+      {
+        student: this.convertToRequestBody(student),
+        user: UserService.getInstance().convertToRequestBody(user)
+      },
+      [id]
+    );
   }
 
   public async createStudent({
@@ -69,7 +73,7 @@ export default class StudentAdminService extends StudentBase {
   }: StudentForm): Promise<AxiosResponse<CreateStudentResponse>> {
     await this.apiService.bindAuthorizationForClient();
 
-    return this.apiService.post<CreateStudentResponse>(StudentApi.ADMIN, {
+    return this.apiService.post<CreateStudentResponse>(STUDENT_API_ADMIN_ROOT, {
       student: this.convertToRequestBody(student),
       user: UserService.getInstance().convertToRequestBody(user)
     });
@@ -77,7 +81,9 @@ export default class StudentAdminService extends StudentBase {
 
   public async getInitialForEdit(id: number): Promise<StudentForm> {
     await this.apiService.bindAuthorizationForClient();
-    const { data } = await this.apiService.get<FindOneStudentResponse>(`${StudentApi.ROOT}/${id}`);
+    const { data } = await this.apiService.get<FindOneStudentResponse>(StudentApi.ADMIN_SPECIFY, [
+      id
+    ]);
     if (data) {
       return this.convertToFormValue(data.student);
     }

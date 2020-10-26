@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, FindOptionsWhere, Like, Not, Repository } from 'typeorm';
+import { Connection, EntityManager, FindOptionsWhere, Like, Not, Repository } from 'typeorm';
 
 import { NOT_DELETE_CONDITION } from '../common/common.resource';
 import { ThesisStudentService } from '../thesis/thesis-student/thesis-student.service';
@@ -14,9 +14,10 @@ import { IsGraduate, StudentError, StudentRelation, StudentSearchType } from './
 @Injectable()
 export class StudentService {
   constructor(
-    @InjectRepository(StudentEntity) private studentRepository: Repository<Student>,
+    @InjectRepository(StudentEntity) private readonly studentRepository: Repository<Student>,
     private readonly userService: UserService,
-    private readonly thesisStudentService: ThesisStudentService
+    private readonly thesisStudentService: ThesisStudentService,
+    private readonly connection: Connection
   ) {}
 
   public async findMany(offset: number, limit: number): Promise<Student[]> {
@@ -32,8 +33,7 @@ export class StudentService {
   public async findById(id: number): Promise<Student> {
     const student: Student | undefined = await this.studentRepository.findOne(id, {
       relations: [StudentRelation.USER],
-      where: { ...NOT_DELETE_CONDITION },
-      cache: true
+      where: { ...NOT_DELETE_CONDITION }
     });
 
     if (!student) {
@@ -130,10 +130,18 @@ export class StudentService {
 
   public async deleteById(id: number): Promise<void> {
     const student = await this.findById(id);
-    const currentDate = new Date();
-    student.user.deletedAt = currentDate;
-    student.deletedAt = currentDate;
-    await this.studentRepository.save(student);
+    const deletedAt = new Date();
+
+    await this.connection.transaction(async (manager) => {
+      await this.thesisStudentService.deleteByStudentIdWithTransaction(
+        manager,
+        student.id,
+        deletedAt
+      );
+      student.user.deletedAt = deletedAt;
+      student.deletedAt = deletedAt;
+      await manager.save(student);
+    });
   }
 
   public async getStudentAmount(): Promise<number> {

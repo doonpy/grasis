@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, FindOptionsWhere, Like, Repository } from 'typeorm';
+import { Connection, EntityManager, FindOptionsWhere, Like, Repository } from 'typeorm';
 
 import { NOT_DELETE_CONDITION } from '../common/common.resource';
+import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
 import { UserRequestBody } from '../user/user.interface';
 import { UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -13,8 +14,10 @@ import { LecturerError, LecturerRelation, LecturerSearchType } from './lecturer.
 @Injectable()
 export class LecturerService {
   constructor(
-    @InjectRepository(LecturerEntity) private lecturerRepository: Repository<Lecturer>,
-    private userService: UserService
+    @InjectRepository(LecturerEntity) private readonly lecturerRepository: Repository<Lecturer>,
+    private readonly userService: UserService,
+    private readonly thesisLecturerService: ThesisLecturerService,
+    private readonly connection: Connection
   ) {}
 
   public async findMany(offset: number, limit: number): Promise<Lecturer[]> {
@@ -30,8 +33,7 @@ export class LecturerService {
   public async findById(id: number): Promise<Lecturer> {
     const lecturer: Lecturer | undefined = await this.lecturerRepository.findOne(id, {
       relations: [LecturerRelation.USER],
-      where: { ...NOT_DELETE_CONDITION },
-      cache: true
+      where: { ...NOT_DELETE_CONDITION }
     });
 
     if (!lecturer) {
@@ -116,10 +118,14 @@ export class LecturerService {
 
   public async deleteById(id: number): Promise<void> {
     const lecturer = await this.findById(id);
-    const currentData = new Date();
-    lecturer.user.deletedAt = currentData;
-    lecturer.deletedAt = currentData;
-    await this.lecturerRepository.save(lecturer);
+    const deletedAt = new Date();
+
+    await this.connection.transaction(async (manager) => {
+      await this.thesisLecturerService.deleteByLecturerIdWithTransaction(manager, id, deletedAt);
+      lecturer.user.deletedAt = deletedAt;
+      lecturer.deletedAt = deletedAt;
+      await manager.save(lecturer);
+    });
   }
 
   public async getLecturerAmount(): Promise<number> {

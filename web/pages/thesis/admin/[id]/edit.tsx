@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useEffect, useState } from 'react';
 
-import ThesisTerminology from '../../../../assets/terminology/thesis.terminology';
+import { ThesisTerminology } from '../../../../assets/terminology/thesis.terminology';
 import MainLayout from '../../../../components/Layout/MainLayout';
 import ThesisAttendeesSelectFormItem from '../../../../components/Thesis/ThesisAttendeesSelectFormItem';
 import ThesisFormItem from '../../../../components/Thesis/ThesisFormItem';
@@ -37,6 +37,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const [initStudentAttendees, setInitStudentAttendees] = useState<StudentSearchAttendee[]>([]);
   const [initStudentSelectedKeys, setInitStudentSelectedKeys] = useState<string[]>([]);
   const [initLecturerSelectedKeys, setInitLecturerSelectedKeys] = useState<string[]>([]);
+  const [thesis, setThesis] = useState<ThesisRequestBody>(undefined);
   const thesisId: number = parseInt(params.id as string);
   const [form] = Form.useForm();
   const adminService = ThesisAdminService.getInstance();
@@ -49,7 +50,6 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
         thesisId,
         adminService.formatThesisRequestBody(formValues)
       );
-      setLoading(false);
       await adminService.redirectService.redirectTo(`${THESIS_PATH_ROOT}/${data.id}`);
     } catch (error) {
       await adminService.requestErrorHandler(error);
@@ -65,6 +65,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
         setInitStudentAttendees(thesisForEdit.studentAttendees);
 
         const currentThesis = adminService.convertToFormValue(thesisForEdit);
+        setThesis(currentThesis);
         setInitLecturerSelectedKeys(currentThesis.attendees.lecturers);
         setInitStudentSelectedKeys(currentThesis.attendees.students);
         form.setFieldsValue(currentThesis);
@@ -79,7 +80,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
     <Card title={ThesisTerminology.THESIS_26} loading={contentLoading}>
       <Form form={form} requiredMark={true} layout="vertical" onFinish={handleSubmitButton}>
         <Space size={100} align="start">
-          <ThesisFormItem />
+          <ThesisFormItem initThesis={thesis} />
           <Space direction="vertical">
             <ThesisAttendeesSelectFormItem
               attendeeTarget={ThesisAttendeeTarget.LECTURER}

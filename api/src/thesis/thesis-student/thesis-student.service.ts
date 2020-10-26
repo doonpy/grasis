@@ -34,7 +34,8 @@ export class ThesisStudentService {
       where: {
         studentId: In(ids),
         thesis: { status: ThesisStatus.ACTIVE },
-        student: { user: { ...NOT_DELETE_CONDITION } }
+        student: { user: { ...NOT_DELETE_CONDITION } },
+        ...NOT_DELETE_CONDITION
       },
       cache: true
     });
@@ -52,7 +53,8 @@ export class ThesisStudentService {
       where: {
         studentId: In(ids),
         thesis: { status: ThesisStatus.ACTIVE },
-        student: { user: { ...NOT_DELETE_CONDITION } }
+        student: { user: { ...NOT_DELETE_CONDITION } },
+        ...NOT_DELETE_CONDITION
       },
       cache: true
     });
@@ -65,7 +67,7 @@ export class ThesisStudentService {
   ): Promise<ThesisStudent[]> {
     return this.thesisStudentRepository.find({
       relations: { student: { user: {} } },
-      where: { thesisId, student: { user: { ...NOT_DELETE_CONDITION } } },
+      where: { thesisId, student: { user: { ...NOT_DELETE_CONDITION } }, ...NOT_DELETE_CONDITION },
       skip: offset,
       take: limit,
       cache: true
@@ -75,7 +77,8 @@ export class ThesisStudentService {
   public async isLoadMoreStudentsOfThesis(thesisId: number, offset = 0): Promise<boolean> {
     const amount = await this.thesisStudentRepository.count({
       thesisId,
-      student: { user: { ...NOT_DELETE_CONDITION } }
+      student: { user: { ...NOT_DELETE_CONDITION } },
+      ...NOT_DELETE_CONDITION
     });
 
     return amount - offset - ATTENDEES_LOAD_LIMIT > 0;
@@ -85,7 +88,8 @@ export class ThesisStudentService {
     return (
       (await this.thesisStudentRepository.count({
         thesisId: id,
-        student: { user: { ...NOT_DELETE_CONDITION, id: loginUser.id } }
+        student: { user: { ...NOT_DELETE_CONDITION, id: loginUser.id } },
+        ...NOT_DELETE_CONDITION
       })) > 0
     );
   }
@@ -93,7 +97,7 @@ export class ThesisStudentService {
   public async getThesisStudentsForEditView(thesisId: number): Promise<StudentSearchAttendee[]> {
     const students = await this.thesisStudentRepository.find({
       relations: { student: { user: {} } },
-      where: { thesisId, student: { user: { ...NOT_DELETE_CONDITION } } },
+      where: { thesisId, student: { user: { ...NOT_DELETE_CONDITION } }, ...NOT_DELETE_CONDITION },
       cache: true
     });
 
@@ -118,7 +122,7 @@ export class ThesisStudentService {
 
   public async getThesisStudentsForEdit(thesisId: number): Promise<ThesisStudent[]> {
     return this.thesisStudentRepository.find({
-      where: { thesis: { id: thesisId } },
+      where: { thesis: { id: thesisId }, ...NOT_DELETE_CONDITION },
       cache: true
     });
   }
@@ -145,7 +149,8 @@ export class ThesisStudentService {
       thesisStudents.push(
         this.createEntity({
           thesisId: thesis.id,
-          studentId: studentEntity.id
+          studentId: studentEntity.id,
+          deletedAt: null
         })
       );
     }
@@ -159,13 +164,33 @@ export class ThesisStudentService {
     const deleteIds = currentThesisStudentIds.filter((id) => !studentIds.includes(id));
 
     if (deleteIds.length > 0) {
-      await manager.delete(ThesisStudentEntity, { studentId: In(deleteIds) });
+      await this.deleteByStudentIdsWithTransaction(manager, deleteIds);
     }
 
     await manager.save(thesisStudents);
   }
 
-  public async deleteWithTransaction(manager: EntityManager, thesisId: number): Promise<void> {
-    await manager.delete(ThesisStudentEntity, { thesisId });
+  public async deleteByThesisIdWithTransaction(
+    manager: EntityManager,
+    thesisId: number,
+    deletedAt = new Date()
+  ): Promise<void> {
+    await manager.update(ThesisStudentEntity, { thesisId }, { deletedAt });
+  }
+
+  public async deleteByStudentIdsWithTransaction(
+    manager: EntityManager,
+    studentIds: number[],
+    deletedAt = new Date()
+  ): Promise<void> {
+    await manager.update(ThesisStudentEntity, { studentId: In(studentIds) }, { deletedAt });
+  }
+
+  public async deleteByStudentIdWithTransaction(
+    manager: EntityManager,
+    studentId: number,
+    deletedAt = new Date()
+  ): Promise<void> {
+    await manager.update(ThesisStudentEntity, { studentId }, { deletedAt });
   }
 }

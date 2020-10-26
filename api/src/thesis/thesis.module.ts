@@ -16,12 +16,12 @@ import { ThesisService } from './thesis.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ThesisEntity, ThesisStudentEntity, ThesisLecturerEntity]),
-    LecturerModule,
+    forwardRef(() => LecturerModule),
     forwardRef(() => StudentModule),
     UserModule
   ],
   providers: [ThesisService, ThesisStudentService, ThesisLecturerService],
   controllers: [ThesisController, ThesisAdminController],
-  exports: [ThesisStudentService]
+  exports: [ThesisStudentService, ThesisLecturerService]
 })
 export class ThesisModule {}

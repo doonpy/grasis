@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import {
   Connection,
   FindOptionsWhere,
@@ -25,7 +25,7 @@ import { ThesisStudent } from './thesis-student/thesis-student.interface';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
 import { ThesisEntity } from './thesis.entity';
 import { Thesis, ThesisForEdit, ThesisRequestBody } from './thesis.interface';
-import { ThesisError, ThesisState } from './thesis.resource';
+import { ThesisError, ThesisState, ThesisStatus } from './thesis.resource';
 
 @Injectable()
 export class ThesisService {
@@ -45,13 +45,14 @@ export class ThesisService {
     if (user.isAdmin === IsAdmin.TRUE) {
       return this.thesisRepository.find({
         relations: { creator: { user } },
+        where: { ...NOT_DELETE_CONDITION },
         skip: offset,
         take: limit,
         cache: true
       });
     }
 
-    let conditions: FindOptionsWhere<Thesis> = {};
+    let conditions: FindOptionsWhere<Thesis> = { ...NOT_DELETE_CONDITION };
     if (user.userType === UserType.LECTURER) {
       conditions = { lecturers: { lecturer: { id: user.id } } };
     }
@@ -61,7 +62,7 @@ export class ThesisService {
     }
 
     return this.thesisRepository.find({
-      relations: { creator: { user } },
+      relations: { creator: { user: {} } },
       where: conditions,
       skip: offset,
       take: limit,
@@ -132,105 +133,100 @@ export class ThesisService {
     return await this.thesisRepository.save(thesisEntity);
   }
 
-  private validateThesisStateDate(thesis: Thesis): void {
-    if (!this.isValidStartAndEndTime(thesis)) {
+  private validateThesisStateDate({
+    startTime,
+    endTime,
+    lecturerTopicRegister,
+    studentTopicRegister,
+    progressReport,
+    review,
+    defense
+  }: Thesis): void {
+    if (!moment(startTime).isBefore(endTime, 'day')) {
       throw new BadRequestException(ThesisError.ERR_6);
     }
 
-    if (!this.isValidLecturerTopicRegister(thesis)) {
+    if (
+      !this.isValidStateDate(
+        moment(lecturerTopicRegister),
+        moment(startTime),
+        moment(endTime),
+        undefined,
+        moment(studentTopicRegister)
+      )
+    ) {
       throw new BadRequestException(ThesisError.ERR_1);
     }
 
-    if (!this.isValidStudentTopicRegister(thesis)) {
+    if (
+      !this.isValidStateDate(
+        moment(studentTopicRegister),
+        moment(startTime),
+        moment(endTime),
+        moment(lecturerTopicRegister),
+        moment(progressReport)
+      )
+    ) {
       throw new BadRequestException(ThesisError.ERR_2);
     }
 
-    if (!this.isValidProgressReport(thesis)) {
+    if (
+      !this.isValidStateDate(
+        moment(progressReport),
+        moment(startTime),
+        moment(endTime),
+        moment(studentTopicRegister),
+        moment(review)
+      )
+    ) {
       throw new BadRequestException(ThesisError.ERR_3);
     }
 
-    if (!this.isValidReview(thesis)) {
+    if (
+      !this.isValidStateDate(
+        moment(review),
+        moment(startTime),
+        moment(endTime),
+        moment(progressReport),
+        moment(defense)
+      )
+    ) {
       throw new BadRequestException(ThesisError.ERR_4);
     }
 
-    if (!this.isValidDefense(thesis)) {
+    if (
+      !this.isValidStateDate(
+        moment(defense),
+        moment(startTime),
+        moment(endTime),
+        moment(progressReport)
+      )
+    ) {
       throw new BadRequestException(ThesisError.ERR_5);
     }
   }
 
-  private isValidStartAndEndTime(thesis: Thesis): boolean {
-    const { startTime, endTime } = thesis;
+  private isValidStateDate(
+    date: Moment,
+    startDate: Moment,
+    endDate: Moment,
+    startState?: Moment,
+    endState?: Moment
+  ): boolean {
+    const beginRange = startState
+      ? date.isSameOrBefore(startState, 'day')
+      : date.isBefore(startDate, 'day');
+    const endRange = endState
+      ? date.isSameOrAfter(endState.endOf('day'), 'day')
+      : date.isAfter(endDate.endOf('day'), 'day');
 
-    return !(moment.utc(startTime).unix() > moment.utc(endTime).unix());
+    return !(beginRange || endRange);
   }
 
-  private isValidLecturerTopicRegister(thesis: Thesis): boolean {
-    const {
-      lecturerTopicRegister,
-      studentTopicRegister,
-
-      startTime
-    } = thesis;
-
-    return !(
-      moment.utc(lecturerTopicRegister).unix() < moment.utc(startTime).unix() ||
-      moment.utc(lecturerTopicRegister).unix() >= moment.utc(studentTopicRegister).unix()
-    );
-  }
-
-  private isValidStudentTopicRegister(thesis: Thesis): boolean {
-    const { lecturerTopicRegister, studentTopicRegister, progressReport } = thesis;
-
-    return !(
-      moment.utc(studentTopicRegister).unix() < moment.utc(lecturerTopicRegister).unix() ||
-      moment.utc(studentTopicRegister).unix() >= moment.utc(progressReport).unix()
-    );
-  }
-
-  private isValidProgressReport(thesis: Thesis): boolean {
-    const { studentTopicRegister, progressReport, review } = thesis;
-
-    return !(
-      moment.utc(progressReport).unix() < moment.utc(studentTopicRegister).unix() ||
-      moment.utc(progressReport).unix() >= moment.utc(review).unix()
-    );
-  }
-
-  private isValidReview(thesis: Thesis): boolean {
-    const { progressReport, review, defense } = thesis;
-
-    return !(
-      moment.utc(review).unix() < moment.utc(progressReport).unix() ||
-      moment.utc(review).unix() >= moment.utc(defense).unix()
-    );
-  }
-
-  private isValidDefense(thesis: Thesis): boolean {
-    const { review, defense, endTime } = thesis;
-
-    return !(
-      moment.utc(defense).unix() >= moment.utc(endTime).unix() ||
-      moment.utc(defense).unix() < moment.utc(review).unix()
-    );
-  }
-
-  public async getById(id: number, loginUserId: number): Promise<Thesis> {
-    const user = await this.userService.findById(loginUserId);
-    let conditions: FindOptionsWhere<Thesis> = {};
-    if (user.isAdmin !== IsAdmin.TRUE) {
-      if (user.userType === UserType.LECTURER) {
-        conditions = { lecturers: { lecturer: { id: user.id } } };
-      }
-
-      if (user.userType === UserType.STUDENT) {
-        conditions = { students: { studentId: user.id } };
-      }
-    }
-
+  public async getById(id: number): Promise<Thesis> {
     const thesis = await this.thesisRepository.findOne(id, {
-      relations: { creator: { user } },
-      where: conditions,
-      cache: true
+      relations: { creator: { user: {} } },
+      where: { ...NOT_DELETE_CONDITION }
     });
     if (!thesis) {
       throw new BadRequestException(ThesisError.ERR_7);
@@ -280,9 +276,7 @@ export class ThesisService {
   }
 
   public async getByIdForEdit(id: number): Promise<ThesisForEdit> {
-    const thesis = await this.thesisRepository.findOne(id, {
-      cache: true
-    });
+    const thesis = await this.thesisRepository.findOne({ id, ...NOT_DELETE_CONDITION });
     if (!thesis) {
       throw new BadRequestException(ThesisError.ERR_7);
     }
@@ -301,7 +295,7 @@ export class ThesisService {
   public async updateById(id: number, data: ThesisRequestBody): Promise<Thesis> {
     const { attendees, ...thesis } = data;
     this.validateThesisStateDate(thesis as Thesis);
-    const currentThesis = await this.thesisRepository.findOne(id, { cache: true });
+    const currentThesis = await this.thesisRepository.findOne({ id, ...NOT_DELETE_CONDITION });
 
     if (!currentThesis) {
       throw new BadRequestException(ThesisError.ERR_7);
@@ -324,6 +318,38 @@ export class ThesisService {
             attendees.students
           );
         }
+      }
+
+      if (thesis.subject) {
+        currentThesis.subject = thesis.subject;
+      }
+
+      if (thesis.startTime) {
+        currentThesis.startTime = thesis.startTime;
+      }
+
+      if (thesis.endTime) {
+        currentThesis.endTime = thesis.endTime;
+      }
+
+      if (thesis.lecturerTopicRegister) {
+        currentThesis.lecturerTopicRegister = thesis.lecturerTopicRegister;
+      }
+
+      if (thesis.studentTopicRegister) {
+        currentThesis.studentTopicRegister = thesis.studentTopicRegister;
+      }
+
+      if (thesis.progressReport) {
+        currentThesis.progressReport = thesis.progressReport;
+      }
+
+      if (thesis.review) {
+        currentThesis.review = thesis.review;
+      }
+
+      if (thesis.defense) {
+        currentThesis.defense = thesis.defense;
       }
 
       currentThesis.state = this.getThesisCurrentState(currentThesis);
@@ -349,23 +375,23 @@ export class ThesisService {
       return ThesisState.FINISH;
     }
 
-    if (currentDate.isBetween(startTime, lecturerTopicRegister, 'day')) {
+    if (currentDate.isBetween(startTime, lecturerTopicRegister, 'day', '[]')) {
       return ThesisState.LECTURER_TOPIC_REGISTER;
     }
 
-    if (currentDate.isBetween(lecturerTopicRegister, studentTopicRegister, 'day')) {
+    if (currentDate.isBetween(studentTopicRegister, lecturerTopicRegister, 'day', '[)')) {
       return ThesisState.STUDENT_TOPIC_REGISTER;
     }
 
-    if (currentDate.isBetween(studentTopicRegister, progressReport, 'day')) {
+    if (currentDate.isBetween(studentTopicRegister, progressReport, 'day', '[)')) {
       return ThesisState.PROGRESS_REPORT;
     }
 
-    if (currentDate.isBetween(progressReport, review, 'day')) {
+    if (currentDate.isBetween(progressReport, review, 'day', '[)')) {
       return ThesisState.REVIEW;
     }
 
-    if (currentDate.isBetween(review, defense, 'day')) {
+    if (currentDate.isBetween(review, defense, 'day', '[]')) {
       return ThesisState.DEFENSE;
     }
 
@@ -381,7 +407,8 @@ export class ThesisService {
       where: {
         state: Not(ThesisState.FINISH),
         startTime: LessThanOrEqual(current.toISOString()),
-        endTime: MoreThanOrEqual(current.toISOString())
+        endTime: MoreThanOrEqual(current.toISOString()),
+        ...NOT_DELETE_CONDITION
       },
       cache: true
     });
@@ -398,9 +425,21 @@ export class ThesisService {
   public async deleteById(id: number): Promise<void> {
     await this.checkThesisExistById(id);
     await this.connection.transaction(async (manager) => {
-      await this.thesisLecturerService.deleteWithTransaction(manager, id);
-      await this.thesisStudentService.deleteWithTransaction(manager, id);
-      await manager.delete(ThesisEntity, id);
+      const deletedAt = new Date();
+      await this.thesisLecturerService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
+      await this.thesisStudentService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
+      await manager.update(ThesisEntity, { id }, { deletedAt });
     });
+  }
+
+  public async switchStatus(id: number): Promise<ThesisStatus> {
+    const thesis = await this.getById(id);
+    if (thesis.status === ThesisStatus.INACTIVE) {
+      await this.thesisRepository.update({ id }, { status: ThesisStatus.ACTIVE });
+      return ThesisStatus.ACTIVE;
+    } else {
+      await this.thesisRepository.update({ id }, { status: ThesisStatus.INACTIVE });
+      return ThesisStatus.INACTIVE;
+    }
   }
 }

@@ -4,11 +4,15 @@ export const LECTURER_PATH = {
   CREATE: `${LECTURER_ADMIN_PATH_ROOT}/create`
 };
 
-export enum LecturerApi {
-  ROOT = '/lecturers',
-  ADMIN = '/admin/lecturers',
-  SEARCH_ATTENDEES = `admin/lecturers/action/search-thesis-attendees`
-}
+export const LECTURER_API_ROOT = '/lecturers';
+
+export const LECTURER_API_ADMIN_ROOT = '/admin/lecturers';
+
+export const LecturerApi = {
+  ADMIN_SPECIFY: `${LECTURER_API_ADMIN_ROOT}/@0`,
+  SPECIFY: `${LECTURER_API_ROOT}/@0`,
+  SEARCH_ATTENDEES: `admin/lecturers/action/search-thesis-attendees`
+};
 
 export enum LecturerSearchType {
   LECTURER_ID = '1',

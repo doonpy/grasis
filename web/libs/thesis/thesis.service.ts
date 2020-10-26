@@ -11,7 +11,7 @@ import {
   UseTheses,
   UseThesis
 } from './thesis.interface';
-import { LoadMoreTarget, ThesisApi } from './thesis.resource';
+import { LoadMoreTarget, THESIS_API_ROOT, ThesisApi } from './thesis.resource';
 
 export default class ThesisService extends CommonService {
   private static instance: ThesisService;
@@ -30,7 +30,7 @@ export default class ThesisService extends CommonService {
 
   public useTheses(pageNumber = 0, pageSize: number = DEFAULT_PAGE_SIZE): UseTheses {
     const offset = (pageNumber - 1) * pageSize;
-    const { data } = useSWR<ThesisFindManyResponse>(`${ThesisApi.ROOT}?offset=${offset}`);
+    const { data } = useSWR<ThesisFindManyResponse>(`${THESIS_API_ROOT}?offset=${offset}`);
     if (data) {
       data.theses = data.theses.map((thesis) => ({ ...thesis, key: thesis.id.toString() }));
     }
@@ -39,7 +39,7 @@ export default class ThesisService extends CommonService {
   }
 
   public useThesis(id: number): UseThesis {
-    const { data } = useSWR<ThesisGetByIdResponse>(id && `${ThesisApi.ROOT}/${id}`);
+    const { data } = useSWR<ThesisGetByIdResponse>(id && `${THESIS_API_ROOT}/${id}`);
 
     return { data, isLoading: !data };
   }
@@ -51,13 +51,15 @@ export default class ThesisService extends CommonService {
   ): Promise<AxiosResponse<ThesisLoadMoreLecturersResponse | ThesisLoadMoreStudentsResponse>> {
     await this.apiService.bindAuthorizationForClient();
     if (target === LoadMoreTarget.LECTURER) {
-      return this.apiService.get<ThesisLoadMoreLecturersResponse>(
-        `${ThesisApi.ROOT}/${thesisId}/${ThesisApi.LOAD_MORE_LECTURERS}?offset=${offset}`
-      );
+      return this.apiService.get<ThesisLoadMoreLecturersResponse>(ThesisApi.LOAD_MORE_LECTURERS, [
+        thesisId,
+        offset
+      ]);
     }
 
-    return this.apiService.get<ThesisLoadMoreStudentsResponse>(
-      `${ThesisApi.ROOT}/${thesisId}/${ThesisApi.LOAD_MORE_STUDENTS}?offset=${offset}`
-    );
+    return this.apiService.get<ThesisLoadMoreStudentsResponse>(ThesisApi.LOAD_MORE_STUDENTS, [
+      thesisId,
+      offset
+    ]);
   }
 }

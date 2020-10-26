@@ -11,7 +11,7 @@ import {
   UseStudent,
   UseStudents
 } from './student.interface';
-import { StudentApi } from './student.resource';
+import { STUDENT_API_ROOT, StudentApi } from './student.resource';
 
 export default class StudentService extends StudentBase {
   private static instance: StudentService;
@@ -30,7 +30,7 @@ export default class StudentService extends StudentBase {
 
   public useStudents(pageNumber = 0, pageSize: number = DEFAULT_PAGE_SIZE): UseStudents {
     const offset = (pageNumber - 1) * pageSize;
-    const { data } = useSWR<FindManyStudentResponse>(`${StudentApi.ROOT}?offset=${offset}`);
+    const { data } = useSWR<FindManyStudentResponse>(`${STUDENT_API_ROOT}?offset=${offset}`);
     if (data) {
       data.students = data.students.map((student, index) => {
         const user = student.user;
@@ -43,7 +43,7 @@ export default class StudentService extends StudentBase {
   }
 
   public useStudent(id: number): UseStudent {
-    const { data } = useSWR<FindOneStudentResponse>(id && `${StudentApi.ROOT}/${id}`);
+    const { data } = useSWR<FindOneStudentResponse>(id && `${STUDENT_API_ROOT}/${id}`);
 
     return { data, isLoading: !data };
   }
@@ -51,7 +51,7 @@ export default class StudentService extends StudentBase {
   public async updateById(id: number, body: StudentRequestBody): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
 
-    await this.apiService.patch(`${StudentApi.ROOT}/${id}`, this.convertToRequestBody(body));
+    await this.apiService.patch(StudentApi.SPECIFY, this.convertToRequestBody(body), [id]);
   }
 
   public convertToTransferItem(attendees: StudentSearchAttendee[]): TransferItem[] {

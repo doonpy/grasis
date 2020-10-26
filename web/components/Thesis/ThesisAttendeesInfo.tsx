@@ -1,7 +1,7 @@
 import { Col, Descriptions, Row } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import ThesisTerminology from '../../assets/terminology/thesis.terminology';
+import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import { ThesisLecturer } from '../../libs/thesis/thesis-lecturer/thesis-lecturer.interface';
 import { ThesisStudent } from '../../libs/thesis/thesis-student/thesis-student.interface';
 import ThesisLecturerList from './ThesisLecturerList';
@@ -22,6 +22,12 @@ const ThesisAttendeesInfo: React.FC<ComponentProps> = ({
   initStudents,
   initIsMoreStudents
 }) => {
+  useEffect(() => undefined, [thesisId]);
+  useEffect(() => undefined, [initLecturers]);
+  useEffect(() => undefined, [initIsMoreLecturers]);
+  useEffect(() => undefined, [initStudents]);
+  useEffect(() => undefined, [initIsMoreStudents]);
+
   return (
     <Row>
       <Col span={11} offset={0}>

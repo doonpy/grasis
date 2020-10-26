@@ -1,23 +1,26 @@
 export enum Gender {
   MALE = 1,
-  FEMALE = 2
+  FEMALE
 }
 
 export enum UserStatus {
   INACTIVE = 1,
-  ACTIVE = 2
+  ACTIVE
 }
 
 export enum IsAdmin {
   FALSE = 1,
-  TRUE = 2
+  TRUE
 }
 
 export enum UserType {
   STUDENT = 1,
-  LECTURER = 2
+  LECTURER
 }
 
-export const USER_API = {
-  ROOT: '/users'
+export const USER_API_ROOT = '/users';
+
+export const UserApi = {
+  ROOT: '/users',
+  SPECIFY: `${USER_API_ROOT}/@0`
 };

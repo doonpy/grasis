@@ -12,7 +12,7 @@ import {
   UseLecturer,
   UseLecturers
 } from './lecturer.interface';
-import { LecturerApi } from './lecturer.resource';
+import { LECTURER_API_ADMIN_ROOT, LecturerApi } from './lecturer.resource';
 
 export default class LecturerAdminService extends LecturerBase {
   private static instance: LecturerAdminService;
@@ -38,7 +38,7 @@ export default class LecturerAdminService extends LecturerBase {
       lecturer.level = this.convertLevelToString(lecturer.level);
     }
 
-    return this.apiService.post<CreateLecturerResponse>(LecturerApi.ADMIN, {
+    return this.apiService.post<CreateLecturerResponse>(LECTURER_API_ADMIN_ROOT, {
       lecturer,
       user: UserService.getInstance().convertToRequestBody(user)
     });
@@ -46,14 +46,14 @@ export default class LecturerAdminService extends LecturerBase {
 
   public async deleteLecturer(id: number): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.delete(`${LecturerApi.ADMIN}/${id}`);
+    await this.apiService.delete(LecturerApi.ADMIN_SPECIFY, [id]);
   }
 
   public async getInitialForEdit(id: number): Promise<LecturerForm> {
     await this.apiService.bindAuthorizationForClient();
-    const { data } = await this.apiService.get<FindOneLecturerResponse>(
-      `${LecturerApi.ADMIN}/${id}`
-    );
+    const { data } = await this.apiService.get<FindOneLecturerResponse>(LecturerApi.ADMIN_SPECIFY, [
+      id
+    ]);
     if (data) {
       return this.convertToFormValue(data.lecturer);
     }
@@ -65,15 +65,21 @@ export default class LecturerAdminService extends LecturerBase {
       lecturer.level = this.convertLevelToString(lecturer.level);
     }
 
-    await this.apiService.patch(`${LecturerApi.ADMIN}/${id}`, {
-      lecturer,
-      user: UserService.getInstance().convertToRequestBody(user)
-    });
+    await this.apiService.patch(
+      LecturerApi.ADMIN_SPECIFY,
+      {
+        lecturer,
+        user: UserService.getInstance().convertToRequestBody(user)
+      },
+      [id]
+    );
   }
 
   public useLecturers(pageNumber = 0, pageSize: number = DEFAULT_PAGE_SIZE): UseLecturers {
     const offset = (pageNumber - 1) * pageSize;
-    const { data } = useSWR<FindManyLecturerResponse>(`${LecturerApi.ADMIN}?offset=${offset}`);
+    const { data } = useSWR<FindManyLecturerResponse>(
+      `${LECTURER_API_ADMIN_ROOT}?offset=${offset}`
+    );
     if (data) {
       data.lecturers = data.lecturers.map((lecturer, index) => {
         const user = lecturer.user;
@@ -86,7 +92,7 @@ export default class LecturerAdminService extends LecturerBase {
   }
 
   public useLecturer(id: number): UseLecturer {
-    const { data } = useSWR<FindOneLecturerResponse>(id && `${LecturerApi.ADMIN}/${id}`);
+    const { data } = useSWR<FindOneLecturerResponse>(id && `${LECTURER_API_ADMIN_ROOT}/${id}`);
     if (data && data.lecturer.level && typeof data.lecturer.level === 'string') {
       data.lecturer.level = data.lecturer.level.split(';');
     }

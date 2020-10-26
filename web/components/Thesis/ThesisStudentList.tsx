@@ -1,7 +1,7 @@
 import { Button, List, Row } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import ThesisTerminology from '../../assets/terminology/thesis.terminology';
+import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import { ThesisStudent } from '../../libs/thesis/thesis-student/thesis-student.interface';
 import { ThesisLoadMoreStudentsResponse } from '../../libs/thesis/thesis.interface';
 import { LoadMoreTarget } from '../../libs/thesis/thesis.resource';
@@ -44,6 +44,11 @@ const ThesisStudentList: React.FC<ComponentPros> = ({ initStudents, initIsMore, 
       </Row>
     );
   };
+
+  useEffect(() => {
+    setStudents(initStudents);
+    setIsMore(initIsMore);
+  }, [initStudents]);
 
   return (
     <List

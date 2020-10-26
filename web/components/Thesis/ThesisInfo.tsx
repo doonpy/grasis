@@ -2,11 +2,12 @@ import { Descriptions } from 'antd';
 import React from 'react';
 
 import CommonTerminology from '../../assets/terminology/common.terminology';
-import ThesisTerminology from '../../assets/terminology/thesis.terminology';
+import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import { Thesis } from '../../libs/thesis/thesis.interface';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import LecturerInfo from '../Lecturer/LecturerInfo';
+import ThesisInfoButtons from './ThesisInfoButtons';
 import ThesisStateRender from './ThesisStateRender';
 import ThesisStatusRender from './ThesisStatusRender';
 
@@ -16,6 +17,7 @@ interface ComponentProps {
 
 const ThesisInfo: React.FC<ComponentProps> = ({
   thesis: {
+    id,
     subject,
     creator,
     startTime,
@@ -32,7 +34,11 @@ const ThesisInfo: React.FC<ComponentProps> = ({
   }
 }) => {
   return (
-    <Descriptions title={ThesisTerminology.THESIS_9} bordered column={4}>
+    <Descriptions
+      title={ThesisTerminology.THESIS_9}
+      bordered
+      column={4}
+      extra={<ThesisInfoButtons thesisId={id} status={status} />}>
       <Descriptions.Item label={<b>{ThesisTerminology.THESIS_10}</b>} span={2}>
         <TextData text={subject} />
       </Descriptions.Item>

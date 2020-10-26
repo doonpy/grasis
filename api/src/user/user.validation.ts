@@ -8,38 +8,43 @@ export const userUpdateValidationSchema = Joi.object<UserRequestBody>({
     'string.base': 'Tên đăng nhập phải là chuỗi.',
     'string.max': 'Tên đăng nhập không quá 50 kí tự.'
   }),
-  password: Joi.string().allow(null).max(50).messages({
+  password: Joi.string().allow(null, '').max(50).messages({
     'string.base': 'Mật khẩu phải là chuỗi.',
     'string.max': 'Mật khẩu không không quá 50 kí tự.'
   }),
-  confirmPassword: Joi.string().allow(null).max(50).messages({
+  confirmPassword: Joi.string().allow(null, '').max(50).messages({
     'string.base': 'Mật khẩu xác nhận phải là chuỗi.',
     'string.max': 'Mật khẩu xác nhận không quá 50 kí tự.'
   }),
-  firstname: Joi.string().allow(null).optional().max(50).messages({
+  firstname: Joi.string().allow(null, '').optional().max(50).messages({
     'string.base': 'Tên phải là chuỗi.',
     'string.max': 'Tên không quá 50 kí tự.'
   }),
-  lastname: Joi.string().allow(null).optional().max(50).messages({
+  lastname: Joi.string().allow(null, '').optional().max(50).messages({
     'string.base': 'Họ và tên lót phải là chuỗi.',
     'string.max': 'Họ và tên lót không quá 50 kí tự.'
   }),
-  gender: Joi.number().optional().integer().valid(Gender.MALE, Gender.FEMALE, null).messages({
-    'number.base': 'Giới tính không hợp lệ.',
-    'number.integer': 'Giới tính không hợp lệ.',
-    'any.only': 'Giới tính có giá trị bị cấm.'
-  }),
-  email: Joi.string().allow(null).optional().email({ allowUnicode: true }).max(100).messages({
+  gender: Joi.number()
+    .optional()
+    .allow(null, '')
+    .integer()
+    .valid(Gender.MALE, Gender.FEMALE, null)
+    .messages({
+      'number.base': 'Giới tính không hợp lệ.',
+      'number.integer': 'Giới tính không hợp lệ.',
+      'any.only': 'Giới tính có giá trị bị cấm.'
+    }),
+  email: Joi.string().allow(null, '').optional().email({ allowUnicode: true }).max(100).messages({
     'string.base': 'Email phải là chuỗi.',
     'string.email': 'Email không đúng định dạng.',
     'string.max': 'Email không quá 100 kí tự.'
   }),
-  address: Joi.string().allow(null).optional().max(100).messages({
+  address: Joi.string().allow(null, '').optional().max(100).messages({
     'string.base': 'Địa chỉ phải là chuỗi.',
     'string.max': 'Địa chỉ không quá 100 kí tự.'
   }),
   phone: Joi.string()
-    .allow(null)
+    .allow(null, '')
     .optional()
     .length(10)
     .pattern(/^[0-9]*$/)

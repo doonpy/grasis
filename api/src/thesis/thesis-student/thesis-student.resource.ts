@@ -12,7 +12,8 @@ export enum ThesisStudentColumn {
 }
 
 export enum ThesisStudentError {
-  ERR_1 = 'Sinh viên %s đang tham gia một khóa luận khác.'
+  ERR_1 = 'Sinh viên %s đang tham gia một khóa luận khác.',
+  ERR_2 = 'Sinh viên không tồn tại trong khóa luận.'
 }
 
 export enum ThesisStudentRelation {

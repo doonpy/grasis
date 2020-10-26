@@ -4,7 +4,7 @@ import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
-import ThesisTerminology from '../../assets/terminology/thesis.terminology';
+import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import MainLayout from '../../components/Layout/MainLayout';
 import { THESIS_TABLE_COLUMNS } from '../../components/Thesis/ThesisTableColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../libs/common/common.interface';

@@ -2,7 +2,6 @@ import Joi from '@hapi/joi';
 
 import { commonIdValidateSchema } from '../common/common.validation';
 import { ThesisRequestBody } from './thesis.interface';
-import { ThesisState, ThesisStatus } from './thesis.resource';
 
 const thesisValidationSchema = Joi.object<ThesisRequestBody>({
   subject: Joi.string().max(100).messages({
@@ -44,22 +43,6 @@ const thesisValidationSchema = Joi.object<ThesisRequestBody>({
     'string.isoDate': 'Thời gian hạn cuối bảo vệ có định dạng không hợp lệ.',
     'any.invalid': 'Thời gian hạn cuối bảo vệ có giá trị không hợp lệ.'
   }),
-  state: Joi.number()
-    .integer()
-    .min(ThesisState.LECTURER_TOPIC_REGISTER)
-    .max(ThesisState.FINISH)
-    .messages({
-      'number.base': 'Giai đoạn của khóa luận không hợp lệ.',
-      'number.integer': 'Giai đoạn của khóa luận không hợp lệ.',
-      'number.min': 'Giai đoạn của khóa luận không hợp lệ.',
-      'number.max': 'Giai đoạn của khóa luận không hợp lệ.'
-    }),
-  status: Joi.number().integer().min(ThesisStatus.INACTIVE).max(ThesisStatus.ACTIVE).messages({
-    'number.base': 'Trạng thái của khóa luận không hợp lệ.',
-    'number.integer': 'Trạng thái của khóa luận không hợp lệ.',
-    'number.min': 'Trạng thái của khóa luận không hợp lệ.',
-    'number.max': 'Trạng thái của khóa luận không hợp lệ.'
-  }),
   attendees: Joi.object({
     lecturers: Joi.array().items(commonIdValidateSchema).messages({
       'array.base': 'Danh sách giảng viên hướng dẫn không hợp lệ.'
@@ -98,12 +81,6 @@ export const thesisCreateValidationSchema = thesisValidationSchema.concat(
     }),
     defense: Joi.required().messages({
       'any.required': 'Hạn chót bảo vệ là thông tin bắt buộc.'
-    }),
-    status: Joi.forbidden().messages({
-      'any.unknown': 'Tạo khóa luận thất bại (tham số không hợp lệ).'
-    }),
-    state: Joi.forbidden().messages({
-      'any.unknown': 'Tạo khóa luận thất bại (tham số không hợp lệ).'
     })
   })
 );
@@ -118,8 +95,6 @@ export const thesisUpdateValidationSchema = thesisValidationSchema.concat(
     progressReport: Joi.optional(),
     review: Joi.optional(),
     defense: Joi.optional(),
-    state: Joi.optional(),
-    status: Joi.optional(),
     attendees: Joi.optional()
   })
 );

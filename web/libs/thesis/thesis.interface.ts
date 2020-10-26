@@ -85,3 +85,7 @@ export interface AttendeesRequestBody {
     students: string[];
   };
 }
+
+export interface ThesisSwitchStatusResponse extends CommonResponse {
+  currentStatus: ThesisStatus;
+}

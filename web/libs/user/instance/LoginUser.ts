@@ -1,5 +1,5 @@
 import { User } from '../user.interface';
-import { IsAdmin } from '../user.resource';
+import { IsAdmin, UserType } from '../user.resource';
 
 export default class LoginUser {
   private static instance: LoginUser;
@@ -23,5 +23,9 @@ export default class LoginUser {
 
   public isAdmin(): boolean {
     return this.user.isAdmin === IsAdmin.TRUE;
+  }
+
+  public getUserType(): UserType {
+    return this.user.userType;
   }
 }

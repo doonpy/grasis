@@ -6,9 +6,10 @@ import {
   ThesisCreateOrUpdateResponse,
   ThesisForEdit,
   ThesisGetByIdForEditResponse,
-  ThesisRequestBody
+  ThesisRequestBody,
+  ThesisSwitchStatusResponse
 } from './thesis.interface';
-import { ThesisApi } from './thesis.resource';
+import { THESIS_API_ADMIN_ROOT, ThesisApi } from './thesis.resource';
 
 export default class ThesisAdminService extends CommonService {
   private static instance: ThesisAdminService;
@@ -30,7 +31,7 @@ export default class ThesisAdminService extends CommonService {
   ): Promise<AxiosResponse<ThesisCreateOrUpdateResponse>> {
     await this.apiService.bindAuthorizationForClient();
 
-    return this.apiService.post<ThesisCreateOrUpdateResponse>(ThesisApi.ADMIN, body);
+    return this.apiService.post<ThesisCreateOrUpdateResponse>(THESIS_API_ADMIN_ROOT, body);
   }
 
   public async updateById(
@@ -39,10 +40,7 @@ export default class ThesisAdminService extends CommonService {
   ): Promise<AxiosResponse<ThesisCreateOrUpdateResponse>> {
     await this.apiService.bindAuthorizationForClient();
 
-    return this.apiService.patch<ThesisCreateOrUpdateResponse>(
-      ThesisApi.ADMIN_SPECIFY.replace('@1', id.toString()),
-      body
-    );
+    return this.apiService.patch<ThesisCreateOrUpdateResponse>(ThesisApi.ADMIN_SPECIFY, body, [id]);
   }
 
   public formatThesisRequestBody(formValues: ThesisRequestBody): ThesisRequestBody {
@@ -64,7 +62,8 @@ export default class ThesisAdminService extends CommonService {
   public async getInitialForEdit(id: number): Promise<ThesisForEdit> {
     await this.apiService.bindAuthorizationForClient();
     const { data } = await this.apiService.get<ThesisGetByIdForEditResponse>(
-      ThesisApi.ADMIN_GET_EDIT.replace('@1', id.toString())
+      ThesisApi.ADMIN_GET_EDIT,
+      [id]
     );
     if (data) {
       return data.thesis;
@@ -98,7 +97,14 @@ export default class ThesisAdminService extends CommonService {
 
   public async deleteById(id: number): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
+    await this.apiService.delete(ThesisApi.ADMIN_SPECIFY, [id]);
+  }
 
-    await this.apiService.delete(ThesisApi.ADMIN_SPECIFY.replace('@1', id.toString()));
+  public async switchStatus(id: number): Promise<AxiosResponse<ThesisSwitchStatusResponse>> {
+    await this.apiService.bindAuthorizationForClient();
+    await this.apiService.bindCancelToken();
+    return this.apiService.post<ThesisSwitchStatusResponse>(ThesisApi.ADMIN_SWITCH_STATUS, {}, [
+      id
+    ]);
   }
 }

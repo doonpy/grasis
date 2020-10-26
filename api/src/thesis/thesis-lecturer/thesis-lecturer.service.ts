@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
 
@@ -16,6 +16,7 @@ export class ThesisLecturerService {
   constructor(
     @InjectRepository(ThesisLecturerEntity)
     private readonly thesisLecturerService: Repository<ThesisLecturer>,
+    @Inject(forwardRef(() => LecturerService))
     private readonly lecturerService: LecturerService
   ) {}
 
@@ -30,7 +31,7 @@ export class ThesisLecturerService {
   ): Promise<ThesisLecturer[]> {
     return this.thesisLecturerService.find({
       relations: { lecturer: { user: {} } },
-      where: { thesisId, lecturer: { user: { ...NOT_DELETE_CONDITION } } },
+      where: { thesisId, lecturer: { user: { ...NOT_DELETE_CONDITION } }, ...NOT_DELETE_CONDITION },
       skip: offset,
       take: limit,
       cache: true
@@ -40,7 +41,7 @@ export class ThesisLecturerService {
   public async getThesisLecturersForEditView(thesisId: number): Promise<LecturerSearchAttendee[]> {
     const lecturers = await this.thesisLecturerService.find({
       relations: { lecturer: { user: {} } },
-      where: { thesisId, lecturer: { user: { ...NOT_DELETE_CONDITION } } },
+      where: { thesisId, lecturer: { user: { ...NOT_DELETE_CONDITION } }, ...NOT_DELETE_CONDITION },
       cache: true
     });
 
@@ -54,7 +55,8 @@ export class ThesisLecturerService {
   public async isLoadMoreLecturersOfThesis(thesisId: number, offset = 0): Promise<boolean> {
     const amount = await this.thesisLecturerService.count({
       thesisId,
-      lecturer: { user: { ...NOT_DELETE_CONDITION } }
+      lecturer: { user: { ...NOT_DELETE_CONDITION } },
+      ...NOT_DELETE_CONDITION
     });
 
     return amount - offset - ATTENDEES_LOAD_LIMIT > 0;
@@ -77,7 +79,8 @@ export class ThesisLecturerService {
       thesisLecturers.push(
         this.createEntity({
           thesisId: thesis.id,
-          lecturerId: lecturerEntity.id
+          lecturerId: lecturerEntity.id,
+          deletedAt: null
         })
       );
     }
@@ -91,13 +94,33 @@ export class ThesisLecturerService {
     const deleteIds = currentThesisLecturerIds.filter((id) => !lecturerIds.includes(id));
 
     if (deleteIds.length > 0) {
-      await manager.delete(ThesisLecturerEntity, { lecturerId: In(deleteIds) });
+      await this.deleteByLecturerIdsWithTransaction(manager, deleteIds);
     }
 
     await manager.save(thesisLecturers);
   }
 
-  public async deleteWithTransaction(manager: EntityManager, thesisId: number): Promise<void> {
-    await manager.delete(ThesisLecturerEntity, { thesisId });
+  public async deleteByThesisIdWithTransaction(
+    manager: EntityManager,
+    thesisId: number,
+    deletedAt = new Date()
+  ): Promise<void> {
+    await manager.update(ThesisLecturerEntity, { thesisId }, { deletedAt });
+  }
+
+  public async deleteByLecturerIdsWithTransaction(
+    manager: EntityManager,
+    lecturerIds: number[],
+    deletedAt = new Date()
+  ): Promise<void> {
+    await manager.update(ThesisLecturerEntity, { lecturerId: In(lecturerIds) }, { deletedAt });
+  }
+
+  public async deleteByLecturerIdWithTransaction(
+    manager: EntityManager,
+    lecturerId: number,
+    deletedAt = new Date()
+  ): Promise<void> {
+    await manager.update(ThesisLecturerEntity, { lecturerId }, { deletedAt });
   }
 }

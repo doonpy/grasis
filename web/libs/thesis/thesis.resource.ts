@@ -2,7 +2,7 @@ export const THESIS_PATH_ROOT = '/thesis';
 
 export const THESIS_PATH = {
   CREATE: `${THESIS_PATH_ROOT}/admin/create`,
-  EDIT: `${THESIS_PATH_ROOT}/admin/%id/edit`
+  EDIT: `${THESIS_PATH_ROOT}/admin/@0/edit`
 };
 
 export enum ThesisState {
@@ -33,21 +33,24 @@ export enum ThesisStatus {
   ACTIVE = 2
 }
 
-export enum ThesisApi {
-  ROOT = '/theses',
-  ADMIN = '/admin/theses',
-  ADMIN_GET_EDIT = 'admin/theses/@1/edit',
-  ADMIN_SPECIFY = 'admin/theses/@1',
-  LOAD_MORE_LECTURERS = 'lecturers-load-more',
-  LOAD_MORE_STUDENTS = 'students-load-more'
-}
+export const THESIS_API_ROOT = '/theses';
+
+export const THESIS_API_ADMIN_ROOT = `/admin/theses`;
+
+export const ThesisApi = {
+  ADMIN_GET_EDIT: `${THESIS_API_ADMIN_ROOT}/@0/edit`,
+  ADMIN_SPECIFY: `${THESIS_API_ADMIN_ROOT}/@0`,
+  ADMIN_SWITCH_STATUS: `${THESIS_API_ADMIN_ROOT}/@0/switch-status`,
+  LOAD_MORE_LECTURERS: `${THESIS_API_ROOT}/@0/lecturers-load-more?offset=@1`,
+  LOAD_MORE_STUDENTS: `${THESIS_API_ROOT}/@0/students-load-more?offset=@1`
+};
 
 export enum ThesisAttendeeTarget {
   LECTURER = 1,
-  STUDENT = 2
+  STUDENT
 }
 
 export enum LoadMoreTarget {
-  STUDENT,
+  STUDENT = 1,
   LECTURER
 }

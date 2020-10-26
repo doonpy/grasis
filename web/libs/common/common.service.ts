@@ -79,4 +79,13 @@ export default class CommonService {
       endpoint + queryString
     );
   }
+
+  public replaceParams(url: string, params: (string | number)[]): string {
+    let result = url;
+    params.forEach((param, index) => {
+      result = result.replace(`@${index}`, encodeURI(param.toString()));
+    });
+
+    return result;
+  }
 }

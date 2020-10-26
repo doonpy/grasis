@@ -82,11 +82,9 @@ export class ThesisController {
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
     )
-    id: number,
-    @Request() req: Record<string, any>
+    id: number
   ): Promise<ThesisGetByIdResponse> {
-    const loginUserId = req.user.userId;
-    const thesis = await this.thesisService.getById(id, loginUserId);
+    const thesis = await this.thesisService.getById(id);
     const isMoreLecturers = await this.thesisLecturerService.isLoadMoreLecturersOfThesis(thesis.id);
     const isMoreStudents = await this.thesisStudentService.isLoadMoreStudentsOfThesis(thesis.id);
 

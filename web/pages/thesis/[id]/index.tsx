@@ -5,17 +5,17 @@ import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 
-import ThesisTerminology from '../../assets/terminology/thesis.terminology';
-import MainLayout from '../../components/Layout/MainLayout';
-import ThesisAttendeesInfo from '../../components/Thesis/ThesisAttendeesInfo';
-import ThesisInfo from '../../components/Thesis/ThesisInfo';
-import { CommonPageProps, NextPageWithLayout } from '../../libs/common/common.interface';
-import { SIDER_KEYS } from '../../libs/common/common.resource';
-import ThesisAdminService from '../../libs/thesis/admin.service';
-import { THESIS_PATH, THESIS_PATH_ROOT } from '../../libs/thesis/thesis.resource';
-import ThesisService from '../../libs/thesis/thesis.service';
-import LoginUser from '../../libs/user/instance/LoginUser';
-import { UserType } from '../../libs/user/user.resource';
+import { ThesisTerminology } from '../../../assets/terminology/thesis.terminology';
+import MainLayout from '../../../components/Layout/MainLayout';
+import ThesisAttendeesInfo from '../../../components/Thesis/ThesisAttendeesInfo';
+import ThesisInfo from '../../../components/Thesis/ThesisInfo';
+import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
+import { SIDER_KEYS } from '../../../libs/common/common.resource';
+import ThesisAdminService from '../../../libs/thesis/admin.service';
+import { THESIS_PATH, THESIS_PATH_ROOT } from '../../../libs/thesis/thesis.resource';
+import ThesisService from '../../../libs/thesis/thesis.service';
+import LoginUser from '../../../libs/user/instance/LoginUser';
+import { UserType } from '../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
   params: PageParams;
@@ -54,11 +54,12 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
 
   return (
     <Card
+      loading={isLoading}
       title={ThesisTerminology.THESIS_4}
       extra={
         LoginUser.getInstance().isAdmin() && (
           <Space>
-            <Link href={THESIS_PATH.EDIT.replace('%id', thesisId.toString())}>
+            <Link href={thesisService.replaceParams(THESIS_PATH.EDIT, [thesisId])}>
               <Button
                 type="primary"
                 shape="circle"

@@ -1,5 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
+import { CommonEntity } from '../../common/common.entity';
 import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../../common/common.resource';
 import { LecturerEntity } from '../../lecturer/lecturer.entity';
 import { Lecturer } from '../../lecturer/lecturer.interface';
@@ -8,7 +9,7 @@ import { Thesis } from '../thesis.interface';
 import { THESIS_LECTURER_TABLE, ThesisLecturerColumn } from '../thesis.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: THESIS_LECTURER_TABLE })
-export class ThesisLecturerEntity {
+export class ThesisLecturerEntity extends CommonEntity {
   @PrimaryColumn({ name: ThesisLecturerColumn.THESIS_ID, type: 'int' })
   public thesisId!: number;
 

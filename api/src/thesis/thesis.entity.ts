@@ -1,14 +1,6 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
+import { CommonEntity } from '../common/common.entity';
 import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
 import { LecturerEntity } from '../lecturer/lecturer.entity';
 import { Lecturer } from '../lecturer/lecturer.interface';
@@ -26,7 +18,7 @@ import {
 } from './thesis.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: THESIS_TABLE })
-export class ThesisEntity {
+export class ThesisEntity extends CommonEntity {
   @PrimaryGeneratedColumn({ name: CommonColumn.ID, type: 'int' })
   public id!: number;
 
@@ -66,12 +58,6 @@ export class ThesisEntity {
 
   @Column({ name: ThesisColumn.STATUS, type: 'int', default: ThesisStatus.INACTIVE })
   public status!: ThesisStatus;
-
-  @CreateDateColumn({ name: CommonColumn.CREATED_AT })
-  public createdAt!: string;
-
-  @UpdateDateColumn({ name: CommonColumn.UPDATED_AT })
-  public updatedAt!: string;
 
   @OneToMany(() => ThesisStudentEntity, ({ thesis }) => thesis, { cascade: true })
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ThesisStudentColumn.THESIS_ID })

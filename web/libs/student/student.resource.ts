@@ -4,11 +4,15 @@ export const STUDENT_PATH = {
   CREATE: `${STUDENT_ADMIN_PATH_ROOT}/create`
 };
 
-export enum StudentApi {
-  ROOT = '/students',
-  ADMIN = '/admin/students',
-  SEARCH_ATTENDEES = 'admin/students/action/search-thesis-attendees'
-}
+export const STUDENT_API_ROOT = '/students';
+
+export const STUDENT_API_ADMIN_ROOT = '/admin/students';
+
+export const StudentApi = {
+  ADMIN_SPECIFY: `${STUDENT_API_ADMIN_ROOT}/@0`,
+  SPECIFY: `${STUDENT_API_ROOT}/@0`,
+  SEARCH_ATTENDEES: 'admin/students/action/search-thesis-attendees'
+};
 
 export enum IsGraduate {
   FALSE = 1,

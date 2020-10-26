@@ -24,7 +24,8 @@ import {
   Thesis,
   ThesisCreateOrUpdateResponse,
   ThesisGetByIdForEditResponse,
-  ThesisRequestBody
+  ThesisRequestBody,
+  ThesisSwitchStatusResponse
 } from './thesis.interface';
 import { THESIS_ADMIN_ROOT_PATH, ThesisPath } from './thesis.resource';
 import { ThesisService } from './thesis.service';
@@ -104,6 +105,24 @@ export class ThesisAdminController {
     return {
       statusCode: HttpStatus.NO_CONTENT,
       id
+    };
+  }
+
+  @Post(ThesisPath.ADMIN_SWITCH_STATUS)
+  public async switchStatus(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number
+  ): Promise<ThesisSwitchStatusResponse> {
+    const currentStatus = await this.thesisService.switchStatus(id);
+
+    return {
+      statusCode: HttpStatus.OK,
+      currentStatus
     };
   }
 }
