@@ -79,7 +79,7 @@ export class ThesisService {
     this.validateThesisStateDate(thesis as Thesis);
     const thesisEntity = this.thesisRepository.create(thesis);
     thesisEntity.state = this.getThesisCurrentState(thesisEntity);
-    thesisEntity.creator = await this.lecturerService.findById(data.creatorId);
+    thesisEntity.creator = await this.lecturerService.getById(data.creatorId);
 
     if (attendees && attendees.lecturers) {
       const { lecturers } = attendees;

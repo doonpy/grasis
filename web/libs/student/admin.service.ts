@@ -29,9 +29,15 @@ export default class StudentAdminService extends StudentBase {
     return this.instance;
   }
 
-  public useStudents(pageNumber = 0, pageSize: number = DEFAULT_PAGE_SIZE): UseStudents {
+  public useStudents(
+    pageNumber = 0,
+    pageSize: number = DEFAULT_PAGE_SIZE,
+    keyword = ''
+  ): UseStudents {
     const offset = (pageNumber - 1) * pageSize;
-    const { data } = useSWR<FindManyStudentResponse>(`${STUDENT_API_ADMIN_ROOT}?offset=${offset}`);
+    const { data } = useSWR<FindManyStudentResponse>(
+      this.replaceParams(StudentApi.ADMIN_GET_MANY, [offset, keyword])
+    );
     if (data) {
       data.students = data.students.map((student, index) => {
         const user = student.user;

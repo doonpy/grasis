@@ -47,7 +47,7 @@ export class StudentAdminController {
   constructor(private studentService: StudentService) {}
 
   @Get()
-  public async findMany(
+  public async getMany(
     @Query(
       CommonQuery.OFFSET,
       new JoiValidationPipe(commonOffsetValidateSchema),
@@ -61,10 +61,11 @@ export class StudentAdminController {
       new DefaultValuePipe(CommonQueryValue.LIMIT),
       ParseIntPipe
     )
-    limit: number
+    limit: number,
+    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
   ): Promise<StudentFindManyResponse> {
-    const students: Student[] = await this.studentService.findMany(offset, limit);
-    const total: number = await this.studentService.getStudentAmount();
+    const students: Student[] = await this.studentService.getMany(offset, limit, keyword);
+    const total: number = await this.studentService.getStudentAmount(keyword);
 
     return {
       statusCode: HttpStatus.OK,
@@ -74,7 +75,7 @@ export class StudentAdminController {
   }
 
   @Get(StudentPath.SPECIFY)
-  public async findById(
+  public async getById(
     @Param(
       CommonParam.ID,
       new JoiValidationPipe(commonIdValidateSchema),

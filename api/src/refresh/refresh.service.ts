@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 
 import { Payload } from '../auth/strategies/jwt.strategy';
 import { RefreshEntity } from './refresh.entity';
@@ -52,7 +52,7 @@ export class RefreshService {
 
   public async create(data: CreateRefresh): Promise<void> {
     const { refreshToken, ...conditions } = data;
-    const currentRefreshToken: Refresh | undefined = await this.getByConditions(conditions);
+    const currentRefreshToken = await this.getByConditions(conditions);
 
     if (!currentRefreshToken) {
       const newRefreshToken = this.refreshRepository.create(data);
@@ -67,21 +67,10 @@ export class RefreshService {
     return this.refreshRepository.findOne(conditions);
   }
 
-  public async deleteByUserIdTransaction(manager: EntityManager, userId: number): Promise<void> {
-    await manager.delete(RefreshEntity, { userId });
-  }
-
   public async deleteExpiredToken(userId: number): Promise<void> {
     const expiredTime = new Date();
     expiredTime.setDate(expiredTime.getDate() - REFRESH_EXPIRE_TIME_BY_DAYS);
 
-    await this.refreshRepository
-      .createQueryBuilder()
-      .delete()
-      .where('userId = :userId AND updatedAt <= :expiredTime', {
-        userId,
-        expiredTime
-      })
-      .execute();
+    await this.refreshRepository.delete({ userId, updatedAt: LessThanOrEqual(expiredTime) });
   }
 }

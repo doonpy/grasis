@@ -1,10 +1,11 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Card, Table } from 'antd';
+import { Button, Card, Space, Table } from 'antd';
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 import StudentTerminology from '../../../assets/terminology/student.terminology';
+import SearchBox from '../../../components/Common/SearchBox';
 import MainLayout from '../../../components/Layout/MainLayout';
 import { STUDENT_TABLE_COLUMNS } from '../../../components/Student/StudentColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
@@ -20,10 +21,19 @@ const Index: NextPageWithLayout = () => {
     total: 0,
     showSizeChanger: false
   });
+  const [keyword, setKeyword] = useState<string>('');
   const adminService = StudentAdminService.getInstance();
-  const { data, isLoading } = adminService.useStudents(pagination.current, pagination.pageSize);
+  const { data, isLoading } = adminService.useStudents(
+    pagination.current,
+    pagination.pageSize,
+    keyword
+  );
   const handleTableChange = (paginationValues) => {
     setPagination({ ...pagination, ...paginationValues });
+  };
+
+  const onSearch = (value: string) => {
+    setKeyword(value);
   };
 
   useEffect(() => {
@@ -36,15 +46,18 @@ const Index: NextPageWithLayout = () => {
     <Card
       title={StudentTerminology.STUDENT_1}
       extra={
-        <Link href={STUDENT_PATH.CREATE}>
-          <Button
-            type="primary"
-            shape="circle"
-            icon={<PlusOutlined />}
-            size="large"
-            disabled={isLoading}
-          />
-        </Link>
+        <Space size="large">
+          <SearchBox onSearch={onSearch} />
+          <Link href={STUDENT_PATH.CREATE}>
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<PlusOutlined />}
+              size="large"
+              disabled={isLoading}
+            />
+          </Link>
+        </Space>
       }>
       <Table
         bordered

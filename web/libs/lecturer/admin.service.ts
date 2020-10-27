@@ -75,10 +75,14 @@ export default class LecturerAdminService extends LecturerBase {
     );
   }
 
-  public useLecturers(pageNumber = 0, pageSize: number = DEFAULT_PAGE_SIZE): UseLecturers {
+  public useLecturers(
+    pageNumber = 0,
+    pageSize: number = DEFAULT_PAGE_SIZE,
+    keyword = ''
+  ): UseLecturers {
     const offset = (pageNumber - 1) * pageSize;
     const { data } = useSWR<FindManyLecturerResponse>(
-      `${LECTURER_API_ADMIN_ROOT}?offset=${offset}`
+      this.replaceParams(LecturerApi.ADMIN_GET_MANY, [offset, keyword])
     );
     if (data) {
       data.lecturers = data.lecturers.map((lecturer, index) => {
