@@ -12,7 +12,8 @@
     "outDir": "./dist",
     "incremental": true,
     "resolveJsonModule": true,
-    "inlineSourceMap": true
+    "inlineSourceMap": true,
+    "typeRoots": ["types"]
   },
   "exclude": [
     "files",

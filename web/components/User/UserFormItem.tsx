@@ -38,12 +38,24 @@ const UserFormItem: React.FC<ComponentProps> = ({ isEdit, userType, userId }) =>
       }
 
       return (
-        <Form.Item
-          name={['user', 'isAdmin']}
-          label={UserTerminology.USER_11}
-          valuePropName="checked">
-          <Switch checkedChildren={<CheckOutlined />} unCheckedChildren={<CloseOutlined />} />
-        </Form.Item>
+        <>
+          <Form.Item
+            name={['user', 'status']}
+            label={UserTerminology.USER_10}
+            valuePropName="checked">
+            <Switch
+              defaultChecked
+              checkedChildren={<CheckOutlined />}
+              unCheckedChildren={<CloseOutlined />}
+            />
+          </Form.Item>
+          <Form.Item
+            name={['user', 'isAdmin']}
+            label={UserTerminology.USER_11}
+            valuePropName="checked">
+            <Switch checkedChildren={<CheckOutlined />} unCheckedChildren={<CloseOutlined />} />
+          </Form.Item>
+        </>
       );
     }
   };
@@ -90,13 +102,6 @@ const UserFormItem: React.FC<ComponentProps> = ({ isEdit, userType, userId }) =>
       </Form.Item>
       <Form.Item name={['user', 'phone']} label={UserTerminology.USER_9}>
         <Input />
-      </Form.Item>
-      <Form.Item name={['user', 'status']} label={UserTerminology.USER_10} valuePropName="checked">
-        <Switch
-          defaultChecked
-          checkedChildren={<CheckOutlined />}
-          unCheckedChildren={<CloseOutlined />}
-        />
       </Form.Item>
       {isAdminFormInput()}
     </div>

@@ -34,7 +34,8 @@ export enum UserError {
   ERR_6 = 'Bạn không thể xóa chính mình.',
   ERR_7 = 'Sinh viên không thể là quản trị viên.',
   ERR_8 = 'Bạn không thể chỉnh sửa quyền quản trị của chính mình.',
-  ERR_9 = 'Người dùng %s đang ngưng hoạt động.'
+  ERR_9 = 'Người dùng %s đang ngưng hoạt động.',
+  ERR_10 = 'Bạn không thể chỉnh sửa trạng thái của chính mình.'
 }
 
 export enum UserColumn {
