@@ -45,7 +45,11 @@ const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({
       ? lecturerService.convertToTransferItem(initAttendees)
       : studentService.convertToTransferItem(initAttendees as StudentSearchAttendee[])
   );
-  const [targetAttendees, setTargetAttendees] = useState<TransferItem[]>([]);
+  const [targetAttendees, setTargetAttendees] = useState<TransferItem[]>(
+    attendeeTarget === ThesisAttendeeTarget.LECTURER
+      ? lecturerService.convertToTransferItem(initAttendees)
+      : studentService.convertToTransferItem(initAttendees as StudentSearchAttendee[])
+  );
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
   const onMoveChange = (targetKeys: string[]) => {
@@ -88,6 +92,7 @@ const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({
       }
 
       if (transferItems.length !== 0) {
+        console.log(targetAttendees, transferItems);
         setSourceAttendees([...targetAttendees, ...transferItems]);
       }
 
