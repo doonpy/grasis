@@ -6,6 +6,7 @@ import {
   Connection,
   FindOptionsWhere,
   LessThanOrEqual,
+  Like,
   MoreThanOrEqual,
   Not,
   Repository
@@ -39,31 +40,86 @@ export class ThesisService {
     private readonly userService: UserService
   ) {}
 
-  public async getMany(offset: number, limit: number, loginUserId: number): Promise<Thesis[]> {
-    const user = await this.userService.findById(loginUserId);
+  public async getMany(
+    offset: number,
+    limit: number,
+    loginUserId: number,
+    keyword?: string
+  ): Promise<Thesis[]> {
+    const loginUser = await this.userService.findById(loginUserId);
 
-    if (user.isAdmin === IsAdmin.TRUE) {
-      return this.thesisRepository.find({
-        relations: { creator: { user } },
-        where: { ...NOT_DELETE_CONDITION },
-        skip: offset,
-        take: limit,
-        cache: true
-      });
+    if (loginUser.isAdmin === IsAdmin.TRUE) {
+      return this.getManyForAdmin(offset, limit, keyword);
     }
 
-    let conditions: FindOptionsWhere<Thesis> = { ...NOT_DELETE_CONDITION };
-    if (user.userType === UserType.LECTURER) {
-      conditions = { lecturers: { lecturer: { id: user.id } } };
+    if (loginUser.userType === UserType.LECTURER) {
+      return this.getManyForLecturer(loginUserId, offset, limit, keyword);
     }
 
-    if (user.userType === UserType.STUDENT) {
-      conditions = { students: { studentId: user.id } };
+    if (loginUser.userType === UserType.STUDENT) {
+      return this.getManyForStudent(loginUserId, offset, limit, keyword);
+    }
+
+    return [];
+  }
+
+  private async getManyForAdmin(
+    offset: number,
+    limit: number,
+    keyword?: string
+  ): Promise<Thesis[]> {
+    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
+    if (keyword) {
+      conditions = this.getSearchConditions(keyword);
     }
 
     return this.thesisRepository.find({
       relations: { creator: { user: {} } },
-      where: conditions,
+      where: conditions ? conditions : { ...NOT_DELETE_CONDITION },
+      skip: offset,
+      take: limit,
+      cache: true
+    });
+  }
+
+  private async getManyForLecturer(
+    userId: number,
+    offset: number,
+    limit: number,
+    keyword?: string
+  ): Promise<Thesis[]> {
+    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
+    if (keyword) {
+      conditions = this.getSearchConditions(keyword, UserType.LECTURER, userId);
+    }
+
+    return this.thesisRepository.find({
+      relations: { creator: { user: {} } },
+      where: conditions
+        ? conditions
+        : { ...NOT_DELETE_CONDITION, lecturers: { lecturer: { id: userId } } },
+      skip: offset,
+      take: limit,
+      cache: true
+    });
+  }
+
+  private async getManyForStudent(
+    userId: number,
+    offset: number,
+    limit: number,
+    keyword?: string
+  ): Promise<Thesis[]> {
+    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
+    if (keyword) {
+      conditions = this.getSearchConditions(keyword, UserType.STUDENT, userId);
+    }
+
+    return this.thesisRepository.find({
+      relations: { creator: { user: {} } },
+      where: conditions
+        ? conditions
+        : { ...NOT_DELETE_CONDITION, students: { student: { id: userId } } },
       skip: offset,
       take: limit,
       cache: true
@@ -441,5 +497,33 @@ export class ThesisService {
       await this.thesisRepository.update({ id }, { status: ThesisStatus.INACTIVE });
       return ThesisStatus.INACTIVE;
     }
+  }
+
+  private getSearchConditions(
+    keyword: string,
+    userType?: UserType,
+    userId?: number
+  ): FindOptionsWhere<Thesis> {
+    if (userType === UserType.LECTURER) {
+      return [
+        {
+          ...NOT_DELETE_CONDITION,
+          subject: Like(`%${keyword}%`),
+          lecturers: { lecturer: { id: userId } }
+        }
+      ];
+    }
+
+    if (userType === UserType.STUDENT) {
+      return [
+        {
+          ...NOT_DELETE_CONDITION,
+          subject: Like(`%${keyword}%`),
+          students: { student: { id: userId } }
+        }
+      ];
+    }
+
+    return [{ ...NOT_DELETE_CONDITION, subject: Like(`%${keyword}%`) }];
   }
 }

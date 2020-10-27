@@ -42,7 +42,8 @@ export const ThesisApi = {
   ADMIN_SPECIFY: `${THESIS_API_ADMIN_ROOT}/@0`,
   ADMIN_SWITCH_STATUS: `${THESIS_API_ADMIN_ROOT}/@0/switch-status`,
   LOAD_MORE_LECTURERS: `${THESIS_API_ROOT}/@0/lecturers-load-more?offset=@1`,
-  LOAD_MORE_STUDENTS: `${THESIS_API_ROOT}/@0/students-load-more?offset=@1`
+  LOAD_MORE_STUDENTS: `${THESIS_API_ROOT}/@0/students-load-more?offset=@1`,
+  GET_MANY: `${THESIS_API_ROOT}?offset=@0&keyword=@1`
 };
 
 export enum ThesisAttendeeTarget {
