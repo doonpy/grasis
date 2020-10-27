@@ -31,10 +31,10 @@
   "homepage": "https://github.com/doonpy/grasis#readme",
   "devDependencies": {
     "concurrently": "^5.3.0",
-    "eslint": "^7.11.0",
+    "eslint": "^7.12.1",
     "prettier": "^2.1.2",
     "react": "^16.14.0",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.5"
   },
   "dependencies": {}
 }
