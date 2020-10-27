@@ -2,13 +2,17 @@ import { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import useSWR from 'swr';
 
-import { LecturerRequestBody } from '../../../api/src/lecturer/lecturer.interface';
 import { COMMON_PATH, COOKIES } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { TokenResponse } from '../jwt/jwt.base';
-import { StudentRequestBody } from '../student/student.interface';
-import { FindUserByIdResponse, LoginInputs, Remember, UserRequestBody } from './user.interface';
-import { IsAdmin, USER_API, UserStatus } from './user.resource';
+import {
+  FindUserByIdResponse,
+  LoginInputs,
+  Remember,
+  User,
+  UserRequestBody
+} from './user.interface';
+import { IsAdmin, UserApi, UserStatus } from './user.resource';
 
 export default class UserService extends CommonService {
   private static instance: UserService;
@@ -38,7 +42,7 @@ export default class UserService extends CommonService {
   public async getUserById(userId: number): Promise<AxiosResponse<FindUserByIdResponse>> {
     await this.apiService.bindAuthorizationForClient();
 
-    return this.apiService.get<FindUserByIdResponse>(`${USER_API}/${userId}`);
+    return this.apiService.get<FindUserByIdResponse>(UserApi.SPECIFY, [userId]);
   }
 
   public getRememberValue(): Remember {
@@ -71,7 +75,7 @@ export default class UserService extends CommonService {
   public useAuthorization(): FindUserByIdResponse {
     const userId = this.jwtService.accessTokenPayload.userId;
     const currentPath = this.redirectService.currentPath;
-    const { data } = useSWR<FindUserByIdResponse>(`${USER_API.ROOT}/${userId}`, {
+    const { data } = useSWR<FindUserByIdResponse>(`${UserApi.ROOT}/${userId}`, {
       onSuccess: async () => {
         this.jwtService.initialValue();
         this.redirectService.resetCurrentPathForClient();
@@ -84,7 +88,7 @@ export default class UserService extends CommonService {
     return data;
   }
 
-  public convertToRequestBody(user: StudentRequestBody | LecturerRequestBody): UserRequestBody {
+  public convertToRequestBody(user: UserRequestBody): UserRequestBody {
     const result = user;
     const { isAdmin, status } = user;
     if (typeof isAdmin !== 'undefined' && isAdmin !== null) {
@@ -96,5 +100,12 @@ export default class UserService extends CommonService {
     }
 
     return result;
+  }
+
+  public getInitialForEdit(user: User): User {
+    user.status = user.status && user.status === UserStatus.ACTIVE;
+    user.isAdmin = user.isAdmin && user.isAdmin === IsAdmin.TRUE;
+
+    return user;
   }
 }

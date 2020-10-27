@@ -2,8 +2,9 @@ import { CheckOutlined, CloseOutlined, EyeInvisibleOutlined, EyeTwoTone } from '
 import { Form, Input, Radio, Switch } from 'antd';
 import React from 'react';
 
-import AdminLecturerService from '../../libs/lecturer/admin/admin.lecturer.service';
-import { UserType } from '../../libs/user/user.resource';
+import UserTerminology from '../../assets/terminology/user.terminology';
+import LoginUser from '../../libs/user/instance/LoginUser';
+import { Gender, UserType } from '../../libs/user/user.resource';
 
 interface ComponentProps {
   isEdit: boolean;
@@ -12,46 +13,24 @@ interface ComponentProps {
 }
 
 const genderOptions = [
-  { label: 'Nam', value: 0 },
-  { label: 'Nữ', value: 1 }
+  { label: UserTerminology.USER_12, value: Gender.MALE },
+  { label: UserTerminology.USER_13, value: Gender.FEMALE }
 ];
 
 function getUsernameRules(isEdit: boolean) {
-  return isEdit
-    ? []
-    : [
-        {
-          required: true,
-          message: 'Vui lòng nhập tên đăng nhập!'
-        }
-      ];
+  return isEdit ? [] : [{ required: true, message: UserTerminology.USER_14 }];
 }
 
 function getPasswordRules(isEdit: boolean) {
-  return isEdit
-    ? []
-    : [
-        {
-          required: true,
-          message: 'Vui lòng nhập mật khẩu!'
-        }
-      ];
+  return isEdit ? [] : [{ required: true, message: UserTerminology.USER_15 }];
 }
 
 function getConfirmPasswordRules(isEdit: boolean) {
-  return isEdit
-    ? []
-    : [
-        {
-          required: true,
-          message: 'Vui lòng nhập mật khẩu xác nhận!'
-        }
-      ];
+  return isEdit ? [] : [{ required: true, message: UserTerminology.USER_16 }];
 }
 
 const UserFormItem: React.FC<ComponentProps> = ({ isEdit, userType, userId }) => {
-  const adminLecturerService = AdminLecturerService.getInstance();
-  const loginUserId = adminLecturerService.jwtService.accessTokenPayload.userId;
+  const loginUserId = LoginUser.getInstance().getId();
   const isAdminFormInput = () => {
     if (userType === UserType.LECTURER) {
       if (isEdit && userId === loginUserId) {
@@ -59,7 +38,10 @@ const UserFormItem: React.FC<ComponentProps> = ({ isEdit, userType, userId }) =>
       }
 
       return (
-        <Form.Item name="isAdmin" label="Quản trị viên" valuePropName="checked">
+        <Form.Item
+          name={['user', 'isAdmin']}
+          label={UserTerminology.USER_11}
+          valuePropName="checked">
           <Switch checkedChildren={<CheckOutlined />} unCheckedChildren={<CloseOutlined />} />
         </Form.Item>
       );
@@ -68,44 +50,48 @@ const UserFormItem: React.FC<ComponentProps> = ({ isEdit, userType, userId }) =>
 
   return (
     <div>
-      <Form.Item required name="username" label="Tên đăng nhập" rules={getUsernameRules(isEdit)}>
-        <Input name="username" />
+      <Form.Item
+        name={['user', 'username']}
+        label={UserTerminology.USER_1}
+        rules={getUsernameRules(isEdit)}>
+        <Input />
       </Form.Item>
-      <Form.Item required name="password" label="Mật khẩu" rules={getPasswordRules(isEdit)}>
+      <Form.Item
+        name={['user', 'password']}
+        label={UserTerminology.USER_2}
+        rules={getPasswordRules(isEdit)}>
         <Input.Password
-          name="password"
           iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
         />
       </Form.Item>
       <Form.Item
         required
-        name="confirmPassword"
-        label="Mật khẩu xác nhận"
+        name={['user', 'confirmPassword']}
+        label={UserTerminology.USER_3}
         rules={getConfirmPasswordRules(isEdit)}>
         <Input.Password
-          name="confirmPassword"
           iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
         />
       </Form.Item>
-      <Form.Item name="lastname" label="Họ và tên đệm">
-        <Input name="lastname" />
+      <Form.Item name={['user', 'lastname']} label={UserTerminology.USER_5}>
+        <Input />
       </Form.Item>
-      <Form.Item name="firstname" label="Tên">
-        <Input name="firstname" />
+      <Form.Item name={['user', 'firstname']} label={UserTerminology.USER_4}>
+        <Input />
       </Form.Item>
-      <Form.Item name="gender" label="Giới tính">
-        <Radio.Group name="gender" options={genderOptions} />
+      <Form.Item name={['user', 'gender']} label={UserTerminology.USER_6}>
+        <Radio.Group options={genderOptions} />
       </Form.Item>
-      <Form.Item name="email" label="Email">
-        <Input type="email" name="email" />
+      <Form.Item name={['user', 'email']} label={UserTerminology.USER_7}>
+        <Input type="email" />
       </Form.Item>
-      <Form.Item name="address" label="Địa chỉ">
-        <Input name="address" />
+      <Form.Item name={['user', 'address']} label={UserTerminology.USER_8}>
+        <Input />
       </Form.Item>
-      <Form.Item name="phone" label="Số điện thoại">
-        <Input name="phone" />
+      <Form.Item name={['user', 'phone']} label={UserTerminology.USER_9}>
+        <Input />
       </Form.Item>
-      <Form.Item name="status" label="Trạng thái" valuePropName="checked">
+      <Form.Item name={['user', 'status']} label={UserTerminology.USER_10} valuePropName="checked">
         <Switch
           defaultChecked
           checkedChildren={<CheckOutlined />}

@@ -5,7 +5,6 @@ import { Details } from 'express-useragent';
 import { CreateRefresh } from '../refresh/refresh.interface';
 import { RefreshService } from '../refresh/refresh.service';
 import { UserAuth } from '../user/user.interface';
-import { UserStatus } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { JWT_TOKEN_EXPIRE_TIME } from './auth.resource';
 
@@ -23,9 +22,8 @@ export class AuthService {
   ) {}
 
   public async validateUser(username: string, inputPassword: string): Promise<number | null> {
-    const user: UserAuth | undefined = await this.userService.findByUsernameForAuth(username);
-    const hashPassword: string = this.userService.hashPassword(inputPassword, username);
-    if (user && user.password === hashPassword && user.status === UserStatus.ACTIVE) {
+    const user: UserAuth | undefined = await this.userService.findForAuth(username, inputPassword);
+    if (user) {
       return user.id;
     }
 

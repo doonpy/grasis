@@ -1,49 +1,48 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryColumn,
-  UpdateDateColumn
-} from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
 import { CommonEntity } from '../common/common.entity';
-import { COMMON_ENTITY_OPTIONS } from '../common/common.resource';
+import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
+import { ThesisLecturerEntity } from '../thesis/thesis-lecturer/thesis-lecturer.entity';
+import { ThesisLecturer } from '../thesis/thesis-lecturer/thesis-lecturer.interface';
+import { ThesisLecturerColumn } from '../thesis/thesis.resource';
 import { UserEntity } from '../user/user.entity';
-import { LEC_ENTITY_RESOURCE } from './lecturer.resource';
+import { User } from '../user/user.interface';
+import { LECTURER_TABLE, LecturerColumn } from './lecturer.resource';
 
-@Entity({ ...COMMON_ENTITY_OPTIONS, name: LEC_ENTITY_RESOURCE.TABLE_NAME })
+@Entity({ ...COMMON_ENTITY_OPTIONS, name: LECTURER_TABLE })
 export class LecturerEntity extends CommonEntity {
-  @PrimaryColumn({ type: 'int' })
-  @OneToOne(() => UserEntity, (user) => user.id, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
-  @JoinColumn({ name: 'id', referencedColumnName: 'id' })
-  id!: number;
+  @PrimaryColumn({ name: CommonColumn.ID, type: 'int' })
+  public id!: number;
 
   @Column({
+    name: LecturerColumn.LECTURER_ID,
     type: 'nchar',
     length: 4,
     nullable: true
   })
-  lecturerId!: string;
+  public lecturerId!: string | null;
 
   @Column({
+    name: LecturerColumn.POSITION,
     type: 'nvarchar',
     length: 255,
     nullable: true
   })
-  position!: string;
+  public position!: string | null;
 
   @Column({
+    name: LecturerColumn.LEVEL,
     type: 'nvarchar',
     length: 255,
     nullable: true
   })
-  level!: string;
+  public level!: string | null;
 
-  @CreateDateColumn()
-  createdAt!: Date;
+  @OneToMany(() => ThesisLecturerEntity, ({ lecturer }) => lecturer)
+  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ThesisLecturerColumn.LECTURER_ID })
+  public theses!: ThesisLecturer[];
 
-  @UpdateDateColumn()
-  updatedAt!: Date;
+  @OneToOne(() => UserEntity, { cascade: true })
+  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: CommonColumn.ID })
+  public user!: User;
 }

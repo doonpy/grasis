@@ -1,144 +1,135 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, EntityManager, Repository } from 'typeorm';
+import { Connection, EntityManager, FindOptionsWhere, Like, Repository } from 'typeorm';
 
-import { User } from '../user/user.interface';
-import { UserType } from '../user/user.resource';
+import { NOT_DELETE_CONDITION } from '../common/common.resource';
+import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
+import { UserRequestBody } from '../user/user.interface';
+import { UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { LecturerEntity } from './lecturer.entity';
-import {
-  Lecturer,
-  LecturerRequestBody,
-  LecturerView,
-  SplitUserFromRequestBody
-} from './lecturer.interface';
-import { LEC_ERROR_RESOURCE } from './lecturer.resource';
+import { Lecturer, LecturerRequestBody, LecturerSearchAttendee } from './lecturer.interface';
+import { LecturerError, LecturerRelation, LecturerSearchType } from './lecturer.resource';
 
 @Injectable()
 export class LecturerService {
   constructor(
-    @InjectRepository(LecturerEntity) private lecturerRepository: Repository<Lecturer>,
-    private userService: UserService,
-    private connection: Connection
+    @InjectRepository(LecturerEntity) private readonly lecturerRepository: Repository<Lecturer>,
+    private readonly userService: UserService,
+    private readonly thesisLecturerService: ThesisLecturerService,
+    private readonly connection: Connection
   ) {}
 
-  public async findAll(offset: number, limit: number): Promise<LecturerView[]> {
-    const lecturers = await this.lecturerRepository.find({
-      relations: ['id'],
+  public async findMany(offset: number, limit: number): Promise<Lecturer[]> {
+    return await this.lecturerRepository.find({
+      relations: [LecturerRelation.USER],
+      where: { ...NOT_DELETE_CONDITION },
       skip: offset,
       take: limit,
       cache: true
     });
-
-    return lecturers.map((lecturer) => this.convertToView({ lecturer }));
   }
 
-  public async findById(id: number): Promise<LecturerView> {
+  public async findById(id: number): Promise<Lecturer> {
     const lecturer: Lecturer | undefined = await this.lecturerRepository.findOne(id, {
-      relations: ['id'],
-      cache: true
+      relations: [LecturerRelation.USER],
+      where: { ...NOT_DELETE_CONDITION }
     });
 
     if (!lecturer) {
-      throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_3);
+      throw new BadRequestException(LecturerError.ERR_3);
     }
 
-    return this.convertToView({ lecturer });
-  }
-
-  public async findByIdTransaction(manager: EntityManager, id: number): Promise<Lecturer> {
-    const lecturer: Lecturer | undefined = await manager.findOne<Lecturer>(LecturerEntity, id, {
-      relations: ['id'],
-      cache: true
-    });
-
-    if (!lecturer) {
-      throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_3);
-    }
-
-    return this.convertToView({ lecturer });
+    return lecturer;
   }
 
   public async isLecturerExistByLecturerId(lecturerId: string): Promise<boolean> {
-    return (await this.lecturerRepository.count({ where: { lecturerId } })) > 0;
+    return (await this.lecturerRepository.count({ lecturerId, ...NOT_DELETE_CONDITION })) > 0;
   }
 
   public async isLecturerExistById(id: number): Promise<boolean> {
-    return (await this.lecturerRepository.count({ where: { id } })) > 0;
+    return (await this.lecturerRepository.count({ id, ...NOT_DELETE_CONDITION })) > 0;
   }
 
-  public async isLecturerExistByLecturerIdTransaction(
-    manager: EntityManager,
-    lecturerId: string
-  ): Promise<boolean> {
-    return (await manager.count<Lecturer>(LecturerEntity, { where: { lecturerId } })) > 0;
-  }
-
-  public async checkLecturerNotExistByLecturerIdTransaction(
-    manager: EntityManager,
-    lecturerId: string
-  ): Promise<void> {
-    if (await this.isLecturerExistByLecturerIdTransaction(manager, lecturerId)) {
-      throw new BadRequestException(LEC_ERROR_RESOURCE.ERR_2);
+  public async checkLecturerNotExistByLecturerId(lecturerId: string): Promise<void> {
+    if (await this.isLecturerExistByLecturerId(lecturerId)) {
+      throw new BadRequestException(LecturerError.ERR_2);
     }
   }
 
-  public async create(data: LecturerRequestBody): Promise<LecturerView> {
-    return await this.connection.transaction(async (manager) => {
-      data.userType = UserType.LECTURER;
-      const user = await this.userService.createTransaction(manager, data);
+  public async create(
+    userBody: UserRequestBody,
+    lecturerBody?: LecturerRequestBody
+  ): Promise<Lecturer> {
+    const userEntity = await this.userService.createUser(userBody);
+    userEntity.userType = UserType.LECTURER;
 
-      if (data.lecturerId) {
-        await this.checkLecturerNotExistByLecturerIdTransaction(manager, data.lecturerId);
+    let lecturerEntity: Lecturer;
+    if (lecturerBody) {
+      if (lecturerBody.lecturerId) {
+        await this.checkLecturerNotExistByLecturerId(lecturerBody.lecturerId);
       }
 
-      if (data.level) {
-        data.level = this.sanitizeLevel(data.level);
+      if (lecturerBody.level) {
+        lecturerBody.level = this.sanitizeLevel(lecturerBody.level);
       }
 
-      const createObject = manager.create<Lecturer>(LecturerEntity, {
-        ...this.filterNullProperties(data),
-        id: user.id
-      });
-      const lecturer = await manager.save<Lecturer>(createObject);
+      lecturerEntity = this.lecturerRepository.create(lecturerBody);
+    } else {
+      lecturerEntity = this.lecturerRepository.create({});
+    }
 
-      return this.convertToView({ lecturer, user });
-    });
+    lecturerEntity.user = userEntity;
+    return this.lecturerRepository.save(lecturerEntity);
   }
 
-  public async updateById(id: number, data: LecturerRequestBody): Promise<void> {
-    await this.connection.transaction(async (manager) => {
-      await this.userService.checkUserExistByIdTransaction(manager, id);
-      const currentLecturer = await this.findByIdTransaction(manager, id);
+  public async updateById(
+    id: number,
+    userBody?: UserRequestBody,
+    lecturerBody?: LecturerRequestBody
+  ): Promise<void> {
+    if (!userBody && !lecturerBody) {
+      return;
+    }
 
-      data.userType = UserType.LECTURER;
-      const { user, remain: lecturer } = this.userService.splitUserFromRequestBody(
-        data
-      ) as SplitUserFromRequestBody;
-      await this.userService.updateByIdTransaction(manager, id, user);
+    const currentLecturer = await this.findById(id);
+    if (userBody) {
+      currentLecturer.user = await this.userService.updateById(currentLecturer.user, userBody);
+    }
 
-      if (lecturer.lecturerId && data.lecturerId !== currentLecturer.lecturerId) {
-        await this.checkLecturerNotExistByLecturerIdTransaction(manager, lecturer.lecturerId);
+    if (lecturerBody) {
+      const { lecturerId, level, position } = lecturerBody;
+      if (lecturerId && lecturerId !== currentLecturer.lecturerId) {
+        await this.checkLecturerNotExistByLecturerId(lecturerId);
+        currentLecturer.lecturerId = lecturerId;
       }
 
-      if (lecturer.level) {
-        lecturer.level = this.sanitizeLevel(lecturer.level);
+      if (level) {
+        currentLecturer.level = this.sanitizeLevel(level);
       }
 
-      await manager.update<Lecturer>(LecturerEntity, id, this.filterNullProperties(lecturer));
-    });
+      if (position) {
+        currentLecturer.position = position;
+      }
+    }
+
+    await this.lecturerRepository.save(currentLecturer);
   }
 
   public async deleteById(id: number): Promise<void> {
+    const lecturer = await this.findById(id);
+    const deletedAt = new Date();
+
     await this.connection.transaction(async (manager) => {
-      await this.userService.checkUserExistByIdTransaction(manager, id);
-      await manager.softDelete<Lecturer>(LecturerEntity, id);
-      await this.userService.deleteByIdTransaction(manager, id);
+      await this.thesisLecturerService.deleteByLecturerIdWithTransaction(manager, id, deletedAt);
+      lecturer.user.deletedAt = deletedAt;
+      lecturer.deletedAt = deletedAt;
+      await manager.save(lecturer);
     });
   }
 
   public async getLecturerAmount(): Promise<number> {
-    return this.lecturerRepository.count();
+    return this.lecturerRepository.count({ ...NOT_DELETE_CONDITION });
   }
 
   public sanitizeLevel(level: string): string {
@@ -154,43 +145,84 @@ export class LecturerService {
     return result;
   }
 
-  public convertToView({ lecturer }: { lecturer: Lecturer }): LecturerView;
-  public convertToView({ lecturer, user }: { lecturer: Lecturer; user?: User }): LecturerView;
-  public convertToView({ lecturer, user }: any): any {
-    const { lecturerId, level, position, createdAt, updatedAt } = lecturer;
-    if (user) {
-      return {
-        ...this.userService.convertToView(user),
-        lecturerId,
-        level,
-        position,
-        createdAt,
-        updatedAt
-      };
-    } else {
-      return {
-        ...this.userService.convertToView(lecturer.id as User),
-        lecturerId,
-        level,
-        position,
-        createdAt,
-        updatedAt
-      };
+  public async searchThesisAttendees(
+    keyword?: string,
+    searchTypes?: LecturerSearchType[]
+  ): Promise<LecturerSearchAttendee[]> {
+    if (!keyword || !searchTypes || searchTypes.length === 0) {
+      return [];
     }
+
+    const conditions: FindOptionsWhere<Lecturer> = [];
+    if (searchTypes.includes(LecturerSearchType.LECTURER_ID)) {
+      conditions.push({
+        ...NOT_DELETE_CONDITION,
+        lecturerId: Like(`%${keyword}%`),
+        user: { status: UserStatus.ACTIVE }
+      });
+    }
+
+    if (searchTypes.includes(LecturerSearchType.FULL_NAME)) {
+      conditions.push({
+        user: {
+          ...NOT_DELETE_CONDITION,
+          firstname: Like(`%${keyword}%`),
+          status: UserStatus.ACTIVE
+        }
+      });
+      conditions.push({
+        user: {
+          ...NOT_DELETE_CONDITION,
+          lastname: Like(`%${keyword}%`),
+          status: UserStatus.ACTIVE
+        }
+      });
+    }
+
+    const lecturers = await this.lecturerRepository.find({
+      relations: [LecturerRelation.USER],
+      where: conditions,
+      cache: true
+    });
+
+    return lecturers.map(({ id, lecturerId, user: { firstname, lastname } }) => ({
+      id,
+      attendeeId: lecturerId,
+      fullName: `${lastname} ${firstname}`
+    }));
   }
 
-  public filterNullProperties(lecturer: LecturerRequestBody): LecturerRequestBody {
-    const result: LecturerRequestBody = {};
-    if (typeof lecturer.lecturerId !== 'undefined' && lecturer.lecturerId !== null) {
-      result.lecturerId = lecturer.lecturerId;
-    }
-    if (typeof lecturer.level !== 'undefined' && lecturer.level !== null) {
-      result.level = lecturer.level;
-    }
-    if (typeof lecturer.position !== 'undefined' && lecturer.position !== null) {
-      result.position = lecturer.position;
-    }
+  public async findByIds(ids: number[]): Promise<Lecturer[]> {
+    return await this.lecturerRepository.findByIds(ids, {
+      relations: [LecturerRelation.USER],
+      where: { ...NOT_DELETE_CONDITION },
+      cache: true
+    });
+  }
 
-    return result;
+  public async findByIdsWithTransaction(
+    manager: EntityManager,
+    ids: number[]
+  ): Promise<Lecturer[]> {
+    return await manager.findByIds(LecturerEntity, ids, {
+      relations: { user: {} },
+      where: { ...NOT_DELETE_CONDITION },
+      cache: true
+    });
+  }
+
+  public generateErrorInfo({ user, lecturerId }: Lecturer): string {
+    const { firstname, lastname } = user;
+
+    return `${lastname} ${firstname} (${lecturerId})`;
+  }
+
+  public checkIsActive(lecturer: Lecturer): void {
+    const userStatus = lecturer.user.status;
+    if (userStatus === UserStatus.INACTIVE) {
+      throw new BadRequestException(
+        UserError.ERR_9.replace('%s', this.generateErrorInfo(lecturer))
+      );
+    }
   }
 }

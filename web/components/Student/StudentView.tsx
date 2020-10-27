@@ -2,13 +2,14 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { Col, Row, Space, Typography } from 'antd';
 import React from 'react';
 
-import { StudentViewType } from '../../libs/student/student.interface';
+import { Student } from '../../libs/student/student.interface';
+import { IsGraduate } from '../../libs/student/student.resource';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import StudentIsGraduate from './StudentIsGraduate';
 
 interface ComponentProps {
-  student?: StudentViewType;
+  student?: Student;
 }
 
 const StudentView: React.FC<ComponentProps> = ({
@@ -49,7 +50,7 @@ const StudentView: React.FC<ComponentProps> = ({
               <TextData text={studentId} />
               <TextData text={schoolYear} />
               <TextData text={studentClass} />
-              <StudentIsGraduate isGraduate={isGraduate} />
+              <StudentIsGraduate isGraduate={isGraduate as IsGraduate} />
               <DateData date={createdAt} />
               <DateData date={updatedAt} isRelative={true} />
             </Space>

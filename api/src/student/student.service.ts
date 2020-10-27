@@ -1,196 +1,269 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, EntityManager, Repository } from 'typeorm';
+import { Connection, EntityManager, FindOptionsWhere, Like, Not, Repository } from 'typeorm';
 
-import { User } from '../user/user.interface';
-import { UserType } from '../user/user.resource';
+import { NOT_DELETE_CONDITION } from '../common/common.resource';
+import { ThesisStudentService } from '../thesis/thesis-student/thesis-student.service';
+import { UserRequestBody } from '../user/user.interface';
+import { UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { StudentEntity } from './student.entity';
-import {
-  SplitUserFromRequestBody,
-  Student,
-  StudentRequestBody,
-  StudentView
-} from './student.interface';
-import { STD_ERROR_RESOURCE } from './student.resource';
+import { Student, StudentRequestBody, StudentSearchAttendee } from './student.interface';
+import { IsGraduate, StudentError, StudentRelation, StudentSearchType } from './student.resource';
 
 @Injectable()
 export class StudentService {
   constructor(
-    @InjectRepository(StudentEntity) private studentRepository: Repository<Student>,
-    private userService: UserService,
-    private connection: Connection
+    @InjectRepository(StudentEntity) private readonly studentRepository: Repository<Student>,
+    private readonly userService: UserService,
+    private readonly thesisStudentService: ThesisStudentService,
+    private readonly connection: Connection
   ) {}
 
-  public async findAll(offset: number, limit: number): Promise<StudentView[]> {
-    const students = await this.studentRepository.find({
-      relations: ['id'],
+  public async findMany(offset: number, limit: number): Promise<Student[]> {
+    return await this.studentRepository.find({
+      relations: [StudentRelation.USER],
+      where: { ...NOT_DELETE_CONDITION },
       skip: offset,
       take: limit,
       cache: true
     });
-
-    return students.map((student) => this.convertToView({ student }));
   }
 
-  public async findById(id: number): Promise<StudentView> {
+  public async findById(id: number): Promise<Student> {
     const student: Student | undefined = await this.studentRepository.findOne(id, {
-      relations: ['id'],
-      cache: true
+      relations: [StudentRelation.USER],
+      where: { ...NOT_DELETE_CONDITION }
     });
 
     if (!student) {
-      throw new BadRequestException(STD_ERROR_RESOURCE.ERR_3);
+      throw new BadRequestException(StudentError.ERR_3);
     }
 
-    return this.convertToView({ student });
-  }
-
-  public async findByIdTransaction(manager: EntityManager, id: number): Promise<Student> {
-    const student: Student | undefined = await manager.findOne<Student>(StudentEntity, id, {
-      cache: true
-    });
-
-    if (!student) {
-      throw new BadRequestException(STD_ERROR_RESOURCE.ERR_3);
-    }
-
-    return this.convertToView({ student });
+    return student;
   }
 
   public async isStudentExistById(id: number): Promise<boolean> {
-    return (await this.studentRepository.count({ where: { id } })) > 0;
+    return (await this.studentRepository.count({ ...NOT_DELETE_CONDITION, id })) > 0;
   }
 
   public async checkStudentExistById(id: number): Promise<void> {
     if (!(await this.isStudentExistById(id))) {
-      throw new BadRequestException(STD_ERROR_RESOURCE.ERR_3);
+      throw new BadRequestException(StudentError.ERR_3);
     }
   }
 
-  public async checkStudentExistByStudentIdTransaction(
-    manager: EntityManager,
-    studentId: string
-  ): Promise<void> {
-    if (!(await this.isStudentExistByStudentIdTransaction(manager, studentId))) {
-      throw new BadRequestException(STD_ERROR_RESOURCE.ERR_1);
+  public async checkStudentNotExistByStudentId(studentId: string, userId?: number): Promise<void> {
+    if (await this.isStudentExistByStudentId(studentId, userId)) {
+      throw new BadRequestException(StudentError.ERR_2);
     }
   }
 
-  public async checkStudentNotExistByStudentIdTransaction(
-    manager: EntityManager,
-    studentId: string
-  ): Promise<void> {
-    if (await this.isStudentExistByStudentIdTransaction(manager, studentId)) {
-      throw new BadRequestException(STD_ERROR_RESOURCE.ERR_2);
-    }
+  public async isStudentExistByStudentId(studentId: string, userId?: number): Promise<boolean> {
+    return (
+      (await this.studentRepository.count({
+        ...NOT_DELETE_CONDITION,
+        id: Not(userId || 0),
+        studentId
+      })) > 0
+    );
   }
 
-  public async isStudentExistByStudentIdTransaction(
-    manager: EntityManager,
-    studentId: string
-  ): Promise<boolean> {
-    return (await this.studentRepository.count({ where: { studentId } })) > 0;
-  }
+  public async create(
+    userBody: UserRequestBody,
+    studentBody?: StudentRequestBody
+  ): Promise<Student> {
+    const userEntity = await this.userService.createUser(userBody);
+    userEntity.userType = UserType.LECTURER;
 
-  public async create(data: StudentRequestBody): Promise<StudentView> {
-    return await this.connection.transaction(async (manager) => {
-      data.userType = UserType.STUDENT;
-      const user: User = await this.userService.createTransaction(manager, data);
-
-      if (data.studentId) {
-        await this.checkStudentNotExistByStudentIdTransaction(manager, data.studentId);
+    let studentEntity: Student;
+    if (studentBody) {
+      if (studentBody.studentId) {
+        await this.checkStudentNotExistByStudentId(studentBody.studentId);
       }
 
-      const createObject: Student = await manager.create<Student>(StudentEntity, {
-        ...this.filterNullProperties(data),
-        id: user.id
-      });
-      const student = await manager.save<Student>(createObject);
+      studentEntity = this.studentRepository.create(studentBody);
+    } else {
+      studentEntity = this.studentRepository.create({});
+    }
 
-      return this.convertToView({ student, user });
-    });
+    studentEntity.user = userEntity;
+    return this.studentRepository.save(studentEntity);
   }
 
-  public async updateById(id: number, data: StudentRequestBody): Promise<void> {
-    await this.connection.transaction(async (manager) => {
-      await this.userService.checkUserExistByIdTransaction(manager, id);
-      const currentStudent = await this.findByIdTransaction(manager, id);
-      data.userType = UserType.STUDENT;
-      const { user, remain: student } = this.userService.splitUserFromRequestBody(
-        data
-      ) as SplitUserFromRequestBody;
-      await this.userService.updateByIdTransaction(manager, id, user);
+  public async updateById(
+    id: number,
+    userBody: UserRequestBody,
+    studentBody: StudentRequestBody
+  ): Promise<void> {
+    if (!userBody && !studentBody) {
+      return;
+    }
 
-      if (student.studentId && data.studentId !== currentStudent.studentId) {
-        await this.checkStudentNotExistByStudentIdTransaction(manager, student.studentId);
+    const currentStudent = await this.findById(id);
+    if (userBody) {
+      currentStudent.user = await this.userService.updateById(currentStudent.user, userBody);
+    }
+
+    if (studentBody) {
+      const { studentId, studentClass, schoolYear, isGraduate } = studentBody;
+      if (studentId && studentId !== currentStudent.studentId) {
+        await this.checkStudentNotExistByStudentId(studentId, id);
+        currentStudent.studentId = studentId;
       }
 
-      await manager.update<Student>(StudentEntity, id, this.filterNullProperties(student));
-    });
+      if (studentClass) {
+        currentStudent.studentClass = studentClass;
+      }
+
+      if (schoolYear) {
+        currentStudent.schoolYear = schoolYear;
+      }
+
+      if (isGraduate) {
+        currentStudent.isGraduate = isGraduate;
+      }
+    }
+
+    await this.studentRepository.save(currentStudent);
   }
 
   public async deleteById(id: number): Promise<void> {
+    const student = await this.findById(id);
+    const deletedAt = new Date();
+
     await this.connection.transaction(async (manager) => {
-      await this.userService.checkUserExistByIdTransaction(manager, id);
-      await manager.softDelete<StudentEntity>(StudentEntity, id);
-      await this.userService.deleteByIdTransaction(manager, id);
+      await this.thesisStudentService.deleteByStudentIdWithTransaction(
+        manager,
+        student.id,
+        deletedAt
+      );
+      student.user.deletedAt = deletedAt;
+      student.deletedAt = deletedAt;
+      await manager.save(student);
     });
   }
 
   public async getStudentAmount(): Promise<number> {
-    return this.studentRepository.count();
+    return this.studentRepository.count({ ...NOT_DELETE_CONDITION });
   }
 
-  public convertToView({ student }: { student: Student }): StudentView;
-  public convertToView({ student, user }: { student: Student; user?: User }): StudentView;
-  public convertToView({ student, user }: any): any {
-    const {
-      studentId,
-      schoolYear,
-      studentClass,
-      isGraduate,
-      createdAt,
-      updatedAt
-    } = student as Student;
-    if (user) {
-      return {
-        ...this.userService.convertToView(user),
-        studentId,
+  public async searchAttendees(
+    keyword?: string,
+    searchTypes?: StudentSearchType[]
+  ): Promise<StudentSearchAttendee[]> {
+    if (!keyword || !searchTypes || searchTypes.length === 0) {
+      return [];
+    }
+
+    const conditions: FindOptionsWhere<Student> = [];
+    if (searchTypes && searchTypes.includes(StudentSearchType.STUDENT_ID)) {
+      conditions.push({
+        studentId: Like(`%${keyword}%`),
+        user: { ...NOT_DELETE_CONDITION, status: UserStatus.ACTIVE }
+      });
+    }
+
+    if (searchTypes && searchTypes.includes(StudentSearchType.FULL_NAME)) {
+      conditions.push({
+        user: {
+          ...NOT_DELETE_CONDITION,
+          firstname: Like(`%${keyword}%`),
+          status: UserStatus.ACTIVE
+        }
+      });
+      conditions.push({
+        user: {
+          ...NOT_DELETE_CONDITION,
+          lastname: Like(`%${keyword}%`),
+          status: UserStatus.ACTIVE
+        }
+      });
+    }
+
+    if (searchTypes && searchTypes.includes(StudentSearchType.STUDENT_CLASS)) {
+      conditions.push({
+        ...NOT_DELETE_CONDITION,
+        studentClass: Like(`%${keyword}%`),
+        user: { status: UserStatus.ACTIVE }
+      });
+    }
+
+    if (searchTypes && searchTypes.includes(StudentSearchType.SCHOOL_YEAR)) {
+      conditions.push({
+        ...NOT_DELETE_CONDITION,
+        schoolYear: Like(`%${keyword}%`)
+      });
+    }
+
+    let students = await this.studentRepository.find({
+      relations: [StudentRelation.USER],
+      where: conditions,
+      cache: true
+    });
+    const studentIds = students.map(({ id }) => id);
+    const participatedThesisStudentIds = (
+      await this.thesisStudentService.getStudentParticipatedThesisByIds(studentIds)
+    ).map(({ studentId }) => studentId);
+    students = students.filter(({ id }) => !participatedThesisStudentIds.includes(id));
+
+    return students.map(
+      ({ id, user: { firstname, lastname }, studentId, schoolYear, studentClass }) => ({
+        id,
+        attendeeId: studentId,
+        fullName: `${lastname} ${firstname}`,
         schoolYear,
-        studentClass,
-        isGraduate,
-        createdAt,
-        updatedAt
-      };
-    } else {
-      return {
-        ...this.userService.convertToView(student.id as User),
-        studentId,
-        schoolYear,
-        studentClass,
-        isGraduate,
-        createdAt,
-        updatedAt
-      };
+        studentClass
+      })
+    );
+  }
+
+  public async findByIdsForThesis(ids: number[]): Promise<Student[]> {
+    return await this.studentRepository.findByIds(ids, {
+      relations: [StudentRelation.USER, StudentRelation.THESES],
+      where: { ...NOT_DELETE_CONDITION },
+      cache: true
+    });
+  }
+
+  public async findByIdsWithTransaction(manager: EntityManager, ids: number[]): Promise<Student[]> {
+    return await manager.findByIds(StudentEntity, ids, {
+      relations: { user: {} },
+      where: { ...NOT_DELETE_CONDITION },
+      cache: true
+    });
+  }
+
+  public generateErrorInfo({ user, studentId }: Student): string {
+    const { firstname, lastname } = user;
+
+    return `${lastname} ${firstname} (${studentId})`;
+  }
+
+  public checkIsActive(student: Student): void {
+    const userStatus = student.user.status;
+    if (userStatus === UserStatus.INACTIVE) {
+      throw new BadRequestException(UserError.ERR_9.replace('%s', this.generateErrorInfo(student)));
     }
   }
 
-  public filterNullProperties(student: StudentRequestBody): StudentRequestBody {
-    const result: StudentRequestBody = {};
-    if (typeof student.studentId !== 'undefined' && student.studentId !== null) {
-      result.studentId = student.studentId;
+  public checkHasParticipatedThesis(
+    student: Student,
+    participatedThesisStudentIds: number[]
+  ): void {
+    const hasParticipated = participatedThesisStudentIds.includes(student.id);
+    if (hasParticipated) {
+      throw new BadRequestException(
+        StudentError.ERR_4.replace('@1', this.generateErrorInfo(student))
+      );
     }
-    if (typeof student.schoolYear !== 'undefined' && student.schoolYear !== null) {
-      result.schoolYear = student.schoolYear;
-    }
-    if (typeof student.studentClass !== 'undefined' && student.studentClass !== null) {
-      result.studentClass = student.studentClass;
-    }
-    if (typeof student.isGraduate !== 'undefined' && student.isGraduate !== null) {
-      result.isGraduate = student.isGraduate;
-    }
+  }
 
-    return result;
+  public checkGraduated(student: Student): void {
+    if (student.isGraduate === IsGraduate.TRUE) {
+      throw new BadRequestException(
+        StudentError.ERR_5.replace('@1', this.generateErrorInfo(student))
+      );
+    }
   }
 }

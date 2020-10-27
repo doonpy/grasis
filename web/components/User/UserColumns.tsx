@@ -1,5 +1,6 @@
 import React from 'react';
 
+import UserTerminology from '../../assets/terminology/user.terminology';
 import { User } from '../../libs/user/user.interface';
 import { Gender, UserStatus } from '../../libs/user/user.resource';
 import TextData from '../Common/TextData';
@@ -45,7 +46,12 @@ function sortByGender(a: User, b: User): number {
 }
 
 function sortByStatus(a: User, b: User): number {
-  if (a.status !== null && b.status !== null) {
+  if (
+    a.status !== null &&
+    typeof a.status !== 'boolean' &&
+    b.status !== null &&
+    typeof b.status !== 'boolean'
+  ) {
     return a.status - b.status;
   }
 
@@ -54,7 +60,7 @@ function sortByStatus(a: User, b: User): number {
 
 export const USER_COLUMNS = [
   {
-    title: 'Tên đăng nhập',
+    title: UserTerminology.USER_1,
     dataIndex: 'username',
     key: 'username',
     sorter: {
@@ -64,7 +70,7 @@ export const USER_COLUMNS = [
     render: (value: string | null) => <TextData text={value} />
   },
   {
-    title: 'Họ và tên đệm',
+    title: UserTerminology.USER_5,
     dataIndex: 'lastname',
     key: 'lastname',
     sorter: {
@@ -74,7 +80,7 @@ export const USER_COLUMNS = [
     render: (value: string | null) => <TextData text={value} />
   },
   {
-    title: 'Tên',
+    title: UserTerminology.USER_4,
     dataIndex: 'firstname',
     key: 'firstname',
     sorter: {
@@ -84,7 +90,7 @@ export const USER_COLUMNS = [
     render: (value: string | null) => <TextData text={value} />
   },
   {
-    title: 'Giới tính',
+    title: UserTerminology.USER_6,
     dataIndex: 'gender',
     key: 'gender',
     width: '10%',
@@ -95,7 +101,7 @@ export const USER_COLUMNS = [
     }
   },
   {
-    title: 'Trạng thái',
+    title: UserTerminology.USER_10,
     dataIndex: 'status',
     key: 'status',
     width: '10%',

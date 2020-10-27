@@ -5,7 +5,7 @@ export const COOKIES = {
 };
 
 export const SIDER_KEYS = {
-  GRADUATION_THESIS: '0',
+  THESIS: '0',
   TOPIC: '1',
   REGISTER_TOPIC: '2',
   PROGRESS_REPORT: '3',

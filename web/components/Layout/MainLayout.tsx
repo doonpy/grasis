@@ -7,6 +7,7 @@ import React from 'react';
 import styles from '../../assets/css/components/layout/main-layout.module.css';
 import { CommonPageProps } from '../../libs/common/common.interface';
 import { COMMON_PATH } from '../../libs/common/common.resource';
+import LoginUser from '../../libs/user/instance/LoginUser';
 import UserService from '../../libs/user/user.service';
 import { Breadcrumb } from '../Breadcrumb/Breadcrumb';
 import Copyright from '../Copyright/Copyright';
@@ -27,6 +28,7 @@ const MainLayout: React.FC<MainLayoutProps> = (props) => {
 
   const { isAdminCheck, allowUserTypes } = props;
   if (data) {
+    LoginUser.getInstance().setUser(data.user);
     if (isAdminCheck) {
       if (!userClient.isAdminCheck(data.user.isAdmin)) {
         userClient.redirectService.redirectTo(COMMON_PATH.ERROR.ERR_403);

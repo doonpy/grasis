@@ -1,11 +1,11 @@
-import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import chalk from 'chalk';
 import { Connection } from 'typeorm';
 
 import { isProductionMode } from './common/common.helper';
 import { LecturerService } from './lecturer/lecturer.service';
 import { UserRequestBody } from './user/user.interface';
-import { IsAdmin, UserType } from './user/user.resource';
+import { IsAdmin } from './user/user.resource';
 import { UserService } from './user/user.service';
 
 @Injectable()
@@ -22,21 +22,24 @@ export class AppService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap(): Promise<void> {
     if (isProductionMode()) {
-      console.log(chalk.yellow(`=> Run migrations...`));
-      await this.connection.runMigrations({ transaction: 'all' });
-      console.log(chalk.yellow(`=> Run migrations... Done!`));
+      Logger.log(chalk.yellow(`=> Run migrations...`));
+      await this.connection.runMigrations({ transaction: true });
+      Logger.log(chalk.yellow(`=> Run migrations... Done!`));
     }
 
-    if (!(await this.userService.isUserExistById(1))) {
-      const user: Partial<UserRequestBody & { id: number }> = {
-        id: 1,
-        username: process.env.ADMIN_USERNAME,
-        password: process.env.ADMIN_PASSWORD,
-        confirmPassword: process.env.ADMIN_PASSWORD,
-        isAdmin: IsAdmin.TRUE,
-        userType: UserType.LECTURER
+    if (
+      !(await this.userService.isUserExistById(1)) &&
+      !(await this.userService.isUserExistByUsername(process.env.ADMIN_USERNAME || 'Administrator'))
+    ) {
+      Logger.log('Create administrator account...');
+      const user: UserRequestBody = {
+        username: process.env.ADMIN_USERNAME as string,
+        password: process.env.ADMIN_PASSWORD as string,
+        confirmPassword: process.env.ADMIN_PASSWORD as string,
+        isAdmin: IsAdmin.TRUE
       };
       await this.lecturerService.create(user);
+      Logger.log('Create administrator account.. Done!');
     }
   }
 }

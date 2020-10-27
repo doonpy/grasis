@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import ExpressUserAgent from 'express-useragent';
 
@@ -7,11 +8,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AvatarModule } from './avatar/avatar.module';
-import { COMMON_PATH, DatabaseType, EnvFileName } from './common/common.resource';
+import { CommonPath, DatabaseType, EnvFileName } from './common/common.resource';
 import { LecturerModule } from './lecturer/lecturer.module';
 import { getDatabaseConfig } from './mssql/mssql.helper';
 import { RefreshModule } from './refresh/refresh.module';
 import { StudentModule } from './student/student.module';
+import { ThesisModule } from './thesis/thesis.module';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
 
@@ -36,13 +38,15 @@ function getEnvFilePath(): string {
   imports: [
     ConfigModule.forRoot({ envFilePath: getEnvFilePath() }),
     TypeOrmModule.forRoot(getDatabaseConfig()),
+    ScheduleModule.forRoot(),
     UserModule,
     StudentModule,
     LecturerModule,
     AuthModule,
     UploadModule,
     AvatarModule,
-    RefreshModule
+    RefreshModule,
+    ThesisModule
   ],
   controllers: [AppController],
   providers: [AppService]
@@ -52,8 +56,8 @@ export class AppModule implements NestModule {
     consumer
       .apply(ExpressUserAgent.express())
       .forRoutes(
-        { path: COMMON_PATH.LOGIN, method: RequestMethod.POST },
-        { path: COMMON_PATH.REFRESH_TOKEN, method: RequestMethod.POST }
+        { path: CommonPath.LOGIN, method: RequestMethod.POST },
+        { path: CommonPath.REFRESH_TOKEN, method: RequestMethod.POST }
       );
   }
 }

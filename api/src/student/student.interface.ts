@@ -1,32 +1,38 @@
-import { CommonColumns, CommonFindAllResponse, CommonResponse } from '../common/common.interface';
-import { User, UserRequestBody, UserRequestBodyForUser, UserView } from '../user/user.interface';
+import {
+  CommonColumns,
+  CommonFindManyResponse,
+  CommonResponse,
+  WithOptional
+} from '../common/common.interface';
+import { StudentEntity } from './student.entity';
 
-export interface Student extends CommonColumns {
-  id: number | User;
-  studentId: string;
-  schoolYear: string;
-  isGraduate: number;
-  studentClass: string;
-}
+export type Student = StudentEntity;
 
-export type StudentView = Student & UserView;
-export type StudentRequestBody = Partial<Omit<Student, keyof CommonColumns> & UserRequestBody>;
+export type StudentRequestBody = WithOptional<
+  Omit<Student, keyof CommonColumns | 'id' | 'theses' | 'user'>,
+  'studentId' | 'studentClass' | 'schoolYear' | 'isGraduate'
+>;
 
-export interface SplitUserFromRequestBody {
-  user: UserRequestBody;
-  remain: StudentRequestBody;
-}
-
-export interface StudentFindAllResponse extends CommonFindAllResponse {
-  students: StudentView[];
+export interface StudentFindManyResponse extends CommonFindManyResponse {
+  students: Student[];
 }
 
 export interface StudentFindByIdResponse extends CommonResponse {
-  student: StudentView;
+  student: Student;
 }
 
 export interface StudentCreateOrUpdateResponse extends CommonResponse {
   id: number;
 }
 
-export type StudentRequestBodyForUser = UserRequestBodyForUser;
+export interface StudentSearchAttendee {
+  id: number;
+  attendeeId: string | null;
+  fullName: string;
+  schoolYear: string | null;
+  studentClass: string | null;
+}
+
+export interface StudentSearchAttendeesResponse extends CommonResponse {
+  result: StudentSearchAttendee[];
+}

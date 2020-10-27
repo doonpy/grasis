@@ -1,5 +1,7 @@
 import '../assets/css/styles.css';
 
+import { ConfigProvider } from 'antd';
+import locale from 'antd/lib/locale/vi_VN';
 import Router from 'next/router';
 import NProgress from 'nprogress';
 import React from 'react';
@@ -35,13 +37,15 @@ const MyApp = ({
   return (
     <SWRConfig
       value={{
-        // refreshInterval: 1000,
+        refreshInterval: 3000,
         fetcher: commonClient.apiService.hooksFetcher.bind(commonClient.apiService),
         onError: commonClient.requestErrorHandler.bind(commonClient)
       }}>
-      <Layout {...pageProps}>
-        <Component {...pageProps} />
-      </Layout>
+      <ConfigProvider locale={locale}>
+        <Layout {...pageProps}>
+          <Component {...pageProps} />
+        </Layout>
+      </ConfigProvider>
     </SWRConfig>
   );
 };
