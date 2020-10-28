@@ -17,7 +17,7 @@ export const StudentApi = {
 
 export enum IsGraduate {
   FALSE = 1,
-  TRUE = 2
+  TRUE
 }
 
 export enum StudentSearchType {

@@ -1,15 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, EntityManager, FindOptionsWhere, Like, Not, Repository } from 'typeorm';
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Connection, EntityManager, FindOptionsWhere, Like, Not, Repository } from "typeorm";
 
-import { NOT_DELETE_CONDITION } from '../common/common.resource';
-import { ThesisStudentService } from '../thesis/thesis-student/thesis-student.service';
-import { UserRequestBody } from '../user/user.interface';
-import { UserError, UserStatus, UserType } from '../user/user.resource';
-import { UserService } from '../user/user.service';
-import { StudentEntity } from './student.entity';
-import { Student, StudentRequestBody, StudentSearchAttendee } from './student.interface';
-import { IsGraduate, StudentError, StudentRelation, StudentSearchType } from './student.resource';
+import { NOT_DELETE_CONDITION } from "../common/common.resource";
+import { ThesisStudentService } from "../thesis/thesis-student/thesis-student.service";
+import { UserRequestBody } from "../user/user.interface";
+import { UserError, UserStatus, UserType } from "../user/user.resource";
+import { UserService } from "../user/user.service";
+import { StudentEntity } from "./student.entity";
+import { Student, StudentRequestBody, StudentSearchAttendee } from "./student.interface";
+import { IsGraduate, StudentError, StudentSearchType } from "./student.resource";
 
 @Injectable()
 export class StudentService {
@@ -27,7 +27,7 @@ export class StudentService {
     }
 
     return await this.studentRepository.find({
-      relations: [StudentRelation.USER],
+      relations: { user: {} },
       where: conditions ? conditions : { ...NOT_DELETE_CONDITION },
       skip: offset,
       take: limit,
@@ -37,7 +37,7 @@ export class StudentService {
 
   public async findById(id: number): Promise<Student> {
     const student: Student | undefined = await this.studentRepository.findOne(id, {
-      relations: [StudentRelation.USER],
+      relations: { user: {} },
       where: { ...NOT_DELETE_CONDITION }
     });
 
@@ -217,7 +217,7 @@ export class StudentService {
     }
 
     let students = await this.studentRepository.find({
-      relations: [StudentRelation.USER],
+      relations: { user: {} },
       where: conditions,
       cache: true
     });
@@ -240,7 +240,7 @@ export class StudentService {
 
   public async findByIdsForThesis(ids: number[]): Promise<Student[]> {
     return await this.studentRepository.findByIds(ids, {
-      relations: [StudentRelation.USER, StudentRelation.THESES],
+      relations: { user: {} },
       where: { ...NOT_DELETE_CONDITION },
       cache: true
     });

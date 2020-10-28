@@ -1,5 +1,5 @@
-import { Student } from '../../student/student.interface';
-import { Thesis } from '../thesis.interface';
+import { Student } from "../../student/student.interface";
+import { Thesis } from "../thesis.interface";
 
 export interface ThesisStudent {
   thesisId: number;
@@ -11,8 +11,4 @@ export interface ThesisStudent {
   defenseResult: number | null;
   student: Student;
   thesis: Thesis;
-}
-
-export interface ThesisStudentRequestBody {
-  students: string[];
 }
