@@ -6,8 +6,8 @@ import { UserService } from '../../user/user.service';
 
 export interface Payload {
   userId: number;
-  iat: number;
-  exp: number;
+  iat?: number;
+  exp?: number;
 }
 
 @Injectable()

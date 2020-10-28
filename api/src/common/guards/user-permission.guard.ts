@@ -9,7 +9,7 @@ export class UserPermissionGuard implements CanActivate {
   constructor(private readonly userService: UserService) {}
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest<Express.Request>();
+    const request = context.switchToHttp().getRequest<Express.CustomRequest>();
     if (!request.user) {
       throw new UnauthorizedException(AuthError.ERR_1);
     }

@@ -124,6 +124,9 @@ export class LecturerService {
   public async deleteById(id: number): Promise<void> {
     const lecturer = await this.getById(id);
     const deletedAt = new Date();
+    if (await this.thesisLecturerService.isLecturerParticipatedThesis(id)) {
+      throw new BadRequestException(LecturerError.ERR_4);
+    }
 
     await this.connection.transaction(async (manager) => {
       await this.thesisLecturerService.deleteByLecturerIdWithTransaction(manager, id, deletedAt);

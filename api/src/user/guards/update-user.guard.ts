@@ -8,13 +8,12 @@ import {
 import { Observable } from 'rxjs';
 
 import { AuthError } from '../../auth/auth.resource';
-import { RawUserRequestBody } from '../user.interface';
 import { IsAdmin, UserError, UserStatus } from '../user.resource';
 
 @Injectable()
 export class UpdateUserGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest<Express.Request<RawUserRequestBody>>();
+    const request = context.switchToHttp().getRequest<Express.CustomRequest>();
     if (!request.user) {
       throw new UnauthorizedException(AuthError.ERR_1);
     }

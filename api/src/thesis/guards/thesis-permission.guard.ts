@@ -13,7 +13,7 @@ export class ThesisPermissionGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Express.Request>();
+    const request = context.switchToHttp().getRequest<Express.CustomRequest>();
     if (!request.user) {
       throw new UnauthorizedException(AuthError.ERR_1);
     }

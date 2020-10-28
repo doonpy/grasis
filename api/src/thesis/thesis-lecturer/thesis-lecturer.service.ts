@@ -7,7 +7,7 @@ import { LecturerSearchAttendee } from '../../lecturer/lecturer.interface';
 import { LecturerError } from '../../lecturer/lecturer.resource';
 import { LecturerService } from '../../lecturer/lecturer.service';
 import { Thesis } from '../thesis.interface';
-import { ATTENDEES_LOAD_LIMIT } from '../thesis.resource';
+import { ATTENDEES_LOAD_LIMIT, ThesisStatus } from '../thesis.resource';
 import { ThesisLecturerEntity } from './thesis-lecturer.entity';
 import { ThesisLecturer } from './thesis-lecturer.interface';
 
@@ -15,13 +15,13 @@ import { ThesisLecturer } from './thesis-lecturer.interface';
 export class ThesisLecturerService {
   constructor(
     @InjectRepository(ThesisLecturerEntity)
-    private readonly thesisLecturerService: Repository<ThesisLecturer>,
+    private readonly thesisLecturerRepository: Repository<ThesisLecturer>,
     @Inject(forwardRef(() => LecturerService))
     private readonly lecturerService: LecturerService
   ) {}
 
   public createEntity(data: Partial<ThesisLecturer>): ThesisLecturer {
-    return this.thesisLecturerService.create(data);
+    return this.thesisLecturerRepository.create(data);
   }
 
   public async getThesisLecturersForView(
@@ -29,7 +29,7 @@ export class ThesisLecturerService {
     offset = 0,
     limit = ATTENDEES_LOAD_LIMIT
   ): Promise<ThesisLecturer[]> {
-    return this.thesisLecturerService.find({
+    return this.thesisLecturerRepository.find({
       relations: { lecturer: { user: {} } },
       where: { thesisId, lecturer: { user: { ...NOT_DELETE_CONDITION } }, ...NOT_DELETE_CONDITION },
       skip: offset,
@@ -39,7 +39,7 @@ export class ThesisLecturerService {
   }
 
   public async getThesisLecturersForEditView(thesisId: number): Promise<LecturerSearchAttendee[]> {
-    const lecturers = await this.thesisLecturerService.find({
+    const lecturers = await this.thesisLecturerRepository.find({
       relations: { lecturer: { user: {} } },
       where: { thesisId, lecturer: { user: { ...NOT_DELETE_CONDITION } }, ...NOT_DELETE_CONDITION },
       cache: true
@@ -53,7 +53,7 @@ export class ThesisLecturerService {
   }
 
   public async isLoadMoreLecturersOfThesis(thesisId: number, offset = 0): Promise<boolean> {
-    const amount = await this.thesisLecturerService.count({
+    const amount = await this.thesisLecturerRepository.count({
       thesisId,
       lecturer: { user: { ...NOT_DELETE_CONDITION } },
       ...NOT_DELETE_CONDITION
@@ -122,5 +122,15 @@ export class ThesisLecturerService {
     deletedAt = new Date()
   ): Promise<void> {
     await manager.update(ThesisLecturerEntity, { lecturerId }, { deletedAt });
+  }
+
+  public async isLecturerParticipatedThesis(userId: number): Promise<boolean> {
+    return (
+      (await this.thesisLecturerRepository.count({
+        ...NOT_DELETE_CONDITION,
+        lecturerId: userId,
+        thesis: { status: ThesisStatus.ACTIVE }
+      })) > 0
+    );
   }
 }

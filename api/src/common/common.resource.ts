@@ -50,10 +50,6 @@ export enum CommonColumn {
   DELETED_AT = 'deleted_at'
 }
 
-export enum CommonHeader {
-  REFRESH = 'refresh'
-}
-
 export const NOT_DELETE_CONDITION = {
   deletedAt: IsNull()
 };

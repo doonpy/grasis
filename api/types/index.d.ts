@@ -1,5 +1,8 @@
 // This file declare global type (for customization)
 
+import { Details } from 'express-useragent';
+import { IncomingHttpHeaders } from 'http';
+
 declare global {
   namespace Express {
     interface User {
@@ -8,12 +11,16 @@ declare global {
       exp: number;
     }
 
-    interface Request<BodyType = Record<string, any>> {
+    interface CustomRequest {
+      headers: IncomingHttpHeaders & {
+        refresh?: string;
+      };
       params?: {
         id?: string;
       };
-      body?: BodyType;
+      body?: any;
       user?: User;
+      useragent?: Details;
     }
   }
 

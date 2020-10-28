@@ -136,6 +136,9 @@ export class StudentService {
   public async deleteById(id: number): Promise<void> {
     const student = await this.findById(id);
     const deletedAt = new Date();
+    if (await this.thesisStudentService.isParticipatedByUserId(id)) {
+      throw new BadRequestException(StudentError.ERR_6);
+    }
 
     await this.connection.transaction(async (manager) => {
       await this.thesisStudentService.deleteByStudentIdWithTransaction(
