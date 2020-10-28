@@ -4,6 +4,7 @@ import { Connection, EntityManager, FindOptionsWhere, Like, Repository } from 't
 
 import { NOT_DELETE_CONDITION } from '../common/common.resource';
 import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
+import { ThesisError } from '../thesis/thesis.resource';
 import { UserRequestBody } from '../user/user.interface';
 import { UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -99,6 +100,13 @@ export class LecturerService {
 
     const currentLecturer = await this.getById(id);
     if (userBody) {
+      if (
+        userBody.status === UserStatus.INACTIVE &&
+        (await this.thesisLecturerService.isLecturerParticipatedThesis(id))
+      ) {
+        throw new BadRequestException(LecturerError.ERR_4);
+      }
+
       currentLecturer.user = await this.userService.updateById(currentLecturer.user, userBody);
     }
 

@@ -107,6 +107,13 @@ export class StudentService {
 
     const currentStudent = await this.findById(id);
     if (userBody) {
+      if (
+        userBody.status === UserStatus.INACTIVE &&
+        (await this.thesisStudentService.isParticipatedByUserId(id))
+      ) {
+        throw new BadRequestException(StudentError.ERR_6);
+      }
+
       currentStudent.user = await this.userService.updateById(currentStudent.user, userBody);
     }
 

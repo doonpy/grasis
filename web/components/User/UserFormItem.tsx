@@ -58,6 +58,21 @@ const UserFormItem: React.FC<ComponentProps> = ({ isEdit, userType, userId }) =>
         </>
       );
     }
+
+    if (userType === UserType.STUDENT) {
+      return (
+        <Form.Item
+          name={['user', 'status']}
+          label={UserTerminology.USER_10}
+          valuePropName="checked">
+          <Switch
+            defaultChecked
+            checkedChildren={<CheckOutlined />}
+            unCheckedChildren={<CloseOutlined />}
+          />
+        </Form.Item>
+      );
+    }
   };
 
   return (
