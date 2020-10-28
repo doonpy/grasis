@@ -1,9 +1,4 @@
-import {
-  CommonColumns,
-  CommonFindManyResponse,
-  CommonResponse,
-  WithOptional
-} from '../common/common.interface';
+import { CommonColumns, CommonFindManyResponse, CommonResponse } from '../common/common.interface';
 import { StudentEntity } from './student.entity';
 
 export type Student = StudentEntity;

@@ -10,6 +10,7 @@ export const STUDENT_API_ADMIN_ROOT = '/admin/students';
 
 export const StudentApi = {
   ADMIN_SPECIFY: `${STUDENT_API_ADMIN_ROOT}/@0`,
+  ADMIN_GET_MANY: `${STUDENT_API_ADMIN_ROOT}?offset=@0&keyword=@1`,
   SPECIFY: `${STUDENT_API_ROOT}/@0`,
   SEARCH_ATTENDEES: 'admin/students/action/search-thesis-attendees'
 };

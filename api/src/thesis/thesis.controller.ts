@@ -60,10 +60,11 @@ export class ThesisController {
       ParseIntPipe
     )
     limit: number,
-    @Request() req: Record<string, any>
+    @Request() req: Record<string, any>,
+    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
   ): Promise<ThesisGetManyResponse> {
     const loginUserId = req.user.userId;
-    const theses: Thesis[] = await this.thesisService.getMany(offset, limit, loginUserId);
+    const theses: Thesis[] = await this.thesisService.getMany(offset, limit, loginUserId, keyword);
     const total: number = await this.thesisService.getAmount();
 
     return {

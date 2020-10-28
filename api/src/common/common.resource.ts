@@ -1,5 +1,5 @@
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
-import { EntityOptions, FindOptionsWhere, IsNull } from 'typeorm';
+import { EntityOptions, IsNull } from 'typeorm';
 
 export enum CommonQueryValue {
   OFFSET = 0,
@@ -50,10 +50,6 @@ export enum CommonColumn {
   DELETED_AT = 'deleted_at'
 }
 
-export enum CommonHeader {
-  REFRESH = 'refresh'
-}
-
-export const NOT_DELETE_CONDITION: FindOptionsWhere<any> = {
+export const NOT_DELETE_CONDITION = {
   deletedAt: IsNull()
 };

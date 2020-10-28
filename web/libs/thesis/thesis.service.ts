@@ -28,9 +28,15 @@ export default class ThesisService extends CommonService {
     return this.instance;
   }
 
-  public useTheses(pageNumber = 0, pageSize: number = DEFAULT_PAGE_SIZE): UseTheses {
+  public useTheses(
+    pageNumber = 0,
+    pageSize: number = DEFAULT_PAGE_SIZE,
+    keyword?: string
+  ): UseTheses {
     const offset = (pageNumber - 1) * pageSize;
-    const { data } = useSWR<ThesisFindManyResponse>(`${THESIS_API_ROOT}?offset=${offset}`);
+    const { data } = useSWR<ThesisFindManyResponse>(
+      this.replaceParams(ThesisApi.GET_MANY, [offset, keyword])
+    );
     if (data) {
       data.theses = data.theses.map((thesis) => ({ ...thesis, key: thesis.id.toString() }));
     }

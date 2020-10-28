@@ -41,5 +41,9 @@ export const ThesisTerminology = {
   THESIS_34: 'Vui lòng nhập hạn chót sinh viên đăng ký đề tài!',
   THESIS_35: 'Vui lòng nhập hạn chót báo cáo tiến độ!',
   THESIS_36: 'Vui lòng nhập hạn chót phản biện!',
-  THESIS_37: 'Vui lòng nhập hạn chót bảo vệ!'
+  THESIS_37: 'Vui lòng nhập hạn chót bảo vệ!',
+  THESIS_38: 'Bạn có chắc muốn kích hoạt khóa luận này?',
+  THESIS_39: 'Bạn có chắc muốn ngưng kích hoạt khóa luận này?',
+  THESIS_40: 'Mọi hoạt động của khóa luận này sẽ vô hiệu lực.',
+  THESIS_41: 'Mọi hoạt động của khóa luận này sẽ có hiệu lực.'
 };

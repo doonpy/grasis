@@ -20,10 +20,15 @@ export class StudentService {
     private readonly connection: Connection
   ) {}
 
-  public async findMany(offset: number, limit: number): Promise<Student[]> {
+  public async getMany(offset: number, limit: number, keyword?: string): Promise<Student[]> {
+    let conditions: FindOptionsWhere<Student> | undefined = undefined;
+    if (keyword) {
+      conditions = this.getSearchConditions(keyword);
+    }
+
     return await this.studentRepository.find({
       relations: [StudentRelation.USER],
-      where: { ...NOT_DELETE_CONDITION },
+      where: conditions ? conditions : { ...NOT_DELETE_CONDITION },
       skip: offset,
       take: limit,
       cache: true
@@ -74,7 +79,7 @@ export class StudentService {
     studentBody?: StudentRequestBody
   ): Promise<Student> {
     const userEntity = await this.userService.createUser(userBody);
-    userEntity.userType = UserType.LECTURER;
+    userEntity.userType = UserType.STUDENT;
 
     let studentEntity: Student;
     if (studentBody) {
@@ -102,6 +107,13 @@ export class StudentService {
 
     const currentStudent = await this.findById(id);
     if (userBody) {
+      if (
+        userBody.status === UserStatus.INACTIVE &&
+        (await this.thesisStudentService.isParticipatedByUserId(id))
+      ) {
+        throw new BadRequestException(StudentError.ERR_6);
+      }
+
       currentStudent.user = await this.userService.updateById(currentStudent.user, userBody);
     }
 
@@ -131,6 +143,9 @@ export class StudentService {
   public async deleteById(id: number): Promise<void> {
     const student = await this.findById(id);
     const deletedAt = new Date();
+    if (await this.thesisStudentService.isParticipatedByUserId(id)) {
+      throw new BadRequestException(StudentError.ERR_6);
+    }
 
     await this.connection.transaction(async (manager) => {
       await this.thesisStudentService.deleteByStudentIdWithTransaction(
@@ -144,8 +159,13 @@ export class StudentService {
     });
   }
 
-  public async getStudentAmount(): Promise<number> {
-    return this.studentRepository.count({ ...NOT_DELETE_CONDITION });
+  public async getStudentAmount(keyword?: string): Promise<number> {
+    let conditions: FindOptionsWhere<Student> | undefined = undefined;
+    if (keyword) {
+      conditions = this.getSearchConditions(keyword);
+    }
+
+    return this.studentRepository.count(conditions ? conditions : { ...NOT_DELETE_CONDITION });
   }
 
   public async searchAttendees(
@@ -265,5 +285,31 @@ export class StudentService {
         StudentError.ERR_5.replace('@1', this.generateErrorInfo(student))
       );
     }
+  }
+
+  private getSearchConditions(keyword: string): FindOptionsWhere<Student> {
+    return [
+      { ...NOT_DELETE_CONDITION, studentId: Like(`%${keyword}%`) },
+      { ...NOT_DELETE_CONDITION, schoolYear: Like(`%${keyword}%`) },
+      { ...NOT_DELETE_CONDITION, studentClass: Like(`%${keyword}%`) },
+      {
+        user: {
+          ...NOT_DELETE_CONDITION,
+          username: Like(`%${keyword}%`)
+        }
+      },
+      {
+        user: {
+          ...NOT_DELETE_CONDITION,
+          firstname: Like(`%${keyword}%`)
+        }
+      },
+      {
+        user: {
+          ...NOT_DELETE_CONDITION,
+          lastname: Like(`%${keyword}%`)
+        }
+      }
+    ];
   }
 }

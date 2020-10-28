@@ -8,7 +8,7 @@ type AvatarDestinationCallback = (error: Error | null, destination: string) => v
 type AvatarFileNameCallback = (error: Error | null, destination: string) => void;
 
 export function avatarFileFilter(
-  req: Express.Request,
+  req: Express.CustomRequest,
   { originalname }: Express.Multer.File,
   callback: FileFilterCallback
 ): void {
@@ -20,7 +20,7 @@ export function avatarFileFilter(
 }
 
 export function getAvatarDestination(
-  req: Express.Request,
+  req: Express.CustomRequest,
   file: Express.Multer.File,
   callback: AvatarDestinationCallback
 ): void {
@@ -32,7 +32,7 @@ export function getAvatarDestination(
 }
 
 export function getAvatarFilename(
-  req: Express.Request | any,
+  req: Express.CustomRequest | any,
   file: Express.Multer.File,
   callback: AvatarFileNameCallback
 ): void {

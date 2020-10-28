@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export interface TokenPayload {
   userId: number;
   iat: number;
@@ -17,16 +19,12 @@ export default class JwtBase {
   public accessTokenPayload!: TokenPayload;
   public refreshTokenPayload!: TokenPayload;
 
-  protected expiresAt(exp: number): Date {
-    return new Date(exp * 1000);
-  }
-
   public isAccessTokenExpired(): boolean {
-    return new Date() > this.expiresAt(this.accessTokenPayload.exp);
+    return moment().isAfter(this.accessTokenPayload.exp * 1000);
   }
 
   public isRefreshTokenExpired(): boolean {
-    return new Date() > this.expiresAt(this.refreshTokenPayload.exp);
+    return moment().isAfter(this.refreshTokenPayload.exp * 1000);
   }
 
   public getAccessTokenForAuth(): string {

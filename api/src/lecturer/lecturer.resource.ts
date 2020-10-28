@@ -3,7 +3,8 @@ export const LECTURER_TABLE = 'lecturer';
 export enum LecturerError {
   ERR_1 = 'Mã giảng viên không tồn tại.',
   ERR_2 = 'Mã giảng viên đã tồn tại.',
-  ERR_3 = 'Giảng viên không tồn tại.'
+  ERR_3 = 'Giảng viên không tồn tại.',
+  ERR_4 = 'Giảng viên đang tham gia một khóa luận.'
 }
 
 export const LECTURER_LEVELS = ['Tiến sĩ', 'Thạc sĩ', 'Phó giáo sư', 'Giáo sư'];

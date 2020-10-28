@@ -31,7 +31,7 @@ export class LecturerController {
     )
     id: number
   ): Promise<LecturerFindByIdResponse> {
-    const lecturer: Lecturer = await this.lecturerService.findById(id);
+    const lecturer: Lecturer = await this.lecturerService.getById(id);
 
     return {
       statusCode: HttpStatus.OK,

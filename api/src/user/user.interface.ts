@@ -1,4 +1,3 @@
-import { WithOptional } from '../common/common.interface';
 import { UserEntity } from './user.entity';
 
 export type User = UserEntity;

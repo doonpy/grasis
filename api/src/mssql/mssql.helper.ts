@@ -23,7 +23,7 @@ export function getDatabaseConfig(): TypeOrmModuleOptions & ConnectionOptions {
 
   return {
     ...configs,
-    logging: !isProductionMode() ? ['error'] : ['migration'],
+    logging: !isProductionMode() ? ['error', 'query'] : ['migration'],
     synchronize: !isProductionMode(),
     autoLoadEntities: true,
     keepConnectionAlive: true,

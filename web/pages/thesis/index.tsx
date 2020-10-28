@@ -1,10 +1,11 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Card, Table } from 'antd';
+import { Button, Card, Space, Table } from 'antd';
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
 import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
+import SearchBox from '../../components/Common/SearchBox';
 import MainLayout from '../../components/Layout/MainLayout';
 import { THESIS_TABLE_COLUMNS } from '../../components/Thesis/ThesisTableColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../libs/common/common.interface';
@@ -21,27 +22,39 @@ const Index: NextPageWithLayout = () => {
     total: 0,
     showSizeChanger: false
   });
+  const [keyword, setKeyword] = useState<string>('');
   const thesisService = ThesisService.getInstance();
-  const { data, isLoading } = thesisService.useTheses(pagination.current, pagination.pageSize);
+  const { data, isLoading } = thesisService.useTheses(
+    pagination.current,
+    pagination.pageSize,
+    keyword
+  );
   const handleTableChange = (paginationValues) => {
     setPagination({ ...pagination, ...paginationValues });
+  };
+
+  const onSearch = (value: string) => {
+    setKeyword(value);
   };
 
   return (
     <Card
       title={ThesisTerminology.THESIS_3}
       extra={
-        LoginUser.getInstance().isAdmin() && (
-          <Link href={THESIS_PATH.CREATE}>
-            <Button
-              type="primary"
-              shape="circle"
-              icon={<PlusOutlined />}
-              size="large"
-              disabled={isLoading}
-            />
-          </Link>
-        )
+        <Space size="large">
+          <SearchBox onSearch={onSearch} />
+          {LoginUser.getInstance().isAdmin() && (
+            <Link href={THESIS_PATH.CREATE}>
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<PlusOutlined />}
+                size="large"
+                disabled={isLoading}
+              />
+            </Link>
+          )}
+        </Space>
       }>
       <Table
         bordered

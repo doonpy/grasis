@@ -1,4 +1,4 @@
-import { CommonColumns, CommonResponse, WithOptional } from '../common/common.interface';
+import { CommonColumns, CommonResponse } from '../common/common.interface';
 import { LecturerSearchAttendee } from '../lecturer/lecturer.interface';
 import { StudentSearchAttendee } from '../student/student.interface';
 import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.interface';

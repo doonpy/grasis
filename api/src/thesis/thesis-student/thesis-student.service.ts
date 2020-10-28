@@ -193,4 +193,14 @@ export class ThesisStudentService {
   ): Promise<void> {
     await manager.update(ThesisStudentEntity, { studentId }, { deletedAt });
   }
+
+  public async isParticipatedByUserId(id: number): Promise<boolean> {
+    return (
+      (await this.thesisStudentRepository.count({
+        ...NOT_DELETE_CONDITION,
+        studentId: id,
+        thesis: { status: ThesisStatus.ACTIVE }
+      })) > 0
+    );
+  }
 }

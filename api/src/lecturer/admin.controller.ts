@@ -60,10 +60,11 @@ export class LecturerAdminController {
       new DefaultValuePipe(CommonQueryValue.LIMIT),
       ParseIntPipe
     )
-    limit: number
+    limit: number,
+    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
   ): Promise<LecturerFindManyResponse> {
-    const lecturers: Lecturer[] = await this.lecturerService.findMany(offset, limit);
-    const total: number = await this.lecturerService.getLecturerAmount();
+    const lecturers: Lecturer[] = await this.lecturerService.getMany(offset, limit, keyword);
+    const total: number = await this.lecturerService.getLecturerAmount(keyword);
 
     return {
       statusCode: HttpStatus.OK,
@@ -82,7 +83,7 @@ export class LecturerAdminController {
     )
     id: number
   ): Promise<LecturerFindByIdResponse> {
-    const lecturer: Lecturer = await this.lecturerService.findById(id);
+    const lecturer: Lecturer = await this.lecturerService.getById(id);
 
     return {
       statusCode: HttpStatus.OK,

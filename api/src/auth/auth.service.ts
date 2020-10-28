@@ -7,6 +7,7 @@ import { RefreshService } from '../refresh/refresh.service';
 import { UserAuth } from '../user/user.interface';
 import { UserService } from '../user/user.service';
 import { JWT_TOKEN_EXPIRE_TIME } from './auth.resource';
+import { Payload } from './strategies/jwt.strategy';
 
 export interface JwtToken {
   accessToken: string;
@@ -21,16 +22,16 @@ export class AuthService {
     private readonly refreshService: RefreshService
   ) {}
 
-  public async validateUser(username: string, inputPassword: string): Promise<number | null> {
+  public async validateUser(username: string, inputPassword: string): Promise<Payload | null> {
     const user: UserAuth | undefined = await this.userService.findForAuth(username, inputPassword);
     if (user) {
-      return user.id;
+      return { userId: user.id };
     }
 
     return null;
   }
 
-  public async login(userId: number, userAgent?: Details): Promise<JwtToken> {
+  public async login(userId: number, userAgent?: Details | undefined): Promise<JwtToken> {
     const accessToken = this.jwtService.sign(
       { userId },
       { secret: process.env.JWT_SECRET, expiresIn: JWT_TOKEN_EXPIRE_TIME }
