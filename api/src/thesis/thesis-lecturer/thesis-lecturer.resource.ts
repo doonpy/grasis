@@ -1,4 +1,4 @@
-import { THESIS_TABLE } from "../thesis.resource";
+import { THESIS_TABLE } from '../thesis.resource';
 
 export const THESIS_LECTURER_TABLE = `${THESIS_TABLE}_lecturer`;
 

@@ -6,6 +6,7 @@ import { NOT_DELETE_CONDITION } from '../../common/common.resource';
 import { LecturerSearchAttendee } from '../../lecturer/lecturer.interface';
 import { LecturerError } from '../../lecturer/lecturer.resource';
 import { LecturerService } from '../../lecturer/lecturer.service';
+import { User } from '../../user/user.interface';
 import { Thesis } from '../thesis.interface';
 import { ATTENDEES_LOAD_LIMIT, ThesisStatus } from '../thesis.resource';
 import { ThesisLecturerEntity } from './thesis-lecturer.entity';
@@ -130,6 +131,16 @@ export class ThesisLecturerService {
         ...NOT_DELETE_CONDITION,
         lecturerId: userId,
         thesis: { status: ThesisStatus.ACTIVE }
+      })) > 0
+    );
+  }
+
+  public async hasPermission(id: number, loginUser: User): Promise<boolean> {
+    return (
+      (await this.thesisLecturerRepository.count({
+        thesisId: id,
+        lecturer: { user: { ...NOT_DELETE_CONDITION, id: loginUser.id } },
+        ...NOT_DELETE_CONDITION
       })) > 0
     );
   }

@@ -1,5 +1,5 @@
-import { CorsOptions } from "@nestjs/common/interfaces/external/cors-options.interface";
-import { EntityOptions, IsNull } from "typeorm";
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+import { EntityOptions, IsNull } from 'typeorm';
 
 export const CommonQueryValue = {
   OFFSET: 0,

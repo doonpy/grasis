@@ -1,15 +1,15 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Connection, EntityManager, FindOptionsWhere, Like, Not, Repository } from "typeorm";
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Connection, EntityManager, FindOptionsWhere, Like, Not, Repository } from 'typeorm';
 
-import { NOT_DELETE_CONDITION } from "../common/common.resource";
-import { ThesisStudentService } from "../thesis/thesis-student/thesis-student.service";
-import { UserRequestBody } from "../user/user.interface";
-import { UserError, UserStatus, UserType } from "../user/user.resource";
-import { UserService } from "../user/user.service";
-import { StudentEntity } from "./student.entity";
-import { Student, StudentRequestBody, StudentSearchAttendee } from "./student.interface";
-import { IsGraduate, StudentError, StudentSearchType } from "./student.resource";
+import { NOT_DELETE_CONDITION } from '../common/common.resource';
+import { ThesisStudentService } from '../thesis/thesis-student/thesis-student.service';
+import { UserRequestBody } from '../user/user.interface';
+import { UserError, UserStatus, UserType } from '../user/user.resource';
+import { UserService } from '../user/user.service';
+import { StudentEntity } from './student.entity';
+import { Student, StudentRequestBody, StudentSearchAttendee } from './student.interface';
+import { IsGraduate, StudentError, StudentSearchType } from './student.resource';
 
 @Injectable()
 export class StudentService {

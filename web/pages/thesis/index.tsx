@@ -10,7 +10,7 @@ import MainLayout from '../../components/Layout/MainLayout';
 import { THESIS_TABLE_COLUMNS } from '../../components/Thesis/ThesisTableColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../libs/common/common.resource';
-import { THESIS_PATH, THESIS_PATH_ROOT } from '../../libs/thesis/thesis.resource';
+import { THESIS_PATH_ROOT, ThesisPath } from '../../libs/thesis/thesis.resource';
 import ThesisService from '../../libs/thesis/thesis.service';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import { UserType } from '../../libs/user/user.resource';
@@ -44,7 +44,7 @@ const Index: NextPageWithLayout = () => {
         <Space size="large">
           <SearchBox onSearch={onSearch} />
           {LoginUser.getInstance().isAdmin() && (
-            <Link href={THESIS_PATH.CREATE}>
+            <Link href={ThesisPath.CREATE}>
               <Button
                 type="primary"
                 shape="circle"

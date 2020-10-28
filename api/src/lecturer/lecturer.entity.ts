@@ -1,13 +1,13 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
-import { CommonEntity } from "../common/common.entity";
-import { COMMON_ENTITY_OPTIONS, CommonColumn } from "../common/common.resource";
-import { ThesisLecturerEntity } from "../thesis/thesis-lecturer/thesis-lecturer.entity";
-import { ThesisLecturer } from "../thesis/thesis-lecturer/thesis-lecturer.interface";
-import { ThesisLecturerColumn } from "../thesis/thesis-lecturer/thesis-lecturer.resource";
-import { UserEntity } from "../user/user.entity";
-import { User } from "../user/user.interface";
-import { LECTURER_TABLE, LecturerColumn } from "./lecturer.resource";
+import { CommonEntity } from '../common/common.entity';
+import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
+import { ThesisLecturerEntity } from '../thesis/thesis-lecturer/thesis-lecturer.entity';
+import { ThesisLecturer } from '../thesis/thesis-lecturer/thesis-lecturer.interface';
+import { ThesisLecturerColumn } from '../thesis/thesis-lecturer/thesis-lecturer.resource';
+import { UserEntity } from '../user/user.entity';
+import { User } from '../user/user.interface';
+import { LECTURER_TABLE, LecturerColumn } from './lecturer.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: LECTURER_TABLE })
 export class LecturerEntity extends CommonEntity {

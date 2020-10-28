@@ -1,15 +1,15 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Connection, EntityManager, FindOptionsWhere, Like, Repository } from "typeorm";
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Connection, EntityManager, FindOptionsWhere, Like, Repository } from 'typeorm';
 
-import { NOT_DELETE_CONDITION } from "../common/common.resource";
-import { ThesisLecturerService } from "../thesis/thesis-lecturer/thesis-lecturer.service";
-import { UserRequestBody } from "../user/user.interface";
-import { UserError, UserStatus, UserType } from "../user/user.resource";
-import { UserService } from "../user/user.service";
-import { LecturerEntity } from "./lecturer.entity";
-import { Lecturer, LecturerRequestBody, LecturerSearchAttendee } from "./lecturer.interface";
-import { LecturerError, LecturerSearchType } from "./lecturer.resource";
+import { NOT_DELETE_CONDITION } from '../common/common.resource';
+import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
+import { UserRequestBody } from '../user/user.interface';
+import { UserError, UserStatus, UserType } from '../user/user.resource';
+import { UserService } from '../user/user.service';
+import { LecturerEntity } from './lecturer.entity';
+import { Lecturer, LecturerRequestBody, LecturerSearchAttendee } from './lecturer.interface';
+import { LecturerError, LecturerSearchType } from './lecturer.resource';
 
 @Injectable()
 export class LecturerService {

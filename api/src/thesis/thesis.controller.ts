@@ -85,7 +85,7 @@ export class ThesisController {
     )
     id: number
   ): Promise<ThesisGetByIdResponse> {
-    const thesis = await this.thesisService.getById(id);
+    const thesis = await this.thesisService.getById(id, true);
     const isMoreLecturers = await this.thesisLecturerService.isLoadMoreLecturersOfThesis(thesis.id);
     const isMoreStudents = await this.thesisStudentService.isLoadMoreStudentsOfThesis(thesis.id);
 

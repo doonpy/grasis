@@ -12,7 +12,7 @@ import ThesisInfo from '../../../components/Thesis/ThesisInfo';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../libs/common/common.resource';
 import ThesisAdminService from '../../../libs/thesis/admin.service';
-import { THESIS_PATH, THESIS_PATH_ROOT } from '../../../libs/thesis/thesis.resource';
+import { THESIS_PATH_ROOT, ThesisPath } from '../../../libs/thesis/thesis.resource';
 import ThesisService from '../../../libs/thesis/thesis.service';
 import LoginUser from '../../../libs/user/instance/LoginUser';
 import { UserType } from '../../../libs/user/user.resource';
@@ -22,14 +22,14 @@ interface PageProps extends CommonPageProps {
 }
 
 interface PageParams extends ParsedUrlQuery {
-  id?: string;
+  thesisId?: string;
 }
 
 const { confirm } = Modal;
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const thesisService = ThesisService.getInstance();
-  const thesisId = parseInt(params.id);
+  const thesisId = parseInt(params.thesisId);
   const { data, isLoading } = thesisService.useThesis(thesisId);
   const adminService = ThesisAdminService.getInstance();
 
@@ -59,7 +59,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       extra={
         LoginUser.getInstance().isAdmin() && (
           <Space>
-            <Link href={thesisService.replaceParams(THESIS_PATH.EDIT, [thesisId])}>
+            <Link href={thesisService.replaceParams(ThesisPath.EDIT, [thesisId])}>
               <Button
                 type="primary"
                 shape="circle"

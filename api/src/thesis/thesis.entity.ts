@@ -1,16 +1,16 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { CommonEntity } from "../common/common.entity";
-import { COMMON_ENTITY_OPTIONS, CommonColumn } from "../common/common.resource";
-import { LecturerEntity } from "../lecturer/lecturer.entity";
-import { Lecturer } from "../lecturer/lecturer.interface";
-import { ThesisLecturerEntity } from "./thesis-lecturer/thesis-lecturer.entity";
-import { ThesisLecturer } from "./thesis-lecturer/thesis-lecturer.interface";
-import { ThesisLecturerColumn } from "./thesis-lecturer/thesis-lecturer.resource";
-import { ThesisStudentEntity } from "./thesis-student/thesis-student.entity";
-import { ThesisStudent } from "./thesis-student/thesis-student.interface";
-import { ThesisStudentColumn } from "./thesis-student/thesis-student.resource";
-import { THESIS_TABLE, ThesisColumn, ThesisState, ThesisStatus } from "./thesis.resource";
+import { CommonEntity } from '../common/common.entity';
+import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
+import { LecturerEntity } from '../lecturer/lecturer.entity';
+import { Lecturer } from '../lecturer/lecturer.interface';
+import { ThesisLecturerEntity } from './thesis-lecturer/thesis-lecturer.entity';
+import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.interface';
+import { ThesisLecturerColumn } from './thesis-lecturer/thesis-lecturer.resource';
+import { ThesisStudentEntity } from './thesis-student/thesis-student.entity';
+import { ThesisStudent } from './thesis-student/thesis-student.interface';
+import { ThesisStudentColumn } from './thesis-student/thesis-student.resource';
+import { THESIS_TABLE, ThesisColumn, ThesisState, ThesisStatus } from './thesis.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: THESIS_TABLE })
 export class ThesisEntity extends CommonEntity {

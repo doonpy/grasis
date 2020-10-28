@@ -1,5 +1,5 @@
-import { Student } from "../../student/student.interface";
-import { Thesis } from "../thesis.interface";
+import { Student } from '../../student/student.interface';
+import { Thesis } from '../thesis.interface';
 
 export interface ThesisStudent {
   thesisId: number;

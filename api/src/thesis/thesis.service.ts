@@ -63,69 +63,6 @@ export class ThesisService {
     return [];
   }
 
-  private async getManyForAdmin(
-    offset: number,
-    limit: number,
-    keyword?: string
-  ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
-    if (keyword) {
-      conditions = this.getSearchConditions(keyword);
-    }
-
-    return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
-      where: conditions ? conditions : { ...NOT_DELETE_CONDITION },
-      skip: offset,
-      take: limit,
-      cache: true
-    });
-  }
-
-  private async getManyForLecturer(
-    userId: number,
-    offset: number,
-    limit: number,
-    keyword?: string
-  ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
-    if (keyword) {
-      conditions = this.getSearchConditions(keyword, UserType.LECTURER, userId);
-    }
-
-    return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
-      where: conditions
-        ? conditions
-        : { ...NOT_DELETE_CONDITION, lecturers: { lecturer: { id: userId } } },
-      skip: offset,
-      take: limit,
-      cache: true
-    });
-  }
-
-  private async getManyForStudent(
-    userId: number,
-    offset: number,
-    limit: number,
-    keyword?: string
-  ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
-    if (keyword) {
-      conditions = this.getSearchConditions(keyword, UserType.STUDENT, userId);
-    }
-
-    return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
-      where: conditions
-        ? conditions
-        : { ...NOT_DELETE_CONDITION, students: { student: { id: userId } } },
-      skip: offset,
-      take: limit,
-      cache: true
-    });
-  }
-
   public async getAmount(): Promise<number> {
     return this.thesisRepository.count();
   }
@@ -189,97 +126,7 @@ export class ThesisService {
     return await this.thesisRepository.save(thesisEntity);
   }
 
-  private validateThesisStateDate({
-    startTime,
-    endTime,
-    lecturerTopicRegister,
-    studentTopicRegister,
-    progressReport,
-    review,
-    defense
-  }: Thesis): void {
-    if (!moment(startTime).isBefore(endTime, 'day')) {
-      throw new BadRequestException(ThesisError.ERR_6);
-    }
-
-    if (
-      !this.isValidStateDate(
-        moment(lecturerTopicRegister),
-        moment(startTime),
-        moment(endTime),
-        undefined,
-        moment(studentTopicRegister)
-      )
-    ) {
-      throw new BadRequestException(ThesisError.ERR_1);
-    }
-
-    if (
-      !this.isValidStateDate(
-        moment(studentTopicRegister),
-        moment(startTime),
-        moment(endTime),
-        moment(lecturerTopicRegister),
-        moment(progressReport)
-      )
-    ) {
-      throw new BadRequestException(ThesisError.ERR_2);
-    }
-
-    if (
-      !this.isValidStateDate(
-        moment(progressReport),
-        moment(startTime),
-        moment(endTime),
-        moment(studentTopicRegister),
-        moment(review)
-      )
-    ) {
-      throw new BadRequestException(ThesisError.ERR_3);
-    }
-
-    if (
-      !this.isValidStateDate(
-        moment(review),
-        moment(startTime),
-        moment(endTime),
-        moment(progressReport),
-        moment(defense)
-      )
-    ) {
-      throw new BadRequestException(ThesisError.ERR_4);
-    }
-
-    if (
-      !this.isValidStateDate(
-        moment(defense),
-        moment(startTime),
-        moment(endTime),
-        moment(progressReport)
-      )
-    ) {
-      throw new BadRequestException(ThesisError.ERR_5);
-    }
-  }
-
-  private isValidStateDate(
-    date: Moment,
-    startDate: Moment,
-    endDate: Moment,
-    startState?: Moment,
-    endState?: Moment
-  ): boolean {
-    const beginRange = startState
-      ? date.isSameOrBefore(startState, 'day')
-      : date.isBefore(startDate, 'day');
-    const endRange = endState
-      ? date.isSameOrAfter(endState.endOf('day'), 'day')
-      : date.isAfter(endDate.endOf('day'), 'day');
-
-    return !(beginRange || endRange);
-  }
-
-  public async getById(id: number): Promise<Thesis> {
+  public async getById(id: number, withAttendees = false): Promise<Thesis> {
     const thesis = await this.thesisRepository.findOne(id, {
       relations: { creator: { user: {} } },
       where: { ...NOT_DELETE_CONDITION }
@@ -288,8 +135,10 @@ export class ThesisService {
       throw new BadRequestException(ThesisError.ERR_7);
     }
 
-    thesis.lecturers = await this.thesisLecturerService.getThesisLecturersForView(thesis.id);
-    thesis.students = await this.thesisStudentService.getThesisStudentsForView(thesis.id);
+    if (withAttendees) {
+      thesis.lecturers = await this.thesisLecturerService.getThesisLecturersForView(thesis.id);
+      thesis.students = await this.thesisStudentService.getThesisStudentsForView(thesis.id);
+    }
 
     return thesis;
   }
@@ -300,16 +149,11 @@ export class ThesisService {
     }
 
     if (loginUser.userType === UserType.LECTURER) {
-      return (
-        (await this.thesisRepository.count({
-          id,
-          lecturers: { lecturer: { id: loginUser.id, user: { ...NOT_DELETE_CONDITION } } }
-        })) > 0
-      );
+      return this.thesisLecturerService.hasPermission(id, loginUser);
     }
 
     if (loginUser.userType === UserType.STUDENT) {
-      return this.thesisStudentService.isThesisExistById(id, loginUser);
+      return this.thesisStudentService.hasPermission(id, loginUser);
     }
 
     return false;
@@ -497,6 +341,159 @@ export class ThesisService {
       await this.thesisRepository.update({ id }, { status: ThesisStatus.INACTIVE });
       return ThesisStatus.INACTIVE;
     }
+  }
+
+  private async getManyForAdmin(
+    offset: number,
+    limit: number,
+    keyword?: string
+  ): Promise<Thesis[]> {
+    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
+    if (keyword) {
+      conditions = this.getSearchConditions(keyword);
+    }
+
+    return this.thesisRepository.find({
+      relations: { creator: { user: {} } },
+      where: conditions ? conditions : { ...NOT_DELETE_CONDITION },
+      skip: offset,
+      take: limit,
+      cache: true
+    });
+  }
+
+  private async getManyForLecturer(
+    userId: number,
+    offset: number,
+    limit: number,
+    keyword?: string
+  ): Promise<Thesis[]> {
+    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
+    if (keyword) {
+      conditions = this.getSearchConditions(keyword, UserType.LECTURER, userId);
+    }
+
+    return this.thesisRepository.find({
+      relations: { creator: { user: {} } },
+      where: conditions
+        ? conditions
+        : { ...NOT_DELETE_CONDITION, lecturers: { lecturer: { id: userId } } },
+      skip: offset,
+      take: limit,
+      cache: true
+    });
+  }
+
+  private async getManyForStudent(
+    userId: number,
+    offset: number,
+    limit: number,
+    keyword?: string
+  ): Promise<Thesis[]> {
+    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
+    if (keyword) {
+      conditions = this.getSearchConditions(keyword, UserType.STUDENT, userId);
+    }
+
+    return this.thesisRepository.find({
+      relations: { creator: { user: {} } },
+      where: conditions
+        ? conditions
+        : { ...NOT_DELETE_CONDITION, students: { student: { id: userId } } },
+      skip: offset,
+      take: limit,
+      cache: true
+    });
+  }
+
+  private validateThesisStateDate({
+    startTime,
+    endTime,
+    lecturerTopicRegister,
+    studentTopicRegister,
+    progressReport,
+    review,
+    defense
+  }: Thesis): void {
+    if (!moment(startTime).isBefore(endTime, 'day')) {
+      throw new BadRequestException(ThesisError.ERR_6);
+    }
+
+    if (
+      !this.isValidStateDate(
+        moment(lecturerTopicRegister),
+        moment(startTime),
+        moment(endTime),
+        undefined,
+        moment(studentTopicRegister)
+      )
+    ) {
+      throw new BadRequestException(ThesisError.ERR_1);
+    }
+
+    if (
+      !this.isValidStateDate(
+        moment(studentTopicRegister),
+        moment(startTime),
+        moment(endTime),
+        moment(lecturerTopicRegister),
+        moment(progressReport)
+      )
+    ) {
+      throw new BadRequestException(ThesisError.ERR_2);
+    }
+
+    if (
+      !this.isValidStateDate(
+        moment(progressReport),
+        moment(startTime),
+        moment(endTime),
+        moment(studentTopicRegister),
+        moment(review)
+      )
+    ) {
+      throw new BadRequestException(ThesisError.ERR_3);
+    }
+
+    if (
+      !this.isValidStateDate(
+        moment(review),
+        moment(startTime),
+        moment(endTime),
+        moment(progressReport),
+        moment(defense)
+      )
+    ) {
+      throw new BadRequestException(ThesisError.ERR_4);
+    }
+
+    if (
+      !this.isValidStateDate(
+        moment(defense),
+        moment(startTime),
+        moment(endTime),
+        moment(progressReport)
+      )
+    ) {
+      throw new BadRequestException(ThesisError.ERR_5);
+    }
+  }
+
+  private isValidStateDate(
+    date: Moment,
+    startDate: Moment,
+    endDate: Moment,
+    startState?: Moment,
+    endState?: Moment
+  ): boolean {
+    const beginRange = startState
+      ? date.isSameOrBefore(startState, 'day')
+      : date.isBefore(startDate, 'day');
+    const endRange = endState
+      ? date.isSameOrAfter(endState.endOf('day'), 'day')
+      : date.isAfter(endDate.endOf('day'), 'day');
+
+    return !(beginRange || endRange);
   }
 
   private getSearchConditions(

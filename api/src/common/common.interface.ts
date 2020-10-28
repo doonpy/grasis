@@ -9,6 +9,5 @@ export interface CommonFindManyResponse extends CommonResponse {
 export interface CommonColumns {
   createdAt: string;
   updatedAt: string;
+  deletedAt: string;
 }
-
-export type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

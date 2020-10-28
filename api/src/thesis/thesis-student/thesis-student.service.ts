@@ -84,7 +84,7 @@ export class ThesisStudentService {
     return amount - offset - ATTENDEES_LOAD_LIMIT > 0;
   }
 
-  public async isThesisExistById(id: number, loginUser: User): Promise<boolean> {
+  public async hasPermission(id: number, loginUser: User): Promise<boolean> {
     return (
       (await this.thesisStudentRepository.count({
         thesisId: id,

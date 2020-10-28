@@ -22,6 +22,6 @@ import { ThesisService } from './thesis.service';
   ],
   providers: [ThesisService, ThesisStudentService, ThesisLecturerService],
   controllers: [ThesisController, ThesisAdminController],
-  exports: [ThesisStudentService, ThesisLecturerService]
+  exports: [ThesisService, ThesisStudentService, ThesisLecturerService]
 })
 export class ThesisModule {}

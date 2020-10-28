@@ -1,7 +1,7 @@
-import { ServerResponse } from "http";
-import { StatusCodes } from "http-status-codes";
-import { GetServerSidePropsContext } from "next";
-import Router from "next/router";
+import { ServerResponse } from 'http';
+import { StatusCodes } from 'http-status-codes';
+import { GetServerSidePropsContext } from 'next';
+import Router from 'next/router';
 
 export enum RenderSide {
   SERVER = 1,
