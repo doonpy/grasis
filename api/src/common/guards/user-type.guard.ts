@@ -1,8 +1,8 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 
-import { Payload } from '../../auth/strategies/jwt.strategy';
+import { AuthError } from '../../auth/auth.resource';
 import { UserService } from '../../user/user.service';
 
 @Injectable()
@@ -14,8 +14,13 @@ export class UserTypeGuard implements CanActivate {
     if (!userTypes) {
       return true;
     }
+
     const request = context.switchToHttp().getRequest();
-    const { userId } = request.user as Payload;
+    if (!request.user) {
+      throw new UnauthorizedException(AuthError.ERR_1);
+    }
+
+    const { userId } = request.user;
 
     return this.userService.checkUserTypeById(userId, userTypes);
   }
