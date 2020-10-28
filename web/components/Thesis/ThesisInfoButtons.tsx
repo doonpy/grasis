@@ -1,5 +1,5 @@
-import Icon from '@ant-design/icons';
-import { Button, Space } from 'antd';
+import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Modal, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
@@ -8,6 +8,7 @@ import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import ThesisAdminService from '../../libs/thesis/admin.service';
 import { ThesisStatus } from '../../libs/thesis/thesis.resource';
 import LoginUser from '../../libs/user/instance/LoginUser';
+const { confirm } = Modal;
 
 interface ComponentProps {
   thesisId: number;
@@ -21,19 +22,35 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
   const buttonList: React.FC[] = [];
   const adminService = ThesisAdminService.getInstance();
 
-  const onSwitchStatus = async () => {
-    try {
-      if (switchButtonLoading) {
-        adminService.apiService.cancelPreviousRequest();
-      }
+  const showStatusConfirm = () => {
+    confirm({
+      title:
+        thesisStatus === ThesisStatus.INACTIVE
+          ? ThesisTerminology.THESIS_38
+          : ThesisTerminology.THESIS_39,
+      icon: <ExclamationCircleOutlined />,
+      content:
+        thesisStatus === ThesisStatus.INACTIVE
+          ? ThesisTerminology.THESIS_41
+          : ThesisTerminology.THESIS_40,
+      okText: ThesisTerminology.THESIS_23,
+      cancelText: ThesisTerminology.THESIS_24,
+      cancelButtonProps: { type: 'primary', danger: true },
+      async onOk() {
+        try {
+          if (switchButtonLoading) {
+            adminService.apiService.cancelPreviousRequest();
+          }
 
-      setSwitchButtonLoading(true);
-      const { data } = await adminService.switchStatus(thesisId);
-      setThesisStatus(data.currentStatus);
-    } catch (error) {
-      await adminService.requestErrorHandler(error);
-    }
-    setSwitchButtonLoading(false);
+          setSwitchButtonLoading(true);
+          const { data } = await adminService.switchStatus(thesisId);
+          setThesisStatus(data.currentStatus);
+        } catch (error) {
+          await adminService.requestErrorHandler(error);
+        }
+        setSwitchButtonLoading(false);
+      }
+    });
   };
 
   if (loginUser.isAdmin()) {
@@ -44,7 +61,7 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
           icon={<Icon component={MinusCircleIcon} />}
           danger
           loading={switchButtonLoading}
-          onClick={onSwitchStatus}>
+          onClick={showStatusConfirm}>
           {ThesisTerminology.THESIS_28}
         </Button>
       ));
@@ -56,7 +73,7 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
           type="primary"
           icon={<Icon component={CheckCircleIcon} />}
           loading={switchButtonLoading}
-          onClick={onSwitchStatus}>
+          onClick={showStatusConfirm}>
           {ThesisTerminology.THESIS_29}
         </Button>
       ));

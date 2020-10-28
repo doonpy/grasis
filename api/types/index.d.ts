@@ -1,9 +1,12 @@
 // This file declare global type (for customization)
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Details } from 'express-useragent';
-import { IncomingHttpHeaders } from 'http';
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface IncomingHttpHeaders {}
+
   namespace Express {
     interface User {
       userId: number;
