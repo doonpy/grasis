@@ -79,7 +79,7 @@ export class StudentService {
     studentBody?: StudentRequestBody
   ): Promise<Student> {
     const userEntity = await this.userService.createUser(userBody);
-    userEntity.userType = UserType.LECTURER;
+    userEntity.userType = UserType.STUDENT;
 
     let studentEntity: Student;
     if (studentBody) {

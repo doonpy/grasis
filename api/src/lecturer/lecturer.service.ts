@@ -4,7 +4,6 @@ import { Connection, EntityManager, FindOptionsWhere, Like, Repository } from 't
 
 import { NOT_DELETE_CONDITION } from '../common/common.resource';
 import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
-import { ThesisError } from '../thesis/thesis.resource';
 import { UserRequestBody } from '../user/user.interface';
 import { UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
