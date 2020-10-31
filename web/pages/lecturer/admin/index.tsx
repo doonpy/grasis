@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import LecturerTerminology from '../../../assets/terminology/lecturer.terminology';
 import SearchBox from '../../../components/Common/SearchBox';
 import MainLayout from '../../../components/Layout/MainLayout';
-import { LECTURER_TABLE_COLUMNS } from '../../../components/Lecturer/LecturerColumns';
+import { LecturerTableColumns } from '../../../components/Lecturer/LecturerTableColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../libs/common/common.resource';
 import LecturerAdminService from '../../../libs/lecturer/admin.service';
@@ -61,7 +61,7 @@ const Index: NextPageWithLayout = () => {
       }>
       <Table
         bordered
-        columns={LECTURER_TABLE_COLUMNS}
+        columns={LecturerTableColumns}
         dataSource={data && data.lecturers}
         loading={isLoading}
         pagination={pagination}

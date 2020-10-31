@@ -25,7 +25,15 @@ export default class LoginUser {
     return this.user.isAdmin === IsAdmin.TRUE;
   }
 
-  public getUserType(): UserType {
-    return this.user.userType;
+  public isLecturer(): boolean {
+    return this.user.userType === UserType.LECTURER;
+  }
+
+  public getFirstname(): string {
+    return this.user.firstname;
+  }
+
+  public getLastname(): string {
+    return this.user.lastname;
   }
 }

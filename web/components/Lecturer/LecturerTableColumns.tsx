@@ -37,7 +37,7 @@ function sortByPosition(a: Lecturer, b: Lecturer): number {
   return 0;
 }
 
-export const LECTURER_TABLE_COLUMNS: ColumnsType = [
+export const LecturerTableColumns: ColumnsType = [
   {
     title: '',
     dataIndex: 'id',
@@ -64,7 +64,7 @@ export const LECTURER_TABLE_COLUMNS: ColumnsType = [
       compare: sortByPosition,
       multiple: 7
     },
-    render: (value: string | null) => <TextData text={value} />
+    render: (value: string | null) => <TextData text={value} enableTruncate={true} />
   },
   ...USER_COLUMNS
 ];

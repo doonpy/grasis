@@ -58,7 +58,7 @@ function sortByIsGraduate(a: Student, b: Student): number {
   return 0;
 }
 
-export const STUDENT_TABLE_COLUMNS: ColumnsType = [
+export const StudentTableColumns: ColumnsType = [
   {
     title: '',
     dataIndex: 'id',

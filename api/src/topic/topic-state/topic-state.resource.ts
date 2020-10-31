@@ -4,18 +4,20 @@ export const TOPIC_STATE_TABLE = `${TOPIC_TABLE}_state`;
 
 export const TopicStateColumn = {
   TOPIC_ID: 'topic_id',
-  PROCESSOR: 'processor',
-  COMMENT: 'comment',
+  PROCESSOR_ID: 'processor_id',
+  NOTE: 'note',
   ACTION: 'action'
 };
 
 export enum TopicStateAction {
   NEW = 1,
-  APPROVE,
-  REJECT,
+  APPROVED,
+  REJECTED,
   SEND_BACK,
   WITHDRAW,
-  CONFIRMED
+  CONFIRMED,
+  SEND_REQUEST,
+  CANCELED
 }
 
-export const NEW_STATE_COMMENT = 'Khởi tạo đề tài.';
+export const NEW_STATE_NOTE = 'Khởi tạo đề tài.';

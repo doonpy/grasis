@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import SearchBox from '../../components/Common/SearchBox';
 import MainLayout from '../../components/Layout/MainLayout';
-import { THESIS_TABLE_COLUMNS } from '../../components/Thesis/ThesisTableColumns';
+import { ThesisTableColumns } from '../../components/Thesis/ThesisTableColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../libs/common/common.resource';
 import { THESIS_PATH_ROOT, ThesisPath } from '../../libs/thesis/thesis.resource';
@@ -58,7 +58,7 @@ const Index: NextPageWithLayout = () => {
       }>
       <Table
         bordered
-        columns={THESIS_TABLE_COLUMNS}
+        columns={ThesisTableColumns}
         dataSource={data && data.theses}
         loading={isLoading}
         pagination={pagination}

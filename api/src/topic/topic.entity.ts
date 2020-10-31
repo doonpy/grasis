@@ -8,8 +8,8 @@ import { ThesisEntity } from '../thesis/thesis.entity';
 import { Thesis } from '../thesis/thesis.interface';
 import { TopicStateEntity } from './topic-state/topic-state.entity';
 import { TopicState } from './topic-state/topic-state.interface';
-import { TopicStateColumn } from './topic-state/topic-state.resource';
-import { RegisterStatus, TOPIC_TABLE, TopicColumn, TopicStatus } from './topic.resource';
+import { TopicStateAction, TopicStateColumn } from './topic-state/topic-state.resource';
+import { TOPIC_TABLE, TopicColumn, TopicRegisterStatus } from './topic.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: TOPIC_TABLE })
 export class TopicEntity extends CommonEntity {
@@ -25,8 +25,8 @@ export class TopicEntity extends CommonEntity {
   @Column({ name: TopicColumn.DESCRIPTION, type: 'ntext', nullable: true })
   public description!: string | null;
 
-  @Column({ name: TopicColumn.STATUS, type: 'tinyint', default: TopicStatus.NEW })
-  public status!: TopicStatus;
+  @Column({ name: TopicColumn.STATUS, type: 'tinyint', default: TopicStateAction.NEW })
+  public status!: TopicStateAction;
 
   @Column({ name: TopicColumn.APPROVER_ID, type: 'int' })
   public approverId!: number;
@@ -37,7 +37,11 @@ export class TopicEntity extends CommonEntity {
   @Column({ name: TopicColumn.MAX_STUDENT, type: 'tinyint', default: 2 })
   public maxStudent!: number;
 
-  @Column({ name: TopicColumn.REGISTER_STATUS, type: 'tinyint', default: RegisterStatus.DISABLE })
+  @Column({
+    name: TopicColumn.REGISTER_STATUS,
+    type: 'tinyint',
+    default: TopicRegisterStatus.DISABLE
+  })
   public registerStatus!: number;
 
   @ManyToOne(() => LecturerEntity, (lecturer) => lecturer)

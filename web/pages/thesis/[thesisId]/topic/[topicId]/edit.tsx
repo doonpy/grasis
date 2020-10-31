@@ -4,18 +4,18 @@ import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useEffect, useState } from 'react';
 
-import { ThesisTerminology } from '../../../../assets/terminology/thesis.terminology';
-import { TopicTerminology } from '../../../../assets/terminology/topic.terminology';
-import MainLayout from '../../../../components/Layout/MainLayout';
-import TopicFormItem from '../../../../components/Topic/TopicFormItem';
-import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
-import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import CommonService from '../../../../libs/common/common.service';
-import { THESIS_PATH_ROOT, ThesisPath } from '../../../../libs/thesis/thesis.resource';
-import { TopicRequestBody } from '../../../../libs/topic/topic.interface';
-import { TOPIC_PATH_ROOT, TopicPath } from '../../../../libs/topic/topic.resource';
-import TopicService from '../../../../libs/topic/topic.service';
-import { UserType } from '../../../../libs/user/user.resource';
+import { ThesisTerminology } from '../../../../../assets/terminology/thesis.terminology';
+import { TopicTerminology } from '../../../../../assets/terminology/topic.terminology';
+import MainLayout from '../../../../../components/Layout/MainLayout';
+import TopicFormItem from '../../../../../components/Topic/TopicFormItem';
+import { CommonPageProps, NextPageWithLayout } from '../../../../../libs/common/common.interface';
+import { SIDER_KEYS } from '../../../../../libs/common/common.resource';
+import CommonService from '../../../../../libs/common/common.service';
+import { THESIS_PATH_ROOT, ThesisPath } from '../../../../../libs/thesis/thesis.resource';
+import { TopicRequestBody } from '../../../../../libs/topic/topic.interface';
+import { TOPIC_PATH_ROOT, TopicPath } from '../../../../../libs/topic/topic.resource';
+import TopicService from '../../../../../libs/topic/topic.service';
+import { UserType } from '../../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
   params: PageParams;
@@ -23,11 +23,14 @@ interface PageProps extends CommonPageProps {
 
 interface PageParams extends ParsedUrlQuery {
   thesisId?: string;
+  topicId?: string;
 }
 
-const Index: NextPageWithLayout<PageProps> = ({ params }) => {
+const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const thesisId = parseInt(params.thesisId);
-  const [loading, setLoading] = useState(false);
+  const topicId = parseInt(params.topicId);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [contentLoading, setContentLoading] = useState<boolean>(true);
   const topicService = TopicService.getInstance();
   const [form] = Form.useForm();
 
@@ -36,7 +39,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       setLoading(true);
       const {
         data: { id }
-      } = await topicService.create(thesisId, formValues);
+      } = await topicService.updateById(thesisId, topicId, formValues);
       await topicService.redirectService.redirectTo(
         topicService.replaceParams(TopicPath.SPECIFY, [thesisId, id])
       );
@@ -47,11 +50,19 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   };
 
   useEffect(() => {
-    form.setFieldsValue({ maxStudent: 2 });
+    (async () => {
+      try {
+        const topicForEdit = await topicService.getInitialForEdit(thesisId, topicId);
+        form.setFieldsValue(topicForEdit);
+        setContentLoading(false);
+      } catch (error) {
+        await topicService.requestErrorHandler(error);
+      }
+    })();
   }, []);
 
   return (
-    <Card title={TopicTerminology.TOPIC_1}>
+    <Card title={TopicTerminology.TOPIC_16} loading={contentLoading}>
       <Form
         form={form}
         requiredMark={true}
@@ -91,20 +102,25 @@ export const getStaticPaths: GetStaticPaths<PageParams> = async () => {
 
 export const getStaticProps: GetStaticProps<CommonPageProps, PageParams> = async ({ params }) => {
   const commonService = CommonService.getInstance();
+  const { topicId, thesisId } = params;
 
   return {
     props: {
       params,
-      title: TopicTerminology.TOPIC_1,
+      title: TopicTerminology.TOPIC_16,
       selectedMenu: SIDER_KEYS.THESIS,
       breadcrumbs: [
         { text: ThesisTerminology.THESIS_3, href: THESIS_PATH_ROOT },
         {
           text: ThesisTerminology.THESIS_4,
-          href: commonService.replaceParams(ThesisPath.SPECIFY, [params.thesisId])
+          href: commonService.replaceParams(ThesisPath.SPECIFY, [thesisId])
         },
         { text: TopicTerminology.TOPIC_6, href: TOPIC_PATH_ROOT },
-        { text: TopicTerminology.TOPIC_1 }
+        {
+          text: TopicTerminology.TOPIC_11,
+          href: commonService.replaceParams(TopicPath.SPECIFY, [thesisId, topicId])
+        },
+        { text: TopicTerminology.TOPIC_16 }
       ],
       isAdminCheck: false,
       allowUserTypes: [UserType.LECTURER]
@@ -112,6 +128,6 @@ export const getStaticProps: GetStaticProps<CommonPageProps, PageParams> = async
   };
 };
 
-Index.Layout = MainLayout;
+Edit.Layout = MainLayout;
 
-export default Index;
+export default Edit;

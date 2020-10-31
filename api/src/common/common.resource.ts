@@ -17,6 +17,7 @@ export const CommonQuery = {
 export const CommonParam = {
   ID: 'id'
 };
+
 export const COMMON_ENTITY_OPTIONS: EntityOptions = {
   database: process.env.DB_MSSQL_DATABASE,
   engine: 'InnoDB'

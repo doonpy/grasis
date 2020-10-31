@@ -45,5 +45,6 @@ export const ThesisTerminology = {
   THESIS_38: 'Bạn có chắc muốn kích hoạt khóa luận này?',
   THESIS_39: 'Bạn có chắc muốn ngưng kích hoạt khóa luận này?',
   THESIS_40: 'Mọi hoạt động của khóa luận này sẽ vô hiệu lực.',
-  THESIS_41: 'Mọi hoạt động của khóa luận này sẽ có hiệu lực.'
+  THESIS_41: 'Mọi hoạt động của khóa luận này sẽ có hiệu lực.',
+  THESIS_42: 'Danh sách đề tài'
 };

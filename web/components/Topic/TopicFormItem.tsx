@@ -21,7 +21,7 @@ const TopicFormItem: React.FC<ComponentProps> = ({ isEdit }) => {
         <Input.TextArea rows={5} />
       </Form.Item>
       <Form.Item label={TopicTerminology.TOPIC_5} name="maxStudent">
-        <InputNumber min={1} max={2} defaultValue={2} />
+        <InputNumber min={1} max={2} />
       </Form.Item>
     </>
   );
