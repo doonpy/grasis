@@ -463,10 +463,6 @@ export class TopicService {
       throw new BadRequestException(TopicError.ERR_9);
     }
 
-    if (await this.topicStudentService.hasRegisteredTopic(topicId, studentId)) {
-      throw new BadRequestException(TopicError.ERR_10);
-    }
-
     await this.topicStudentService.registerTopic(topicId, studentId);
   }
 
@@ -479,14 +475,6 @@ export class TopicService {
     const topic = await this.getById(topicId, user);
     if (user.userType !== UserType.LECTURER && topic.creatorId !== user.id) {
       throw new BadRequestException(TopicError.ERR_14);
-    }
-
-    if (!(await this.topicStudentService.hasRegisteredTopic(topicId, studentId))) {
-      throw new BadRequestException(TopicError.ERR_12);
-    }
-
-    if (await this.topicStudentService.hasParticipatedAnotherTopic(topicId, studentId)) {
-      throw new BadRequestException(TopicError.ERR_15);
     }
 
     const topicStudent = await this.topicStudentService.getOne(topicId, studentId);

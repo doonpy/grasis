@@ -1,6 +1,6 @@
 import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Descriptions, message, Modal } from 'antd';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
 import MinusCircleIcon from '../../assets/svg/regular/minus-circle.svg';
@@ -37,16 +37,22 @@ const TopicInfo: React.FC<ComponentProps> = ({
 }) => {
   const topicService = TopicService.getInstance();
   const loginUser = LoginUser.getInstance();
+  const [registerStatusState, setRegisterStatusState] = useState<TopicRegisterStatus>(
+    registerStatus
+  );
+  const [canRegister, setCanRegister] = useState<boolean>(
+    !topicService.hasStudentParticipated(students)
+  );
 
   const onConfirmChangeRegisterStatus = async () => {
     confirm({
       title:
-        registerStatus === TopicRegisterStatus.DISABLE
+        registerStatusState === TopicRegisterStatus.DISABLE
           ? TopicTerminology.TOPIC_34
           : TopicTerminology.TOPIC_36,
       icon: <ExclamationCircleOutlined />,
       content:
-        registerStatus === TopicRegisterStatus.DISABLE
+        registerStatusState === TopicRegisterStatus.DISABLE
           ? TopicTerminology.TOPIC_35
           : TopicTerminology.TOPIC_37,
       okText: TopicTerminology.TOPIC_19,
@@ -55,9 +61,11 @@ const TopicInfo: React.FC<ComponentProps> = ({
       async onOk() {
         try {
           await topicService.changeRegisterStatus(thesisId, id);
-          if (registerStatus === TopicRegisterStatus.DISABLE) {
+          if (registerStatusState === TopicRegisterStatus.DISABLE) {
+            setRegisterStatusState(TopicRegisterStatus.ENABLE);
             message.success(TopicTerminology.TOPIC_47);
           } else {
+            setRegisterStatusState(TopicRegisterStatus.DISABLE);
             message.success(TopicTerminology.TOPIC_48);
           }
         } catch (error) {
@@ -78,6 +86,7 @@ const TopicInfo: React.FC<ComponentProps> = ({
       async onOk() {
         try {
           await topicService.registerTopic(thesisId, id, loginUser.getId());
+          setCanRegister(false);
           message.success(TopicTerminology.TOPIC_45);
         } catch (error) {
           await topicService.requestErrorHandler(error);
@@ -91,7 +100,7 @@ const TopicInfo: React.FC<ComponentProps> = ({
       return <></>;
     }
 
-    if (registerStatus === TopicRegisterStatus.DISABLE) {
+    if (registerStatusState === TopicRegisterStatus.DISABLE) {
       return (
         <Button
           type="primary"
@@ -116,9 +125,9 @@ const TopicInfo: React.FC<ComponentProps> = ({
   const registerTopicButton = () => {
     if (
       loginUser.isStudent() &&
-      !topicService.hasStudentParticipated(students) &&
+      canRegister &&
       status === TopicStateAction.APPROVED &&
-      registerStatus === TopicRegisterStatus.ENABLE
+      registerStatusState === TopicRegisterStatus.ENABLE
     ) {
       return (
         <Button
@@ -130,6 +139,14 @@ const TopicInfo: React.FC<ComponentProps> = ({
       );
     }
   };
+
+  useEffect(() => {
+    setRegisterStatusState(registerStatus);
+  }, [registerStatus]);
+
+  useEffect(() => {
+    setCanRegister(!topicService.hasStudentParticipated(students));
+  }, [topicService.hasStudentParticipated(students)]);
 
   return (
     <Descriptions

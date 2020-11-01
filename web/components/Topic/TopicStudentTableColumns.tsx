@@ -2,13 +2,13 @@ import Icon, { ExclamationCircleOutlined, FileTextTwoTone } from '@ant-design/ic
 import { Button, message, Modal, Space } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import CheckIcon from '../../assets/svg/regular/check.svg';
 import MinusIcon from '../../assets/svg/regular/minus.svg';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import UserTerminology from '../../assets/terminology/user.terminology';
-import { sortByCreatedAt } from '../../libs/common/common.helper';
+import { sortByUpdatedAt } from '../../libs/common/common.helper';
 import CommonService from '../../libs/common/common.service';
 import { sortByStudentId } from '../../libs/student/student.helper';
 import { StudentPath } from '../../libs/student/student.resource';
@@ -37,10 +37,14 @@ function actionRender({
   studentId,
   status
 }: TopicStudent): JSX.Element {
+  const [disableButton, setDisableButton] = useState<TopicStudentStatus>(status);
   const topicService = TopicService.getInstance();
   const onConfirmChangeStudentRegisterStatus: (status: TopicStudentStatus) => void = (status) => {
     confirm({
-      title: TopicTerminology.TOPIC_31,
+      title:
+        status === TopicStudentStatus.APPROVED
+          ? TopicTerminology.TOPIC_49
+          : TopicTerminology.TOPIC_50,
       icon: <ExclamationCircleOutlined />,
       okText: TopicTerminology.TOPIC_19,
       cancelText: TopicTerminology.TOPIC_20,
@@ -49,12 +53,17 @@ function actionRender({
         try {
           await topicService.changeStudentRegisterStatus(thesisId, topicId, studentId, status);
           message.success(TopicTerminology.TOPIC_43);
+          setDisableButton(status);
         } catch (error) {
           await topicService.requestErrorHandler(error);
         }
       }
     });
   };
+
+  useEffect(() => {
+    setDisableButton(status);
+  }, [status]);
 
   return (
     <Space size="middle">
@@ -63,7 +72,7 @@ function actionRender({
         type="primary"
         icon={<Icon component={CheckIcon} />}
         onClick={() => onConfirmChangeStudentRegisterStatus(TopicStudentStatus.APPROVED)}
-        disabled={status !== TopicStudentStatus.PENDING}
+        disabled={disableButton !== TopicStudentStatus.PENDING}
       />
       <Button
         shape="circle"
@@ -71,7 +80,7 @@ function actionRender({
         icon={<Icon component={MinusIcon} />}
         danger
         onClick={() => onConfirmChangeStudentRegisterStatus(TopicStudentStatus.REJECTED)}
-        disabled={status !== TopicStudentStatus.PENDING}
+        disabled={disableButton !== TopicStudentStatus.PENDING}
       />
     </Space>
   );
@@ -125,10 +134,10 @@ export const TopicStudentTableColumns: ColumnsType<TopicStudent> = [
   },
   {
     title: TopicTerminology.TOPIC_42,
-    key: 'createdAt',
-    dataIndex: 'createdAt',
+    key: 'updatedAt',
+    dataIndex: 'updatedAt',
     sorter: {
-      compare: sortByCreatedAt,
+      compare: sortByUpdatedAt,
       multiple: 4
     },
     render: (value: string) => <DateData date={value} isRelative={true} />

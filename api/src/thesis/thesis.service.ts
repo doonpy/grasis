@@ -315,7 +315,6 @@ export class ThesisService {
   @Cron('0 0 * * *', { timeZone: 'UTC' })
   public async switchStateCron(): Promise<void> {
     Logger.log('Switch thesis state...');
-
     const current = moment.utc();
     const theses = await this.thesisRepository.find({
       where: {
@@ -332,7 +331,6 @@ export class ThesisService {
     }
 
     await this.thesisRepository.save(theses);
-
     Logger.log('Switch thesis state... Done!');
   }
 

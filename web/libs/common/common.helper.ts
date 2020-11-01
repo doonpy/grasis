@@ -13,3 +13,15 @@ export function sortByCreatedAt(a: CommonColumns, b: CommonColumns): number {
 
   return 0;
 }
+
+export function sortByUpdatedAt(a: CommonColumns, b: CommonColumns): number {
+  if (moment(a.updatedAt).isBefore(b.updatedAt)) {
+    return -1;
+  }
+
+  if (moment(b.updatedAt).isBefore(a.updatedAt)) {
+    return 1;
+  }
+
+  return 0;
+}
