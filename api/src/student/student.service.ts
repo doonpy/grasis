@@ -176,9 +176,11 @@ export class StudentService {
       return [];
     }
 
+    const requiredConditions = { ...NOT_DELETE_CONDITION, isGraduate: IsGraduate.FALSE };
     const conditions: FindOptionsWhere<Student> = [];
     if (searchTypes && searchTypes.includes(StudentSearchType.STUDENT_ID)) {
       conditions.push({
+        ...requiredConditions,
         studentId: Like(`%${keyword}%`),
         user: { ...NOT_DELETE_CONDITION, status: UserStatus.ACTIVE }
       });
@@ -186,6 +188,7 @@ export class StudentService {
 
     if (searchTypes && searchTypes.includes(StudentSearchType.FULL_NAME)) {
       conditions.push({
+        ...requiredConditions,
         user: {
           ...NOT_DELETE_CONDITION,
           firstname: Like(`%${keyword}%`),
@@ -193,6 +196,7 @@ export class StudentService {
         }
       });
       conditions.push({
+        ...requiredConditions,
         user: {
           ...NOT_DELETE_CONDITION,
           lastname: Like(`%${keyword}%`),
@@ -203,7 +207,7 @@ export class StudentService {
 
     if (searchTypes && searchTypes.includes(StudentSearchType.STUDENT_CLASS)) {
       conditions.push({
-        ...NOT_DELETE_CONDITION,
+        ...requiredConditions,
         studentClass: Like(`%${keyword}%`),
         user: { status: UserStatus.ACTIVE }
       });
@@ -211,7 +215,7 @@ export class StudentService {
 
     if (searchTypes && searchTypes.includes(StudentSearchType.SCHOOL_YEAR)) {
       conditions.push({
-        ...NOT_DELETE_CONDITION,
+        ...requiredConditions,
         schoolYear: Like(`%${keyword}%`)
       });
     }
