@@ -49,5 +49,6 @@ export const TopicTerminology = {
   TOPIC_47: 'Mở đăng ký đề tài thành công.',
   TOPIC_48: 'Đóng đăng ký đề tài thành công.',
   TOPIC_49: 'Bạn có chắc muốn chấp nhận sinh viên này?',
-  TOPIC_50: 'Bạn có chắc muốn từ chối sinh viên này?'
+  TOPIC_50: 'Bạn có chắc muốn từ chối sinh viên này?',
+  TOPIC_51: 'Số lượt đăng ký'
 };

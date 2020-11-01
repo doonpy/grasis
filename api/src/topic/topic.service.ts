@@ -146,7 +146,7 @@ export class TopicService {
     };
 
     return this.topicRepository.find({
-      relations: { creator: { user: {} }, students: {} },
+      relations: { creator: { user: {} } },
       where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
