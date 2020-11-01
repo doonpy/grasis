@@ -8,6 +8,7 @@ export const TopicColumn = {
   STATUS: 'status',
   APPROVER_ID: 'approver_id',
   MAX_STUDENT: 'max_student',
+  CURRENT_STUDENT: 'current_student',
   REGISTER_STATUS: 'register_status'
 };
 
@@ -22,7 +23,9 @@ export const TopicPath = {
   WITH_THESIS: '/:thesisId',
   SPECIFY: ':id',
   CHANGE_STATUS: ':id/change-status',
-  CHANGE_REGISTER_STATUS: ':id/change-register-status'
+  CHANGE_REGISTER_STATUS: ':id/change-register-status',
+  REGISTER_TOPIC: ':id/register-topic/:studentId',
+  CHANGE_STUDENT_REGISTER_STATUS: ':id/register-topic/:studentId/change'
 };
 
 export const TopicError = {
@@ -33,9 +36,17 @@ export const TopicError = {
   ERR_5: 'Đề tài không tồn tại.',
   ERR_6: 'Bạn không có quyền tương tác với đề tài này.',
   ERR_7: 'Trạng thái phê duyệt không hợp lệ.',
-  ERR_8: 'Đề tài này chưa được chấp nhận.'
+  ERR_8: 'Đề tài này chưa được chấp nhận.',
+  ERR_9: 'Đề tài này đã đủ số lượng sinh viên tham gia thực hiện.',
+  ERR_10: 'Bạn đã đăng ký đề tài này rồi.',
+  ERR_11: 'Hiện tại không nằm trong thời hạn sinh viên đăng ký đề tài.',
+  ERR_12: 'Sinh viên chưa đăng ký đề tài này.',
+  ERR_13: 'Đề tài này hiện không mở đăng ký.',
+  ERR_14: 'Bạn không có quyền thực hiện thao tác này.',
+  ERR_15: 'Sinh viên đã đăng ký đề tài khác.'
 };
 
 export const TopicParam = {
-  THESIS_ID: 'thesisId'
+  THESIS_ID: 'thesisId',
+  STUDENT_ID: 'studentId'
 };

@@ -1,6 +1,6 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, In, Repository } from 'typeorm';
+import { EntityManager, In, Not, Repository } from 'typeorm';
 
 import { NOT_DELETE_CONDITION } from '../../common/common.resource';
 import { StudentSearchAttendee } from '../../student/student.interface';
@@ -43,6 +43,7 @@ export class ThesisStudentService {
 
   public async getStudentParticipatedThesisByIdsWithTransaction(
     manager: EntityManager,
+    thesisId: number,
     ids: number[]
   ): Promise<ThesisStudent[]> {
     if (ids.length === 0) {
@@ -52,6 +53,7 @@ export class ThesisStudentService {
     return manager.find(ThesisStudentEntity, {
       where: {
         studentId: In(ids),
+        thesisId: Not(thesisId),
         thesis: { status: ThesisStatus.ACTIVE },
         student: { user: { ...NOT_DELETE_CONDITION } },
         ...NOT_DELETE_CONDITION
@@ -134,7 +136,7 @@ export class ThesisStudentService {
   ): Promise<void> {
     const students = await this.studentService.findByIdsWithTransaction(manager, studentIds);
     const participatedThesisStudentIds = (
-      await this.getStudentParticipatedThesisByIdsWithTransaction(manager, studentIds)
+      await this.getStudentParticipatedThesisByIdsWithTransaction(manager, thesis.id, studentIds)
     ).map(({ studentId }) => studentId);
     const thesisStudents: ThesisStudent[] = [];
     for (const studentId of studentIds) {

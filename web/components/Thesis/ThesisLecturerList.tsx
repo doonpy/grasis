@@ -52,12 +52,14 @@ const ThesisLecturerList: React.FC<ComponentPros> = ({ initLecturers, initIsMore
 
   return (
     <List
+      loading={loadMoreLoading}
       itemLayout="horizontal"
       dataSource={lecturers}
       loadMore={isMore && loadMoreButton()}
       renderItem={(lecturer: ThesisLecturer) => (
         <ThesisLecturersListItem thesisLecturer={lecturer} />
       )}
+      rowKey={(record: ThesisLecturer) => record.lecturerId.toString()}
     />
   );
 };

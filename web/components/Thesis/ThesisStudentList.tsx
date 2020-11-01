@@ -52,6 +52,7 @@ const ThesisStudentList: React.FC<ComponentPros> = ({ initStudents, initIsMore, 
 
   return (
     <List
+      loading={loadMoreLoading}
       itemLayout="horizontal"
       dataSource={students}
       loadMore={isMore && loadMoreButton()}

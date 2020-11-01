@@ -28,7 +28,7 @@ export class TopicStateService {
   public async deleteByIdsWithTransaction(
     manager: EntityManager,
     ids: number[],
-    deletedAt?: Date
+    deletedAt = new Date()
   ): Promise<void> {
     await manager.update(TopicStateEntity, { id: In(ids) }, { deletedAt });
   }

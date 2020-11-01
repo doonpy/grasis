@@ -10,8 +10,8 @@ export const ThesisTerminology = {
   THESIS_3: 'Danh sách khóa luận',
   THESIS_4: 'Chi tiết khóa luận',
   THESIS_5: 'Các cá nhân liên quan',
-  THESIS_6: 'Danh sách giảng viên tham gia',
-  THESIS_7: 'Danh sách sinh viên tham gia',
+  THESIS_6: 'Danh sách giảng viên hướng dẫn',
+  THESIS_7: 'Danh sách sinh viên thực hiện',
   THESIS_8: 'Xem thêm',
   THESIS_9: 'Thông tin về khóa luận',
   THESIS_10: 'Tiêu đề',
@@ -46,5 +46,7 @@ export const ThesisTerminology = {
   THESIS_39: 'Bạn có chắc muốn ngưng kích hoạt khóa luận này?',
   THESIS_40: 'Mọi hoạt động của khóa luận này sẽ vô hiệu lực.',
   THESIS_41: 'Mọi hoạt động của khóa luận này sẽ có hiệu lực.',
-  THESIS_42: 'Danh sách đề tài'
+  THESIS_42: 'Danh sách đề tài',
+  THESIS_43: 'Kích hoạt thành công.',
+  THESIS_44: 'Ngưng kích hoạt thành công.'
 };

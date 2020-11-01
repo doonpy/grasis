@@ -293,7 +293,7 @@ export class ThesisService {
       return ThesisState.LECTURER_TOPIC_REGISTER;
     }
 
-    if (currentDate.isBetween(studentTopicRegister, lecturerTopicRegister, 'day', '[)')) {
+    if (currentDate.isBetween(lecturerTopicRegister, studentTopicRegister, 'day', '[)')) {
       return ThesisState.STUDENT_TOPIC_REGISTER;
     }
 

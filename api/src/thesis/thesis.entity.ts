@@ -4,6 +4,9 @@ import { CommonEntity } from '../common/common.entity';
 import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
 import { LecturerEntity } from '../lecturer/lecturer.entity';
 import { Lecturer } from '../lecturer/lecturer.interface';
+import { TopicEntity } from '../topic/topic.entity';
+import { Topic } from '../topic/topic.interface';
+import { TopicColumn } from '../topic/topic.resource';
 import { ThesisLecturerEntity } from './thesis-lecturer/thesis-lecturer.entity';
 import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.interface';
 import { ThesisLecturerColumn } from './thesis-lecturer/thesis-lecturer.resource';
@@ -67,4 +70,8 @@ export class ThesisEntity extends CommonEntity {
   })
   @JoinColumn({ name: ThesisColumn.CREATOR_ID, referencedColumnName: CommonColumn.ID })
   public creator!: Lecturer | null;
+
+  @OneToMany(() => TopicEntity, ({ thesis }) => thesis)
+  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: TopicColumn.THESIS_ID })
+  public topics!: Topic[];
 }

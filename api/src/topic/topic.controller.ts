@@ -27,11 +27,14 @@ import { ThesisPermissionGuard } from '../thesis/guards/thesis-permission.guard'
 import { UserService } from '../user/user.service';
 import { TopicLecturerRegisterGuard } from './guards/topic-lecturer-register.guard';
 import { TopicPermissionGuard } from './guards/topic-permission.guard';
+import { TopicStudentRegisterGuard } from './guards/topic-student-register.guard';
 import { ParseTopicChangeStatusPipe } from './pipes/parse-topic-change-status.pipe';
+import { ParseTopicChangeStudentRegisterStatusPipe } from './pipes/parse-topic-change-student-register-status.pipe';
 import { ParseTopicRequestBodyPipe } from './pipes/parse-topic-request-body.pipe';
 import {
   Topic,
   TopicChangeStatusRequestBody,
+  TopicChangeStudentRegisterStatusRequestBody,
   TopicCreateOrUpdateResponse,
   TopicGetByIdResponse,
   TopicGetManyResponse,
@@ -41,6 +44,7 @@ import { TopicParam, TopicPath } from './topic.resource';
 import { TopicService } from './topic.service';
 import {
   topicChangeActionValidationSchema,
+  topicChangeStudentRegisterStatusValidationSchema,
   topicCreateValidationSchema,
   topicUpdateValidationSchema
 } from './topic.validation';
@@ -199,7 +203,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_REGISTER_STATUS)
-  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
   public async changeRegisterStatus(
     @Param(
       CommonParam.ID,
@@ -213,5 +217,57 @@ export class TopicController {
     const loginUserId = req.user?.userId as number;
     const loginUser = await this.userService.findById(loginUserId);
     await this.topicService.changeRegisterStatus(id, loginUser);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post(TopicPath.REGISTER_TOPIC)
+  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
+  public async registerTopic(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number,
+    @Param(
+      TopicParam.STUDENT_ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    studentId: number
+  ): Promise<void> {
+    await this.topicService.registerTopic(id, studentId);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post(TopicPath.CHANGE_STUDENT_REGISTER_STATUS)
+  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
+  public async changStudentRegisterStatus(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number,
+    @Param(
+      TopicParam.STUDENT_ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    studentId: number,
+    @Body(
+      new JoiValidationPipe(topicChangeStudentRegisterStatusValidationSchema),
+      ParseTopicChangeStudentRegisterStatusPipe
+    )
+    body: TopicChangeStudentRegisterStatusRequestBody,
+    @Request() req: Express.Request
+  ): Promise<void> {
+    const loginUserId = req.user?.userId as number;
+    const loginUser = await this.userService.findById(loginUserId);
+    await this.topicService.changeStudentRegisterStatus(loginUser, id, studentId, body.status);
   }
 }

@@ -4,12 +4,15 @@ import { Connection, FindOptionsWhere, In, Like, Repository } from 'typeorm';
 
 import { NOT_DELETE_CONDITION } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
+import { StudentService } from '../student/student.service';
 import { ThesisService } from '../thesis/thesis.service';
 import { User } from '../user/user.interface';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { NEW_STATE_NOTE, TopicStateAction } from './topic-state/topic-state.resource';
 import { TopicStateService } from './topic-state/topic-state.service';
+import { TopicStudentStatus } from './topic-student/topic-student.resouce';
+import { TopicStudentService } from './topic-student/topic-student.service';
 import { TopicEntity } from './topic.entity';
 import { Topic, TopicChangeStatusRequestBody, TopicRequestBody } from './topic.interface';
 import { TopicError, TopicRegisterStatus } from './topic.resource';
@@ -22,7 +25,9 @@ export class TopicService {
     private readonly userService: UserService,
     private readonly topicStateService: TopicStateService,
     private readonly lecturerService: LecturerService,
-    private readonly connection: Connection
+    private readonly connection: Connection,
+    private readonly topicStudentService: TopicStudentService,
+    private readonly studentService: StudentService
   ) {}
 
   public async create(thesisId: number, topicBody: TopicRequestBody): Promise<Topic> {
@@ -81,7 +86,7 @@ export class TopicService {
     };
 
     return this.topicRepository.find({
-      relations: { creator: { user: {} }, states: {} },
+      relations: { creator: { user: {} }, thesis: {} },
       where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
@@ -113,7 +118,7 @@ export class TopicService {
     };
 
     return this.topicRepository.find({
-      relations: { creator: { user: {} }, states: {} },
+      relations: { creator: { user: {} }, thesis: {} },
       where: keyword
         ? [
             { ...ownerConditions, subject: Like(`%${keyword}%`) },
@@ -141,7 +146,7 @@ export class TopicService {
     };
 
     return this.topicRepository.find({
-      relations: { creator: { user: {} }, states: {} },
+      relations: { creator: { user: {} }, students: {} },
       where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
@@ -257,6 +262,14 @@ export class TopicService {
       topic.states = await this.topicStateService.getMany(topic.id);
     }
 
+    if (
+      loginUser.isAdmin === IsAdmin.TRUE ||
+      loginUser.id === topic.creatorId ||
+      loginUser.userType === UserType.STUDENT
+    ) {
+      topic.students = await this.topicStudentService.getMany(topic.id);
+    }
+
     return topic;
   }
 
@@ -310,6 +323,7 @@ export class TopicService {
       const deletedAt = new Date();
       const stateIds = currentTopic.states.map(({ id }) => id);
       await this.topicStateService.deleteByIdsWithTransaction(manager, stateIds, deletedAt);
+      await this.topicStudentService.deleteByTopicIdsWithTransaction(manager, topicId, deletedAt);
       await manager.update(TopicEntity, { id: topicId }, { deletedAt });
     });
   }
@@ -417,6 +431,10 @@ export class TopicService {
 
   public async changeRegisterStatus(topicId: number, user: User): Promise<void> {
     const topic = await this.getById(topicId, user);
+    if (topic.creatorId !== user.id) {
+      throw new BadRequestException(TopicError.ERR_6);
+    }
+
     if (topic.status !== TopicStateAction.APPROVED) {
       throw new BadRequestException(TopicError.ERR_8);
     }
@@ -428,5 +446,88 @@ export class TopicService {
     }
 
     await this.topicRepository.save(topic);
+  }
+
+  public async registerTopic(topicId: number, studentId: number): Promise<void> {
+    const student = await this.studentService.findById(studentId);
+    const topic = await this.getById(topicId, student.user);
+    if (topic.status !== TopicStateAction.APPROVED) {
+      throw new BadRequestException(TopicError.ERR_8);
+    }
+
+    if (topic.registerStatus === TopicRegisterStatus.DISABLE) {
+      throw new BadRequestException(TopicError.ERR_13);
+    }
+
+    if (topic.currentStudent === topic.maxStudent) {
+      throw new BadRequestException(TopicError.ERR_9);
+    }
+
+    if (await this.topicStudentService.hasRegisteredTopic(topicId, studentId)) {
+      throw new BadRequestException(TopicError.ERR_10);
+    }
+
+    await this.topicStudentService.registerTopic(topicId, studentId);
+  }
+
+  public async changeStudentRegisterStatus(
+    user: User,
+    topicId: number,
+    studentId: number,
+    status: TopicStudentStatus
+  ): Promise<void> {
+    const topic = await this.getById(topicId, user);
+    if (user.userType !== UserType.LECTURER && topic.creatorId !== user.id) {
+      throw new BadRequestException(TopicError.ERR_14);
+    }
+
+    if (!(await this.topicStudentService.hasRegisteredTopic(topicId, studentId))) {
+      throw new BadRequestException(TopicError.ERR_12);
+    }
+
+    if (await this.topicStudentService.hasParticipatedAnotherTopic(topicId, studentId)) {
+      throw new BadRequestException(TopicError.ERR_15);
+    }
+
+    const topicStudent = await this.topicStudentService.getOne(topicId, studentId);
+    if (
+      status === TopicStudentStatus.PENDING ||
+      status === topicStudent.status ||
+      topicStudent.status !== TopicStudentStatus.PENDING
+    ) {
+      throw new BadRequestException(TopicError.ERR_7);
+    }
+
+    if (status === TopicStudentStatus.APPROVED) {
+      const anotherTopicIds = (await this.getManyByThesisId(topic.thesisId))
+        .map(({ id }) => id)
+        .filter((id) => id !== topicId);
+
+      await this.connection.transaction(async (manager) => {
+        await this.topicStudentService.changeRegisterStatusWithTransaction(
+          manager,
+          topicId,
+          studentId,
+          status
+        );
+        await this.topicStudentService.rejectAnotherRegisterTopicWithTransaction(
+          manager,
+          anotherTopicIds,
+          studentId
+        );
+      });
+    } else {
+      await this.topicStudentService.changeRegisterStatus(topicId, studentId, status);
+    }
+  }
+
+  private async getManyByThesisId(thesisId: number): Promise<Topic[]> {
+    return this.topicRepository.find({
+      where: {
+        ...NOT_DELETE_CONDITION,
+        thesisId
+      },
+      cache: true
+    });
   }
 }

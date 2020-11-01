@@ -5,6 +5,8 @@ import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import LoginUser from '../user/instance/LoginUser';
 import { TopicStateAction } from './topic-state/topic-state.resource';
+import { TopicStudent } from './topic-student/topic-student.interface';
+import { TopicStudentStatus } from './topic-student/topic-student.resource';
 import {
   Topic,
   TopicCreateOrUpdateResponse,
@@ -116,5 +118,36 @@ export default class TopicService extends CommonService {
   public async changeRegisterStatus(thesisId: number, topicId: number): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
     await this.apiService.post(TopicApi.CHANGE_REGISTER_STATUS, {}, [thesisId, topicId]);
+  }
+
+  public async registerTopic(thesisId: number, topicId: number, studentId: number): Promise<void> {
+    await this.apiService.bindAuthorizationForClient();
+    await this.apiService.post(TopicApi.REGISTER_TOPIC, {}, [thesisId, topicId, studentId]);
+  }
+
+  public hasStudentParticipated(students: TopicStudent[]): boolean {
+    const loginUserId = LoginUser.getInstance().getId();
+
+    return (
+      students.findIndex(
+        ({ studentId, status }) =>
+          loginUserId === studentId &&
+          (status === TopicStudentStatus.APPROVED || status === TopicStudentStatus.PENDING)
+      ) !== -1
+    );
+  }
+
+  public async changeStudentRegisterStatus(
+    thesisId: number,
+    topicId: number,
+    studentId: number,
+    status: TopicStudentStatus
+  ): Promise<void> {
+    await this.apiService.bindAuthorizationForClient();
+    await this.apiService.post(TopicApi.CHANGE_STUDENT_REGISTER_STATUS, { status }, [
+      thesisId,
+      topicId,
+      studentId
+    ]);
   }
 }

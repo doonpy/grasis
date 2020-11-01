@@ -1,7 +1,8 @@
 export const STUDENT_ADMIN_PATH_ROOT = '/student/admin';
 export const STUDENT_PATH_ROOT = '/student';
-export const STUDENT_PATH = {
-  CREATE: `${STUDENT_ADMIN_PATH_ROOT}/create`
+export const StudentPath = {
+  CREATE: `${STUDENT_ADMIN_PATH_ROOT}/create`,
+  SPECIFY: `${STUDENT_PATH_ROOT}/@0`
 };
 
 export const STUDENT_API_ROOT = '/students';

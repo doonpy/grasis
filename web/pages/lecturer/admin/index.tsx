@@ -11,7 +11,7 @@ import { LecturerTableColumns } from '../../../components/Lecturer/LecturerTable
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../libs/common/common.resource';
 import LecturerAdminService from '../../../libs/lecturer/admin.service';
-import { LECTURER_PATH } from '../../../libs/lecturer/lecturer.resource';
+import { LecturerPath } from '../../../libs/lecturer/lecturer.resource';
 import { UserType } from '../../../libs/user/user.resource';
 
 const Index: NextPageWithLayout = () => {
@@ -48,7 +48,7 @@ const Index: NextPageWithLayout = () => {
       extra={
         <Space size="large">
           <SearchBox onSearch={onSearch} />
-          <Link href={LECTURER_PATH.CREATE}>
+          <Link href={LecturerPath.CREATE}>
             <Button
               type="primary"
               shape="circle"

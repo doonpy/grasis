@@ -36,4 +36,8 @@ export default class LoginUser {
   public getLastname(): string {
     return this.user.lastname;
   }
+
+  public isStudent(): boolean {
+    return this.user.userType === UserType.STUDENT;
+  }
 }

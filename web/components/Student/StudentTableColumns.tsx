@@ -4,7 +4,12 @@ import { ColumnsType } from 'antd/es/table';
 import Link from 'next/link';
 import React from 'react';
 
-import { Student } from '../../libs/student/student.interface';
+import {
+  sortByClass,
+  sortByIsGraduate,
+  sortBySchoolYear,
+  sortByStudentId
+} from '../../libs/student/student.helper';
 import { STUDENT_ADMIN_PATH_ROOT } from '../../libs/student/student.resource';
 import TextData from '../Common/TextData';
 import { USER_COLUMNS } from '../User/UserColumns';
@@ -16,46 +21,6 @@ function idRender(id: number): JSX.Element {
       <Button ghost type="primary" shape="circle" icon={<FileTextTwoTone />} />
     </Link>
   );
-}
-
-function sortByStudentId(a: Student, b: Student): number {
-  if (a.studentId < b.studentId) {
-    return -1;
-  }
-  if (a.studentId > b.studentId) {
-    return 1;
-  }
-  return 0;
-}
-
-function sortBySchoolYear(a: Student, b: Student): number {
-  if (a.schoolYear < b.schoolYear) {
-    return -1;
-  }
-  if (a.schoolYear > b.schoolYear) {
-    return 1;
-  }
-  return 0;
-}
-
-function sortByClass(a: Student, b: Student): number {
-  if (a.studentClass < b.studentClass) {
-    return -1;
-  }
-  if (a.studentClass > b.studentClass) {
-    return 1;
-  }
-  return 0;
-}
-
-function sortByIsGraduate(a: Student, b: Student): number {
-  if (a.isGraduate < b.isGraduate) {
-    return -1;
-  }
-  if (a.isGraduate > b.isGraduate) {
-    return 1;
-  }
-  return 0;
 }
 
 export const StudentTableColumns: ColumnsType = [

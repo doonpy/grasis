@@ -1,5 +1,5 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Comment, Input, Modal } from 'antd';
+import { Comment, Input, message, Modal } from 'antd';
 import React, { useState } from 'react';
 
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
@@ -38,6 +38,7 @@ const TopicChangeStatus: React.FC<ComponentProps> = ({
         try {
           await topicService.changeStatus(thesisId, id, action, note);
           setNote('');
+          message.success(TopicTerminology.TOPIC_44);
         } catch (error) {
           await topicService.requestErrorHandler(error);
         }

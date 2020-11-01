@@ -4,6 +4,7 @@ import { Lecturer } from '../lecturer/lecturer.interface';
 import { Thesis } from '../thesis/thesis.interface';
 import { TopicState } from './topic-state/topic-state.interface';
 import { TopicStateAction } from './topic-state/topic-state.resource';
+import { TopicStudent } from './topic-student/topic-student.interface';
 import { TopicRegisterStatus } from './topic.resource';
 
 export interface Topic extends CommonColumns {
@@ -20,6 +21,7 @@ export interface Topic extends CommonColumns {
   approver: Lecturer;
   thesis: Thesis;
   states: TopicState[];
+  students: TopicStudent[];
 }
 
 export interface TopicCreateOrUpdateResponse extends CommonResponse {

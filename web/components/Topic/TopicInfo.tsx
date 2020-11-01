@@ -1,9 +1,10 @@
-import Icon, { ExclamationCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Descriptions, Modal, Space } from 'antd';
+import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Descriptions, message, Modal } from 'antd';
 import React from 'react';
 
 import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
 import MinusCircleIcon from '../../assets/svg/regular/minus-circle.svg';
+import SignInAltIcon from '../../assets/svg/regular/sign-in-alt.svg';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
 import { Topic } from '../../libs/topic/topic.interface';
@@ -30,7 +31,8 @@ const TopicInfo: React.FC<ComponentProps> = ({
     status,
     creatorId,
     thesisId,
-    id
+    id,
+    students
   }
 }) => {
   const topicService = TopicService.getInstance();
@@ -53,6 +55,30 @@ const TopicInfo: React.FC<ComponentProps> = ({
       async onOk() {
         try {
           await topicService.changeRegisterStatus(thesisId, id);
+          if (registerStatus === TopicRegisterStatus.DISABLE) {
+            message.success(TopicTerminology.TOPIC_47);
+          } else {
+            message.success(TopicTerminology.TOPIC_48);
+          }
+        } catch (error) {
+          await topicService.requestErrorHandler(error);
+        }
+      }
+    });
+  };
+
+  const onConfirmRegisterTopic = async () => {
+    confirm({
+      title: TopicTerminology.TOPIC_39,
+      icon: <ExclamationCircleOutlined />,
+      content: TopicTerminology.TOPIC_40,
+      okText: TopicTerminology.TOPIC_19,
+      cancelText: TopicTerminology.TOPIC_20,
+      cancelButtonProps: { type: 'primary', danger: true },
+      async onOk() {
+        try {
+          await topicService.registerTopic(thesisId, id, loginUser.getId());
+          message.success(TopicTerminology.TOPIC_45);
         } catch (error) {
           await topicService.requestErrorHandler(error);
         }
@@ -87,16 +113,33 @@ const TopicInfo: React.FC<ComponentProps> = ({
     }
   };
 
+  const registerTopicButton = () => {
+    if (
+      loginUser.isStudent() &&
+      !topicService.hasStudentParticipated(students) &&
+      status === TopicStateAction.APPROVED &&
+      registerStatus === TopicRegisterStatus.ENABLE
+    ) {
+      return (
+        <Button
+          type="primary"
+          icon={<Icon component={SignInAltIcon} />}
+          onClick={onConfirmRegisterTopic}>
+          {TopicTerminology.TOPIC_38}
+        </Button>
+      );
+    }
+  };
+
   return (
     <Descriptions
       title={
-        <Space>
-          <InfoCircleOutlined />
-          {TopicTerminology.TOPIC_12}
-        </Space>
+        <div>
+          {registerTopicButton()}
+          {changeRegisterStatusButton()}
+        </div>
       }
-      column={4}
-      extra={changeRegisterStatusButton()}>
+      column={4}>
       <Descriptions.Item label={<b>{TopicTerminology.TOPIC_2}</b>} span={4}>
         <TextData text={subject} />
       </Descriptions.Item>

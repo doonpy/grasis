@@ -11,7 +11,7 @@ import { StudentTableColumns } from '../../../components/Student/StudentTableCol
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../libs/common/common.resource';
 import StudentAdminService from '../../../libs/student/admin.service';
-import { STUDENT_PATH } from '../../../libs/student/student.resource';
+import { StudentPath } from '../../../libs/student/student.resource';
 import { UserType } from '../../../libs/user/user.resource';
 
 const Index: NextPageWithLayout = () => {
@@ -48,7 +48,7 @@ const Index: NextPageWithLayout = () => {
       extra={
         <Space size="large">
           <SearchBox onSearch={onSearch} />
-          <Link href={STUDENT_PATH.CREATE}>
+          <Link href={StudentPath.CREATE}>
             <Button
               type="primary"
               shape="circle"

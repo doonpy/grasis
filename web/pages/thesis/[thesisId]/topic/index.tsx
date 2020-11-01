@@ -13,7 +13,7 @@ import { TopicTableColumns } from '../../../../components/Topic/TopicTableColumn
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../../libs/common/common.resource';
 import CommonService from '../../../../libs/common/common.service';
-import { THESIS_PATH_ROOT, ThesisPath } from '../../../../libs/thesis/thesis.resource';
+import { THESIS_PATH_ROOT, ThesisPath, ThesisState } from '../../../../libs/thesis/thesis.resource';
 import { TopicPath } from '../../../../libs/topic/topic.resource';
 import TopicService from '../../../../libs/topic/topic.service';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
@@ -29,6 +29,7 @@ interface PageParams extends ParsedUrlQuery {
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const thesisId: number = parseInt(params.thesisId as string);
+  const loginUser = LoginUser.getInstance();
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: DEFAULT_PAGE_SIZE,
@@ -57,17 +58,19 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       extra={
         <Space size="large">
           <SearchBox onSearch={onSearch} />
-          {LoginUser.getInstance().isLecturer() && (
-            <Link href={topicService.replaceParams(TopicPath.CREATE, [thesisId])}>
-              <Button
-                type="primary"
-                shape="circle"
-                icon={<PlusOutlined />}
-                size="large"
-                disabled={isLoading}
-              />
-            </Link>
-          )}
+          {loginUser.isLecturer() &&
+            data &&
+            data.topics[0].thesis.state === ThesisState.LECTURER_TOPIC_REGISTER && (
+              <Link href={topicService.replaceParams(TopicPath.CREATE, [thesisId])}>
+                <Button
+                  type="primary"
+                  shape="circle"
+                  icon={<PlusOutlined />}
+                  size="large"
+                  disabled={isLoading}
+                />
+              </Link>
+            )}
         </Space>
       }>
       <Table

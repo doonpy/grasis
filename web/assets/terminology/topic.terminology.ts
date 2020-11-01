@@ -35,5 +35,17 @@ export const TopicTerminology = {
   TOPIC_34: 'Bạn có chắc muốn mở đăng ký đề tài?',
   TOPIC_35: 'Sinh viên có thể đăng ký đề tài sau khi thao tác này được thực hiện thành công.',
   TOPIC_36: 'Bạn có chắc muốn đóng đăng ký đề tài?',
-  TOPIC_37: 'Sinh viên không thể đăng ký đề tài sau khi thao tác này được thực hiện thành công.'
+  TOPIC_37: 'Sinh viên không thể đăng ký đề tài sau khi thao tác này được thực hiện thành công.',
+  TOPIC_38: 'Đăng ký đề tài',
+  TOPIC_39: 'Bạn chắc chắn muốn đăng ký đề tài này?',
+  TOPIC_40:
+    'Bạn không thể đăng ký đề tài nào khác cho đến khi giảng viên hướng dẫn đề tài này từ chối.',
+  TOPIC_41: 'Trạng thái sinh viên đăng ký',
+  TOPIC_42: 'Ngày đăng ký',
+  TOPIC_43: 'Phê duyệt đăng ký thành công.',
+  TOPIC_44: 'Thao tác thành công.',
+  TOPIC_45: 'Đăng ký đề tài thành công.',
+  TOPIC_46: 'Danh sách sinh viên đăng ký đề tài',
+  TOPIC_47: 'Mở đăng ký đề tài thành công.',
+  TOPIC_48: 'Đóng đăng ký đề tài thành công.'
 };

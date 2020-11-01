@@ -1,5 +1,4 @@
-import { LockOutlined } from '@ant-design/icons';
-import { Descriptions, Space } from 'antd';
+import { Descriptions } from 'antd';
 import React from 'react';
 
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
@@ -52,14 +51,7 @@ const TopicPrivateInfo: React.FC<ComponentProps> = ({ topic }) => {
   };
 
   return (
-    <Descriptions
-      title={
-        <Space>
-          <LockOutlined />
-          {TopicTerminology.TOPIC_13}
-        </Space>
-      }
-      column={4}>
+    <Descriptions column={4}>
       <Descriptions.Item label={<b>{TopicTerminology.TOPIC_14}</b>} span={2}>
         <LecturerInfo lecturer={approver} />
       </Descriptions.Item>

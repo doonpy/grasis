@@ -1,5 +1,5 @@
 import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Modal, Space } from 'antd';
+import { Button, message, Modal, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
@@ -63,6 +63,11 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
           setSwitchButtonLoading(true);
           const { data } = await adminService.switchStatus(thesisId);
           setThesisStatus(data.currentStatus);
+          if (thesisStatus === ThesisStatus.INACTIVE) {
+            message.success(ThesisTerminology.THESIS_43);
+          } else {
+            message.success(ThesisTerminology.THESIS_44);
+          }
         } catch (error) {
           await adminService.requestErrorHandler(error);
         }
@@ -103,7 +108,7 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
   }, [status]);
 
   return (
-    <Space>
+    <Space size="middle">
       {buttonList.map((ButtonItem, index) => (
         <ButtonItem key={index} />
       ))}

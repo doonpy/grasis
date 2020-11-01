@@ -9,6 +9,9 @@ import { Thesis } from '../thesis/thesis.interface';
 import { TopicStateEntity } from './topic-state/topic-state.entity';
 import { TopicState } from './topic-state/topic-state.interface';
 import { TopicStateAction, TopicStateColumn } from './topic-state/topic-state.resource';
+import { TopicStudentEntity } from './topic-student/topic_student.entity';
+import { TopicStudent } from './topic-student/topic-student.interface';
+import { TopicStudentColumn } from './topic-student/topic-student.resouce';
 import { TOPIC_TABLE, TopicColumn, TopicRegisterStatus } from './topic.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: TOPIC_TABLE })
@@ -37,6 +40,9 @@ export class TopicEntity extends CommonEntity {
   @Column({ name: TopicColumn.MAX_STUDENT, type: 'tinyint', default: 2 })
   public maxStudent!: number;
 
+  @Column({ name: TopicColumn.CURRENT_STUDENT, type: 'tinyint', default: 0 })
+  public currentStudent!: number;
+
   @Column({
     name: TopicColumn.REGISTER_STATUS,
     type: 'tinyint',
@@ -59,4 +65,8 @@ export class TopicEntity extends CommonEntity {
   @OneToMany(() => TopicStateEntity, ({ topic }) => topic, { cascade: true })
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: TopicStateColumn.TOPIC_ID })
   public states!: TopicState[];
+
+  @OneToMany(() => TopicStudentEntity, ({ topic }) => topic)
+  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: TopicStudentColumn.TOPIC_ID })
+  public students!: TopicStudent[];
 }

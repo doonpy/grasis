@@ -1,14 +1,22 @@
-import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Modal, Space } from 'antd';
+import Icon, {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  InfoCircleOutlined
+} from '@ant-design/icons';
+import { Button, Card, Modal, Space, Tabs } from 'antd';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 
+import ChalkBoardTeacherIcon from '../../../assets/svg/regular/chalkboard-teacher.svg';
+import UsersClassIcon from '../../../assets/svg/regular/users-class.svg';
 import { ThesisTerminology } from '../../../assets/terminology/thesis.terminology';
 import MainLayout from '../../../components/Layout/MainLayout';
-import ThesisAttendeesInfo from '../../../components/Thesis/ThesisAttendeesInfo';
 import ThesisInfo from '../../../components/Thesis/ThesisInfo';
+import ThesisLecturerList from '../../../components/Thesis/ThesisLecturerList';
+import ThesisStudentList from '../../../components/Thesis/ThesisStudentList';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../libs/common/common.resource';
 import ThesisAdminService from '../../../libs/thesis/admin.service';
@@ -29,6 +37,7 @@ const { confirm } = Modal;
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const thesisService = ThesisService.getInstance();
+  const loginUser = LoginUser.getInstance();
   const thesisId = parseInt(params.thesisId);
   const { data, isLoading } = thesisService.useThesis(thesisId);
   const adminService = ThesisAdminService.getInstance();
@@ -57,7 +66,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       loading={isLoading}
       title={ThesisTerminology.THESIS_4}
       extra={
-        LoginUser.getInstance().isAdmin() && (
+        loginUser.isAdmin() && (
           <Space>
             <Link href={thesisService.replaceParams(ThesisPath.EDIT, [thesisId])}>
               <Button
@@ -81,16 +90,46 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
         )
       }>
       {data && (
-        <Space direction="vertical" size="large">
-          <ThesisInfo thesis={data.thesis} />
-          <ThesisAttendeesInfo
-            thesisId={thesisId}
-            initLecturers={data.thesis.lecturers}
-            initStudents={data.thesis.students}
-            initIsMoreLecturers={data.isMoreLecturers}
-            initIsMoreStudents={data.isMoreStudents}
-          />
-        </Space>
+        <Tabs defaultActiveKey="1">
+          <Tabs.TabPane
+            tab={
+              <span>
+                <InfoCircleOutlined />
+                {ThesisTerminology.THESIS_9}
+              </span>
+            }
+            key="1">
+            <ThesisInfo thesis={data.thesis} />
+          </Tabs.TabPane>
+          <Tabs.TabPane
+            tab={
+              <span>
+                <Icon component={ChalkBoardTeacherIcon} />
+                {ThesisTerminology.THESIS_6}
+              </span>
+            }
+            key="2">
+            <ThesisLecturerList
+              thesisId={thesisId}
+              initLecturers={data.thesis.lecturers}
+              initIsMore={data.isMoreLecturers}
+            />
+          </Tabs.TabPane>
+          <Tabs.TabPane
+            tab={
+              <span>
+                <Icon component={UsersClassIcon} />
+                {ThesisTerminology.THESIS_7}
+              </span>
+            }
+            key="3">
+            <ThesisStudentList
+              thesisId={thesisId}
+              initStudents={data.thesis.students}
+              initIsMore={data.isMoreStudents}
+            />
+          </Tabs.TabPane>
+        </Tabs>
       )}
     </Card>
   );

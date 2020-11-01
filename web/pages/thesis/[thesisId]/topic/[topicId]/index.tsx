@@ -1,5 +1,12 @@
-import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Modal, Space } from 'antd';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  InfoCircleOutlined,
+  LockOutlined,
+  UnorderedListOutlined
+} from '@ant-design/icons';
+import { Button, Card, Modal, Space, Tabs } from 'antd';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
@@ -10,12 +17,14 @@ import { TopicTerminology } from '../../../../../assets/terminology/topic.termin
 import MainLayout from '../../../../../components/Layout/MainLayout';
 import TopicInfo from '../../../../../components/Topic/TopicInfo';
 import TopicPrivateInfo from '../../../../../components/Topic/TopicPrivateInfo';
+import TopicStudentInfo from '../../../../../components/Topic/TopicStudentsInfo';
 import { CommonPageProps, NextPageWithLayout } from '../../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../../libs/common/common.resource';
 import CommonService from '../../../../../libs/common/common.service';
 import { THESIS_PATH_ROOT, ThesisPath } from '../../../../../libs/thesis/thesis.resource';
 import { TOPIC_PATH_ROOT, TopicPath } from '../../../../../libs/topic/topic.resource';
 import TopicService from '../../../../../libs/topic/topic.service';
+import LoginUser from '../../../../../libs/user/instance/LoginUser';
 import { UserType } from '../../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
@@ -31,6 +40,7 @@ const { confirm } = Modal;
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const topicService = TopicService.getInstance();
+  const loginUser = LoginUser.getInstance();
   const thesisId = parseInt(params.thesisId);
   const topicId = parseInt(params.topicId);
   const { data, isLoading } = topicService.useTopic(thesisId, topicId);
@@ -86,10 +96,39 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
         )
       }>
       {data && (
-        <Space direction="vertical" size="large">
-          <TopicInfo topic={data.topic} />
-          <TopicPrivateInfo topic={data.topic} />
-        </Space>
+        <Tabs defaultActiveKey="1">
+          <Tabs.TabPane
+            tab={
+              <span>
+                <InfoCircleOutlined />
+                {TopicTerminology.TOPIC_12}
+              </span>
+            }
+            key="1">
+            <TopicInfo topic={data.topic} />
+          </Tabs.TabPane>
+          <Tabs.TabPane
+            tab={
+              <span>
+                <UnorderedListOutlined />
+                {TopicTerminology.TOPIC_46}
+              </span>
+            }
+            key="2">
+            <TopicStudentInfo students={data.topic.students} creatorId={data.topic.creatorId} />
+          </Tabs.TabPane>
+          <Tabs.TabPane
+            tab={
+              <span>
+                <LockOutlined />
+                {TopicTerminology.TOPIC_13}
+              </span>
+            }
+            key="3"
+            disabled={loginUser.isStudent()}>
+            <TopicPrivateInfo topic={data.topic} />
+          </Tabs.TabPane>
+        </Tabs>
       )}
     </Card>
   );

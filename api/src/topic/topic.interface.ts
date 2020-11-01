@@ -1,5 +1,6 @@
 import { CommonColumns, CommonResponse } from '../common/common.interface';
 import { TopicStateAction } from './topic-state/topic-state.resource';
+import { TopicStudentStatus } from './topic-student/topic-student.resouce';
 import { TopicEntity } from './topic.entity';
 
 export type Topic = TopicEntity;
@@ -44,4 +45,12 @@ export interface TopicChangeStatusRequestBody {
 
 export type RawTopicChangeStatusRequestBody = {
   [K in keyof TopicChangeStatusRequestBody]?: string;
+};
+
+export interface TopicChangeStudentRegisterStatusRequestBody {
+  status: TopicStudentStatus;
+}
+
+export type RawTopicChangeStudentRegisterStatusRequestBody = {
+  [K in keyof TopicChangeStudentRegisterStatusRequestBody]?: string;
 };
