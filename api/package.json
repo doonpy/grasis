@@ -12,7 +12,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build:after": "node after-build",
-    "build": "nest build && npm run build:after",
+    "build": "nest build && yarn build:after",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -21,9 +21,9 @@
     "prune:dependencies": "npm prune --production",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
     "typeorm:staging": "DB_TYPE=staging node --require ts-node/register ./node_modules/typeorm/cli.js",
-    "typeorm:sync-local": "npm run typeorm -- schema:sync -f src/orm-configs/local.json",
-    "typeorm:sync-dev": "npm run typeorm -- schema:sync -f src/orm-configs/dev.json",
-    "typeorm:sync-prod": "npm run typeorm -- schema:sync -f src/orm-configs/prod.json"
+    "typeorm:sync-local": "yarn typeorm schema:sync -f src/orm-configs/local.json",
+    "typeorm:sync-dev": "yarn typeorm schema:sync -f src/orm-configs/dev.json",
+    "typeorm:sync-prod": "yarn typeorm schema:sync -f src/orm-configs/prod.json"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
