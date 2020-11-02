@@ -154,8 +154,7 @@ export const getStaticProps: GetStaticProps<CommonPageProps> = async ({ params }
       ],
       isAdminCheck: false,
       allowUserTypes: [UserType.LECTURER, UserType.STUDENT]
-    },
-
+    }
   };
 };
 

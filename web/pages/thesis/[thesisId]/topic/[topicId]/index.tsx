@@ -115,7 +115,12 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               </span>
             }
             key="2">
-            <TopicStudentInfo students={data.topic.students} creatorId={data.topic.creatorId} />
+            <TopicStudentInfo
+              students={data.topic.students}
+              creatorId={data.topic.creatorId}
+              maxStudent={data.topic.maxStudent}
+              currentStudent={data.topic.currentStudent}
+            />
           </Tabs.TabPane>
           <Tabs.TabPane
             tab={

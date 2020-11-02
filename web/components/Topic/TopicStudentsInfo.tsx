@@ -5,6 +5,8 @@ import React from 'react';
 import BanIcon from '../../assets/svg/regular/ban.svg';
 import CheckIcon from '../../assets/svg/regular/check.svg';
 import SigmaIcon from '../../assets/svg/regular/sigma.svg';
+import UserPlusIcon from '../../assets/svg/regular/user-plus.svg';
+import UsersClassIcon from '../../assets/svg/regular/users-class.svg';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { DEFAULT_PAGE_SIZE } from '../../libs/common/common.resource';
 import { TopicStudent } from '../../libs/topic/topic-student/topic-student.interface';
@@ -15,9 +17,16 @@ import { TopicStudentTableColumns } from './TopicStudentTableColumns';
 interface ComponentProps {
   students: TopicStudent[];
   creatorId: number;
+  maxStudent: number;
+  currentStudent: number;
 }
 
-const TopicStudentInfo: React.FC<ComponentProps> = ({ students, creatorId }) => {
+const TopicStudentInfo: React.FC<ComponentProps> = ({
+  students,
+  creatorId,
+  maxStudent,
+  currentStudent
+}) => {
   const pagination = {
     current: 1,
     pageSize: DEFAULT_PAGE_SIZE,
@@ -40,9 +49,15 @@ const TopicStudentInfo: React.FC<ComponentProps> = ({ students, creatorId }) => 
       .length;
     const rejectAmount = students.filter(({ status }) => status === TopicStudentStatus.REJECTED)
       .length;
+    const remainAmount = maxStudent - currentStudent;
 
     return (
       <Space size="large" split={<Divider type="vertical" />}>
+        <Statistic
+          title={TopicTerminology.TOPIC_5}
+          prefix={<Icon component={UsersClassIcon} />}
+          value={maxStudent}
+        />
         <Statistic
           title={TopicTerminology.TOPIC_51}
           prefix={<Icon component={SigmaIcon} />}
@@ -59,6 +74,12 @@ const TopicStudentInfo: React.FC<ComponentProps> = ({ students, creatorId }) => 
           prefix={<Icon component={BanIcon} />}
           valueStyle={{ color: '#cf1322' }}
           value={rejectAmount}
+        />
+        <Statistic
+          title={TopicTerminology.TOPIC_53}
+          valueStyle={remainAmount === 0 ? { color: '#cf1322' } : { color: '#3f8600' }}
+          prefix={<Icon component={UserPlusIcon} />}
+          value={remainAmount}
         />
       </Space>
     );

@@ -28,6 +28,7 @@ const TopicInfo: React.FC<ComponentProps> = ({
     maxStudent,
     creator,
     registerStatus,
+    currentStudent,
     status,
     creatorId,
     thesisId,
@@ -163,8 +164,11 @@ const TopicInfo: React.FC<ComponentProps> = ({
       <Descriptions.Item label={<b>{TopicTerminology.TOPIC_7}</b>} span={4}>
         <LecturerInfo lecturer={creator} />
       </Descriptions.Item>
-      <Descriptions.Item label={<b>{TopicTerminology.TOPIC_5}</b>} span={2}>
+      <Descriptions.Item label={<b>{TopicTerminology.TOPIC_5}</b>} span={1}>
         {maxStudent}
+      </Descriptions.Item>
+      <Descriptions.Item label={<b>{TopicTerminology.TOPIC_52}</b>} span={1}>
+        {currentStudent}
       </Descriptions.Item>
       <Descriptions.Item label={<b>{TopicTerminology.TOPIC_9}</b>} span={2}>
         <TopicRegisterStatusRender registerStatus={registerStatus} />

@@ -16,6 +16,7 @@ export interface Topic extends CommonColumns {
   approverId: number;
   thesisId: number;
   maxStudent: number;
+  currentStudent: number;
   registerStatus: TopicRegisterStatus;
   creator: Lecturer;
   approver: Lecturer;

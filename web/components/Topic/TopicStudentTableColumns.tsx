@@ -8,7 +8,7 @@ import CheckIcon from '../../assets/svg/regular/check.svg';
 import MinusIcon from '../../assets/svg/regular/minus.svg';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import UserTerminology from '../../assets/terminology/user.terminology';
-import { sortByUpdatedAt } from '../../libs/common/common.helper';
+import { sortByCreatedAt } from '../../libs/common/common.helper';
 import CommonService from '../../libs/common/common.service';
 import { sortByStudentId } from '../../libs/student/student.helper';
 import { StudentPath } from '../../libs/student/student.resource';
@@ -134,10 +134,10 @@ export const TopicStudentTableColumns: ColumnsType<TopicStudent> = [
   },
   {
     title: TopicTerminology.TOPIC_42,
-    key: 'updatedAt',
-    dataIndex: 'updatedAt',
+    key: 'createdAt',
+    dataIndex: 'createdAt',
     sorter: {
-      compare: sortByUpdatedAt,
+      compare: sortByCreatedAt,
       multiple: 4
     },
     render: (value: string) => <DateData date={value} isRelative={true} />

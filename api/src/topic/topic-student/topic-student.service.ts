@@ -48,6 +48,7 @@ export class TopicStudentService {
       await this.topicStudentRepository.save(topicStudentEntity);
     } else {
       topicStudent.status = TopicStudentStatus.PENDING;
+      topicStudent.createdAt = new Date();
       await this.topicStudentRepository.save(topicStudent);
     }
   }
