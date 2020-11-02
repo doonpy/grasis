@@ -52,10 +52,6 @@ export class LecturerService {
     return (await this.lecturerRepository.count({ lecturerId, ...notDeleteCondition })) > 0;
   }
 
-  public async isLecturerExistById(id: number): Promise<boolean> {
-    return (await this.lecturerRepository.count({ id, ...notDeleteCondition })) > 0;
-  }
-
   public async checkLecturerNotExistByLecturerId(lecturerId: string): Promise<void> {
     if (await this.isLecturerExistByLecturerId(lecturerId)) {
       throw new BadRequestException(LecturerError.ERR_2);

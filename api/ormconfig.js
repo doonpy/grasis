@@ -7,13 +7,13 @@ let configs;
 function getConfigs() {
   switch (process.env.DB_TYPE) {
     case DatabaseType.STAGING:
-      configs = require('./dist/orm-configs/dev.json');
+      configs = require('./orm-configs/staging.json');
       break;
     case DatabaseType.PRODUCTION:
-      configs = require('./dist/orm-configs/prod.json');
+      configs = require('./orm-configs/prod.json');
       break;
     default:
-      configs = require('./src/orm-configs/local.json');
+      configs = require('./orm-configs/local.json');
       break;
   }
 
