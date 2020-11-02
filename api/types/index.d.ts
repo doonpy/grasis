@@ -20,6 +20,7 @@ declare global {
       };
       params?: {
         id?: string;
+        thesisId?: string;
       };
       body?: any;
       user?: User;

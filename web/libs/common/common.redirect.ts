@@ -4,8 +4,8 @@ import { GetServerSidePropsContext } from 'next';
 import Router from 'next/router';
 
 export enum RenderSide {
-  SERVER = 0,
-  CLIENT = 1
+  SERVER = 1,
+  CLIENT
 }
 
 export default class CommonRedirect {

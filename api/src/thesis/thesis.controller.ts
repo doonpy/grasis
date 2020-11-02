@@ -65,7 +65,7 @@ export class ThesisController {
   ): Promise<ThesisGetManyResponse> {
     const loginUserId = req.user.userId;
     const theses: Thesis[] = await this.thesisService.getMany(offset, limit, loginUserId, keyword);
-    const total: number = await this.thesisService.getAmount();
+    const total: number = await this.thesisService.getAmount(loginUserId, keyword);
 
     return {
       statusCode: HttpStatus.OK,
@@ -85,7 +85,7 @@ export class ThesisController {
     )
     id: number
   ): Promise<ThesisGetByIdResponse> {
-    const thesis = await this.thesisService.getById(id);
+    const thesis = await this.thesisService.getById(id, true);
     const isMoreLecturers = await this.thesisLecturerService.isLoadMoreLecturersOfThesis(thesis.id);
     const isMoreStudents = await this.thesisStudentService.isLoadMoreStudentsOfThesis(thesis.id);
 

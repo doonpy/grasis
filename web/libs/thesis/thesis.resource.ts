@@ -1,6 +1,7 @@
 export const THESIS_PATH_ROOT = '/thesis';
 
-export const THESIS_PATH = {
+export const ThesisPath = {
+  SPECIFY: `${THESIS_PATH_ROOT}/@0`,
   CREATE: `${THESIS_PATH_ROOT}/admin/create`,
   EDIT: `${THESIS_PATH_ROOT}/admin/@0/edit`
 };

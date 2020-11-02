@@ -14,6 +14,7 @@ import { getDatabaseConfig } from './mssql/mssql.helper';
 import { RefreshModule } from './refresh/refresh.module';
 import { StudentModule } from './student/student.module';
 import { ThesisModule } from './thesis/thesis.module';
+import { TopicModule } from './topic/topic.module';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
 
@@ -46,7 +47,8 @@ function getEnvFilePath(): string {
     UploadModule,
     AvatarModule,
     RefreshModule,
-    ThesisModule
+    ThesisModule,
+    TopicModule
   ],
   controllers: [AppController],
   providers: [AppService]

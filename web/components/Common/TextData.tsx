@@ -3,13 +3,19 @@ import React from 'react';
 
 interface ComponentProps {
   text?: string | null;
+  enableTruncate?: boolean;
+  isParagraph?: boolean;
 }
 
 const TRUNCATE_LIMIT = 50;
 
 function truncateString(str?: string): string {
   if (!str) {
-    return null;
+    return 'NULL';
+  }
+
+  if (typeof str !== 'string') {
+    return str;
   }
 
   if (str.length <= TRUNCATE_LIMIT) {
@@ -19,8 +25,24 @@ function truncateString(str?: string): string {
   return `${str.slice(0, TRUNCATE_LIMIT)}...`;
 }
 
-const TextData: React.FC<ComponentProps> = ({ text }) => {
-  return <Typography.Text disabled={!text}>{truncateString(text) ?? 'NULL'}</Typography.Text>;
+const TextData: React.FC<ComponentProps> = ({ text, enableTruncate, isParagraph }) => {
+  if (enableTruncate) {
+    text = truncateString(text);
+  }
+
+  if (isParagraph && typeof text === 'string') {
+    const paragraphs = text.split(/\r|\n/g);
+
+    return (
+      <div>
+        {paragraphs.map((paragraph, index) => (
+          <Typography.Paragraph key={index}>{paragraph}</Typography.Paragraph>
+        ))}
+      </div>
+    );
+  }
+
+  return <Typography.Text disabled={!text || text === 'NULL'}>{text || 'NULL'}</Typography.Text>;
 };
 
 export default TextData;

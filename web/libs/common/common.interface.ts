@@ -21,6 +21,7 @@ export interface CommonResponse {
 export interface CommonColumns {
   createdAt: string;
   updatedAt: string;
+  deletedAt: string;
 }
 
 export interface Layout<P> {

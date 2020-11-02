@@ -1,3 +1,4 @@
+import { CommonColumns } from '../../../api/src/common/common.interface';
 import { CommonResponse } from '../common/common.interface';
 import { Gender, IsAdmin, UserStatus, UserType } from './user.resource';
 
@@ -21,7 +22,7 @@ export interface UserRequestBody extends Partial<Omit<User, 'id'>> {
   confirmPassword?: string;
 }
 
-export type UserViewType = Omit<User, 'password' | 'deletedAt' | 'userType'>;
+export type UserViewType = Omit<User, keyof CommonColumns | 'password' | 'userType'>;
 export interface FindUserByIdResponse extends CommonResponse {
   user: User;
 }

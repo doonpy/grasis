@@ -7,7 +7,3 @@ export interface ThesisLecturer {
   thesis: Thesis;
   lecturer: Lecturer;
 }
-
-export interface ThesisLecturerRequestBody {
-  lecturers: string[];
-}

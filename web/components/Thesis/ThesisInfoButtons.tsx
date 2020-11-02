@@ -1,12 +1,14 @@
 import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Modal, Space } from 'antd';
+import { Button, message, Modal, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
+import ListAltIcon from '../../assets/svg/regular/list-alt.svg';
 import MinusCircleIcon from '../../assets/svg/regular/minus-circle.svg';
 import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import ThesisAdminService from '../../libs/thesis/admin.service';
 import { ThesisStatus } from '../../libs/thesis/thesis.resource';
+import { TOPIC_PATH_ROOT } from '../../libs/topic/topic.resource';
 import LoginUser from '../../libs/user/instance/LoginUser';
 const { confirm } = Modal;
 
@@ -19,8 +21,24 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
   const [switchButtonLoading, setSwitchButtonLoading] = useState<boolean>(false);
   const [thesisStatus, setThesisStatus] = useState<ThesisStatus>(status);
   const loginUser = LoginUser.getInstance();
-  const buttonList: React.FC[] = [];
   const adminService = ThesisAdminService.getInstance();
+  const buttonList: React.FC[] = [
+    () => (
+      <Button
+        type="primary"
+        icon={<Icon component={ListAltIcon} />}
+        loading={switchButtonLoading}
+        onClick={onClickTopicsButton}>
+        {ThesisTerminology.THESIS_42}
+      </Button>
+    )
+  ];
+
+  const onClickTopicsButton = async () => {
+    await adminService.redirectService.redirectTo(
+      adminService.replaceParams(TOPIC_PATH_ROOT, [thesisId])
+    );
+  };
 
   const showStatusConfirm = () => {
     confirm({
@@ -45,6 +63,11 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
           setSwitchButtonLoading(true);
           const { data } = await adminService.switchStatus(thesisId);
           setThesisStatus(data.currentStatus);
+          if (thesisStatus === ThesisStatus.INACTIVE) {
+            message.success(ThesisTerminology.THESIS_43);
+          } else {
+            message.success(ThesisTerminology.THESIS_44);
+          }
         } catch (error) {
           await adminService.requestErrorHandler(error);
         }
@@ -85,7 +108,7 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
   }, [status]);
 
   return (
-    <Space>
+    <Space size="middle">
       {buttonList.map((ButtonItem, index) => (
         <ButtonItem key={index} />
       ))}

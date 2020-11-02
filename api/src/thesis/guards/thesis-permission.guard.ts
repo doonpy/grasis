@@ -1,8 +1,8 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { AuthError } from '../../auth/auth.resource';
 import { IsAdmin } from '../../user/user.resource';
 import { UserService } from '../../user/user.service';
+import { ThesisError } from '../thesis.resource';
 import { ThesisService } from '../thesis.service';
 
 @Injectable()
@@ -14,18 +14,21 @@ export class ThesisPermissionGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Express.CustomRequest>();
-    if (!request.user) {
-      throw new UnauthorizedException(AuthError.ERR_1);
+    const { userId } = request.user!;
+    let thesisId: number | undefined = undefined;
+    if (request.params && request.params.id) {
+      thesisId = parseInt(request.params.id);
     }
 
-    if (!request.params || !request.params.id) {
-      return false;
+    if (request.params && request.params.thesisId) {
+      thesisId = parseInt(request.params.thesisId);
     }
 
-    const { userId } = request.user;
-    const thesisId = parseInt(request.params.id);
+    if (!thesisId) {
+      throw new BadRequestException(ThesisError.ERR_8);
+    }
+
     const loginUser = await this.userService.findById(userId);
-
     if (loginUser.isAdmin === IsAdmin.TRUE) {
       return true;
     }

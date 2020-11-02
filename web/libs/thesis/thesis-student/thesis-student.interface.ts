@@ -12,7 +12,3 @@ export interface ThesisStudent {
   student: Student;
   thesis: Thesis;
 }
-
-export interface ThesisStudentRequestBody {
-  students: string[];
-}

@@ -1,9 +1,10 @@
+import { CommonColumns } from '../common/common.interface';
 import { UserEntity } from './user.entity';
 
 export type User = UserEntity;
 
 export type UserRequestBody = WithOptional<
-  User,
+  Omit<User, keyof CommonColumns | 'id'>,
   | 'password'
   | 'firstname'
   | 'lastname'
@@ -12,11 +13,7 @@ export type UserRequestBody = WithOptional<
   | 'address'
   | 'phone'
   | 'userType'
-  | 'id'
-  | 'deletedAt'
   | 'status'
-  | 'createdAt'
-  | 'updatedAt'
 > & {
   confirmPassword?: string;
 };

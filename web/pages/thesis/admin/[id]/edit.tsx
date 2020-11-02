@@ -38,7 +38,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const [initStudentSelectedKeys, setInitStudentSelectedKeys] = useState<string[]>([]);
   const [initLecturerSelectedKeys, setInitLecturerSelectedKeys] = useState<string[]>([]);
   const [thesis, setThesis] = useState<ThesisRequestBody>(undefined);
-  const thesisId: number = parseInt(params.id as string);
+  const thesisId = parseInt(params.id as string);
   const [form] = Form.useForm();
   const adminService = ThesisAdminService.getInstance();
 
