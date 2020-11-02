@@ -12,7 +12,7 @@ import {
   Repository
 } from 'typeorm';
 
-import { NOT_DELETE_CONDITION } from '../common/common.resource';
+import { notDeleteCondition } from '../common/common.resource';
 import { LecturerError } from '../lecturer/lecturer.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { StudentError } from '../student/student.resource';
@@ -63,71 +63,22 @@ export class ThesisService {
     return [];
   }
 
-  private async getManyForAdmin(
-    offset: number,
-    limit: number,
-    keyword?: string
-  ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
-    if (keyword) {
-      conditions = this.getSearchConditions(keyword);
+  public async getAmount(loginUserId: number, keyword?: string): Promise<number> {
+    const loginUser = await this.userService.findById(loginUserId);
+
+    if (loginUser.isAdmin === IsAdmin.TRUE) {
+      return this.getAmountForAdmin(keyword);
     }
 
-    return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
-      where: conditions ? conditions : { ...NOT_DELETE_CONDITION },
-      skip: offset,
-      take: limit,
-      cache: true
-    });
-  }
-
-  private async getManyForLecturer(
-    userId: number,
-    offset: number,
-    limit: number,
-    keyword?: string
-  ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
-    if (keyword) {
-      conditions = this.getSearchConditions(keyword, UserType.LECTURER, userId);
+    if (loginUser.userType === UserType.LECTURER) {
+      return this.getAmountForLecturer(loginUserId, keyword);
     }
 
-    return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
-      where: conditions
-        ? conditions
-        : { ...NOT_DELETE_CONDITION, lecturers: { lecturer: { id: userId } } },
-      skip: offset,
-      take: limit,
-      cache: true
-    });
-  }
-
-  private async getManyForStudent(
-    userId: number,
-    offset: number,
-    limit: number,
-    keyword?: string
-  ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> | undefined = undefined;
-    if (keyword) {
-      conditions = this.getSearchConditions(keyword, UserType.STUDENT, userId);
+    if (loginUser.userType === UserType.STUDENT) {
+      return this.getAmountForStudent(loginUserId, keyword);
     }
 
-    return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
-      where: conditions
-        ? conditions
-        : { ...NOT_DELETE_CONDITION, students: { student: { id: userId } } },
-      skip: offset,
-      take: limit,
-      cache: true
-    });
-  }
-
-  public async getAmount(): Promise<number> {
-    return this.thesisRepository.count();
+    return 0;
   }
 
   public async create(data: ThesisRequestBody): Promise<Thesis> {
@@ -187,6 +138,286 @@ export class ThesisService {
     }
 
     return await this.thesisRepository.save(thesisEntity);
+  }
+
+  public async getById(id: number, withAttendees = false): Promise<Thesis> {
+    const thesis = await this.thesisRepository.findOne(id, {
+      relations: { creator: { user: {} } },
+      where: { ...notDeleteCondition }
+    });
+    if (!thesis) {
+      throw new BadRequestException(ThesisError.ERR_7);
+    }
+
+    if (withAttendees) {
+      thesis.lecturers = await this.thesisLecturerService.getThesisLecturersForView(thesis.id);
+      thesis.students = await this.thesisStudentService.getThesisStudentsForView(thesis.id);
+    }
+
+    return thesis;
+  }
+
+  public async hasPermission(id: number, loginUser: User): Promise<boolean> {
+    if (loginUser.isAdmin === IsAdmin.TRUE) {
+      return true;
+    }
+
+    if (loginUser.userType === UserType.LECTURER) {
+      return this.thesisLecturerService.hasPermission(id, loginUser);
+    }
+
+    if (loginUser.userType === UserType.STUDENT) {
+      return this.thesisStudentService.hasPermission(id, loginUser);
+    }
+
+    return false;
+  }
+
+  public async isThesisExistById(id: number): Promise<boolean> {
+    return (await this.thesisRepository.count({ id })) > 0;
+  }
+
+  public async checkThesisExistById(id: number): Promise<void> {
+    if (!(await this.isThesisExistById(id))) {
+      throw new BadRequestException(ThesisError.ERR_7);
+    }
+  }
+
+  public async checkThesisPermission(thesisId: number, loginUser: User): Promise<void> {
+    if (!(await this.hasPermission(thesisId, loginUser))) {
+      throw new BadRequestException(ThesisError.ERR_8);
+    }
+  }
+
+  public async getByIdForEdit(id: number): Promise<ThesisForEdit> {
+    const thesis = await this.thesisRepository.findOne({ id, ...notDeleteCondition });
+    if (!thesis) {
+      throw new BadRequestException(ThesisError.ERR_7);
+    }
+
+    const thesisForEdit: ThesisForEdit = { ...thesis, lecturerAttendees: [], studentAttendees: [] };
+    thesisForEdit.lecturerAttendees = await this.thesisLecturerService.getThesisLecturersForEditView(
+      id
+    );
+    thesisForEdit.studentAttendees = await this.thesisStudentService.getThesisStudentsForEditView(
+      id
+    );
+
+    return thesisForEdit;
+  }
+
+  public async updateById(id: number, data: ThesisRequestBody): Promise<Thesis> {
+    const { attendees, ...thesis } = data;
+    this.validateThesisStateDate(thesis as Thesis);
+    const currentThesis = await this.thesisRepository.findOne({ id, ...notDeleteCondition });
+
+    if (!currentThesis) {
+      throw new BadRequestException(ThesisError.ERR_7);
+    }
+
+    return await this.connection.transaction(async (manager) => {
+      if (attendees) {
+        if (attendees.lecturers) {
+          await this.thesisLecturerService.updateWithTransaction(
+            manager,
+            currentThesis,
+            attendees.lecturers
+          );
+        }
+
+        if (attendees.students) {
+          await this.thesisStudentService.updateWithTransaction(
+            manager,
+            currentThesis,
+            attendees.students
+          );
+        }
+      }
+
+      if (thesis.subject) {
+        currentThesis.subject = thesis.subject;
+      }
+
+      if (thesis.startTime) {
+        currentThesis.startTime = thesis.startTime;
+      }
+
+      if (thesis.endTime) {
+        currentThesis.endTime = thesis.endTime;
+      }
+
+      if (thesis.lecturerTopicRegister) {
+        currentThesis.lecturerTopicRegister = thesis.lecturerTopicRegister;
+      }
+
+      if (thesis.studentTopicRegister) {
+        currentThesis.studentTopicRegister = thesis.studentTopicRegister;
+      }
+
+      if (thesis.progressReport) {
+        currentThesis.progressReport = thesis.progressReport;
+      }
+
+      if (thesis.review) {
+        currentThesis.review = thesis.review;
+      }
+
+      if (thesis.defense) {
+        currentThesis.defense = thesis.defense;
+      }
+
+      currentThesis.state = this.getThesisCurrentState(currentThesis);
+      return await manager.save(currentThesis);
+    });
+  }
+
+  public getThesisCurrentState({
+    startTime,
+    endTime,
+    lecturerTopicRegister,
+    studentTopicRegister,
+    progressReport,
+    review,
+    defense
+  }: Thesis): ThesisState {
+    const currentDate = moment.utc();
+    if (currentDate.isBefore(startTime, 'day')) {
+      return ThesisState.NOT_START;
+    }
+
+    if (currentDate.isAfter(endTime, 'day')) {
+      return ThesisState.FINISH;
+    }
+
+    if (currentDate.isBetween(startTime, lecturerTopicRegister, 'day', '[]')) {
+      return ThesisState.LECTURER_TOPIC_REGISTER;
+    }
+
+    if (currentDate.isBetween(lecturerTopicRegister, studentTopicRegister, 'day', '[)')) {
+      return ThesisState.STUDENT_TOPIC_REGISTER;
+    }
+
+    if (currentDate.isBetween(studentTopicRegister, progressReport, 'day', '[)')) {
+      return ThesisState.PROGRESS_REPORT;
+    }
+
+    if (currentDate.isBetween(progressReport, review, 'day', '[)')) {
+      return ThesisState.REVIEW;
+    }
+
+    if (currentDate.isBetween(review, defense, 'day', '[]')) {
+      return ThesisState.DEFENSE;
+    }
+
+    return ThesisState.RESULT;
+  }
+
+  @Cron('0 0 * * *', { timeZone: 'UTC' })
+  public async switchStateCron(): Promise<void> {
+    Logger.log('Switch thesis state...');
+    const current = moment.utc();
+    const theses = await this.thesisRepository.find({
+      where: {
+        state: Not(ThesisState.FINISH),
+        startTime: LessThanOrEqual(current.toISOString()),
+        endTime: MoreThanOrEqual(current.toISOString()),
+        ...notDeleteCondition
+      },
+      cache: true
+    });
+
+    for (const thesis of theses) {
+      thesis.state = this.getThesisCurrentState(thesis);
+    }
+
+    await this.thesisRepository.save(theses);
+    Logger.log('Switch thesis state... Done!');
+  }
+
+  public async deleteById(id: number): Promise<void> {
+    await this.checkThesisExistById(id);
+    await this.connection.transaction(async (manager) => {
+      const deletedAt = new Date();
+      await this.thesisLecturerService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
+      await this.thesisStudentService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
+      await manager.update(ThesisEntity, { id }, { deletedAt });
+    });
+  }
+
+  public async switchStatus(id: number): Promise<ThesisStatus> {
+    const thesis = await this.getById(id);
+    if (thesis.status === ThesisStatus.INACTIVE) {
+      await this.thesisRepository.update({ id }, { status: ThesisStatus.ACTIVE });
+      return ThesisStatus.ACTIVE;
+    } else {
+      await this.thesisRepository.update({ id }, { status: ThesisStatus.INACTIVE });
+      return ThesisStatus.INACTIVE;
+    }
+  }
+
+  private async getManyForAdmin(
+    offset: number,
+    limit: number,
+    keyword?: string
+  ): Promise<Thesis[]> {
+    let conditions: FindOptionsWhere<Thesis> = { ...notDeleteCondition };
+    if (keyword) {
+      conditions = this.getSearchConditions(conditions, keyword);
+    }
+
+    return this.thesisRepository.find({
+      relations: { creator: { user: {} } },
+      where: conditions,
+      skip: offset,
+      take: limit,
+      cache: true
+    });
+  }
+
+  private async getManyForLecturer(
+    userId: number,
+    offset: number,
+    limit: number,
+    keyword?: string
+  ): Promise<Thesis[]> {
+    let conditions: FindOptionsWhere<Thesis> = {
+      ...notDeleteCondition,
+      lecturers: { lecturer: { id: userId } }
+    };
+    if (keyword) {
+      conditions = this.getSearchConditions(conditions, keyword);
+    }
+
+    return this.thesisRepository.find({
+      relations: { creator: { user: {} } },
+      where: conditions,
+      skip: offset,
+      take: limit,
+      cache: true
+    });
+  }
+
+  private async getManyForStudent(
+    userId: number,
+    offset: number,
+    limit: number,
+    keyword?: string
+  ): Promise<Thesis[]> {
+    let conditions: FindOptionsWhere<Thesis> = {
+      ...notDeleteCondition,
+      students: { student: { id: userId } }
+    };
+    if (keyword) {
+      conditions = this.getSearchConditions(conditions, keyword);
+    }
+
+    return this.thesisRepository.find({
+      relations: { creator: { user: {} } },
+      where: conditions,
+      skip: offset,
+      take: limit,
+      cache: true
+    });
   }
 
   private validateThesisStateDate({
@@ -279,251 +510,43 @@ export class ThesisService {
     return !(beginRange || endRange);
   }
 
-  public async getById(id: number): Promise<Thesis> {
-    const thesis = await this.thesisRepository.findOne(id, {
-      relations: { creator: { user: {} } },
-      where: { ...NOT_DELETE_CONDITION }
-    });
-    if (!thesis) {
-      throw new BadRequestException(ThesisError.ERR_7);
-    }
-
-    thesis.lecturers = await this.thesisLecturerService.getThesisLecturersForView(thesis.id);
-    thesis.students = await this.thesisStudentService.getThesisStudentsForView(thesis.id);
-
-    return thesis;
-  }
-
-  public async hasPermission(id: number, loginUser: User): Promise<boolean> {
-    if (loginUser.isAdmin === IsAdmin.TRUE) {
-      return true;
-    }
-
-    if (loginUser.userType === UserType.LECTURER) {
-      return (
-        (await this.thesisRepository.count({
-          id,
-          lecturers: { lecturer: { id: loginUser.id, user: { ...NOT_DELETE_CONDITION } } }
-        })) > 0
-      );
-    }
-
-    if (loginUser.userType === UserType.STUDENT) {
-      return this.thesisStudentService.isThesisExistById(id, loginUser);
-    }
-
-    return false;
-  }
-
-  public async isThesisExistById(id: number): Promise<boolean> {
-    return (await this.thesisRepository.count({ id })) > 0;
-  }
-
-  public async checkThesisExistById(id: number): Promise<void> {
-    if (!(await this.isThesisExistById(id))) {
-      throw new BadRequestException(ThesisError.ERR_7);
-    }
-  }
-
-  public async checkThesisPermission(thesisId: number, loginUser: User): Promise<void> {
-    if (!(await this.hasPermission(thesisId, loginUser))) {
-      throw new BadRequestException(ThesisError.ERR_8);
-    }
-  }
-
-  public async getByIdForEdit(id: number): Promise<ThesisForEdit> {
-    const thesis = await this.thesisRepository.findOne({ id, ...NOT_DELETE_CONDITION });
-    if (!thesis) {
-      throw new BadRequestException(ThesisError.ERR_7);
-    }
-
-    const thesisForEdit: ThesisForEdit = { ...thesis, lecturerAttendees: [], studentAttendees: [] };
-    thesisForEdit.lecturerAttendees = await this.thesisLecturerService.getThesisLecturersForEditView(
-      id
-    );
-    thesisForEdit.studentAttendees = await this.thesisStudentService.getThesisStudentsForEditView(
-      id
-    );
-
-    return thesisForEdit;
-  }
-
-  public async updateById(id: number, data: ThesisRequestBody): Promise<Thesis> {
-    const { attendees, ...thesis } = data;
-    this.validateThesisStateDate(thesis as Thesis);
-    const currentThesis = await this.thesisRepository.findOne({ id, ...NOT_DELETE_CONDITION });
-
-    if (!currentThesis) {
-      throw new BadRequestException(ThesisError.ERR_7);
-    }
-
-    return await this.connection.transaction(async (manager) => {
-      if (attendees) {
-        if (attendees.lecturers) {
-          await this.thesisLecturerService.updateWithTransaction(
-            manager,
-            currentThesis,
-            attendees.lecturers
-          );
-        }
-
-        if (attendees.students) {
-          await this.thesisStudentService.updateWithTransaction(
-            manager,
-            currentThesis,
-            attendees.students
-          );
-        }
-      }
-
-      if (thesis.subject) {
-        currentThesis.subject = thesis.subject;
-      }
-
-      if (thesis.startTime) {
-        currentThesis.startTime = thesis.startTime;
-      }
-
-      if (thesis.endTime) {
-        currentThesis.endTime = thesis.endTime;
-      }
-
-      if (thesis.lecturerTopicRegister) {
-        currentThesis.lecturerTopicRegister = thesis.lecturerTopicRegister;
-      }
-
-      if (thesis.studentTopicRegister) {
-        currentThesis.studentTopicRegister = thesis.studentTopicRegister;
-      }
-
-      if (thesis.progressReport) {
-        currentThesis.progressReport = thesis.progressReport;
-      }
-
-      if (thesis.review) {
-        currentThesis.review = thesis.review;
-      }
-
-      if (thesis.defense) {
-        currentThesis.defense = thesis.defense;
-      }
-
-      currentThesis.state = this.getThesisCurrentState(currentThesis);
-      return await manager.save(currentThesis);
-    });
-  }
-
-  public getThesisCurrentState({
-    startTime,
-    endTime,
-    lecturerTopicRegister,
-    studentTopicRegister,
-    progressReport,
-    review,
-    defense
-  }: Thesis): ThesisState {
-    const currentDate = moment.utc();
-    if (currentDate.isBefore(startTime, 'day')) {
-      return ThesisState.NOT_START;
-    }
-
-    if (currentDate.isAfter(endTime, 'day')) {
-      return ThesisState.FINISH;
-    }
-
-    if (currentDate.isBetween(startTime, lecturerTopicRegister, 'day', '[]')) {
-      return ThesisState.LECTURER_TOPIC_REGISTER;
-    }
-
-    if (currentDate.isBetween(studentTopicRegister, lecturerTopicRegister, 'day', '[)')) {
-      return ThesisState.STUDENT_TOPIC_REGISTER;
-    }
-
-    if (currentDate.isBetween(studentTopicRegister, progressReport, 'day', '[)')) {
-      return ThesisState.PROGRESS_REPORT;
-    }
-
-    if (currentDate.isBetween(progressReport, review, 'day', '[)')) {
-      return ThesisState.REVIEW;
-    }
-
-    if (currentDate.isBetween(review, defense, 'day', '[]')) {
-      return ThesisState.DEFENSE;
-    }
-
-    return ThesisState.RESULT;
-  }
-
-  @Cron('0 0 * * *', { timeZone: 'UTC' })
-  public async switchStateCron(): Promise<void> {
-    Logger.log('Switch thesis state...');
-
-    const current = moment.utc();
-    const theses = await this.thesisRepository.find({
-      where: {
-        state: Not(ThesisState.FINISH),
-        startTime: LessThanOrEqual(current.toISOString()),
-        endTime: MoreThanOrEqual(current.toISOString()),
-        ...NOT_DELETE_CONDITION
-      },
-      cache: true
-    });
-
-    for (const thesis of theses) {
-      thesis.state = this.getThesisCurrentState(thesis);
-    }
-
-    await this.thesisRepository.save(theses);
-
-    Logger.log('Switch thesis state... Done!');
-  }
-
-  public async deleteById(id: number): Promise<void> {
-    await this.checkThesisExistById(id);
-    await this.connection.transaction(async (manager) => {
-      const deletedAt = new Date();
-      await this.thesisLecturerService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
-      await this.thesisStudentService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
-      await manager.update(ThesisEntity, { id }, { deletedAt });
-    });
-  }
-
-  public async switchStatus(id: number): Promise<ThesisStatus> {
-    const thesis = await this.getById(id);
-    if (thesis.status === ThesisStatus.INACTIVE) {
-      await this.thesisRepository.update({ id }, { status: ThesisStatus.ACTIVE });
-      return ThesisStatus.ACTIVE;
-    } else {
-      await this.thesisRepository.update({ id }, { status: ThesisStatus.INACTIVE });
-      return ThesisStatus.INACTIVE;
-    }
-  }
-
   private getSearchConditions(
-    keyword: string,
-    userType?: UserType,
-    userId?: number
+    initConditions: FindOptionsWhere<Thesis>,
+    keyword: string
   ): FindOptionsWhere<Thesis> {
-    if (userType === UserType.LECTURER) {
-      return [
-        {
-          ...NOT_DELETE_CONDITION,
-          subject: Like(`%${keyword}%`),
-          lecturers: { lecturer: { id: userId } }
-        }
-      ];
+    return { ...initConditions, subject: Like(`%${keyword}%`) };
+  }
+
+  private async getAmountForAdmin(keyword?: string): Promise<number> {
+    let conditions: FindOptionsWhere<Thesis> = { ...notDeleteCondition };
+    if (keyword) {
+      conditions = this.getSearchConditions(conditions, keyword);
     }
 
-    if (userType === UserType.STUDENT) {
-      return [
-        {
-          ...NOT_DELETE_CONDITION,
-          subject: Like(`%${keyword}%`),
-          students: { student: { id: userId } }
-        }
-      ];
+    return this.thesisRepository.count(conditions);
+  }
+
+  private async getAmountForLecturer(userId: number, keyword?: string): Promise<number> {
+    let conditions: FindOptionsWhere<Thesis> = {
+      ...notDeleteCondition,
+      lecturers: { lecturer: { id: userId } }
+    };
+    if (keyword) {
+      conditions = this.getSearchConditions(conditions, keyword);
     }
 
-    return [{ ...NOT_DELETE_CONDITION, subject: Like(`%${keyword}%`) }];
+    return this.thesisRepository.count(conditions);
+  }
+
+  private async getAmountForStudent(userId: number, keyword?: string): Promise<number> {
+    let conditions: FindOptionsWhere<Thesis> = {
+      ...notDeleteCondition,
+      students: { student: { id: userId } }
+    };
+    if (keyword) {
+      conditions = this.getSearchConditions(conditions, keyword);
+    }
+
+    return this.thesisRepository.count(conditions);
   }
 }

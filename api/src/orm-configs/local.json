@@ -1,9 +1,9 @@
 {
-  "type": "mssql",
+  "type": "mysql",
   "host": "127.0.0.1",
-  "port": 1433,
-  "username": "sa",
-  "password": "GrasisRoot13579@",
+  "port": 3306,
+  "username": "root",
+  "password": "greencare",
   "database": "grasis",
   "entities": [
     "dist/**/*.entity.js"

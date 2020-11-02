@@ -2,7 +2,7 @@ import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/com
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
 
-import { NOT_DELETE_CONDITION } from '../../common/common.resource';
+import { notDeleteCondition } from '../../common/common.resource';
 import { StudentSearchAttendee } from '../../student/student.interface';
 import { StudentError } from '../../student/student.resource';
 import { StudentService } from '../../student/student.service';
@@ -34,8 +34,8 @@ export class ThesisStudentService {
       where: {
         studentId: In(ids),
         thesis: { status: ThesisStatus.ACTIVE },
-        student: { user: { ...NOT_DELETE_CONDITION } },
-        ...NOT_DELETE_CONDITION
+        student: { user: { ...notDeleteCondition } },
+        ...notDeleteCondition
       },
       cache: true
     });
@@ -53,8 +53,8 @@ export class ThesisStudentService {
       where: {
         studentId: In(ids),
         thesis: { status: ThesisStatus.ACTIVE },
-        student: { user: { ...NOT_DELETE_CONDITION } },
-        ...NOT_DELETE_CONDITION
+        student: { user: { ...notDeleteCondition } },
+        ...notDeleteCondition
       },
       cache: true
     });
@@ -67,7 +67,7 @@ export class ThesisStudentService {
   ): Promise<ThesisStudent[]> {
     return this.thesisStudentRepository.find({
       relations: { student: { user: {} } },
-      where: { thesisId, student: { user: { ...NOT_DELETE_CONDITION } }, ...NOT_DELETE_CONDITION },
+      where: { thesisId, student: { user: { ...notDeleteCondition } }, ...notDeleteCondition },
       skip: offset,
       take: limit,
       cache: true
@@ -77,8 +77,8 @@ export class ThesisStudentService {
   public async isLoadMoreStudentsOfThesis(thesisId: number, offset = 0): Promise<boolean> {
     const amount = await this.thesisStudentRepository.count({
       thesisId,
-      student: { user: { ...NOT_DELETE_CONDITION } },
-      ...NOT_DELETE_CONDITION
+      student: { user: { ...notDeleteCondition } },
+      ...notDeleteCondition
     });
 
     return amount - offset - ATTENDEES_LOAD_LIMIT > 0;
@@ -88,8 +88,8 @@ export class ThesisStudentService {
     return (
       (await this.thesisStudentRepository.count({
         thesisId: id,
-        student: { user: { ...NOT_DELETE_CONDITION, id: loginUser.id } },
-        ...NOT_DELETE_CONDITION
+        student: { user: { ...notDeleteCondition, id: loginUser.id } },
+        ...notDeleteCondition
       })) > 0
     );
   }
@@ -97,7 +97,7 @@ export class ThesisStudentService {
   public async getThesisStudentsForEditView(thesisId: number): Promise<StudentSearchAttendee[]> {
     const students = await this.thesisStudentRepository.find({
       relations: { student: { user: {} } },
-      where: { thesisId, student: { user: { ...NOT_DELETE_CONDITION } }, ...NOT_DELETE_CONDITION },
+      where: { thesisId, student: { user: { ...notDeleteCondition } }, ...notDeleteCondition },
       cache: true
     });
 
@@ -122,7 +122,7 @@ export class ThesisStudentService {
 
   public async getThesisStudentsForEdit(thesisId: number): Promise<ThesisStudent[]> {
     return this.thesisStudentRepository.find({
-      where: { thesis: { id: thesisId }, ...NOT_DELETE_CONDITION },
+      where: { thesis: { id: thesisId }, ...notDeleteCondition },
       cache: true
     });
   }
@@ -197,7 +197,7 @@ export class ThesisStudentService {
   public async isParticipatedByUserId(id: number): Promise<boolean> {
     return (
       (await this.thesisStudentRepository.count({
-        ...NOT_DELETE_CONDITION,
+        ...notDeleteCondition,
         studentId: id,
         thesis: { status: ThesisStatus.ACTIVE }
       })) > 0
