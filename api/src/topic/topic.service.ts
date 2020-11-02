@@ -442,6 +442,10 @@ export class TopicService {
     if (topic.registerStatus === TopicRegisterStatus.ENABLE) {
       topic.registerStatus = TopicRegisterStatus.DISABLE;
     } else {
+      if (topic.currentStudent === topic.maxStudent) {
+        throw new BadRequestException(TopicError.ERR_16);
+      }
+
       topic.registerStatus = TopicRegisterStatus.ENABLE;
     }
 
@@ -503,6 +507,13 @@ export class TopicService {
           anotherTopicIds,
           studentId
         );
+
+        topic.currentStudent++;
+        if (topic.currentStudent === topic.maxStudent) {
+          topic.registerStatus = TopicRegisterStatus.DISABLE;
+        }
+
+        await manager.save(TopicEntity, topic);
       });
     } else {
       await this.topicStudentService.changeRegisterStatus(topicId, studentId, status);
