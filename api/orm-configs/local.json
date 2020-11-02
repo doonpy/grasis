@@ -1,0 +1,15 @@
+{
+  "type": "mysql",
+  "url": "mysql://localhost:3306/grasis",
+  "entities": [
+    "src/**/*.entity.ts"
+  ],
+  "migrations": [
+    "src/migration/**/*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "src/migration"
+  },
+  "cache": true,
+  "logging": true
+}

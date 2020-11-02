@@ -1,7 +1,11 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { CommonEntity } from '../common/common.entity';
-import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
+import {
+  COMMON_ENTITY_OPTIONS,
+  CommonColumn,
+  commonStringColumnOptions
+} from '../common/common.resource';
 import { LecturerEntity } from '../lecturer/lecturer.entity';
 import { Lecturer } from '../lecturer/lecturer.interface';
 import { TopicEntity } from '../topic/topic.entity';
@@ -20,16 +24,21 @@ export class ThesisEntity extends CommonEntity {
   @PrimaryGeneratedColumn({ name: CommonColumn.ID, type: 'int' })
   public id!: number;
 
-  @Column({ name: ThesisColumn.SUBJECT, type: 'nvarchar', length: 100 })
+  @Column({
+    name: ThesisColumn.SUBJECT,
+    type: 'varchar',
+    length: 100,
+    ...commonStringColumnOptions
+  })
   public subject!: number;
 
   @Column({ name: ThesisColumn.CREATOR_ID, type: 'int' })
   public creatorId!: number;
 
-  @Column({ name: ThesisColumn.START_TIME, type: 'datetime2' })
+  @Column({ name: ThesisColumn.START_TIME, type: 'datetime' })
   public startTime!: string;
 
-  @Column({ name: ThesisColumn.END_TIME, type: 'datetime2' })
+  @Column({ name: ThesisColumn.END_TIME, type: 'datetime' })
   public endTime!: string;
 
   @Column({
@@ -39,19 +48,19 @@ export class ThesisEntity extends CommonEntity {
   })
   public state!: ThesisState;
 
-  @Column({ name: ThesisColumn.LECTURER_TOPIC_REGISTER, type: 'datetime2' })
+  @Column({ name: ThesisColumn.LECTURER_TOPIC_REGISTER, type: 'datetime' })
   public lecturerTopicRegister!: string;
 
-  @Column({ name: ThesisColumn.STUDENT_TOPIC_REGISTER, type: 'datetime2' })
+  @Column({ name: ThesisColumn.STUDENT_TOPIC_REGISTER, type: 'datetime' })
   public studentTopicRegister!: string;
 
-  @Column({ name: ThesisColumn.PROGRESS_REPORT, type: 'datetime2' })
+  @Column({ name: ThesisColumn.PROGRESS_REPORT, type: 'datetime' })
   public progressReport!: string;
 
-  @Column({ name: ThesisColumn.REVIEW, type: 'datetime2' })
+  @Column({ name: ThesisColumn.REVIEW, type: 'datetime' })
   public review!: string;
 
-  @Column({ name: ThesisColumn.DEFENSE, type: 'datetime2' })
+  @Column({ name: ThesisColumn.DEFENSE, type: 'datetime' })
   public defense!: string;
 
   @Column({ name: ThesisColumn.STATUS, type: 'int', default: ThesisStatus.INACTIVE })

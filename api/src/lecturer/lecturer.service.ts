@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, FindOptionsWhere, Like, Repository } from 'typeorm';
 
-import { NOT_DELETE_CONDITION } from '../common/common.resource';
+import { notDeleteCondition } from '../common/common.resource';
 import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
 import { UserRequestBody } from '../user/user.interface';
 import { UserError, UserStatus, UserType } from '../user/user.resource';
@@ -28,7 +28,7 @@ export class LecturerService {
 
     return await this.lecturerRepository.find({
       relations: { user: {} },
-      where: conditions ? conditions : { ...NOT_DELETE_CONDITION },
+      where: conditions ? conditions : { ...notDeleteCondition },
       skip: offset,
       take: limit,
       cache: true
@@ -38,7 +38,7 @@ export class LecturerService {
   public async getById(id: number): Promise<Lecturer> {
     const lecturer: Lecturer | undefined = await this.lecturerRepository.findOne(id, {
       relations: { user: {} },
-      where: { ...NOT_DELETE_CONDITION }
+      where: { ...notDeleteCondition }
     });
 
     if (!lecturer) {
@@ -49,11 +49,7 @@ export class LecturerService {
   }
 
   public async isLecturerExistByLecturerId(lecturerId: string): Promise<boolean> {
-    return (await this.lecturerRepository.count({ lecturerId, ...NOT_DELETE_CONDITION })) > 0;
-  }
-
-  public async isLecturerExistById(id: number): Promise<boolean> {
-    return (await this.lecturerRepository.count({ id, ...NOT_DELETE_CONDITION })) > 0;
+    return (await this.lecturerRepository.count({ lecturerId, ...notDeleteCondition })) > 0;
   }
 
   public async checkLecturerNotExistByLecturerId(lecturerId: string): Promise<void> {
@@ -149,7 +145,7 @@ export class LecturerService {
       conditions = this.getSearchConditions(keyword);
     }
 
-    return this.lecturerRepository.count(conditions ? conditions : { ...NOT_DELETE_CONDITION });
+    return this.lecturerRepository.count(conditions ? conditions : { ...notDeleteCondition });
   }
 
   public sanitizeLevel(level: string): string {
@@ -176,7 +172,7 @@ export class LecturerService {
     const conditions: FindOptionsWhere<Lecturer> = [];
     if (searchTypes.includes(LecturerSearchType.LECTURER_ID)) {
       conditions.push({
-        ...NOT_DELETE_CONDITION,
+        ...notDeleteCondition,
         lecturerId: Like(`%${keyword}%`),
         user: { status: UserStatus.ACTIVE }
       });
@@ -185,14 +181,14 @@ export class LecturerService {
     if (searchTypes.includes(LecturerSearchType.FULL_NAME)) {
       conditions.push({
         user: {
-          ...NOT_DELETE_CONDITION,
+          ...notDeleteCondition,
           firstname: Like(`%${keyword}%`),
           status: UserStatus.ACTIVE
         }
       });
       conditions.push({
         user: {
-          ...NOT_DELETE_CONDITION,
+          ...notDeleteCondition,
           lastname: Like(`%${keyword}%`),
           status: UserStatus.ACTIVE
         }
@@ -215,7 +211,7 @@ export class LecturerService {
   public async findByIds(ids: number[]): Promise<Lecturer[]> {
     return await this.lecturerRepository.findByIds(ids, {
       relations: { user: {} },
-      where: { ...NOT_DELETE_CONDITION },
+      where: { ...notDeleteCondition },
       cache: true
     });
   }
@@ -226,7 +222,7 @@ export class LecturerService {
   ): Promise<Lecturer[]> {
     return await manager.findByIds(LecturerEntity, ids, {
       relations: { user: {} },
-      where: { ...NOT_DELETE_CONDITION },
+      where: { ...notDeleteCondition },
       cache: true
     });
   }
@@ -249,28 +245,28 @@ export class LecturerService {
   private getSearchConditions(keyword: string): FindOptionsWhere<Lecturer> {
     return [
       {
-        ...NOT_DELETE_CONDITION,
+        ...notDeleteCondition,
         lecturerId: Like(`%${keyword}%`)
       },
       {
-        ...NOT_DELETE_CONDITION,
+        ...notDeleteCondition,
         position: Like(`%${keyword}%`)
       },
       {
         user: {
-          ...NOT_DELETE_CONDITION,
+          ...notDeleteCondition,
           username: Like(`%${keyword}%`)
         }
       },
       {
         user: {
-          ...NOT_DELETE_CONDITION,
+          ...notDeleteCondition,
           firstname: Like(`%${keyword}%`)
         }
       },
       {
         user: {
-          ...NOT_DELETE_CONDITION,
+          ...notDeleteCondition,
           lastname: Like(`%${keyword}%`)
         }
       }

@@ -1,7 +1,11 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
 import { CommonEntity } from '../common/common.entity';
-import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
+import {
+  COMMON_ENTITY_OPTIONS,
+  CommonColumn,
+  commonStringColumnOptions
+} from '../common/common.resource';
 import { ThesisLecturerEntity } from '../thesis/thesis-lecturer/thesis-lecturer.entity';
 import { ThesisLecturer } from '../thesis/thesis-lecturer/thesis-lecturer.interface';
 import { ThesisLecturerColumn } from '../thesis/thesis-lecturer/thesis-lecturer.resource';
@@ -16,25 +20,28 @@ export class LecturerEntity extends CommonEntity {
 
   @Column({
     name: LecturerColumn.LECTURER_ID,
-    type: 'nchar',
+    type: 'varchar',
     length: 4,
-    nullable: true
+    nullable: true,
+    ...commonStringColumnOptions
   })
   public lecturerId!: string | null;
 
   @Column({
     name: LecturerColumn.POSITION,
-    type: 'nvarchar',
+    type: 'varchar',
     length: 255,
-    nullable: true
+    nullable: true,
+    ...commonStringColumnOptions
   })
   public position!: string | null;
 
   @Column({
     name: LecturerColumn.LEVEL,
-    type: 'nvarchar',
+    type: 'varchar',
     length: 255,
-    nullable: true
+    nullable: true,
+    ...commonStringColumnOptions
   })
   public level!: string | null;
 

@@ -1,7 +1,11 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { CommonEntity } from '../common/common.entity';
-import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
+import {
+  COMMON_ENTITY_OPTIONS,
+  CommonColumn,
+  commonStringColumnOptions
+} from '../common/common.resource';
 import { LecturerEntity } from '../lecturer/lecturer.entity';
 import { Lecturer } from '../lecturer/lecturer.interface';
 import { ThesisEntity } from '../thesis/thesis.entity';
@@ -22,10 +26,15 @@ export class TopicEntity extends CommonEntity {
   @Column({ name: TopicColumn.CREATOR_ID, type: 'int' })
   public creatorId!: number;
 
-  @Column({ name: TopicColumn.SUBJECT, type: 'ntext' })
+  @Column({ name: TopicColumn.SUBJECT, type: 'text', ...commonStringColumnOptions })
   public subject!: string;
 
-  @Column({ name: TopicColumn.DESCRIPTION, type: 'ntext', nullable: true })
+  @Column({
+    name: TopicColumn.DESCRIPTION,
+    type: 'text',
+    nullable: true,
+    ...commonStringColumnOptions
+  })
   public description!: string | null;
 
   @Column({ name: TopicColumn.STATUS, type: 'tinyint', default: TopicStateAction.NEW })

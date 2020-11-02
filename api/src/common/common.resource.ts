@@ -1,5 +1,5 @@
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
-import { EntityOptions, IsNull } from 'typeorm';
+import { ColumnOptions, EntityOptions, IsNull } from 'typeorm';
 
 export const CommonQueryValue = {
   OFFSET: 0,
@@ -51,6 +51,11 @@ export const CommonColumn = {
   DELETED_AT: 'deleted_at'
 };
 
-export const NOT_DELETE_CONDITION = {
+export const notDeleteCondition = {
   deletedAt: IsNull()
+};
+
+export const commonStringColumnOptions: ColumnOptions = {
+  charset: 'utf8mb4',
+  collation: 'utf8mb4_general_ci'
 };

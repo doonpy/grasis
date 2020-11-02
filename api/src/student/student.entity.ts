@@ -1,7 +1,11 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
 import { CommonEntity } from '../common/common.entity';
-import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
+import {
+  COMMON_ENTITY_OPTIONS,
+  CommonColumn,
+  commonStringColumnOptions
+} from '../common/common.resource';
 import { ThesisStudentEntity } from '../thesis/thesis-student/thesis-student.entity';
 import { ThesisStudent } from '../thesis/thesis-student/thesis-student.interface';
 import { ThesisStudentColumn } from '../thesis/thesis-student/thesis-student.resource';
@@ -19,25 +23,28 @@ export class StudentEntity extends CommonEntity {
 
   @Column({
     name: StudentColumn.STUDENT_ID,
-    type: 'nchar',
+    type: 'char',
     length: 8,
-    nullable: true
+    nullable: true,
+    ...commonStringColumnOptions
   })
   public studentId!: string | null;
 
   @Column({
     name: StudentColumn.SCHOOL_YEAR,
-    type: 'nvarchar',
+    type: 'varchar',
     length: 10,
-    nullable: true
+    nullable: true,
+    ...commonStringColumnOptions
   })
   public schoolYear!: string | null;
 
   @Column({
     name: StudentColumn.STUDENT_CLASS,
-    type: 'nvarchar',
+    type: 'varchar',
     length: 20,
-    nullable: true
+    nullable: true,
+    ...commonStringColumnOptions
   })
   public studentClass!: string | null;
 

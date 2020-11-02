@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Not, Repository } from 'typeorm';
 
-import { NOT_DELETE_CONDITION } from '../../common/common.resource';
+import { notDeleteCondition } from '../../common/common.resource';
 import { TopicError } from '../topic.resource';
 import { TopicStudentEntity } from './topic_student.entity';
 import { TopicStudent } from './topic-student.interface';
@@ -22,7 +22,7 @@ export class TopicStudentService {
   public async hasRegisteredTopic(topicId: number, studentId: number): Promise<boolean> {
     return (
       (await this.topicStudentRepository.count({
-        ...NOT_DELETE_CONDITION,
+        ...notDeleteCondition,
         topicId,
         studentId,
         status: In([TopicStudentStatus.APPROVED, TopicStudentStatus.PENDING])
@@ -33,7 +33,7 @@ export class TopicStudentService {
   public async registerTopic(topicId: number, studentId: number): Promise<void> {
     const topicStudent = await this.topicStudentRepository.findOne({
       where: {
-        ...NOT_DELETE_CONDITION,
+        ...notDeleteCondition,
         topicId,
         studentId
       },
@@ -64,7 +64,7 @@ export class TopicStudentService {
   public async getMany(topicId: number): Promise<TopicStudent[]> {
     return this.topicStudentRepository.find({
       relations: { student: { user: {} }, topic: {} },
-      where: { ...NOT_DELETE_CONDITION, topicId },
+      where: { ...notDeleteCondition, topicId },
       cache: true
     });
   }
@@ -72,7 +72,7 @@ export class TopicStudentService {
   public async getOne(topicId: number, studentId: number): Promise<TopicStudent> {
     const topicStudent = await this.topicStudentRepository.findOne({
       where: {
-        ...NOT_DELETE_CONDITION,
+        ...notDeleteCondition,
         topicId,
         studentId
       },
@@ -88,7 +88,7 @@ export class TopicStudentService {
   public async hasParticipatedAnotherTopic(topicId: number, studentId: number): Promise<boolean> {
     return (
       (await this.topicStudentRepository.count({
-        ...NOT_DELETE_CONDITION,
+        ...notDeleteCondition,
         topicId: Not(topicId),
         studentId,
         status: TopicStudentStatus.APPROVED
@@ -104,7 +104,7 @@ export class TopicStudentService {
   ): Promise<void> {
     await manager.update(
       TopicStudentEntity,
-      { ...NOT_DELETE_CONDITION, topicId, studentId },
+      { ...notDeleteCondition, topicId, studentId },
       { status }
     );
   }
@@ -116,7 +116,7 @@ export class TopicStudentService {
   ): Promise<void> {
     await manager.update(
       TopicStudentEntity,
-      { ...NOT_DELETE_CONDITION, studentId, topicId: In(topicIds) },
+      { ...notDeleteCondition, studentId, topicId: In(topicIds) },
       { status: TopicStudentStatus.REJECTED }
     );
   }

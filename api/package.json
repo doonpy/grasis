@@ -21,9 +21,9 @@
     "prune:dependencies": "npm prune --production",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
     "typeorm:staging": "DB_TYPE=staging node --require ts-node/register ./node_modules/typeorm/cli.js",
-    "typeorm:sync-local": "yarn typeorm schema:sync -f src/orm-configs/local.json",
-    "typeorm:sync-dev": "yarn typeorm schema:sync -f src/orm-configs/dev.json",
-    "typeorm:sync-prod": "yarn typeorm schema:sync -f src/orm-configs/prod.json"
+    "typeorm:sync-local": "yarn typeorm schema:sync -f ./orm-configs/local.json",
+    "typeorm:sync-staging": "yarn typeorm schema:sync -f ./orm-configs/staging.json",
+    "typeorm:sync-prod": "yarn typeorm schema:sync -f ./orm-configs/prod.json"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
@@ -39,8 +39,8 @@
     "express-useragent": "^1.0.15",
     "moment": "^2.29.1",
     "morgan": "^1.10.0",
-    "mssql": "^6.2.3",
     "multer": "^1.4.2",
+    "mysql2": "^2.2.5",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

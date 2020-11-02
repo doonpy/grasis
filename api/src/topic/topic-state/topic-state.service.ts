@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
 
-import { NOT_DELETE_CONDITION } from '../../common/common.resource';
+import { notDeleteCondition } from '../../common/common.resource';
 import { TopicStateEntity } from './topic-state.entity';
 import { TopicState } from './topic-state.interface';
 
@@ -20,7 +20,7 @@ export class TopicStateService {
   public async getMany(topicId: number): Promise<TopicState[]> {
     return this.topicStateRepository.find({
       relations: { processor: { user: {} } },
-      where: { ...NOT_DELETE_CONDITION, topicId },
+      where: { ...notDeleteCondition, topicId },
       cache: true
     });
   }

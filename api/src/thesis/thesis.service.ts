@@ -12,7 +12,7 @@ import {
   Repository
 } from 'typeorm';
 
-import { NOT_DELETE_CONDITION } from '../common/common.resource';
+import { notDeleteCondition } from '../common/common.resource';
 import { LecturerError } from '../lecturer/lecturer.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { StudentError } from '../student/student.resource';
@@ -143,7 +143,7 @@ export class ThesisService {
   public async getById(id: number, withAttendees = false): Promise<Thesis> {
     const thesis = await this.thesisRepository.findOne(id, {
       relations: { creator: { user: {} } },
-      where: { ...NOT_DELETE_CONDITION }
+      where: { ...notDeleteCondition }
     });
     if (!thesis) {
       throw new BadRequestException(ThesisError.ERR_7);
@@ -190,7 +190,7 @@ export class ThesisService {
   }
 
   public async getByIdForEdit(id: number): Promise<ThesisForEdit> {
-    const thesis = await this.thesisRepository.findOne({ id, ...NOT_DELETE_CONDITION });
+    const thesis = await this.thesisRepository.findOne({ id, ...notDeleteCondition });
     if (!thesis) {
       throw new BadRequestException(ThesisError.ERR_7);
     }
@@ -209,7 +209,7 @@ export class ThesisService {
   public async updateById(id: number, data: ThesisRequestBody): Promise<Thesis> {
     const { attendees, ...thesis } = data;
     this.validateThesisStateDate(thesis as Thesis);
-    const currentThesis = await this.thesisRepository.findOne({ id, ...NOT_DELETE_CONDITION });
+    const currentThesis = await this.thesisRepository.findOne({ id, ...notDeleteCondition });
 
     if (!currentThesis) {
       throw new BadRequestException(ThesisError.ERR_7);
@@ -321,7 +321,7 @@ export class ThesisService {
         state: Not(ThesisState.FINISH),
         startTime: LessThanOrEqual(current.toISOString()),
         endTime: MoreThanOrEqual(current.toISOString()),
-        ...NOT_DELETE_CONDITION
+        ...notDeleteCondition
       },
       cache: true
     });
@@ -360,7 +360,7 @@ export class ThesisService {
     limit: number,
     keyword?: string
   ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> = { ...NOT_DELETE_CONDITION };
+    let conditions: FindOptionsWhere<Thesis> = { ...notDeleteCondition };
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
@@ -381,7 +381,7 @@ export class ThesisService {
     keyword?: string
   ): Promise<Thesis[]> {
     let conditions: FindOptionsWhere<Thesis> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       lecturers: { lecturer: { id: userId } }
     };
     if (keyword) {
@@ -404,7 +404,7 @@ export class ThesisService {
     keyword?: string
   ): Promise<Thesis[]> {
     let conditions: FindOptionsWhere<Thesis> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       students: { student: { id: userId } }
     };
     if (keyword) {
@@ -518,7 +518,7 @@ export class ThesisService {
   }
 
   private async getAmountForAdmin(keyword?: string): Promise<number> {
-    let conditions: FindOptionsWhere<Thesis> = { ...NOT_DELETE_CONDITION };
+    let conditions: FindOptionsWhere<Thesis> = { ...notDeleteCondition };
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
@@ -528,7 +528,7 @@ export class ThesisService {
 
   private async getAmountForLecturer(userId: number, keyword?: string): Promise<number> {
     let conditions: FindOptionsWhere<Thesis> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       lecturers: { lecturer: { id: userId } }
     };
     if (keyword) {
@@ -540,7 +540,7 @@ export class ThesisService {
 
   private async getAmountForStudent(userId: number, keyword?: string): Promise<number> {
     let conditions: FindOptionsWhere<Thesis> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       students: { student: { id: userId } }
     };
     if (keyword) {

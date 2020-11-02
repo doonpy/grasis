@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, FindOptionsWhere, In, Like, Repository } from 'typeorm';
 
-import { NOT_DELETE_CONDITION } from '../common/common.resource';
+import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { StudentService } from '../student/student.service';
 import { ThesisService } from '../thesis/thesis.service';
@@ -75,7 +75,7 @@ export class TopicService {
     keyword?: string
   ): Promise<Topic[]> {
     const conditions: FindOptionsWhere<Topic> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       thesisId,
       status: In([
         TopicStateAction.APPROVED,
@@ -107,12 +107,12 @@ export class TopicService {
     keyword?: string
   ): Promise<Topic[]> {
     const ownerConditions: FindOptionsWhere<Topic> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       thesisId,
       creatorId: loginUserId
     };
     const thesisConditions: FindOptionsWhere<Topic> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
@@ -140,7 +140,7 @@ export class TopicService {
     keyword?: string
   ): Promise<Topic[]> {
     const conditions: FindOptionsWhere<Topic> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
@@ -179,7 +179,7 @@ export class TopicService {
 
   private async getAmountForAdmin(thesisId: number, keyword?: string): Promise<number> {
     const conditions: FindOptionsWhere<Topic> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       thesisId,
       status: In([
         TopicStateAction.APPROVED,
@@ -204,12 +204,12 @@ export class TopicService {
     keyword?: string
   ): Promise<number> {
     const ownerConditions: FindOptionsWhere<Topic> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       thesisId,
       creatorId: loginUserId
     };
     const thesisConditions: FindOptionsWhere<Topic> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
@@ -228,7 +228,7 @@ export class TopicService {
 
   private async getAmountForStudent(thesisId: number, keyword?: string): Promise<number> {
     const conditions: FindOptionsWhere<Topic> = {
-      ...NOT_DELETE_CONDITION,
+      ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
@@ -245,7 +245,7 @@ export class TopicService {
 
   public async getById(id: number, loginUser: User): Promise<Topic> {
     const topic = await this.topicRepository.findOne(
-      { ...NOT_DELETE_CONDITION, id },
+      { ...notDeleteCondition, id },
       {
         relations: {
           creator: { user: {} }
@@ -523,7 +523,7 @@ export class TopicService {
   private async getManyByThesisId(thesisId: number): Promise<Topic[]> {
     return this.topicRepository.find({
       where: {
-        ...NOT_DELETE_CONDITION,
+        ...notDeleteCondition,
         thesisId
       },
       cache: true
