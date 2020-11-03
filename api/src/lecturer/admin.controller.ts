@@ -106,7 +106,7 @@ export class LecturerAdminController {
 
     return {
       statusCode: HttpStatus.CREATED,
-      id: createdLecturer.id as number
+      id: createdLecturer.user.id
     };
   }
 
