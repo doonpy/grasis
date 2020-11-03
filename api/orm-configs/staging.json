@@ -1,0 +1,15 @@
+{
+  "type": "mysql",
+  "url": "mysql://bsrb97j7whsjn43p:njnpmmkm0fj1lhtl@qbhol6k6vexd5qjs.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/hd8l34m2n5b20rvn",
+  "entities": [
+    "src/**/*.entity.ts"
+  ],
+  "migrations": [
+    "src/migration/** /*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "src/migration"
+  },
+  "cache": true,
+  "logging": true
+}

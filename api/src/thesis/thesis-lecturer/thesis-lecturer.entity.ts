@@ -6,7 +6,7 @@ import { LecturerEntity } from '../../lecturer/lecturer.entity';
 import { Lecturer } from '../../lecturer/lecturer.interface';
 import { ThesisEntity } from '../thesis.entity';
 import { Thesis } from '../thesis.interface';
-import { THESIS_LECTURER_TABLE, ThesisLecturerColumn } from '../thesis.resource';
+import { THESIS_LECTURER_TABLE, ThesisLecturerColumn } from './thesis-lecturer.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: THESIS_LECTURER_TABLE })
 export class ThesisLecturerEntity extends CommonEntity {

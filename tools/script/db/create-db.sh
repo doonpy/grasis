@@ -3,12 +3,12 @@ set -e
 
 source ./config.conf
 
-echo "=> Create MSSQL container..."
+echo "=> Creating database container..."
 docker run \
   --name $CONTAINER_NAME \
-  -p 1433:1433 \
-  -e SA_PASSWORD=$DB_PASSWORD \
-  -e ACCEPT_EULA="Y" \
+  -p 3306:3306 \
+  -e MYSQL_ROOT_PASSWORD=$DB_PASSWORD \
+  -e MYSQL_DATABASE=$DATABASE \
   -d $MSSQL_IMAGE
 
 echo "=> Done! Container name: $CONTAINER_NAME"

@@ -108,7 +108,7 @@ function sortByStatus(a: Thesis, b: Thesis): number {
   return 0;
 }
 
-export const THESIS_TABLE_COLUMNS: ColumnsType = [
+export const ThesisTableColumns: ColumnsType = [
   {
     title: '',
     dataIndex: 'id',

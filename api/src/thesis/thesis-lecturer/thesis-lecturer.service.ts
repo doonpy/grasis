@@ -2,10 +2,11 @@ import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/com
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
 
-import { NOT_DELETE_CONDITION } from '../../common/common.resource';
+import { notDeleteCondition } from '../../common/common.resource';
 import { LecturerSearchAttendee } from '../../lecturer/lecturer.interface';
 import { LecturerError } from '../../lecturer/lecturer.resource';
 import { LecturerService } from '../../lecturer/lecturer.service';
+import { User } from '../../user/user.interface';
 import { Thesis } from '../thesis.interface';
 import { ATTENDEES_LOAD_LIMIT, ThesisStatus } from '../thesis.resource';
 import { ThesisLecturerEntity } from './thesis-lecturer.entity';
@@ -31,7 +32,7 @@ export class ThesisLecturerService {
   ): Promise<ThesisLecturer[]> {
     return this.thesisLecturerRepository.find({
       relations: { lecturer: { user: {} } },
-      where: { thesisId, lecturer: { user: { ...NOT_DELETE_CONDITION } }, ...NOT_DELETE_CONDITION },
+      where: { thesisId, lecturer: { user: { ...notDeleteCondition } }, ...notDeleteCondition },
       skip: offset,
       take: limit,
       cache: true
@@ -41,7 +42,7 @@ export class ThesisLecturerService {
   public async getThesisLecturersForEditView(thesisId: number): Promise<LecturerSearchAttendee[]> {
     const lecturers = await this.thesisLecturerRepository.find({
       relations: { lecturer: { user: {} } },
-      where: { thesisId, lecturer: { user: { ...NOT_DELETE_CONDITION } }, ...NOT_DELETE_CONDITION },
+      where: { thesisId, lecturer: { user: { ...notDeleteCondition } }, ...notDeleteCondition },
       cache: true
     });
 
@@ -55,8 +56,8 @@ export class ThesisLecturerService {
   public async isLoadMoreLecturersOfThesis(thesisId: number, offset = 0): Promise<boolean> {
     const amount = await this.thesisLecturerRepository.count({
       thesisId,
-      lecturer: { user: { ...NOT_DELETE_CONDITION } },
-      ...NOT_DELETE_CONDITION
+      lecturer: { user: { ...notDeleteCondition } },
+      ...notDeleteCondition
     });
 
     return amount - offset - ATTENDEES_LOAD_LIMIT > 0;
@@ -127,9 +128,19 @@ export class ThesisLecturerService {
   public async isLecturerParticipatedThesis(userId: number): Promise<boolean> {
     return (
       (await this.thesisLecturerRepository.count({
-        ...NOT_DELETE_CONDITION,
+        ...notDeleteCondition,
         lecturerId: userId,
         thesis: { status: ThesisStatus.ACTIVE }
+      })) > 0
+    );
+  }
+
+  public async hasPermission(id: number, loginUser: User): Promise<boolean> {
+    return (
+      (await this.thesisLecturerRepository.count({
+        thesisId: id,
+        lecturer: { user: { ...notDeleteCondition, id: loginUser.id } },
+        ...notDeleteCondition
       })) > 0
     );
   }

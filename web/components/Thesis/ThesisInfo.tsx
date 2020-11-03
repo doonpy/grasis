@@ -34,11 +34,7 @@ const ThesisInfo: React.FC<ComponentProps> = ({
   }
 }) => {
   return (
-    <Descriptions
-      title={ThesisTerminology.THESIS_9}
-      bordered
-      column={4}
-      extra={<ThesisInfoButtons thesisId={id} status={status} />}>
+    <Descriptions title={<ThesisInfoButtons thesisId={id} status={status} />} bordered column={4}>
       <Descriptions.Item label={<b>{ThesisTerminology.THESIS_10}</b>} span={2}>
         <TextData text={subject} />
       </Descriptions.Item>

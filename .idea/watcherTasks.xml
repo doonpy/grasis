@@ -14,7 +14,7 @@
         <array />
       </option>
       <option name="outputFromStdout" value="false" />
-      <option name="program" value="$PROJECT_DIR$/node_modules/eslint/bin/eslint.js" />
+      <option name="program" value="$PROJECT_DIR$/node_modules/.bin/eslint" />
       <option name="runOnExternalChanges" value="true" />
       <option name="scopeName" value="Open Files" />
       <option name="trackOnlyRoot" value="false" />
@@ -34,7 +34,7 @@
         <array />
       </option>
       <option name="outputFromStdout" value="false" />
-      <option name="program" value="$PROJECT_DIR$/node_modules/eslint/bin/eslint.js" />
+      <option name="program" value="$PROJECT_DIR$/node_modules/.bin/eslint" />
       <option name="runOnExternalChanges" value="true" />
       <option name="scopeName" value="Open Files" />
       <option name="trackOnlyRoot" value="false" />

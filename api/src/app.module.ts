@@ -9,11 +9,12 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AvatarModule } from './avatar/avatar.module';
 import { CommonPath, DatabaseType, EnvFileName } from './common/common.resource';
+import { getDatabaseConfig } from './database/database.helper';
 import { LecturerModule } from './lecturer/lecturer.module';
-import { getDatabaseConfig } from './mssql/mssql.helper';
 import { RefreshModule } from './refresh/refresh.module';
 import { StudentModule } from './student/student.module';
 import { ThesisModule } from './thesis/thesis.module';
+import { TopicModule } from './topic/topic.module';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
 
@@ -46,7 +47,8 @@ function getEnvFilePath(): string {
     UploadModule,
     AvatarModule,
     RefreshModule,
-    ThesisModule
+    ThesisModule,
+    TopicModule
   ],
   controllers: [AppController],
   providers: [AppService]

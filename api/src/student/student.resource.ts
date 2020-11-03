@@ -11,15 +11,15 @@ export const StudentError = {
 
 export enum IsGraduate {
   FALSE = 1,
-  TRUE = 2
+  TRUE
 }
 
-export enum StudentColumn {
-  STUDENT_ID = 'student_id',
-  SCHOOL_YEAR = 'school_year',
-  STUDENT_CLASS = 'student_class',
-  IS_GRADUATE = 'is_graduate'
-}
+export const StudentColumn = {
+  STUDENT_ID: 'student_id',
+  SCHOOL_YEAR: 'school_year',
+  STUDENT_CLASS: 'student_class',
+  IS_GRADUATE: 'is_graduate'
+};
 
 export enum StudentSearchType {
   STUDENT_ID = '1',
@@ -28,19 +28,14 @@ export enum StudentSearchType {
   STUDENT_CLASS = '4'
 }
 
-export enum StudentPath {
-  ROOT = 'students',
-  SPECIFY = '/:id',
-  ADMIN_ROOT = 'admin/students',
-  SEARCH_ATTENDEES = '/action/search-thesis-attendees'
-}
+export const StudentPath = {
+  ROOT: 'students',
+  SPECIFY: '/:id',
+  ADMIN_ROOT: 'admin/students',
+  SEARCH_ATTENDEES: '/action/search-thesis-attendees'
+};
 
-export enum StudentRelation {
-  USER = 'user',
-  THESES = 'theses'
-}
-
-export enum StudentBodyProps {
-  USER = 'user',
-  STUDENT = 'student'
-}
+export const StudentBodyProps = {
+  USER: 'user',
+  STUDENT: 'student'
+};

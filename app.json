@@ -1,6 +1,14 @@
 {
   "name": "Config file for Review app on Heroku",
   "description": "Do not modify this file",
+  "addons": [
+    {
+      "plan": "jawsdb:kitefin"
+    },
+    {
+      "plan": "rediscloud:30"
+    }
+  ],
   "buildpacks": [
     {
       "url": "https://github.com/timanovsky/subdir-heroku-buildpack"

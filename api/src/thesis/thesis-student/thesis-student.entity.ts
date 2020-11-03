@@ -16,9 +16,6 @@ export class ThesisStudentEntity extends CommonEntity {
   @PrimaryColumn({ name: ThesisStudentColumn.STUDENT_ID, type: 'int' })
   public studentId!: number;
 
-  @Column({ name: ThesisStudentColumn.TOPIC, type: 'int', nullable: true })
-  public topic!: number | null;
-
   @Column({ name: ThesisStudentColumn.INSTRUCTOR_RESULT, type: 'float', nullable: true })
   public instructorResult!: number | null;
 

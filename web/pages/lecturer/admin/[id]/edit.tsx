@@ -121,8 +121,7 @@ export const getStaticProps: GetStaticProps<CommonPageProps, PageParams> = async
       ],
       isAdminCheck: true,
       allowUserTypes: [UserType.LECTURER]
-    },
-    revalidate: 1
+    }
   };
 };
 

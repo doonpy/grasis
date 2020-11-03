@@ -36,6 +36,7 @@ export class AppService implements OnApplicationBootstrap {
         username: process.env.ADMIN_USERNAME as string,
         password: process.env.ADMIN_PASSWORD as string,
         confirmPassword: process.env.ADMIN_PASSWORD as string,
+        firstname: process.env.ADMIN_USERNAME,
         isAdmin: IsAdmin.TRUE
       };
       await this.lecturerService.create(user);

@@ -1,44 +1,28 @@
-import { UserOutlined } from '@ant-design/icons';
-import { Avatar, List, Space } from 'antd';
+import { List } from 'antd';
 import Link from 'next/link';
 import React from 'react';
 
-import { getAvatarUrl } from '../../libs/avatar/avatar.service';
-import { LECTURER_PATH_ROOT } from '../../libs/lecturer/lecturer.resource';
+import { LecturerPath } from '../../libs/lecturer/lecturer.resource';
+import LecturerService from '../../libs/lecturer/lecturer.service';
 import { ThesisLecturer } from '../../libs/thesis/thesis-lecturer/thesis-lecturer.interface';
-import { UserStatus } from '../../libs/user/user.resource';
-import UserStatusRender from '../User/UserStatusRender';
+import LecturerInfo from '../Lecturer/LecturerInfo';
 
 interface ComponentProps {
   thesisLecturer: ThesisLecturer;
 }
 
 const ThesisLecturersListItem: React.FC<ComponentProps> = ({
-  thesisLecturer: {
-    lecturer: {
-      lecturerId,
-      user: { id, lastname, firstname, status }
-    }
-  }
+  thesisLecturer: { lecturer, lecturerId }
 }) => {
-  const Title = () => (
-    <Link href={`${LECTURER_PATH_ROOT}/${id}`}>
-      <a>
-        <Space>
-          {`${lastname || 'NULL'} ${firstname || 'NULL'}`}
-          {status === UserStatus.INACTIVE && <UserStatusRender status={status} />}
-        </Space>
-      </a>
-    </Link>
-  );
+  const lecturerService = LecturerService.getInstance();
 
   return (
     <List.Item>
-      <List.Item.Meta
-        avatar={<Avatar src={getAvatarUrl(id)} icon={<UserOutlined />} />}
-        title={<Title />}
-        description={lecturerId}
-      />
+      <Link href={lecturerService.replaceParams(LecturerPath.SPECIFY, [lecturerId])}>
+        <a>
+          <LecturerInfo lecturer={lecturer} />
+        </a>
+      </Link>
     </List.Item>
   );
 };
