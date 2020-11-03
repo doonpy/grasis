@@ -15,9 +15,9 @@ export enum TopicStateAction {
   REJECTED,
   SEND_BACK,
   WITHDRAW,
-  CONFIRMED,
   SEND_REQUEST,
   CANCELED
 }
 
-export const NEW_STATE_NOTE = 'Khởi tạo đề tài.';
+export const NEW_STATE_NOTE = '[Hệ thống] Khởi tạo đề tài.';
+export const CANCELLED_STATE_NOTE = '[Hệ thống] Hủy bỏ đề tài do quá hạn.';

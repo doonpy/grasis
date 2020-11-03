@@ -13,7 +13,6 @@ export enum TopicStateAction {
   REJECTED,
   SEND_BACK,
   WITHDRAW,
-  CONFIRMED,
   SEND_REQUEST,
   CANCELED
 }
@@ -25,22 +24,11 @@ export const TopicStateActionText = [
   TopicTerminology.TOPIC_23,
   TopicTerminology.TOPIC_24,
   TopicTerminology.TOPIC_26,
-  TopicTerminology.TOPIC_27,
   TopicTerminology.TOPIC_28,
   TopicTerminology.TOPIC_29
 ];
 
-export const TopicStateActionColor = [
-  '',
-  'blue',
-  'green',
-  'red',
-  'gray',
-  'cyan',
-  'green',
-  'gold',
-  'red'
-];
+export const TopicStateActionColor = ['', 'blue', 'green', 'red', 'gray', 'cyan', 'gold', 'red'];
 
 export const TopicStateActionIcon = [
   '',
@@ -49,7 +37,6 @@ export const TopicStateActionIcon = [
   MinusCircleIcon,
   SendBackIcon,
   ArrowAltCircleDown,
-  CheckCircleIcon,
   StampIcon,
   BanIcon
 ];

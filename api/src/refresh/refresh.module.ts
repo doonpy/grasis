@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -6,6 +6,7 @@ import { RefreshEntity } from './refresh.entity';
 import { REFRESH_EXPIRE_TIME } from './refresh.resource';
 import { RefreshService } from './refresh.service';
 
+@Global()
 @Module({
   imports: [
     JwtModule.registerAsync({

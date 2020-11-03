@@ -58,7 +58,6 @@ export const topicChangeActionValidationSchema = Joi.object<TopicChangeStatusReq
       TopicStateAction.REJECTED,
       TopicStateAction.SEND_BACK,
       TopicStateAction.WITHDRAW,
-      TopicStateAction.CONFIRMED,
       TopicStateAction.SEND_REQUEST,
       TopicStateAction.CANCELED
     )

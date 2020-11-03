@@ -1,11 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 
-import { UserModule } from '../user/user.module';
 import { AvatarController } from './avatar.controller';
 import { AvatarService } from './avatar.service';
 
+@Global()
 @Module({
-  imports: [UserModule],
   controllers: [AvatarController],
   providers: [AvatarService]
 })

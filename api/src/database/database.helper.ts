@@ -12,6 +12,7 @@ export function getDatabaseConfig(): TypeOrmModuleOptions & MysqlConnectionOptio
     database: database,
     entities: ['dist/**/*.entity.js'],
     logging: ['query', 'error'],
+    logger: 'file',
     synchronize: !isProductionMode() || isReviewData(),
     autoLoadEntities: true,
     keepConnectionAlive: true,

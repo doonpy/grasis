@@ -17,7 +17,7 @@ interface ComponentProps {
 const TopicPrivateInfo: React.FC<ComponentProps> = ({ topic }) => {
   const { approver, creatorId, status, states, approverId } = topic;
   const loginUser = LoginUser.getInstance();
-  const creatorActions = [TopicStateAction.CANCELED, TopicStateAction.CONFIRMED];
+  const creatorActions = [TopicStateAction.CANCELED];
   const approverActions = [
     TopicStateAction.WITHDRAW,
     TopicStateAction.APPROVED,

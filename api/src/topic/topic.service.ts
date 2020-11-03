@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, FindOptionsWhere, In, Like, Repository } from 'typeorm';
+import { Connection, EntityManager, FindOptionsWhere, In, Like, Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
@@ -9,7 +9,11 @@ import { ThesisService } from '../thesis/thesis.service';
 import { User } from '../user/user.interface';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
-import { NEW_STATE_NOTE, TopicStateAction } from './topic-state/topic-state.resource';
+import {
+  CANCELLED_STATE_NOTE,
+  NEW_STATE_NOTE,
+  TopicStateAction
+} from './topic-state/topic-state.resource';
 import { TopicStateService } from './topic-state/topic-state.service';
 import { TopicStudentStatus } from './topic-student/topic-student.resouce';
 import { TopicStudentService } from './topic-student/topic-student.service';
@@ -21,7 +25,7 @@ import { TopicError, TopicRegisterStatus } from './topic.resource';
 export class TopicService {
   constructor(
     @InjectRepository(TopicEntity) private readonly topicRepository: Repository<Topic>,
-    private readonly thesisService: ThesisService,
+    @Inject(forwardRef(() => ThesisService)) private readonly thesisService: ThesisService,
     private readonly userService: UserService,
     private readonly topicStateService: TopicStateService,
     private readonly lecturerService: LecturerService,
@@ -54,7 +58,7 @@ export class TopicService {
     const loginUser = await this.userService.findById(loginUserId);
 
     if (loginUser.isAdmin === IsAdmin.TRUE) {
-      return this.getManyForAdmin(thesisId, offset, limit, keyword);
+      return this.getManyForAdmin(thesisId, loginUserId, offset, limit, keyword);
     }
 
     if (loginUser.userType === UserType.LECTURER) {
@@ -70,11 +74,17 @@ export class TopicService {
 
   private async getManyForAdmin(
     thesisId: number,
+    loginUserId: number,
     offset: number,
     limit: number,
     keyword?: string
   ): Promise<Topic[]> {
-    const conditions: FindOptionsWhere<Topic> = {
+    const ownerConditions: FindOptionsWhere<Topic> = {
+      ...notDeleteCondition,
+      thesisId,
+      creatorId: loginUserId
+    };
+    const adminConditions: FindOptionsWhere<Topic> = {
       ...notDeleteCondition,
       thesisId,
       status: In([
@@ -89,10 +99,12 @@ export class TopicService {
       relations: { creator: { user: {} }, thesis: {} },
       where: keyword
         ? [
-            { ...conditions, subject: Like(`%${keyword}%`) },
-            { ...conditions, description: Like(`%${keyword}%`) }
+            { ...adminConditions, subject: Like(`%${keyword}%`) },
+            { ...adminConditions, description: Like(`%${keyword}%`) },
+            { ...ownerConditions, subject: Like(`%${keyword}%`) },
+            { ...ownerConditions, description: Like(`%${keyword}%`) }
           ]
-        : conditions,
+        : [adminConditions, ownerConditions],
       skip: offset,
       take: limit,
       cache: true
@@ -338,8 +350,7 @@ export class TopicService {
     const creatorActions = [
       TopicStateAction.SEND_REQUEST,
       TopicStateAction.WITHDRAW,
-      TopicStateAction.CANCELED,
-      TopicStateAction.CONFIRMED
+      TopicStateAction.CANCELED
     ];
     const approverActions = [
       TopicStateAction.APPROVED,
@@ -395,15 +406,6 @@ export class TopicService {
       topic.status !== TopicStateAction.NEW &&
       topic.status !== TopicStateAction.WITHDRAW &&
       topic.status !== TopicStateAction.SEND_BACK
-    ) {
-      throw new BadRequestException(TopicError.ERR_7);
-    }
-
-    // When action is confirmed, only for approved or rejected
-    if (
-      action === TopicStateAction.CONFIRMED &&
-      topic.status !== TopicStateAction.APPROVED &&
-      topic.status !== TopicStateAction.REJECTED
     ) {
       throw new BadRequestException(TopicError.ERR_7);
     }
@@ -502,7 +504,7 @@ export class TopicService {
           studentId,
           status
         );
-        await this.topicStudentService.rejectAnotherRegisterTopicWithTransaction(
+        await this.topicStudentService.rejectRegisterOfStudentByTopicIdsWithTransaction(
           manager,
           anotherTopicIds,
           studentId
@@ -528,5 +530,69 @@ export class TopicService {
       },
       cache: true
     });
+  }
+
+  public async cancelTopicsByThesisIdWithTransaction(
+    manager: EntityManager,
+    thesisId: number
+  ): Promise<void> {
+    const topics = await this.getPendingTopicsByThesisIdWithTransaction(manager, thesisId);
+    if (topics.length > 0) {
+      for (const topic of topics) {
+        topic.states.push(
+          this.topicStateService.createEntity({
+            topicId: topic.id,
+            processorId: topic.creatorId,
+            action: TopicStateAction.CANCELED,
+            note: CANCELLED_STATE_NOTE
+          })
+        );
+        topic.status = TopicStateAction.CANCELED;
+      }
+      await manager.save(topics);
+    }
+  }
+
+  private async getPendingTopicsByThesisIdWithTransaction(
+    manager: EntityManager,
+    thesisId: number
+  ): Promise<Topic[]> {
+    return manager.find(TopicEntity, {
+      relations: { states: {} },
+      where: {
+        ...notDeleteCondition,
+        thesisId,
+        status: In([
+          TopicStateAction.NEW,
+          TopicStateAction.SEND_REQUEST,
+          TopicStateAction.WITHDRAW,
+          TopicStateAction.SEND_BACK
+        ])
+      },
+      cache: true
+    });
+  }
+
+  public async rejectTopicRegisterByThesisIdWithTransaction(
+    manager: EntityManager,
+    thesisId: number
+  ): Promise<void> {
+    const topics = await manager.find(TopicEntity, {
+      where: { ...notDeleteCondition, thesisId, status: TopicStateAction.APPROVED },
+      cache: true
+    });
+    const topicIds = topics.map(({ id }) => id);
+    await this.topicStudentService.rejectRegisterByTopicIdsWithTransaction(manager, topicIds);
+  }
+
+  public async disableRegisterStatusByThesisIdWithTransaction(
+    manager: EntityManager,
+    thesisId: number
+  ): Promise<void> {
+    await manager.update(
+      TopicEntity,
+      { ...notDeleteCondition, thesisId, registerStatus: TopicRegisterStatus.ENABLE },
+      { registerStatus: TopicRegisterStatus.DISABLE }
+    );
   }
 }

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import moment, { Moment } from 'moment';
 import {
   Connection,
+  EntityManager,
   FindOptionsWhere,
   LessThanOrEqual,
   Like,
@@ -17,6 +18,7 @@ import { LecturerError } from '../lecturer/lecturer.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { StudentError } from '../student/student.resource';
 import { StudentService } from '../student/student.service';
+import { TopicService } from '../topic/topic.service';
 import { User } from '../user/user.interface';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -37,7 +39,8 @@ export class ThesisService {
     private readonly studentService: StudentService,
     private readonly thesisStudentService: ThesisStudentService,
     private readonly thesisLecturerService: ThesisLecturerService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly topicService: TopicService
   ) {}
 
   public async getMany(
@@ -266,7 +269,10 @@ export class ThesisService {
         currentThesis.defense = thesis.defense;
       }
 
-      currentThesis.state = this.getThesisCurrentState(currentThesis);
+      const currentState = this.getThesisCurrentState(currentThesis);
+      await this.handleChangeStateWithTransaction(manager, currentThesis, currentState);
+      currentThesis.state = currentState;
+
       return await manager.save(currentThesis);
     });
   }
@@ -326,12 +332,16 @@ export class ThesisService {
       cache: true
     });
 
-    for (const thesis of theses) {
-      thesis.state = this.getThesisCurrentState(thesis);
-    }
+    await this.connection.transaction(async (manager) => {
+      for (const thesis of theses) {
+        const currentState = this.getThesisCurrentState(thesis);
+        await this.handleChangeStateWithTransaction(manager, thesis, currentState);
+        thesis.state = currentState;
+      }
 
-    await this.thesisRepository.save(theses);
-    Logger.log('Switch thesis state... Done!');
+      await manager.save(ThesisEntity, theses);
+      Logger.log('Switch thesis state... Done!');
+    });
   }
 
   public async deleteById(id: number): Promise<void> {
@@ -548,5 +558,20 @@ export class ThesisService {
     }
 
     return this.thesisRepository.count(conditions);
+  }
+
+  private async handleChangeStateWithTransaction(
+    manager: EntityManager,
+    thesis: Thesis,
+    state: ThesisState
+  ): Promise<void> {
+    if (state !== ThesisState.LECTURER_TOPIC_REGISTER) {
+      await this.topicService.cancelTopicsByThesisIdWithTransaction(manager, thesis.id);
+    }
+
+    if (state !== ThesisState.STUDENT_TOPIC_REGISTER) {
+      await this.topicService.rejectTopicRegisterByThesisIdWithTransaction(manager, thesis.id);
+      await this.topicService.disableRegisterStatusByThesisIdWithTransaction(manager, thesis.id);
+    }
   }
 }

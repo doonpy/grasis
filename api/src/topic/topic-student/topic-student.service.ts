@@ -109,7 +109,7 @@ export class TopicStudentService {
     );
   }
 
-  public async rejectAnotherRegisterTopicWithTransaction(
+  public async rejectRegisterOfStudentByTopicIdsWithTransaction(
     manager: EntityManager,
     topicIds: number[],
     studentId: number
@@ -127,5 +127,16 @@ export class TopicStudentService {
     deletedAt = new Date()
   ): Promise<void> {
     await manager.update(TopicStudentEntity, { topicId }, { deletedAt });
+  }
+
+  public async rejectRegisterByTopicIdsWithTransaction(
+    manager: EntityManager,
+    topicIds: number[]
+  ): Promise<void> {
+    await manager.update(
+      TopicStudentEntity,
+      { ...notDeleteCondition, topicId: In(topicIds), status: TopicStudentStatus.PENDING },
+      { status: TopicStudentStatus.REJECTED }
+    );
   }
 }

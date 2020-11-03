@@ -14,6 +14,7 @@ import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/com
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../../libs/common/common.resource';
 import CommonService from '../../../../libs/common/common.service';
 import { THESIS_PATH_ROOT, ThesisPath, ThesisState } from '../../../../libs/thesis/thesis.resource';
+import ThesisService from '../../../../libs/thesis/thesis.service';
 import { TopicPath } from '../../../../libs/topic/topic.resource';
 import TopicService from '../../../../libs/topic/topic.service';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
@@ -38,12 +39,14 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   });
   const [keyword, setKeyword] = useState<string>('');
   const topicService = TopicService.getInstance();
-  const { data, isLoading } = topicService.useTopics(
+  const thesisService = ThesisService.getInstance();
+  const { data: topicData, isLoading } = topicService.useTopics(
     thesisId,
     pagination.current,
     pagination.pageSize,
     keyword
   );
+  const { data: thesisData } = thesisService.useThesis(thesisId);
   const handleTableChange = (paginationValues) => {
     setPagination({ ...pagination, ...paginationValues });
   };
@@ -59,8 +62,8 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
         <Space size="large">
           <SearchBox onSearch={onSearch} />
           {loginUser.isLecturer() &&
-            data &&
-            data.topics[0].thesis.state === ThesisState.LECTURER_TOPIC_REGISTER && (
+            thesisData &&
+            thesisData.thesis.state === ThesisState.LECTURER_TOPIC_REGISTER && (
               <Link href={topicService.replaceParams(TopicPath.CREATE, [thesisId])}>
                 <Button
                   type="primary"
@@ -76,7 +79,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       <Table
         bordered
         columns={TopicTableColumns}
-        dataSource={data && data.topics}
+        dataSource={topicData && topicData.topics}
         loading={isLoading}
         pagination={pagination}
         size="middle"
