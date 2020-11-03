@@ -66,6 +66,7 @@ export const StudentTableColumns: ColumnsType = [
     title: 'Tình trạng tốt nghiệp',
     dataIndex: 'isGraduate',
     key: 'isGraduate',
+    align: 'center',
     sorter: {
       compare: sortByIsGraduate,
       multiple: 9

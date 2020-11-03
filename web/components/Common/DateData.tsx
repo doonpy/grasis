@@ -10,6 +10,10 @@ interface ComponentProps {
 }
 
 const DateData: React.FC<ComponentProps> = ({ date, isRelative, dateOnly }) => {
+  if (!date) {
+    return <Typography.Text disabled>NULL</Typography.Text>;
+  }
+
   const datetime = new Datetime(date);
 
   return (

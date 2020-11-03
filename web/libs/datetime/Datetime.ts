@@ -20,4 +20,15 @@ export default class Datetime {
   public getDate(): string {
     return this.dateTime.clone().local().format('L');
   }
+
+  public getDateForThesis(): string {
+    const date = this.getDate();
+    const current = moment.utc();
+    let relativeTime = '';
+    if (current.isSameOrBefore(this.dateTime, 'minutes')) {
+      relativeTime = this.dateTime.fromNow();
+    }
+
+    return `${date} (${relativeTime})`;
+  }
 }

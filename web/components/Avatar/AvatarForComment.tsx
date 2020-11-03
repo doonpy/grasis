@@ -14,7 +14,7 @@ const AvatarForComment: React.FC<ComponentProps> = ({ lastname, firstname, id })
   const fullName = `${lastname || ''} ${firstname || ''}`;
 
   return (
-    <Avatar src={getAvatarUrl(id)} size="small" icon={<UserOutlined />}>
+    <Avatar src={getAvatarUrl(id)} icon={<UserOutlined />}>
       {fullName[0]}
     </Avatar>
   );

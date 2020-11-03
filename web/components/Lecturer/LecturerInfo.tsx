@@ -21,7 +21,7 @@ const LecturerInfo: React.FC<ComponentProps> = ({
 
   return (
     <Space>
-      <Avatar src={getAvatarUrl(id)} size="small" icon={<UserOutlined />}>
+      <Avatar src={getAvatarUrl(id)} icon={<UserOutlined />}>
         {fullName[0]}
       </Avatar>
       {`${fullName} ${lecturerIdStr}`}

@@ -9,7 +9,7 @@ export default class ApiService {
   constructor() {
     this.baseConfigs = {
       baseURL: this.getBaseUrl(),
-      timeout: 10000,
+      timeout: 20000,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json'

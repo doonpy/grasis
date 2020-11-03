@@ -42,7 +42,11 @@ const TextData: React.FC<ComponentProps> = ({ text, enableTruncate, isParagraph 
     );
   }
 
-  return <Typography.Text disabled={!text || text === 'NULL'}>{text || 'NULL'}</Typography.Text>;
+  if (typeof text === 'undefined' || text === null) {
+    return <Typography.Text disabled>NULL</Typography.Text>;
+  }
+
+  return <Typography.Text>{text}</Typography.Text>;
 };
 
 export default TextData;

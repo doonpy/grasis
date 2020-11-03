@@ -22,11 +22,5 @@
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://md34fo1r8p80wnre:j3ks7utki9sgauep@s54ham9zz83czkff.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/qhfv9l22x1ge0szq</jdbc-url>
     </data-source>
-    <data-source source="LOCAL" name="jdbc:mysql://ydnqhfr3ewcaah3q:j1iyt03qqz25uuq0@sh4ob67ph9l80v61.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/n6ll5v4jgcvx2kcb" uuid="1063c12c-1596-4c1d-b28c-bb8569217d87">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://ydnqhfr3ewcaah3q:j1iyt03qqz25uuq0@sh4ob67ph9l80v61.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/n6ll5v4jgcvx2kcb</jdbc-url>
-    </data-source>
   </component>
 </project>

@@ -27,3 +27,7 @@ export enum StudentSearchType {
   SCHOOL_YEAR = '3',
   STUDENT_CLASS = '4'
 }
+
+export const IsGraduateText = ['', 'Chưa tốt nghiệp', 'Đã tốt nghiệp'];
+
+export const IsGraduateColor = ['', 'red', 'green'];
