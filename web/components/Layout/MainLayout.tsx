@@ -8,6 +8,7 @@ import styles from '../../assets/css/components/layout/main-layout.module.css';
 import { CommonPageProps } from '../../libs/common/common.interface';
 import { COMMON_PATH } from '../../libs/common/common.resource';
 import LoginUser from '../../libs/user/instance/LoginUser';
+import { IsAdmin } from '../../libs/user/user.resource';
 import UserService from '../../libs/user/user.service';
 import { Breadcrumb } from '../Breadcrumb/Breadcrumb';
 import Copyright from '../Copyright/Copyright';
@@ -30,7 +31,7 @@ const MainLayout: React.FC<MainLayoutProps> = (props) => {
   if (data) {
     LoginUser.getInstance().setUser(data.user);
     if (isAdminCheck) {
-      if (!userClient.isAdminCheck(data.user.isAdmin)) {
+      if (!userClient.isAdminCheck(data.user.isAdmin as IsAdmin)) {
         userClient.redirectService.redirectTo(COMMON_PATH.ERROR.ERR_403);
         return <div />;
       }
@@ -51,7 +52,7 @@ const MainLayout: React.FC<MainLayoutProps> = (props) => {
       </Head>
       <Sider
         selectedMenu={props.selectedMenu}
-        isAdmin={data && data.user.isAdmin}
+        isAdmin={data && (data.user.isAdmin as IsAdmin)}
         userType={data && data.user.userType}
       />
       <Layout className={styles.layout}>

@@ -1,5 +1,16 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Image, Input, Layout, Space, Typography } from 'antd';
+import { EyeInvisibleOutlined, EyeTwoTone, LockOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Form,
+  Image,
+  Input,
+  Layout,
+  Row,
+  Space,
+  Typography
+} from 'antd';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -25,7 +36,6 @@ const styles: Record<string, CSSProperties> = {
     padding: '15%'
   },
   forgot: { float: 'right' },
-  button: { width: '100%' },
   brand: { textAlign: 'center', width: '100%' }
 };
 
@@ -84,9 +94,15 @@ const Login: NextPage = () => {
             style={styles.form}
             onFinish={handleSubmit}>
             <Space direction="vertical" size="large" style={styles.brand}>
-              <Image preview={false} src={logo} width={170} />
-              <Typography.Title level={2}>GRASIS</Typography.Title>
+              <Image preview={false} src={logo} width={100} />
+              <Typography.Title level={1}>GRASIS</Typography.Title>
             </Space>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <Divider>ĐĂNG NHẬP</Divider>
             <Form.Item
               name="username"
               rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}>
@@ -98,10 +114,11 @@ const Login: NextPage = () => {
             <Form.Item
               name="password"
               rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}>
-              <Input
+              <Input.Password
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 placeholder="Mật khẩu"
+                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
               />
             </Form.Item>
             <Form.Item>
@@ -110,11 +127,13 @@ const Login: NextPage = () => {
               </Form.Item>
             </Form.Item>
             <Form.Item>
-              <Button loading={loading} type="primary" htmlType="submit" style={styles.button}>
+              <Button loading={loading} type="primary" htmlType="submit" block>
                 Đăng nhập
               </Button>
             </Form.Item>
-            <Copyright />
+            <Row justify="center">
+              <Copyright />
+            </Row>
           </Form>
         </Layout.Sider>
       </Layout>

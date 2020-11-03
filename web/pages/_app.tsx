@@ -38,7 +38,6 @@ const MyApp = ({
     <SWRConfig
       value={{
         refreshInterval: 1000,
-        refreshWhenHidden: true,
         revalidateOnFocus: false,
         fetcher: commonClient.apiService.hooksFetcher.bind(commonClient.apiService),
         onError: commonClient.requestErrorHandler.bind(commonClient)
