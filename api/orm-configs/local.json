@@ -1,6 +1,6 @@
 {
   "type": "mysql",
-  "url": "mysql://localhost:3306/grasis",
+  "url": "mysql://root:root@localhost:3306/grasis",
   "entities": [
     "src/**/*.entity.ts"
   ],

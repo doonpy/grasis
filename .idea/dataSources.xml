@@ -4,20 +4,29 @@
     <data-source source="LOCAL" name="grasis-api-local" uuid="0dcbf984-656a-4bef-9d07-432635ef272e">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
+      <configured-by-url>true</configured-by-url>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://root:root@localhost:3306/grasis</jdbc-url>
     </data-source>
     <data-source source="LOCAL" name="grasis-api-staging" uuid="9c43512b-ded3-493f-8477-07c5cc88a0cb">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
+      <configured-by-url>true</configured-by-url>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://bsrb97j7whsjn43p:njnpmmkm0fj1lhtl@qbhol6k6vexd5qjs.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/hd8l34m2n5b20rvn</jdbc-url>
     </data-source>
     <data-source source="LOCAL" name="grasis-api-prod" uuid="f982ef8d-1cc6-4425-b1b6-5e9a09b7a609">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
+      <configured-by-url>true</configured-by-url>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://md34fo1r8p80wnre:j3ks7utki9sgauep@s54ham9zz83czkff.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/qhfv9l22x1ge0szq</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="jdbc:mysql://ydnqhfr3ewcaah3q:j1iyt03qqz25uuq0@sh4ob67ph9l80v61.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/n6ll5v4jgcvx2kcb" uuid="1063c12c-1596-4c1d-b28c-bb8569217d87">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://ydnqhfr3ewcaah3q:j1iyt03qqz25uuq0@sh4ob67ph9l80v61.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/n6ll5v4jgcvx2kcb</jdbc-url>
     </data-source>
   </component>
 </project>

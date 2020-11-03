@@ -1,5 +1,5 @@
 {
-  "type": "mssql",
+  "type": "mysql",
   "url": "mysql://md34fo1r8p80wnre:j3ks7utki9sgauep@s54ham9zz83czkff.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/qhfv9l22x1ge0szq",
   "entities": [
     "src/**/*.entity.ts"

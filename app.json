@@ -4,6 +4,9 @@
   "addons": [
     {
       "plan": "jawsdb:kitefin"
+    },
+    {
+      "plan": "rediscloud:30"
     }
   ],
   "buildpacks": [
