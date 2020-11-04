@@ -1,25 +1,21 @@
+import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
 
 import UserTerminology from '../../assets/terminology/user.terminology';
-import {
-  sortByFirstname,
-  sortByGender,
-  sortByLastname,
-  sortByStatus,
-  sortByUsername
-} from '../../libs/user/user.helper';
+import { sortByNumber, sortByString } from '../../libs/common/common.helper';
+import { User } from '../../libs/user/user.interface';
 import { Gender, UserStatus } from '../../libs/user/user.resource';
 import TextData from '../Common/TextData';
 import UserGenderRender from './UserGenderRender';
 import UserStatusRender from './UserStatusRender';
 
-export const USER_COLUMNS = [
+export const UserAdminTableColumns: ColumnsType<User> = [
   {
     title: UserTerminology.USER_1,
     dataIndex: 'username',
     key: 'username',
     sorter: {
-      compare: sortByUsername,
+      compare: (a, b) => sortByString(a.username, b.username),
       multiple: 1
     },
     render: (value: string | null) => <TextData text={value} />
@@ -29,7 +25,7 @@ export const USER_COLUMNS = [
     dataIndex: 'lastname',
     key: 'lastname',
     sorter: {
-      compare: sortByLastname,
+      compare: (a, b) => sortByString(a.lastname, b.lastname),
       multiple: 2
     },
     render: (value: string | null) => <TextData text={value} />
@@ -39,7 +35,7 @@ export const USER_COLUMNS = [
     dataIndex: 'firstname',
     key: 'firstname',
     sorter: {
-      compare: sortByFirstname,
+      compare: (a, b) => sortByString(a.firstname, b.firstname),
       multiple: 3
     },
     render: (value: string | null) => <TextData text={value} />
@@ -51,7 +47,7 @@ export const USER_COLUMNS = [
     width: '10%',
     render: (value: Gender) => <UserGenderRender gender={value} />,
     sorter: {
-      compare: sortByGender,
+      compare: (a, b) => sortByNumber(a.gender, b.gender),
       multiple: 4
     }
   },
@@ -62,7 +58,7 @@ export const USER_COLUMNS = [
     width: '10%',
     render: (value: UserStatus) => <UserStatusRender status={value} />,
     sorter: {
-      compare: sortByStatus,
+      compare: (a, b) => sortByNumber(a.status as UserStatus, b.status as UserStatus),
       multiple: 5
     }
   }

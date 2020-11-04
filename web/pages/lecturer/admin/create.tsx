@@ -3,7 +3,7 @@ import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
-import LecturerTerminology from '../../../assets/terminology/lecturer.terminology';
+import { LecturerTerminology } from '../../../assets/terminology/lecturer.terminology';
 import MainLayout from '../../../components/Layout/MainLayout';
 import LecturerFormItem from '../../../components/Lecturer/LecturerFormItem';
 import UserFormItem from '../../../components/User/UserFormItem';

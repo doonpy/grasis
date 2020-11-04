@@ -7,7 +7,7 @@ import React from 'react';
 
 const { confirm } = Modal;
 import styles from '../../../../assets/css/pages/student/admin/index.module.css';
-import StudentTerminology from '../../../../assets/terminology/student.terminology';
+import { StudentTerminology } from '../../../../assets/terminology/student.terminology';
 import AvatarView from '../../../../components/Avatar/AvatarView';
 import MainLayout from '../../../../components/Layout/MainLayout';
 import StudentView from '../../../../components/Student/StudentView';

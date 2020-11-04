@@ -1,26 +1,30 @@
-import moment from 'moment';
+import { Moment } from 'moment';
 
-import { CommonColumns } from './common.interface';
-
-export function sortByCreatedAt(a: CommonColumns, b: CommonColumns): number {
-  if (moment(a.createdAt).isBefore(b.createdAt)) {
+export function sortByDate(a: Moment, b: Moment): number {
+  if (a.isBefore(b)) {
     return -1;
   }
 
-  if (moment(b.createdAt).isBefore(a.createdAt)) {
+  if (b.isBefore(a)) {
     return 1;
   }
 
   return 0;
 }
 
-export function sortByUpdatedAt(a: CommonColumns, b: CommonColumns): number {
-  if (moment(a.updatedAt).isBefore(b.updatedAt)) {
+export function sortByString(a: string, b: string): number {
+  if (a < b) {
     return -1;
   }
-
-  if (moment(b.updatedAt).isBefore(a.updatedAt)) {
+  if (a > b) {
     return 1;
+  }
+  return 0;
+}
+
+export function sortByNumber(a: number, b: number): number {
+  if (a !== null && b !== null) {
+    return a - b;
   }
 
   return 0;

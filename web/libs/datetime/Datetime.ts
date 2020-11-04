@@ -3,9 +3,9 @@ import 'moment/locale/vi';
 import moment, { Moment } from 'moment';
 
 export default class Datetime {
-  private dateTime: Moment;
+  private readonly dateTime: Moment;
 
-  constructor(value: string | number | Date) {
+  constructor(value: string | number | Date | Moment) {
     this.dateTime = moment.utc(value);
   }
 
@@ -21,14 +21,25 @@ export default class Datetime {
     return this.dateTime.clone().local().format('L');
   }
 
-  public getDateForThesis(): string {
-    const date = this.getDate();
+  public getCountDownDays(): number {
     const current = moment.utc();
-    let relativeTime = '';
-    if (current.isSameOrBefore(this.dateTime, 'minutes')) {
-      relativeTime = this.dateTime.fromNow();
+    if (this.dateTime.isAfter(current)) {
+      return this.dateTime.diff(current, 'days');
     }
 
-    return `${date} (${relativeTime})`;
+    return 0;
+  }
+
+  public getCountDownHours(): number {
+    const current = moment.utc();
+    if (this.dateTime.isAfter(current)) {
+      return this.dateTime.diff(current, 'hours');
+    }
+
+    return 0;
+  }
+
+  public isSameOrAfterCurrentDate(): boolean {
+    return this.dateTime.isSameOrAfter(moment.utc(), 'day');
   }
 }

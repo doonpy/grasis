@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useEffect, useState } from 'react';
 
-import StudentTerminology from '../../../../assets/terminology/student.terminology';
+import { StudentTerminology } from '../../../../assets/terminology/student.terminology';
 import MainLayout from '../../../../components/Layout/MainLayout';
 import StudentFormItem from '../../../../components/Student/StudentFormItem';
 import UserFormItem from '../../../../components/User/UserFormItem';

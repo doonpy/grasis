@@ -1,4 +1,4 @@
-export default {
+export const LecturerTerminology = {
   LECTURER_1: 'Danh sách giảng viên',
   LECTURER_2: 'Thêm giảng viên',
   LECTURER_3: 'Mã giảng viên',

@@ -14,30 +14,17 @@ import {
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { CSSProperties, useState } from 'react';
+import React, { useState } from 'react';
 
-import logo from '../assets/img/hcmute-logo.png';
-import loginBg from '../assets/img/login-bg.jpg';
+import styles from '../assets/css/pages/login/index.module.css';
+import fhqLogo from '../assets/img/fhq-logo.png';
+import hcmuteLogo from '../assets/img/hcmute-logo.png';
+import { LoginTerminology } from '../assets/terminology/login.terminology';
 import Copyright from '../components/Copyright/Copyright';
 import { COMMON_PATH } from '../libs/common/common.resource';
 import CommonService from '../libs/common/common.service';
 import { LoginInputs } from '../libs/user/user.interface';
 import UserService from '../libs/user/user.service';
-
-const styles: Record<string, CSSProperties> = {
-  background: {
-    height: '100vh',
-    backgroundImage: `url(${loginBg})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'auto',
-    backgroundPosition: 'center'
-  },
-  form: {
-    padding: '15%'
-  },
-  forgot: { float: 'right' },
-  brand: { textAlign: 'center', width: '100%' }
-};
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -83,52 +70,57 @@ const Login: NextPage = () => {
   return (
     <div>
       <Head>
-        <title>Đăng nhập</title>
+        <title>{LoginTerminology.LOGIN_1}</title>
       </Head>
       <Layout>
-        <Layout.Content style={styles.background} />
+        <Layout.Content className={styles.background} />
         <Layout.Sider theme="light" width={'40%'}>
           <Form
             name="normal_login"
             initialValues={{ remember: true, username }}
-            style={styles.form}
+            className={styles.form}
             onFinish={handleSubmit}>
-            <Space direction="vertical" size="large" style={styles.brand}>
-              <Image preview={false} src={logo} width={100} />
-              <Typography.Title level={1}>GRASIS</Typography.Title>
+            <Space direction="vertical" size="large" className={styles.logo}>
+              <Space size="large" align="start">
+                <Image preview={false} src={hcmuteLogo} width={'7em'} />
+                <Image preview={false} src={fhqLogo} width={'7em'} />
+              </Space>
+              <Typography.Title level={1} className={styles.logoText}>
+                {LoginTerminology.LOGIN_7}
+              </Typography.Title>
             </Space>
             <br />
             <br />
             <br />
             <br />
             <br />
-            <Divider>ĐĂNG NHẬP</Divider>
+            <Divider>{LoginTerminology.LOGIN_8.toUpperCase()}</Divider>
             <Form.Item
               name="username"
-              rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}>
+              rules={[{ required: true, message: LoginTerminology.LOGIN_3 }]}>
               <Input
                 prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="Tên đăng nhập"
+                placeholder={LoginTerminology.LOGIN_2}
               />
             </Form.Item>
             <Form.Item
               name="password"
-              rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}>
+              rules={[{ required: true, message: LoginTerminology.LOGIN_5 }]}>
               <Input.Password
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
-                placeholder="Mật khẩu"
+                placeholder={LoginTerminology.LOGIN_4}
                 iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
               />
             </Form.Item>
             <Form.Item>
               <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Ghi nhớ</Checkbox>
+                <Checkbox>{LoginTerminology.LOGIN_6}</Checkbox>
               </Form.Item>
             </Form.Item>
             <Form.Item>
               <Button loading={loading} type="primary" htmlType="submit" block>
-                Đăng nhập
+                {LoginTerminology.LOGIN_1}
               </Button>
             </Form.Item>
             <Row justify="center">

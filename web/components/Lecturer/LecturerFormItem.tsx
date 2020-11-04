@@ -1,7 +1,7 @@
 import { Form, Input, Select } from 'antd';
 import React from 'react';
 
-import LecturerTerminology from '../../assets/terminology/lecturer.terminology';
+import { LecturerTerminology } from '../../assets/terminology/lecturer.terminology';
 
 const LecturerFormItem: React.FC = () => {
   return (

@@ -22,8 +22,8 @@ export const ThesisPath = {
   SPECIFY: '/:id',
   ADMIN_EDIT: '/:id/edit',
   ADMIN_SWITCH_STATUS: '/:id/switch-status',
-  LOAD_MORE_LECTURERS: '/:id/lecturers-load-more',
-  LOAD_MORE_STUDENTS: '/:id/students-load-more'
+  GET_THESIS_STUDENTS: '/:id/thesis-students',
+  GET_THESIS_LECTURERS: '/:id/thesis-lecturers'
 };
 
 export const ThesisError = {
@@ -52,5 +52,3 @@ export enum ThesisStatus {
   INACTIVE = 1,
   ACTIVE = 2
 }
-
-export const ATTENDEES_LOAD_LIMIT = 10;

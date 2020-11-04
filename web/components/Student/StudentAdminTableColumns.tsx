@@ -4,15 +4,12 @@ import { ColumnsType } from 'antd/es/table';
 import Link from 'next/link';
 import React from 'react';
 
-import {
-  sortByClass,
-  sortByIsGraduate,
-  sortBySchoolYear,
-  sortByStudentId
-} from '../../libs/student/student.helper';
-import { STUDENT_ADMIN_PATH_ROOT } from '../../libs/student/student.resource';
+import { sortByNumber, sortByString } from '../../libs/common/common.helper';
+import { Student } from '../../libs/student/student.interface';
+import { IsGraduate, STUDENT_ADMIN_PATH_ROOT } from '../../libs/student/student.resource';
+import { User } from '../../libs/user/user.interface';
 import TextData from '../Common/TextData';
-import { USER_COLUMNS } from '../User/UserColumns';
+import { UserAdminTableColumns } from '../User/UserAdminTableColumns';
 import StudentIsGraduate from './StudentIsGraduate';
 
 function idRender(id: number): JSX.Element {
@@ -23,7 +20,7 @@ function idRender(id: number): JSX.Element {
   );
 }
 
-export const StudentTableColumns: ColumnsType = [
+export const StudentAdminTableColumns: ColumnsType<Student & User> = [
   {
     title: '',
     dataIndex: 'id',
@@ -37,7 +34,7 @@ export const StudentTableColumns: ColumnsType = [
     key: 'studentId',
     width: '10%',
     sorter: {
-      compare: sortByStudentId,
+      compare: (a, b) => sortByString(a.studentId, b.studentId),
       multiple: 6
     },
     render: (value: string | null) => <TextData text={value} />
@@ -47,7 +44,7 @@ export const StudentTableColumns: ColumnsType = [
     dataIndex: 'schoolYear',
     key: 'schoolYear',
     sorter: {
-      compare: sortBySchoolYear,
+      compare: (a, b) => sortByString(a.schoolYear, b.schoolYear),
       multiple: 7
     },
     render: (value: string | null) => <TextData text={value} />
@@ -57,7 +54,7 @@ export const StudentTableColumns: ColumnsType = [
     dataIndex: 'studentClass',
     key: 'studentClass',
     sorter: {
-      compare: sortByClass,
+      compare: (a, b) => sortByString(a.studentClass, b.studentClass),
       multiple: 8
     },
     render: (value: string | null) => <TextData text={value} />
@@ -68,10 +65,10 @@ export const StudentTableColumns: ColumnsType = [
     key: 'isGraduate',
     align: 'center',
     sorter: {
-      compare: sortByIsGraduate,
+      compare: (a, b) => sortByNumber(a.isGraduate as IsGraduate, b.isGraduate as IsGraduate),
       multiple: 9
     },
     render: (value: number | null) => <StudentIsGraduate isGraduate={value} />
   },
-  ...USER_COLUMNS
+  ...UserAdminTableColumns
 ];

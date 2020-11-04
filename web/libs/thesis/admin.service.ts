@@ -48,12 +48,18 @@ export default class ThesisAdminService extends CommonService {
     const [startTime, endTime] = formValues.duration;
 
     result.startTime = startTime.startOf('days');
-    result.endTime = endTime.endOf('days');
-    result.lecturerTopicRegister = (formValues.lecturerTopicRegister as Moment).endOf('days');
-    result.studentTopicRegister = (formValues.studentTopicRegister as Moment).endOf('days');
-    result.progressReport = (formValues.progressReport as Moment).endOf('days');
-    result.review = (formValues.review as Moment).endOf('days');
-    result.defense = (formValues.defense as Moment).endOf('days');
+    result.endTime = endTime.endOf('days').subtract(1, 'minutes');
+    result.lecturerTopicRegister = (formValues.lecturerTopicRegister as Moment)
+      .endOf('days')
+      .subtract(1, 'minutes');
+    result.studentTopicRegister = (formValues.studentTopicRegister as Moment)
+      .endOf('days')
+      .subtract(1, 'minutes');
+    result.progressReport = (formValues.progressReport as Moment)
+      .endOf('days')
+      .subtract(1, 'minutes');
+    result.review = (formValues.review as Moment).endOf('days').subtract(1, 'minutes');
+    result.defense = (formValues.defense as Moment).endOf('days').subtract(1, 'minutes');
     delete formValues.duration;
 
     return { ...formValues, ...result };

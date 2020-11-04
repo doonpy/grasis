@@ -1,17 +1,22 @@
-import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import {
+  ThesisGetLecturersResponse,
+  UseThesisLecturers
+} from './thesis-lecturer/thesis-lecturer.interface';
+import {
+  ThesisGetStudentsResponse,
+  UseThesisStudents
+} from './thesis-student/thesis-student.interface';
+import {
   ThesisFindManyResponse,
   ThesisGetByIdResponse,
-  ThesisLoadMoreLecturersResponse,
-  ThesisLoadMoreStudentsResponse,
   UseTheses,
   UseThesis
 } from './thesis.interface';
-import { LoadMoreTarget, THESIS_API_ROOT, ThesisApi } from './thesis.resource';
+import { THESIS_API_ROOT, ThesisApi } from './thesis.resource';
 
 export default class ThesisService extends CommonService {
   private static instance: ThesisService;
@@ -50,22 +55,43 @@ export default class ThesisService extends CommonService {
     return { data, isLoading: !data };
   }
 
-  public async loadMoreAttendees(
-    target: LoadMoreTarget,
+  public useThesisStudents(
     thesisId: number,
-    offset = 0
-  ): Promise<AxiosResponse<ThesisLoadMoreLecturersResponse | ThesisLoadMoreStudentsResponse>> {
-    await this.apiService.bindAuthorizationForClient();
-    if (target === LoadMoreTarget.LECTURER) {
-      return this.apiService.get<ThesisLoadMoreLecturersResponse>(ThesisApi.LOAD_MORE_LECTURERS, [
-        thesisId,
-        offset
-      ]);
+    pageNumber = 0,
+    pageSize: number = DEFAULT_PAGE_SIZE,
+    keyword?: string
+  ): UseThesisStudents {
+    const offset = (pageNumber - 1) * pageSize;
+    const { data } = useSWR<ThesisGetStudentsResponse>(
+      this.replaceParams(ThesisApi.GET_THESIS_STUDENTS, [thesisId, offset, keyword])
+    );
+    if (data) {
+      data.students = data.students.map((student, index) => ({
+        ...student,
+        key: index.toString()
+      }));
     }
 
-    return this.apiService.get<ThesisLoadMoreStudentsResponse>(ThesisApi.LOAD_MORE_STUDENTS, [
-      thesisId,
-      offset
-    ]);
+    return { data, isLoading: !data };
+  }
+
+  public useThesisLecturers(
+    thesisId: number,
+    pageNumber = 0,
+    pageSize: number = DEFAULT_PAGE_SIZE,
+    keyword?: string
+  ): UseThesisLecturers {
+    const offset = (pageNumber - 1) * pageSize;
+    const { data } = useSWR<ThesisGetLecturersResponse>(
+      this.replaceParams(ThesisApi.GET_THESIS_LECTURERS, [thesisId, offset, keyword])
+    );
+    if (data) {
+      data.lecturers = data.lecturers.map((student, index) => ({
+        ...student,
+        key: index.toString()
+      }));
+    }
+
+    return { data, isLoading: !data };
   }
 }

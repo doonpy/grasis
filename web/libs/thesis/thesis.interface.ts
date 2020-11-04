@@ -51,8 +51,8 @@ export interface ThesisFindManyResponse extends CommonResponse {
 
 export interface ThesisGetByIdResponse extends CommonResponse {
   thesis: Thesis;
-  isMoreStudents: boolean;
-  isMoreLecturers: boolean;
+  studentTotal: number;
+  lecturerTotal: number;
 }
 
 export interface UseThesis {

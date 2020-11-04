@@ -6,6 +6,7 @@ import Link from 'next/link';
 import React from 'react';
 
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
+import { sortByDate, sortByNumber, sortByString } from '../../libs/common/common.helper';
 import { Lecturer } from '../../libs/lecturer/lecturer.interface';
 import { Thesis } from '../../libs/thesis/thesis.interface';
 import { THESIS_PATH_ROOT, ThesisState, ThesisStatus } from '../../libs/thesis/thesis.resource';
@@ -36,79 +37,7 @@ function creatorRender({ id, lecturerId, user: { firstname, lastname } }: Lectur
   );
 }
 
-function sortByCreator(a: Thesis, b: Thesis): number {
-  if (a.creator.id > b.creator.id) {
-    return 1;
-  }
-
-  if (a.creator.id < b.creator.id) {
-    return -1;
-  }
-
-  return 0;
-}
-
-function sortBySubject(a: Thesis, b: Thesis): number {
-  if (a.subject > b.subject) {
-    return 1;
-  }
-
-  if (a.subject < b.subject) {
-    return -1;
-  }
-
-  return 0;
-}
-
-function sortByStartTime(a: Thesis, b: Thesis): number {
-  if (moment(a.startTime).isBefore(b.startTime)) {
-    return 1;
-  }
-
-  if (moment(b.startTime).isBefore(a.startTime)) {
-    return -1;
-  }
-
-  return 0;
-}
-
-function sortByEndTime(a: Thesis, b: Thesis): number {
-  if (moment(a.endTime).isBefore(b.endTime)) {
-    return -1;
-  }
-
-  if (moment(b.endTime).isBefore(a.endTime)) {
-    return 1;
-  }
-
-  return 0;
-}
-
-function sortByState(a: Thesis, b: Thesis): number {
-  if (a.state > b.state) {
-    return 1;
-  }
-
-  if (a.state < b.state) {
-    return -1;
-  }
-
-  return 0;
-}
-
-function sortByStatus(a: Thesis, b: Thesis): number {
-  if (a.status > b.status) {
-    return 1;
-  }
-
-  if (a.status < b.status) {
-    return -1;
-  }
-
-  return 0;
-}
-
-export const ThesisTableColumns: ColumnsType = [
+export const ThesisTableColumns: ColumnsType<Thesis> = [
   {
     title: '',
     dataIndex: 'id',
@@ -120,37 +49,40 @@ export const ThesisTableColumns: ColumnsType = [
     title: 'Tiêu đề',
     dataIndex: 'subject',
     width: '20%',
-    sorter: { compare: sortBySubject, multiple: 1 },
+    sorter: { compare: (a, b) => sortByString(a.subject, b.subject), multiple: 1 },
     render: (value: string) => <TextData text={value} />
   },
   {
     title: 'Người tạo',
     dataIndex: 'creator',
-    sorter: { compare: sortByCreator, multiple: 2 },
+    sorter: { compare: (a, b) => sortByNumber(a.creatorId, b.creatorId), multiple: 2 },
     render: creatorRender
   },
   {
     title: 'Ngày bắt đầu',
     dataIndex: 'startTime',
-    sorter: { compare: sortByStartTime, multiple: 3 },
+    sorter: {
+      compare: (a, b) => sortByDate(moment(a.startTime), moment(b.startTime)),
+      multiple: 3
+    },
     render: (value: string) => <DateData date={value} dateOnly={true} />
   },
   {
     title: 'Ngày kết thúc',
     dataIndex: 'endTime',
-    sorter: { compare: sortByEndTime, multiple: 4 },
+    sorter: { compare: (a, b) => sortByDate(moment(a.endTime), moment(b.endTime)), multiple: 4 },
     render: (value: string) => <DateData date={value} dateOnly={true} />
   },
   {
     title: 'Giai đoạn hiện tại',
     dataIndex: 'state',
-    sorter: { compare: sortByState, multiple: 5 },
+    sorter: { compare: (a, b) => sortByNumber(a.state, b.state), multiple: 5 },
     render: (value: ThesisState) => <ThesisStateRender state={value} />
   },
   {
     title: 'Trạng thái',
     dataIndex: 'status',
-    sorter: { compare: sortByStatus, multiple: 6 },
+    sorter: { compare: (a, b) => sortByNumber(a.status, b.status), multiple: 6 },
     render: (value: ThesisStatus) => <ThesisStatusRender status={value} />
   }
 ];

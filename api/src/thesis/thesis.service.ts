@@ -143,18 +143,13 @@ export class ThesisService {
     return await this.thesisRepository.save(thesisEntity);
   }
 
-  public async getById(id: number, withAttendees = false): Promise<Thesis> {
+  public async getById(id: number): Promise<Thesis> {
     const thesis = await this.thesisRepository.findOne(id, {
       relations: { creator: { user: {} } },
       where: { ...notDeleteCondition }
     });
     if (!thesis) {
       throw new BadRequestException(ThesisError.ERR_7);
-    }
-
-    if (withAttendees) {
-      thesis.lecturers = await this.thesisLecturerService.getThesisLecturersForView(thesis.id);
-      thesis.students = await this.thesisStudentService.getThesisStudentsForView(thesis.id);
     }
 
     return thesis;
@@ -199,7 +194,7 @@ export class ThesisService {
     }
 
     const thesisForEdit: ThesisForEdit = { ...thesis, lecturerAttendees: [], studentAttendees: [] };
-    thesisForEdit.lecturerAttendees = await this.thesisLecturerService.getThesisLecturersForEditView(
+    thesisForEdit.lecturerAttendees = await this.thesisLecturerService.getThesisLecturersForEdit(
       id
     );
     thesisForEdit.studentAttendees = await this.thesisStudentService.getThesisStudentsForEditView(

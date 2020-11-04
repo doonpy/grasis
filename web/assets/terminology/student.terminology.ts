@@ -1,4 +1,4 @@
-export default {
+export const StudentTerminology = {
   STUDENT_1: 'Danh sách sinh viên',
   STUDENT_2: 'Thêm sinh viên',
   STUDENT_3: 'Mã sinh viên',

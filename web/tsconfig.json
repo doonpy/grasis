@@ -19,9 +19,11 @@
     "jsx": "preserve",
     "allowSyntheticDefaultImports": true,
     "removeComments": true,
-    "sourceRoot": ".",
     "baseUrl": ".",
-    "typeRoots": ["./types","node_modules/@types"]
+    "typeRoots": [
+      "./types",
+      "node_modules/@types"
+    ]
   },
   "include": [
     "next-env.d.ts",

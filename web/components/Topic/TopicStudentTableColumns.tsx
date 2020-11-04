@@ -1,6 +1,7 @@
 import Icon, { ExclamationCircleOutlined, FileTextTwoTone } from '@ant-design/icons';
 import { Button, message, Modal, Space } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import moment from 'moment';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
@@ -8,15 +9,12 @@ import CheckIcon from '../../assets/svg/regular/check.svg';
 import MinusIcon from '../../assets/svg/regular/minus.svg';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import UserTerminology from '../../assets/terminology/user.terminology';
-import { sortByCreatedAt } from '../../libs/common/common.helper';
+import { sortByDate, sortByNumber, sortByString } from '../../libs/common/common.helper';
 import CommonService from '../../libs/common/common.service';
-import { sortByStudentId } from '../../libs/student/student.helper';
 import { StudentPath } from '../../libs/student/student.resource';
 import { TopicStudent } from '../../libs/topic/topic-student/topic-student.interface';
 import { TopicStudentStatus } from '../../libs/topic/topic-student/topic-student.resource';
-import { sortByStudentRegisterStatus } from '../../libs/topic/topic.helper';
 import TopicService from '../../libs/topic/topic.service';
-import { sortByFirstname, sortByLastname } from '../../libs/user/user.helper';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import TopicStudentStatusRender from './TopicStudentStatusRender';
@@ -98,7 +96,7 @@ export const TopicStudentTableColumns: ColumnsType<TopicStudent> = [
     key: 'studentId',
     width: '10%',
     sorter: {
-      compare: (a, b) => sortByStudentId(a.student, b.student),
+      compare: (a, b) => sortByString(a.student.studentId, b.student.studentId),
       multiple: 1
     },
     render: (record) => <TextData text={record.student.studentId} />
@@ -107,7 +105,7 @@ export const TopicStudentTableColumns: ColumnsType<TopicStudent> = [
     title: UserTerminology.USER_5,
     key: 'lastname',
     sorter: {
-      compare: (a, b) => sortByLastname(a.student.user, b.student.user),
+      compare: (a, b) => sortByString(a.student.user.lastname, b.student.user.lastname),
       multiple: 2
     },
     render: (
@@ -123,7 +121,7 @@ export const TopicStudentTableColumns: ColumnsType<TopicStudent> = [
     title: UserTerminology.USER_4,
     key: 'firstname',
     sorter: {
-      compare: (a, b) => sortByFirstname(a.student.user, b.student.user),
+      compare: (a, b) => sortByString(a.student.user.firstname, b.student.user.firstname),
       multiple: 3
     },
     render: ({
@@ -137,7 +135,7 @@ export const TopicStudentTableColumns: ColumnsType<TopicStudent> = [
     key: 'createdAt',
     dataIndex: 'createdAt',
     sorter: {
-      compare: sortByCreatedAt,
+      compare: (a, b) => sortByDate(moment(a.createdAt), moment(b.createdAt)),
       multiple: 4
     },
     render: (value: string) => <DateData date={value} isRelative={true} />
@@ -147,7 +145,7 @@ export const TopicStudentTableColumns: ColumnsType<TopicStudent> = [
     key: 'status',
     dataIndex: 'status',
     sorter: {
-      compare: sortByStudentRegisterStatus,
+      compare: (a, b) => sortByNumber(a.status, b.status),
       multiple: 5
     },
     render: (value: TopicStudentStatus) => <TopicStudentStatusRender status={value} />

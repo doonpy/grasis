@@ -92,7 +92,6 @@ const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({
       }
 
       if (transferItems.length !== 0) {
-        console.log(targetAttendees, transferItems);
         setSourceAttendees([...targetAttendees, ...transferItems]);
       }
 
@@ -192,6 +191,7 @@ const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({
           }}
           render={renderItem}
           footer={renderFooter}
+          operations={[ThesisTerminology.THESIS_45]}
         />
       </Form.Item>
     </Spin>

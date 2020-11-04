@@ -1,10 +1,11 @@
-import { Typography } from 'antd';
+import { Space, Typography } from 'antd';
+import { Moment } from 'moment';
 import React from 'react';
 
 import Datetime from '../../libs/datetime/Datetime';
 
 interface ComponentProps {
-  date?: string | number | Date;
+  date?: string | number | Date | Moment;
   isRelative?: boolean;
   dateOnly?: boolean;
 }
@@ -17,14 +18,16 @@ const DateData: React.FC<ComponentProps> = ({ date, isRelative, dateOnly }) => {
   const datetime = new Datetime(date);
 
   return (
-    <Typography.Text disabled={!date}>
-      {dateOnly ? datetime.getDate() : datetime.getWithLocalTimezone()}&nbsp;
+    <Space>
+      <Typography.Text disabled={!date}>
+        {dateOnly ? datetime.getDate() : datetime.getWithLocalTimezone()}
+      </Typography.Text>
       {isRelative && (
         <Typography.Text type="secondary">
           <i>{`(${datetime.getRelativeTime()})`}</i>
         </Typography.Text>
       )}
-    </Typography.Text>
+    </Space>
   );
 };
 

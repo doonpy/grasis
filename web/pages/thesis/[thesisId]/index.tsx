@@ -109,11 +109,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               </span>
             }
             key="2">
-            <ThesisLecturerList
-              thesisId={thesisId}
-              initLecturers={data.thesis.lecturers}
-              initIsMore={data.isMoreLecturers}
-            />
+            <ThesisLecturerList thesisId={thesisId} />
           </Tabs.TabPane>
           <Tabs.TabPane
             tab={
@@ -123,11 +119,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               </span>
             }
             key="3">
-            <ThesisStudentList
-              thesisId={thesisId}
-              initStudents={data.thesis.students}
-              initIsMore={data.isMoreStudents}
-            />
+            <ThesisStudentList thesisId={thesisId} />
           </Tabs.TabPane>
         </Tabs>
       )}

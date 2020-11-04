@@ -4,10 +4,12 @@ import { ColumnsType } from 'antd/es/table';
 import Link from 'next/link';
 import React from 'react';
 
+import { sortByString } from '../../libs/common/common.helper';
 import { Lecturer } from '../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../libs/lecturer/lecturer.resource';
+import { User } from '../../libs/user/user.interface';
 import TextData from '../Common/TextData';
-import { USER_COLUMNS } from '../User/UserColumns';
+import { UserAdminTableColumns } from '../User/UserAdminTableColumns';
 
 function idRender(id: number): JSX.Element {
   return (
@@ -17,27 +19,7 @@ function idRender(id: number): JSX.Element {
   );
 }
 
-function sortByLecturerId(a: Lecturer, b: Lecturer): number {
-  if (a.lecturerId < b.lecturerId) {
-    return -1;
-  }
-  if (a.lecturerId > b.lecturerId) {
-    return 1;
-  }
-  return 0;
-}
-
-function sortByPosition(a: Lecturer, b: Lecturer): number {
-  if (a.position < b.position) {
-    return -1;
-  }
-  if (a.position > b.position) {
-    return 1;
-  }
-  return 0;
-}
-
-export const LecturerTableColumns: ColumnsType = [
+export const LecturerTableColumns: ColumnsType<Lecturer & User> = [
   {
     title: '',
     dataIndex: 'id',
@@ -51,7 +33,7 @@ export const LecturerTableColumns: ColumnsType = [
     key: 'lecturerId',
     width: '10%',
     sorter: {
-      compare: sortByLecturerId,
+      compare: (a, b) => sortByString(a.lecturerId, b.lecturerId),
       multiple: 6
     },
     render: (value: string | null) => <TextData text={value} />
@@ -61,10 +43,10 @@ export const LecturerTableColumns: ColumnsType = [
     dataIndex: 'position',
     key: 'position',
     sorter: {
-      compare: sortByPosition,
+      compare: (a, b) => sortByString(a.position, b.position),
       multiple: 7
     },
     render: (value: string | null) => <TextData text={value} enableTruncate={true} />
   },
-  ...USER_COLUMNS
+  ...UserAdminTableColumns
 ];

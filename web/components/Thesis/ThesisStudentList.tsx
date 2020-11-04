@@ -1,64 +1,53 @@
-import { Button, List, Row } from 'antd';
+import { Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 
-import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
-import { ThesisStudent } from '../../libs/thesis/thesis-student/thesis-student.interface';
-import { ThesisLoadMoreStudentsResponse } from '../../libs/thesis/thesis.interface';
-import { LoadMoreTarget } from '../../libs/thesis/thesis.resource';
+import { DEFAULT_PAGE_SIZE } from '../../libs/common/common.resource';
 import ThesisService from '../../libs/thesis/thesis.service';
-import ThesisStudentItem from './ThesisStudentItem';
+import SearchBox from '../Common/SearchBox';
+import { ThesisStudentTableColumns } from './ThesisStudentTableColumns';
 
 interface ComponentPros {
   thesisId: number;
-  initStudents: ThesisStudent[];
-  initIsMore: boolean;
 }
 
-const ThesisStudentList: React.FC<ComponentPros> = ({ initStudents, initIsMore, thesisId }) => {
-  const [isMore, setIsMore] = useState<boolean>(initIsMore);
-  const [students, setStudents] = useState<ThesisStudent[]>(initStudents);
-  const [loadMoreLoading, setLoadMoreLoading] = useState<boolean>(false);
+const ThesisStudentList: React.FC<ComponentPros> = ({ thesisId }) => {
   const thesisService = ThesisService.getInstance();
-
-  const onLoadMoreClick = async () => {
-    try {
-      setLoadMoreLoading(true);
-      const { students: newStudents, isMoreStudents } = (
-        await thesisService.loadMoreAttendees(LoadMoreTarget.STUDENT, thesisId, students.length)
-      ).data as ThesisLoadMoreStudentsResponse;
-      setStudents([...students, ...newStudents]);
-      setIsMore(isMoreStudents);
-    } catch (error) {
-      await thesisService.requestErrorHandler(error);
-    }
-
-    setLoadMoreLoading(false);
+  const [keyword, setKeyword] = useState<string>('');
+  const onSearch = (value: string) => {
+    setKeyword(value);
   };
-
-  const loadMoreButton = () => {
-    return (
-      <Row justify="center" style={{ padding: 10 }}>
-        <Button type="primary" loading={loadMoreLoading} onClick={onLoadMoreClick}>
-          {ThesisTerminology.THESIS_8}
-        </Button>
-      </Row>
-    );
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    total: 0,
+    showSizeChanger: false
+  });
+  const { data, isLoading } = thesisService.useThesisStudents(
+    thesisId,
+    pagination.current,
+    pagination.pageSize,
+    keyword
+  );
+  const handleTableChange = (paginationValues) => {
+    setPagination({ ...pagination, ...paginationValues });
   };
 
   useEffect(() => {
-    setStudents(initStudents);
-    setIsMore(initIsMore);
-  }, [initStudents]);
+    if (data) {
+      setPagination({ ...pagination, total: data.total });
+    }
+  }, [data]);
 
   return (
-    <List
-      loading={loadMoreLoading}
-      itemLayout="horizontal"
-      dataSource={students}
-      loadMore={isMore && loadMoreButton()}
-      renderItem={(thesisStudent: ThesisStudent) => (
-        <ThesisStudentItem thesisStudent={thesisStudent} />
-      )}
+    <Table
+      bordered
+      columns={ThesisStudentTableColumns}
+      dataSource={data && data.students}
+      loading={isLoading}
+      pagination={pagination}
+      size="middle"
+      onChange={handleTableChange}
+      title={() => <SearchBox onSearch={onSearch} />}
     />
   );
 };

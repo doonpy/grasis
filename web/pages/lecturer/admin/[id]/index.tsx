@@ -6,7 +6,7 @@ import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 
 import styles from '../../../../assets/css/pages/lecturer/admin/index.module.css';
-import LecturerTerminology from '../../../../assets/terminology/lecturer.terminology';
+import { LecturerTerminology } from '../../../../assets/terminology/lecturer.terminology';
 import AvatarView from '../../../../components/Avatar/AvatarView';
 import MainLayout from '../../../../components/Layout/MainLayout';
 import LecturerView from '../../../../components/Lecturer/LecturerView';

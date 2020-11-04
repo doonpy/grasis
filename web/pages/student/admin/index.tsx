@@ -4,10 +4,10 @@ import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
-import StudentTerminology from '../../../assets/terminology/student.terminology';
+import { StudentTerminology } from '../../../assets/terminology/student.terminology';
 import SearchBox from '../../../components/Common/SearchBox';
 import MainLayout from '../../../components/Layout/MainLayout';
-import { StudentTableColumns } from '../../../components/Student/StudentTableColumns';
+import { StudentAdminTableColumns } from '../../../components/Student/StudentAdminTableColumns';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../libs/common/common.resource';
 import StudentAdminService from '../../../libs/student/admin.service';
@@ -61,7 +61,7 @@ const Index: NextPageWithLayout = () => {
       }>
       <Table
         bordered
-        columns={StudentTableColumns}
+        columns={StudentAdminTableColumns}
         dataSource={data && data.students}
         loading={isLoading}
         pagination={pagination}

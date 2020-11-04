@@ -2,7 +2,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Form, Input, Switch } from 'antd';
 import React from 'react';
 
-import StudentTerminology from '../../assets/terminology/student.terminology';
+import { StudentTerminology } from '../../assets/terminology/student.terminology';
 
 const StudentFormItem: React.FC = () => {
   return (

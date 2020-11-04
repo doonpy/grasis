@@ -4,7 +4,7 @@ import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
-import LecturerTerminology from '../../../assets/terminology/lecturer.terminology';
+import { LecturerTerminology } from '../../../assets/terminology/lecturer.terminology';
 import SearchBox from '../../../components/Common/SearchBox';
 import MainLayout from '../../../components/Layout/MainLayout';
 import { LecturerTableColumns } from '../../../components/Lecturer/LecturerTableColumns';
