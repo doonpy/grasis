@@ -25,9 +25,11 @@ import { TopicError, TopicRegisterStatus } from './topic.resource';
 export class TopicService {
   constructor(
     @InjectRepository(TopicEntity) private readonly topicRepository: Repository<Topic>,
-    @Inject(forwardRef(() => ThesisService)) private readonly thesisService: ThesisService,
+    @Inject(forwardRef(() => ThesisService))
+    private readonly thesisService: ThesisService,
     private readonly userService: UserService,
     private readonly topicStateService: TopicStateService,
+    @Inject(forwardRef(() => LecturerService))
     private readonly lecturerService: LecturerService,
     private readonly connection: Connection,
     private readonly topicStudentService: TopicStudentService,

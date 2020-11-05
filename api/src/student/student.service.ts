@@ -8,7 +8,12 @@ import { UserRequestBody } from '../user/user.interface';
 import { UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { StudentEntity } from './student.entity';
-import { Student, StudentRequestBody, StudentSearchAttendee } from './student.interface';
+import {
+  Student,
+  StudentForListView,
+  StudentRequestBody,
+  StudentSearchAttendee
+} from './student.interface';
 import { IsGraduate, StudentError, StudentSearchType } from './student.resource';
 
 @Injectable()
@@ -20,19 +25,33 @@ export class StudentService {
     private readonly connection: Connection
   ) {}
 
-  public async getMany(offset: number, limit: number, keyword?: string): Promise<Student[]> {
+  public async getManyForView(
+    offset: number,
+    limit: number,
+    keyword?: string
+  ): Promise<StudentForListView[]> {
     let conditions: FindOptionsWhere<Student> | undefined = undefined;
     if (keyword) {
       conditions = this.getSearchConditions(keyword);
     }
 
-    return await this.studentRepository.find({
-      relations: { user: {} },
-      where: conditions ? conditions : { ...notDeleteCondition },
-      skip: offset,
-      take: limit,
-      cache: true
-    });
+    return (
+      await this.studentRepository.find({
+        relations: { user: {} },
+        where: conditions ? conditions : { ...notDeleteCondition },
+        skip: offset,
+        take: limit,
+        cache: true
+      })
+    ).map(({ id, studentId, user: { username, firstname, lastname, gender, status } }) => ({
+      id,
+      studentId,
+      username,
+      firstname,
+      lastname,
+      gender,
+      status
+    }));
   }
 
   public async findById(id: number): Promise<Student> {

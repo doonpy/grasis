@@ -4,7 +4,8 @@ export const LecturerError = {
   ERR_1: 'Mã giảng viên không tồn tại.',
   ERR_2: 'Mã giảng viên đã tồn tại.',
   ERR_3: 'Giảng viên không tồn tại.',
-  ERR_4: 'Giảng viên đang tham gia một khóa luận.'
+  ERR_4: 'Giảng viên đang tham gia một khóa luận.',
+  ERR_5: 'Giảng viên đang là quản trị viên của một khóa luận đang diễn ra.'
 };
 
 export const LECTURER_LEVELS = ['Tiến sĩ', 'Thạc sĩ', 'Phó giáo sư', 'Giáo sư'];

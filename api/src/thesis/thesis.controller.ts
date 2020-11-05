@@ -24,7 +24,11 @@ import { ThesisGetThesisLecturersResponse } from './thesis-lecturer/thesis-lectu
 import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
 import { ThesisGetThesisStudentsResponse } from './thesis-student/thesis-student.interface';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
-import { Thesis, ThesisGetByIdResponse, ThesisGetManyResponse } from './thesis.interface';
+import {
+  ThesisForListView,
+  ThesisGetByIdResponse,
+  ThesisGetManyResponse
+} from './thesis.interface';
 import { THESIS_ROOT_PATH, ThesisPath } from './thesis.resource';
 import { ThesisService } from './thesis.service';
 
@@ -58,7 +62,12 @@ export class ThesisController {
     @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
   ): Promise<ThesisGetManyResponse> {
     const loginUserId = req.user.userId;
-    const theses: Thesis[] = await this.thesisService.getMany(offset, limit, loginUserId, keyword);
+    const theses: ThesisForListView[] = await this.thesisService.getManyForView(
+      offset,
+      limit,
+      loginUserId,
+      keyword
+    );
     const total: number = await this.thesisService.getAmount(loginUserId, keyword);
 
     return {
@@ -79,15 +88,11 @@ export class ThesisController {
     )
     id: number
   ): Promise<ThesisGetByIdResponse> {
-    const thesis = await this.thesisService.getById(id);
-    const lecturerTotal = await this.thesisLecturerService.getAmountLecturerAttendee(thesis.id);
-    const studentTotal = await this.thesisStudentService.getAmountStudentAttendee(thesis.id);
+    const thesis = await this.thesisService.getByIdForView(id);
 
     return {
       statusCode: HttpStatus.OK,
-      thesis,
-      studentTotal,
-      lecturerTotal
+      thesis
     };
   }
 

@@ -29,3 +29,8 @@ export type UserRequestBodyForUser = Omit<
   UserRequestBody,
   'username' | 'firstname' | 'lastname' | 'gender' | 'isAdmin' | 'status' | 'userType'
 >;
+
+export type UserForListView = Pick<
+  User,
+  'username' | 'firstname' | 'lastname' | 'gender' | 'status'
+>;

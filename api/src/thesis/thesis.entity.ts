@@ -30,16 +30,16 @@ export class ThesisEntity extends CommonEntity {
     length: 100,
     ...commonStringColumnOptions
   })
-  public subject!: number;
+  public subject!: string;
 
   @Column({ name: ThesisColumn.CREATOR_ID, type: 'int' })
   public creatorId!: number;
 
   @Column({ name: ThesisColumn.START_TIME, type: 'datetime' })
-  public startTime!: string;
+  public startTime!: Date;
 
   @Column({ name: ThesisColumn.END_TIME, type: 'datetime' })
-  public endTime!: string;
+  public endTime!: Date;
 
   @Column({
     name: ThesisColumn.STATE,
@@ -49,19 +49,19 @@ export class ThesisEntity extends CommonEntity {
   public state!: ThesisState;
 
   @Column({ name: ThesisColumn.LECTURER_TOPIC_REGISTER, type: 'datetime' })
-  public lecturerTopicRegister!: string;
+  public lecturerTopicRegister!: Date;
 
   @Column({ name: ThesisColumn.STUDENT_TOPIC_REGISTER, type: 'datetime' })
-  public studentTopicRegister!: string;
+  public studentTopicRegister!: Date;
 
   @Column({ name: ThesisColumn.PROGRESS_REPORT, type: 'datetime' })
-  public progressReport!: string;
+  public progressReport!: Date;
 
   @Column({ name: ThesisColumn.REVIEW, type: 'datetime' })
-  public review!: string;
+  public review!: Date;
 
   @Column({ name: ThesisColumn.DEFENSE, type: 'datetime' })
-  public defense!: string;
+  public defense!: Date;
 
   @Column({ name: ThesisColumn.STATUS, type: 'int', default: ThesisStatus.INACTIVE })
   public status!: ThesisStatus;
@@ -78,7 +78,7 @@ export class ThesisEntity extends CommonEntity {
     cascade: true
   })
   @JoinColumn({ name: ThesisColumn.CREATOR_ID, referencedColumnName: CommonColumn.ID })
-  public creator!: Lecturer | null;
+  public creator!: Lecturer;
 
   @OneToMany(() => TopicEntity, ({ thesis }) => thesis)
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: TopicColumn.THESIS_ID })

@@ -8,7 +8,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -19,16 +19,17 @@
     "jsx": "preserve",
     "allowSyntheticDefaultImports": true,
     "removeComments": true,
-    "baseUrl": ".",
+    "rootDir": ".",
+    "downlevelIteration": true,
     "typeRoots": [
-      "./types",
+      "./types/",
       "node_modules/@types"
     ]
   },
   "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "types"
   ],
   "exclude": [
     "node_modules"

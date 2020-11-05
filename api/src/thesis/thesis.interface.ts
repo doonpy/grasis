@@ -2,7 +2,7 @@ import { CommonColumns, CommonResponse } from '../common/common.interface';
 import { LecturerSearchAttendee } from '../lecturer/lecturer.interface';
 import { StudentSearchAttendee } from '../student/student.interface';
 import { ThesisEntity } from './thesis.entity';
-import { ThesisStatus } from './thesis.resource';
+import { ThesisState, ThesisStatus } from './thesis.resource';
 
 export type Thesis = ThesisEntity;
 
@@ -23,7 +23,7 @@ export interface ThesisAttendeesRequestBody {
 }
 
 export interface ThesisGetManyResponse extends CommonResponse {
-  theses: Thesis[];
+  theses: ThesisForListView[];
   total: number;
 }
 
@@ -32,9 +32,7 @@ export interface ThesisCreateOrUpdateResponse extends CommonResponse {
 }
 
 export interface ThesisGetByIdResponse extends CommonResponse {
-  thesis: Thesis;
-  studentTotal: number;
-  lecturerTotal: number;
+  thesis: ThesisForView;
 }
 
 export type RawThesisRequestBody = {
@@ -53,3 +51,22 @@ export interface ThesisGetByIdForEditResponse extends CommonResponse {
 export interface ThesisSwitchStatusResponse extends CommonResponse {
   currentStatus: ThesisStatus;
 }
+
+export interface ThesisForListView {
+  id: number;
+  creatorId: number;
+  subject: string;
+  startTime: Date;
+  endTime: Date;
+  state: ThesisState;
+  status: ThesisStatus;
+  creatorInfo: CreatorInfo;
+}
+
+interface CreatorInfo {
+  firstname: string | null;
+  lastname: string | null;
+  lecturerId: string | null;
+}
+
+export type ThesisForView = Omit<Thesis, 'deletedAt' | 'creator'> & { creatorInfo: CreatorInfo };

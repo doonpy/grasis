@@ -4,11 +4,17 @@ import { Connection, EntityManager, FindOptionsWhere, Like, Repository } from 't
 
 import { notDeleteCondition } from '../common/common.resource';
 import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
+import { ThesisService } from '../thesis/thesis.service';
 import { UserRequestBody } from '../user/user.interface';
 import { UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { LecturerEntity } from './lecturer.entity';
-import { Lecturer, LecturerRequestBody, LecturerSearchAttendee } from './lecturer.interface';
+import {
+  Lecturer,
+  LecturerForListView,
+  LecturerRequestBody,
+  LecturerSearchAttendee
+} from './lecturer.interface';
 import { LecturerError, LecturerSearchType } from './lecturer.resource';
 
 @Injectable()
@@ -17,22 +23,37 @@ export class LecturerService {
     @InjectRepository(LecturerEntity) private readonly lecturerRepository: Repository<Lecturer>,
     private readonly userService: UserService,
     private readonly thesisLecturerService: ThesisLecturerService,
-    private readonly connection: Connection
+    private readonly connection: Connection,
+    private readonly thesisService: ThesisService
   ) {}
 
-  public async getMany(offset: number, limit: number, keyword?: string): Promise<Lecturer[]> {
+  public async getManyForView(
+    offset: number,
+    limit: number,
+    keyword?: string
+  ): Promise<LecturerForListView[]> {
     let conditions: FindOptionsWhere<Lecturer> | undefined = undefined;
     if (keyword) {
       conditions = this.getSearchConditions(keyword);
     }
 
-    return await this.lecturerRepository.find({
-      relations: { user: {} },
-      where: conditions ? conditions : { ...notDeleteCondition },
-      skip: offset,
-      take: limit,
-      cache: true
-    });
+    return (
+      await this.lecturerRepository.find({
+        relations: { user: {} },
+        where: conditions ? conditions : { ...notDeleteCondition },
+        skip: offset,
+        take: limit,
+        cache: true
+      })
+    ).map(({ id, lecturerId, user: { username, firstname, lastname, gender, status } }) => ({
+      id,
+      lecturerId,
+      username,
+      firstname,
+      lastname,
+      gender,
+      status
+    }));
   }
 
   public async getById(id: number): Promise<Lecturer> {
@@ -129,6 +150,10 @@ export class LecturerService {
     const deletedAt = new Date();
     if (await this.thesisLecturerService.isLecturerParticipatedThesis(id)) {
       throw new BadRequestException(LecturerError.ERR_4);
+    }
+
+    if (await this.thesisService.isCreatorActiveThesis(id)) {
+      throw new BadRequestException(LecturerError.ERR_5);
     }
 
     await this.connection.transaction(async (manager) => {
