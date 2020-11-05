@@ -1,6 +1,6 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, In, Not, Repository } from 'typeorm';
+import { EntityManager, FindOptionsWhere, In, Like, Not, Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../../common/common.resource';
 import { StudentSearchAttendee } from '../../student/student.interface';
@@ -8,9 +8,9 @@ import { StudentError } from '../../student/student.resource';
 import { StudentService } from '../../student/student.service';
 import { User } from '../../user/user.interface';
 import { Thesis } from '../thesis.interface';
-import { ATTENDEES_LOAD_LIMIT, ThesisStatus } from '../thesis.resource';
+import { ThesisStatus } from '../thesis.resource';
 import { ThesisStudentEntity } from './thesis-student.entity';
-import { ThesisStudent } from './thesis-student.interface';
+import { ThesisStudent, ThesisStudentForView } from './thesis-student.interface';
 
 @Injectable()
 export class ThesisStudentService {
@@ -63,27 +63,52 @@ export class ThesisStudentService {
   }
 
   public async getThesisStudentsForView(
+    offset: number,
+    limit: number,
     thesisId: number,
-    offset = 0,
-    limit = ATTENDEES_LOAD_LIMIT
-  ): Promise<ThesisStudent[]> {
-    return this.thesisStudentRepository.find({
-      relations: { student: { user: {} } },
-      where: { thesisId, student: { user: { ...notDeleteCondition } }, ...notDeleteCondition },
-      skip: offset,
-      take: limit,
-      cache: true
-    });
+    keyword?: string
+  ): Promise<ThesisStudentForView[]> {
+    let conditions: FindOptionsWhere<ThesisStudent> | undefined = {
+      ...notDeleteCondition,
+      thesisId,
+      student: { user: { ...notDeleteCondition } }
+    };
+    if (keyword) {
+      conditions = this.getSearchConditions(thesisId, keyword);
+    }
+
+    return (
+      await this.thesisStudentRepository.find({
+        relations: { student: { user: {} } },
+        where: conditions,
+        skip: offset,
+        take: limit,
+        cache: true
+      })
+    ).map(
+      ({
+        student: {
+          id,
+          studentId,
+          studentClass,
+          schoolYear,
+          user: { firstname, lastname, gender }
+        }
+      }) => ({ id, schoolYear, studentClass, studentId, firstname, lastname, gender })
+    );
   }
 
-  public async isLoadMoreStudentsOfThesis(thesisId: number, offset = 0): Promise<boolean> {
-    const amount = await this.thesisStudentRepository.count({
+  public async getAmountStudentAttendee(thesisId: number, keyword?: string): Promise<number> {
+    let conditions: FindOptionsWhere<ThesisStudent> | undefined = {
+      ...notDeleteCondition,
       thesisId,
-      student: { user: { ...notDeleteCondition } },
-      ...notDeleteCondition
-    });
+      student: { user: { ...notDeleteCondition } }
+    };
+    if (keyword) {
+      conditions = this.getSearchConditions(thesisId, keyword);
+    }
 
-    return amount - offset - ATTENDEES_LOAD_LIMIT > 0;
+    return this.thesisStudentRepository.count(conditions);
   }
 
   public async hasPermission(id: number, loginUser: User): Promise<boolean> {
@@ -204,5 +229,33 @@ export class ThesisStudentService {
         thesis: { status: ThesisStatus.ACTIVE }
       })) > 0
     );
+  }
+
+  private getSearchConditions(thesisId: number, keyword: string): FindOptionsWhere<ThesisStudent> {
+    const commonConditions = { ...notDeleteCondition, thesisId };
+
+    return [
+      { ...commonConditions, student: { studentId: Like(`%${keyword}%`) } },
+      { ...commonConditions, student: { schoolYear: Like(`%${keyword}%`) } },
+      { ...commonConditions, student: { studentClass: Like(`%${keyword}%`) } },
+      {
+        ...commonConditions,
+        student: {
+          user: {
+            ...notDeleteCondition,
+            firstname: Like(`%${keyword}%`)
+          }
+        }
+      },
+      {
+        ...commonConditions,
+        student: {
+          user: {
+            ...notDeleteCondition,
+            lastname: Like(`%${keyword}%`)
+          }
+        }
+      }
+    ];
   }
 }

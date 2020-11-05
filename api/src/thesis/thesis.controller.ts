@@ -19,16 +19,15 @@ import {
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { LecturerService } from '../lecturer/lecturer.service';
-import { UserService } from '../user/user.service';
 import { ThesisPermissionGuard } from './guards/thesis-permission.guard';
+import { ThesisGetThesisLecturersResponse } from './thesis-lecturer/thesis-lecturer.interface';
 import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
+import { ThesisGetThesisStudentsResponse } from './thesis-student/thesis-student.interface';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
 import {
-  Thesis,
+  ThesisForListView,
   ThesisGetByIdResponse,
-  ThesisGetManyResponse,
-  ThesisLoadMoreLecturersResponse,
-  ThesisLoadMoreStudentsResponse
+  ThesisGetManyResponse
 } from './thesis.interface';
 import { THESIS_ROOT_PATH, ThesisPath } from './thesis.resource';
 import { ThesisService } from './thesis.service';
@@ -40,8 +39,7 @@ export class ThesisController {
     private readonly thesisService: ThesisService,
     private readonly lecturerService: LecturerService,
     private readonly thesisStudentService: ThesisStudentService,
-    private readonly thesisLecturerService: ThesisLecturerService,
-    private readonly userService: UserService
+    private readonly thesisLecturerService: ThesisLecturerService
   ) {}
 
   @Get()
@@ -64,7 +62,12 @@ export class ThesisController {
     @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
   ): Promise<ThesisGetManyResponse> {
     const loginUserId = req.user.userId;
-    const theses: Thesis[] = await this.thesisService.getMany(offset, limit, loginUserId, keyword);
+    const theses: ThesisForListView[] = await this.thesisService.getManyForView(
+      offset,
+      limit,
+      loginUserId,
+      keyword
+    );
     const total: number = await this.thesisService.getAmount(loginUserId, keyword);
 
     return {
@@ -85,21 +88,17 @@ export class ThesisController {
     )
     id: number
   ): Promise<ThesisGetByIdResponse> {
-    const thesis = await this.thesisService.getById(id, true);
-    const isMoreLecturers = await this.thesisLecturerService.isLoadMoreLecturersOfThesis(thesis.id);
-    const isMoreStudents = await this.thesisStudentService.isLoadMoreStudentsOfThesis(thesis.id);
+    const thesis = await this.thesisService.getByIdForView(id);
 
     return {
       statusCode: HttpStatus.OK,
-      thesis,
-      isMoreLecturers,
-      isMoreStudents
+      thesis
     };
   }
 
-  @Get(ThesisPath.LOAD_MORE_LECTURERS)
+  @Get(ThesisPath.GET_THESIS_STUDENTS)
   @UseGuards(ThesisPermissionGuard)
-  public async loadMoreLecturers(
+  public async getThesisStudents(
     @Param(
       CommonParam.ID,
       new JoiValidationPipe(commonIdValidateSchema),
@@ -114,69 +113,68 @@ export class ThesisController {
       ParseIntPipe
     )
     offset: number,
-    @Request() req: Record<string, any>
-  ): Promise<ThesisLoadMoreLecturersResponse> {
-    const loginUserId: number = req.user.userId;
-    const loginUser = await this.userService.findById(loginUserId);
-    await this.thesisService.checkThesisPermission(id, loginUser);
-    const isMoreLecturers = await this.thesisLecturerService.isLoadMoreLecturersOfThesis(
+    @Query(
+      CommonQuery.LIMIT,
+      new JoiValidationPipe(commonLimitValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.LIMIT),
+      ParseIntPipe
+    )
+    limit: number,
+    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
+  ): Promise<ThesisGetThesisStudentsResponse> {
+    const students = await this.thesisStudentService.getThesisStudentsForView(
+      offset,
+      limit,
       id,
-      offset
+      keyword
     );
-    if (!isMoreLecturers) {
-      return {
-        statusCode: HttpStatus.OK,
-        lecturers: [],
-        isMoreLecturers: false
-      };
-    }
-
-    const lecturers = await this.thesisLecturerService.getThesisLecturersForView(id, offset);
-
-    return {
-      statusCode: HttpStatus.OK,
-      lecturers,
-      isMoreLecturers
-    };
-  }
-
-  @Get(ThesisPath.LOAD_MORE_STUDENTS)
-  @UseGuards(ThesisPermissionGuard)
-  public async loadMoreStudents(
-    @Param(
-      CommonParam.ID,
-      new JoiValidationPipe(commonIdValidateSchema),
-      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
-      ParseIntPipe
-    )
-    id: number,
-    @Query(
-      CommonQuery.OFFSET,
-      new JoiValidationPipe(commonOffsetValidateSchema),
-      new DefaultValuePipe(CommonQueryValue.OFFSET),
-      ParseIntPipe
-    )
-    offset: number,
-    @Request() req: Record<string, any>
-  ): Promise<ThesisLoadMoreStudentsResponse> {
-    const loginUserId: number = req.user.userId;
-    const loginUser = await this.userService.findById(loginUserId);
-    await this.thesisService.checkThesisPermission(id, loginUser);
-    if (!(await this.thesisStudentService.isLoadMoreStudentsOfThesis(id))) {
-      return {
-        statusCode: HttpStatus.OK,
-        students: [],
-        isMoreStudents: false
-      };
-    }
-
-    const students = await this.thesisStudentService.getThesisStudentsForView(id, offset);
-    const isMoreStudents = await this.thesisStudentService.isLoadMoreStudentsOfThesis(id, offset);
+    const total = await this.thesisStudentService.getAmountStudentAttendee(id, keyword);
 
     return {
       statusCode: HttpStatus.OK,
       students,
-      isMoreStudents
+      total
+    };
+  }
+
+  @Get(ThesisPath.GET_THESIS_LECTURERS)
+  @UseGuards(ThesisPermissionGuard)
+  public async getThesisLecturers(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number,
+    @Query(
+      CommonQuery.OFFSET,
+      new JoiValidationPipe(commonOffsetValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.OFFSET),
+      ParseIntPipe
+    )
+    offset: number,
+    @Query(
+      CommonQuery.LIMIT,
+      new JoiValidationPipe(commonLimitValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.LIMIT),
+      ParseIntPipe
+    )
+    limit: number,
+    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
+  ): Promise<ThesisGetThesisLecturersResponse> {
+    const lecturers = await this.thesisLecturerService.getThesisLecturersForView(
+      offset,
+      limit,
+      id,
+      keyword
+    );
+    const total = await this.thesisLecturerService.getAmountLecturerAttendee(id, keyword);
+
+    return {
+      statusCode: HttpStatus.OK,
+      lecturers,
+      total
     };
   }
 }

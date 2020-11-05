@@ -1,10 +1,8 @@
 import { CommonColumns, CommonResponse } from '../common/common.interface';
 import { LecturerSearchAttendee } from '../lecturer/lecturer.interface';
 import { StudentSearchAttendee } from '../student/student.interface';
-import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.interface';
-import { ThesisStudent } from './thesis-student/thesis-student.interface';
 import { ThesisEntity } from './thesis.entity';
-import { ThesisStatus } from './thesis.resource';
+import { ThesisState, ThesisStatus } from './thesis.resource';
 
 export type Thesis = ThesisEntity;
 
@@ -25,7 +23,7 @@ export interface ThesisAttendeesRequestBody {
 }
 
 export interface ThesisGetManyResponse extends CommonResponse {
-  theses: Thesis[];
+  theses: ThesisForListView[];
   total: number;
 }
 
@@ -34,24 +32,12 @@ export interface ThesisCreateOrUpdateResponse extends CommonResponse {
 }
 
 export interface ThesisGetByIdResponse extends CommonResponse {
-  thesis: Thesis;
-  isMoreStudents: boolean;
-  isMoreLecturers: boolean;
+  thesis: ThesisForView;
 }
 
 export type RawThesisRequestBody = {
   [K in keyof ThesisRequestBody]?: any;
 };
-
-export interface ThesisLoadMoreLecturersResponse extends CommonResponse {
-  lecturers: ThesisLecturer[];
-  isMoreLecturers: boolean;
-}
-
-export interface ThesisLoadMoreStudentsResponse extends CommonResponse {
-  students: ThesisStudent[];
-  isMoreStudents: boolean;
-}
 
 export type ThesisForEdit = Omit<Thesis, 'lecturers' | 'students'> & {
   lecturerAttendees: LecturerSearchAttendee[];
@@ -65,3 +51,22 @@ export interface ThesisGetByIdForEditResponse extends CommonResponse {
 export interface ThesisSwitchStatusResponse extends CommonResponse {
   currentStatus: ThesisStatus;
 }
+
+export interface ThesisForListView {
+  id: number;
+  creatorId: number;
+  subject: string;
+  startTime: Date;
+  endTime: Date;
+  state: ThesisState;
+  status: ThesisStatus;
+  creatorInfo: CreatorInfo;
+}
+
+interface CreatorInfo {
+  firstname: string | null;
+  lastname: string | null;
+  lecturerId: string | null;
+}
+
+export type ThesisForView = Omit<Thesis, 'deletedAt' | 'creator'> & { creatorInfo: CreatorInfo };

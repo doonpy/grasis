@@ -1,4 +1,5 @@
 import { CommonColumns, CommonFindManyResponse, CommonResponse } from '../common/common.interface';
+import { UserForListView } from '../user/user.interface';
 import { StudentEntity } from './student.entity';
 
 export type Student = StudentEntity;
@@ -9,7 +10,7 @@ export type StudentRequestBody = WithOptional<
 >;
 
 export interface StudentFindManyResponse extends CommonFindManyResponse {
-  students: Student[];
+  students: StudentForListView[];
 }
 
 export interface StudentFindByIdResponse extends CommonResponse {
@@ -31,3 +32,5 @@ export interface StudentSearchAttendee {
 export interface StudentSearchAttendeesResponse extends CommonResponse {
   result: StudentSearchAttendee[];
 }
+
+export type StudentForListView = Pick<Student, 'id' | 'studentId'> & UserForListView;

@@ -64,7 +64,7 @@ export class StudentAdminController {
     limit: number,
     @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
   ): Promise<StudentFindManyResponse> {
-    const students: Student[] = await this.studentService.getMany(offset, limit, keyword);
+    const students = await this.studentService.getManyForView(offset, limit, keyword);
     const total: number = await this.studentService.getStudentAmount(keyword);
 
     return {
@@ -107,7 +107,7 @@ export class StudentAdminController {
 
     return {
       statusCode: HttpStatus.CREATED,
-      id: createdStudent.id as number
+      id: createdStudent.user.id
     };
   }
 

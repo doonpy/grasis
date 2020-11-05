@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import moment, { Moment } from 'moment';
@@ -27,7 +27,13 @@ import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service
 import { ThesisStudent } from './thesis-student/thesis-student.interface';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
 import { ThesisEntity } from './thesis.entity';
-import { Thesis, ThesisForEdit, ThesisRequestBody } from './thesis.interface';
+import {
+  Thesis,
+  ThesisForEdit,
+  ThesisForListView,
+  ThesisForView,
+  ThesisRequestBody
+} from './thesis.interface';
 import { ThesisError, ThesisState, ThesisStatus } from './thesis.resource';
 
 @Injectable()
@@ -35,6 +41,7 @@ export class ThesisService {
   constructor(
     @InjectRepository(ThesisEntity) private readonly thesisRepository: Repository<Thesis>,
     private readonly connection: Connection,
+    @Inject(forwardRef(() => LecturerService))
     private readonly lecturerService: LecturerService,
     private readonly studentService: StudentService,
     private readonly thesisStudentService: ThesisStudentService,
@@ -43,24 +50,30 @@ export class ThesisService {
     private readonly topicService: TopicService
   ) {}
 
-  public async getMany(
+  public async getManyForView(
     offset: number,
     limit: number,
     loginUserId: number,
     keyword?: string
-  ): Promise<Thesis[]> {
+  ): Promise<ThesisForListView[]> {
     const loginUser = await this.userService.findById(loginUserId);
 
     if (loginUser.isAdmin === IsAdmin.TRUE) {
-      return this.getManyForAdmin(offset, limit, keyword);
+      return (await this.getManyForAdmin(offset, limit, keyword)).map((thesis) =>
+        this.convertToListView(thesis)
+      );
     }
 
     if (loginUser.userType === UserType.LECTURER) {
-      return this.getManyForLecturer(loginUserId, offset, limit, keyword);
+      return (await this.getManyForLecturer(loginUserId, offset, limit, keyword)).map((thesis) =>
+        this.convertToListView(thesis)
+      );
     }
 
     if (loginUser.userType === UserType.STUDENT) {
-      return this.getManyForStudent(loginUserId, offset, limit, keyword);
+      return (await this.getManyForStudent(loginUserId, offset, limit, keyword)).map((thesis) =>
+        this.convertToListView(thesis)
+      );
     }
 
     return [];
@@ -143,18 +156,13 @@ export class ThesisService {
     return await this.thesisRepository.save(thesisEntity);
   }
 
-  public async getById(id: number, withAttendees = false): Promise<Thesis> {
+  public async getById(id: number): Promise<Thesis> {
     const thesis = await this.thesisRepository.findOne(id, {
       relations: { creator: { user: {} } },
       where: { ...notDeleteCondition }
     });
     if (!thesis) {
       throw new BadRequestException(ThesisError.ERR_7);
-    }
-
-    if (withAttendees) {
-      thesis.lecturers = await this.thesisLecturerService.getThesisLecturersForView(thesis.id);
-      thesis.students = await this.thesisStudentService.getThesisStudentsForView(thesis.id);
     }
 
     return thesis;
@@ -199,7 +207,7 @@ export class ThesisService {
     }
 
     const thesisForEdit: ThesisForEdit = { ...thesis, lecturerAttendees: [], studentAttendees: [] };
-    thesisForEdit.lecturerAttendees = await this.thesisLecturerService.getThesisLecturersForEditView(
+    thesisForEdit.lecturerAttendees = await this.thesisLecturerService.getThesisLecturersForEdit(
       id
     );
     thesisForEdit.studentAttendees = await this.thesisStudentService.getThesisStudentsForEditView(
@@ -573,5 +581,61 @@ export class ThesisService {
       await this.topicService.rejectTopicRegisterByThesisIdWithTransaction(manager, thesis.id);
       await this.topicService.disableRegisterStatusByThesisIdWithTransaction(manager, thesis.id);
     }
+  }
+
+  private convertToListView({
+    id,
+    creatorId,
+    subject,
+    startTime,
+    endTime,
+    state,
+    status,
+    creator: {
+      lecturerId,
+      user: { firstname, lastname }
+    }
+  }: Thesis): ThesisForListView {
+    return {
+      id,
+      creatorId,
+      subject,
+      startTime,
+      endTime,
+      state,
+      status,
+      creatorInfo: { lecturerId, firstname, lastname }
+    };
+  }
+
+  private convertToView(thesis: Thesis): ThesisForView {
+    const {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      deletedAt,
+      creator: {
+        lecturerId,
+        user: { firstname, lastname }
+      },
+      ...remain
+    } = thesis;
+
+    return {
+      ...remain,
+      creatorInfo: { lecturerId, firstname, lastname }
+    };
+  }
+
+  public async getByIdForView(id: number): Promise<ThesisForView> {
+    return this.convertToView(await this.getById(id));
+  }
+
+  public async isCreatorActiveThesis(userId: number): Promise<boolean> {
+    return (
+      (await this.thesisRepository.count({
+        ...notDeleteCondition,
+        status: ThesisStatus.ACTIVE,
+        creatorId: userId
+      })) > 0
+    );
   }
 }

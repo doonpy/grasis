@@ -63,7 +63,7 @@ export class LecturerAdminController {
     limit: number,
     @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
   ): Promise<LecturerFindManyResponse> {
-    const lecturers: Lecturer[] = await this.lecturerService.getMany(offset, limit, keyword);
+    const lecturers = await this.lecturerService.getManyForView(offset, limit, keyword);
     const total: number = await this.lecturerService.getLecturerAmount(keyword);
 
     return {
@@ -106,7 +106,7 @@ export class LecturerAdminController {
 
     return {
       statusCode: HttpStatus.CREATED,
-      id: createdLecturer.id as number
+      id: createdLecturer.user.id
     };
   }
 

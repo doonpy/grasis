@@ -1,0 +1,22 @@
+.background {
+    height: 100vh;
+    background-image: url(../../../img/login-bg.jpg);
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: center
+}
+
+.form {
+    padding: 15%;
+}
+
+.logo {
+    text-align: center;
+    width: 100%;
+}
+
+.logoText {
+    letter-spacing: 0.1em;
+    font-size: 50px !important;
+    color: #3e4095 !important;
+}

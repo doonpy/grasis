@@ -41,18 +41,5 @@
         </introspection-scope>
       </schema-mapping>
     </data-source>
-    <data-source name="jdbc:mysql://ydnqhfr3ewcaah3q:j1iyt03qqz25uuq0@sh4ob67ph9l80v61.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/n6ll5v4jgcvx2kcb" uuid="1063c12c-1596-4c1d-b28c-bb8569217d87">
-      <database-info product="MySQL" version="5.7.23-log" jdbc-version="4.2" driver-name="MySQL Connector/J" driver-version="mysql-connector-java-8.0.21 (Revision: 33f65445a1bcc544eb0120491926484da168f199)" dbms="MYSQL" exact-version="5.7.23" exact-driver-version="8.0">
-        <extra-name-characters>#@</extra-name-characters>
-        <identifier-quote-string>`</identifier-quote-string>
-      </database-info>
-      <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
-      <secret-storage>master_key</secret-storage>
-      <schema-mapping>
-        <introspection-scope>
-          <node kind="schema" qname="@" />
-        </introspection-scope>
-      </schema-mapping>
-    </data-source>
   </component>
 </project>
