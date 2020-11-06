@@ -22,6 +22,7 @@ const SearchBox: React.FC<ComponentProps> = ({ onSearch, disabled }) => {
       onSearch={onSearch}
       enterButton
       disabled={disabled}
+      style={{ width: 400 }}
     />
   );
 };

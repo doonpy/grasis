@@ -220,14 +220,10 @@ export class ThesisService {
     return thesisForEdit;
   }
 
-  public async updateById(id: number, data: ThesisRequestBody): Promise<Thesis> {
+  public async updateById(id: number, data: ThesisRequestBody): Promise<void> {
     const { attendees, ...thesis } = data;
     this.validateThesisStateDate(thesis as Thesis);
-    const currentThesis = await this.thesisRepository.findOne({ id, ...notDeleteCondition });
-
-    if (!currentThesis) {
-      throw new BadRequestException(ThesisError.ERR_7);
-    }
+    const currentThesis = await this.getById(id);
 
     return await this.connection.transaction(async (manager) => {
       if (attendees) {
@@ -248,43 +244,9 @@ export class ThesisService {
         }
       }
 
-      if (thesis.subject) {
-        currentThesis.subject = thesis.subject;
-      }
-
-      if (thesis.startTime) {
-        currentThesis.startTime = thesis.startTime;
-      }
-
-      if (thesis.endTime) {
-        currentThesis.endTime = thesis.endTime;
-      }
-
-      if (thesis.lecturerTopicRegister) {
-        currentThesis.lecturerTopicRegister = thesis.lecturerTopicRegister;
-      }
-
-      if (thesis.studentTopicRegister) {
-        currentThesis.studentTopicRegister = thesis.studentTopicRegister;
-      }
-
-      if (thesis.progressReport) {
-        currentThesis.progressReport = thesis.progressReport;
-      }
-
-      if (thesis.review) {
-        currentThesis.review = thesis.review;
-      }
-
-      if (thesis.defense) {
-        currentThesis.defense = thesis.defense;
-      }
-
       const currentState = this.getThesisCurrentState(currentThesis);
       await this.handleChangeStateWithTransaction(manager, currentThesis, currentState);
-      currentThesis.state = currentState;
-
-      return await manager.save(currentThesis);
+      await manager.update(ThesisEntity, { id }, { ...thesis, state: currentState });
     });
   }
 
@@ -310,15 +272,15 @@ export class ThesisService {
       return ThesisState.LECTURER_TOPIC_REGISTER;
     }
 
-    if (currentDate.isBetween(lecturerTopicRegister, studentTopicRegister, 'day', '[)')) {
+    if (currentDate.isBetween(lecturerTopicRegister, studentTopicRegister, 'day', '(]')) {
       return ThesisState.STUDENT_TOPIC_REGISTER;
     }
 
-    if (currentDate.isBetween(studentTopicRegister, progressReport, 'day', '[)')) {
+    if (currentDate.isBetween(studentTopicRegister, progressReport, 'day', '(]')) {
       return ThesisState.PROGRESS_REPORT;
     }
 
-    if (currentDate.isBetween(progressReport, review, 'day', '[)')) {
+    if (currentDate.isBetween(progressReport, review, 'day', '(]')) {
       return ThesisState.REVIEW;
     }
 

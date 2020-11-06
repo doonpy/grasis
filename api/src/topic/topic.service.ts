@@ -279,11 +279,8 @@ export class TopicService {
     return topic;
   }
 
-  public async hasPermission(id: number, user: User): Promise<boolean> {
-    const topic = await this.getById(id);
-    await this.thesisService.checkThesisPermission(topic.thesisId, user);
-
-    if (topic.creatorId === user.id) {
+  public async hasPermission(topic: Topic, user: User): Promise<boolean> {
+    if (topic.thesis.creatorId === user.id) {
       return topic.status !== TopicStateAction.NEW && topic.status !== TopicStateAction.WITHDRAW;
     }
 
@@ -299,7 +296,9 @@ export class TopicService {
   }
 
   public async checkPermission(id: number, user: User): Promise<void> {
-    if (!(await this.hasPermission(id, user))) {
+    const topic = await this.getById(id);
+    await this.thesisService.checkThesisPermission(topic.thesisId, user);
+    if (!(await this.hasPermission(topic, user))) {
       throw new BadRequestException(TopicError.ERR_6);
     }
   }

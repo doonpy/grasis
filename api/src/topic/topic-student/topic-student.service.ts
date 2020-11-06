@@ -133,6 +133,10 @@ export class TopicStudentService {
     manager: EntityManager,
     topicIds: number[]
   ): Promise<void> {
+    if (topicIds.length === 0) {
+      return;
+    }
+
     await manager.update(
       TopicStudentEntity,
       { ...notDeleteCondition, topicId: In(topicIds), status: TopicStudentStatus.PENDING },

@@ -23,7 +23,6 @@ export class PermissionGuard implements CanActivate {
 
     const { userId } = request.user!;
     const loginUser = await this.userService.findById(userId);
-    await this.topicService.checkTopicIsExisted(parseInt(topicId));
     await this.topicService.checkPermission(parseInt(topicId), loginUser);
 
     return true;

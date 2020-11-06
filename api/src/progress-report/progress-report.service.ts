@@ -99,10 +99,7 @@ export class ProgressReportService {
     { studentTopicRegister, progressReport }: Thesis,
     time: string | Date
   ): void {
-    if (
-      moment(time).isSameOrBefore(studentTopicRegister, 'day') ||
-      moment(time).isAfter(progressReport, 'day')
-    ) {
+    if (!moment(time).isBetween(studentTopicRegister, progressReport, 'day', '(]')) {
       throw new BadRequestException(ProgressReportError.ERR_3);
     }
   }

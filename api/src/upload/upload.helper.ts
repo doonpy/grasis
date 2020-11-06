@@ -36,6 +36,6 @@ export function getAvatarFilename(
   file: Express.Multer.File,
   callback: AvatarFileNameCallback
 ): void {
-  const userId = req.user.user.id;
+  const userId = req.user.userId;
   callback(null, userId.toString());
 }
