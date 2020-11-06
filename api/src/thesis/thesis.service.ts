@@ -168,17 +168,20 @@ export class ThesisService {
     return thesis;
   }
 
-  public async hasPermission(id: number, loginUser: User): Promise<boolean> {
-    if (loginUser.isAdmin === IsAdmin.TRUE) {
-      return true;
+  public async hasPermission(id: number, user: User): Promise<boolean> {
+    if (user.isAdmin === IsAdmin.TRUE) {
+      const thesis = await this.getById(id);
+      if (thesis.creatorId === user.id) {
+        return true;
+      }
     }
 
-    if (loginUser.userType === UserType.LECTURER) {
-      return this.thesisLecturerService.hasPermission(id, loginUser);
+    if (user.userType === UserType.LECTURER) {
+      return this.thesisLecturerService.hasPermission(id, user);
     }
 
-    if (loginUser.userType === UserType.STUDENT) {
-      return this.thesisStudentService.hasPermission(id, loginUser);
+    if (user.userType === UserType.STUDENT) {
+      return this.thesisStudentService.hasPermission(id, user);
     }
 
     return false;

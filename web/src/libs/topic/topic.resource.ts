@@ -5,11 +5,11 @@ export enum TopicRegisterStatus {
   ENABLE
 }
 
-export const TOPIC_API_ROOT = '/@0/topics';
+export const TOPIC_API_ROOT = '/topics';
 
 export const TopicApi = {
-  GET_MANY: `${TOPIC_API_ROOT}?offset=@1&keyword=@2`,
-  SPECIFY: `${TOPIC_API_ROOT}/@1`,
+  GET_MANY: `${TOPIC_API_ROOT}?thesisId=@0&offset=@1&keyword=@2`,
+  SPECIFY: `${TOPIC_API_ROOT}/@0?thesisId=@1`,
   CHANGE_STATUS: `${TOPIC_API_ROOT}/@1/change-status`,
   CHANGE_REGISTER_STATUS: `${TOPIC_API_ROOT}/@1/change-register-status`,
   REGISTER_TOPIC: `${TOPIC_API_ROOT}/@1/register-topic/@2`,

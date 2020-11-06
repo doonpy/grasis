@@ -23,10 +23,10 @@ import {
   commonOffsetValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { ThesisPermissionGuard } from '../thesis/guards/thesis-permission.guard';
 import { UserService } from '../user/user.service';
+import { PermissionGuard } from './guards/permission.guard';
+import { ThesisPermissionGuard } from './guards/thesis-permission.guard';
 import { TopicLecturerRegisterGuard } from './guards/topic-lecturer-register.guard';
-import { TopicPermissionGuard } from './guards/topic-permission.guard';
 import { TopicStudentRegisterGuard } from './guards/topic-student-register.guard';
 import { ParseTopicChangeStatusPipe } from './pipes/parse-topic-change-status.pipe';
 import { ParseTopicChangeStudentRegisterStatusPipe } from './pipes/parse-topic-change-student-register-status.pipe';
@@ -40,7 +40,7 @@ import {
   TopicGetManyResponse,
   TopicRequestBody
 } from './topic.interface';
-import { TopicParam, TopicPath } from './topic.resource';
+import { TopicPath, TopicQuery } from './topic.resource';
 import { TopicService } from './topic.service';
 import {
   topicChangeActionValidationSchema,
@@ -60,8 +60,8 @@ export class TopicController {
   @Post()
   @UseGuards(TopicLecturerRegisterGuard)
   public async create(
-    @Param(
-      TopicParam.THESIS_ID,
+    @Query(
+      TopicQuery.THESIS_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
@@ -82,8 +82,8 @@ export class TopicController {
 
   @Get()
   public async getMany(
-    @Param(
-      TopicParam.THESIS_ID,
+    @Query(
+      TopicQuery.THESIS_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
@@ -118,7 +118,7 @@ export class TopicController {
   }
 
   @Get(TopicPath.SPECIFY)
-  @UseGuards(TopicPermissionGuard)
+  @UseGuards(PermissionGuard)
   public async getById(
     @Param(
       CommonParam.ID,
@@ -140,7 +140,7 @@ export class TopicController {
   }
 
   @Patch(TopicPath.SPECIFY)
-  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(PermissionGuard, TopicLecturerRegisterGuard)
   public async updateById(
     @Param(
       CommonParam.ID,
@@ -165,7 +165,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(TopicPath.SPECIFY)
-  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(PermissionGuard, TopicLecturerRegisterGuard)
   public async deleteById(
     @Param(
       CommonParam.ID,
@@ -183,7 +183,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_STATUS)
-  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(PermissionGuard, TopicLecturerRegisterGuard)
   public async changeStatus(
     @Param(
       CommonParam.ID,
@@ -203,7 +203,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_REGISTER_STATUS)
-  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(PermissionGuard, TopicStudentRegisterGuard)
   public async changeRegisterStatus(
     @Param(
       CommonParam.ID,
@@ -221,7 +221,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.REGISTER_TOPIC)
-  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(PermissionGuard, TopicStudentRegisterGuard)
   public async registerTopic(
     @Param(
       CommonParam.ID,
@@ -231,7 +231,7 @@ export class TopicController {
     )
     id: number,
     @Param(
-      TopicParam.STUDENT_ID,
+      TopicQuery.STUDENT_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
@@ -243,7 +243,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_STUDENT_REGISTER_STATUS)
-  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(PermissionGuard, TopicStudentRegisterGuard)
   public async changStudentRegisterStatus(
     @Param(
       CommonParam.ID,
@@ -253,7 +253,7 @@ export class TopicController {
     )
     id: number,
     @Param(
-      TopicParam.STUDENT_ID,
+      TopicQuery.STUDENT_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe

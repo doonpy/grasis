@@ -43,7 +43,7 @@ const Index: NextPageWithLayout = () => {
       title={ThesisTerminology.THESIS_3}
       extra={
         <Space size="large">
-          <SearchBox onSearch={onSearch} />
+          <SearchBox onSearch={onSearch} disabled={isLoading} />
           {LoginUser.getInstance().isAdmin() && (
             <Link href={ThesisPath.CREATE}>
               <Button

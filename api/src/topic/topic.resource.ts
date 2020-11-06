@@ -18,9 +18,8 @@ export enum TopicRegisterStatus {
 }
 
 export const TopicPath = {
-  ROOT: ':thesisId/topics',
+  ROOT: 'topics',
   ADMIN_ROOT: 'admin/topics',
-  WITH_THESIS: '/:thesisId',
   SPECIFY: ':id',
   CHANGE_STATUS: ':id/change-status',
   CHANGE_REGISTER_STATUS: ':id/change-register-status',
@@ -47,7 +46,7 @@ export const TopicError = {
   ERR_16: 'Đề tài này đã đủ sinh viên thực hiện.'
 };
 
-export const TopicParam = {
+export const TopicQuery = {
   THESIS_ID: 'thesisId',
   STUDENT_ID: 'studentId'
 };

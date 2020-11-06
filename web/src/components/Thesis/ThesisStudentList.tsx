@@ -48,7 +48,7 @@ const ThesisStudentList: React.FC<ComponentPros> = ({ thesisId }) => {
       pagination={pagination}
       size="middle"
       onChange={handleTableChange}
-      title={() => <SearchBox onSearch={onSearch} />}
+      title={() => <SearchBox onSearch={onSearch} disabled={isLoading} />}
     />
   );
 };

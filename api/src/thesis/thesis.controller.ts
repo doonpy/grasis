@@ -19,7 +19,7 @@ import {
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { LecturerService } from '../lecturer/lecturer.service';
-import { ThesisPermissionGuard } from './guards/thesis-permission.guard';
+import { PermissionGuard } from './guards/permission.guard';
 import { ThesisGetThesisLecturersResponse } from './thesis-lecturer/thesis-lecturer.interface';
 import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
 import { ThesisGetThesisStudentsResponse } from './thesis-student/thesis-student.interface';
@@ -78,7 +78,7 @@ export class ThesisController {
   }
 
   @Get(ThesisPath.SPECIFY)
-  @UseGuards(ThesisPermissionGuard)
+  @UseGuards(PermissionGuard)
   public async getById(
     @Param(
       CommonParam.ID,
@@ -97,7 +97,7 @@ export class ThesisController {
   }
 
   @Get(ThesisPath.GET_THESIS_STUDENTS)
-  @UseGuards(ThesisPermissionGuard)
+  @UseGuards(PermissionGuard)
   public async getThesisStudents(
     @Param(
       CommonParam.ID,
@@ -138,7 +138,7 @@ export class ThesisController {
   }
 
   @Get(ThesisPath.GET_THESIS_LECTURERS)
-  @UseGuards(ThesisPermissionGuard)
+  @UseGuards(PermissionGuard)
   public async getThesisLecturers(
     @Param(
       CommonParam.ID,

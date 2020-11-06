@@ -60,7 +60,7 @@ export default class TopicService extends CommonService {
 
   public useTopic(thesisId = 0, topicId = 0) {
     const { data } = useSWR<TopicGetByIdResponse>(
-      this.replaceParams(TopicApi.SPECIFY, [thesisId, topicId])
+      this.replaceParams(TopicApi.SPECIFY, [topicId, thesisId])
     );
 
     return { data, isLoading: !data };

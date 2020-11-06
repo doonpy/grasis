@@ -52,5 +52,6 @@ export const TopicTerminology = {
   TOPIC_50: 'Bạn có chắc muốn từ chối sinh viên này?',
   TOPIC_51: 'Số lượt đăng ký',
   TOPIC_52: 'Số lượng sinh viên được chấp nhận',
-  TOPIC_53: 'Còn trống'
+  TOPIC_53: 'Còn trống',
+  TOPIC_54: 'Đề tài'
 };

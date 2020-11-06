@@ -11,10 +11,19 @@ interface ComponentProps {
       | React.MouseEvent<HTMLElement>
       | React.KeyboardEvent<HTMLInputElement>
   ) => void;
+  disabled?: boolean;
 }
 
-const SearchBox: React.FC<ComponentProps> = ({ onSearch }) => {
-  return <Search size="large" placeholder="Tìm kiếm..." onSearch={onSearch} enterButton />;
+const SearchBox: React.FC<ComponentProps> = ({ onSearch, disabled }) => {
+  return (
+    <Search
+      size="large"
+      placeholder="Tìm kiếm..."
+      onSearch={onSearch}
+      enterButton
+      disabled={disabled}
+    />
+  );
 };
 
 export default SearchBox;

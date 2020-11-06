@@ -291,7 +291,10 @@ export class TopicService {
     const topic = await this.getById(id, user);
 
     if (user.isAdmin === IsAdmin.TRUE) {
-      return topic.status !== TopicStateAction.NEW || topic.creatorId === user.id;
+      return (
+        (topic.status !== TopicStateAction.NEW && topic.status !== TopicStateAction.WITHDRAW) ||
+        topic.creatorId === user.id
+      );
     }
 
     if (user.userType === UserType.LECTURER) {
@@ -596,5 +599,11 @@ export class TopicService {
       { ...notDeleteCondition, thesisId, registerStatus: TopicRegisterStatus.ENABLE },
       { registerStatus: TopicRegisterStatus.DISABLE }
     );
+  }
+
+  public async checkTopicIsExisted(topicId: number): Promise<void> {
+    if ((await this.topicRepository.count({ ...notDeleteCondition, id: topicId })) === 0) {
+      throw new BadRequestException(TopicError.ERR_5);
+    }
   }
 }

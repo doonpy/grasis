@@ -48,7 +48,7 @@ const Index: NextPageWithLayout = () => {
       title={LecturerTerminology.LECTURER_1}
       extra={
         <Space size="large">
-          <SearchBox onSearch={onSearch} />
+          <SearchBox onSearch={onSearch} disabled={isLoading} />
           <Link href={LecturerPath.CREATE}>
             <Button
               type="primary"

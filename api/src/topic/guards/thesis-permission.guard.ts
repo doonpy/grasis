@@ -1,12 +1,12 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { ThesisError, ThesisState, ThesisStatus } from '../../thesis/thesis.resource';
+import { ThesisError } from '../../thesis/thesis.resource';
 import { ThesisService } from '../../thesis/thesis.service';
 import { UserService } from '../../user/user.service';
-import { TopicError, TopicQuery } from '../topic.resource';
+import { TopicQuery } from '../topic.resource';
 
 @Injectable()
-export class TopicLecturerRegisterGuard implements CanActivate {
+export class ThesisPermissionGuard implements CanActivate {
   constructor(
     private readonly userService: UserService,
     private readonly thesisService: ThesisService
@@ -19,14 +19,10 @@ export class TopicLecturerRegisterGuard implements CanActivate {
       throw new BadRequestException(ThesisError.ERR_7);
     }
 
-    const thesis = await this.thesisService.getById(parseInt(thesisId));
-    if (thesis.status === ThesisStatus.INACTIVE) {
-      throw new BadRequestException(TopicError.ERR_1);
-    }
-
-    if (thesis.state !== ThesisState.LECTURER_TOPIC_REGISTER) {
-      throw new BadRequestException(TopicError.ERR_2);
-    }
+    const { userId } = request.user!;
+    const loginUser = await this.userService.findById(userId);
+    await this.thesisService.checkThesisExistById(parseInt(thesisId));
+    await this.thesisService.checkThesisPermission(parseInt(thesisId), loginUser);
 
     return true;
   }
