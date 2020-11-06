@@ -139,4 +139,12 @@ export class TopicStudentService {
       { status: TopicStudentStatus.REJECTED }
     );
   }
+
+  public async getStudentsParticipated(topicId: number): Promise<TopicStudent[]> {
+    return this.topicStudentRepository.find({
+      relations: { student: { user: true } },
+      where: { ...notDeleteCondition, topicId, status: TopicStudentStatus.APPROVED },
+      cache: true
+    });
+  }
 }

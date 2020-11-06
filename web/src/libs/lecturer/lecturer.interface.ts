@@ -1,6 +1,12 @@
 import { CommonColumns, CommonResponse } from '../common/common.interface';
 import { Thesis } from '../thesis/thesis.interface';
-import { User, UserForListView, UserRequestBody, UserViewType } from '../user/user.interface';
+import {
+  User,
+  UserForFastView,
+  UserForListView,
+  UserRequestBody,
+  UserViewType
+} from '../user/user.interface';
 
 export interface Lecturer extends CommonColumns {
   id: number;
@@ -57,3 +63,6 @@ export interface LecturerForm {
 }
 
 export type LecturerForListView = Pick<Lecturer, 'id' | 'lecturerId'> & UserForListView;
+
+export type LecturerForFastView = Pick<Lecturer, 'id' | 'lecturerId' | 'deletedAt'> &
+  UserForFastView;

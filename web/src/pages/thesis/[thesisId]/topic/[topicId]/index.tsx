@@ -1,4 +1,4 @@
-import {
+import Icon, {
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
@@ -12,9 +12,12 @@ import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 
+import FileChartLineIcon from '../../../../../assets/svg/regular/file-chart-line.svg';
+import { ProgressReportTerminology } from '../../../../../assets/terminology/progress-report.terminology';
 import { ThesisTerminology } from '../../../../../assets/terminology/thesis.terminology';
 import { TopicTerminology } from '../../../../../assets/terminology/topic.terminology';
 import MainLayout from '../../../../../components/Layout/MainLayout';
+import ProgressReportInfo from '../../../../../components/ProgressReport/ProgressReportInfo';
 import TopicInfo from '../../../../../components/Topic/TopicInfo';
 import TopicPrivateInfo from '../../../../../components/Topic/TopicPrivateInfo';
 import TopicStudentInfo from '../../../../../components/Topic/TopicStudentsInfo';
@@ -22,6 +25,7 @@ import { CommonPageProps, NextPageWithLayout } from '../../../../../libs/common/
 import { SIDER_KEYS } from '../../../../../libs/common/common.resource';
 import CommonService from '../../../../../libs/common/common.service';
 import { THESIS_PATH_ROOT, ThesisPath } from '../../../../../libs/thesis/thesis.resource';
+import { TopicStateAction } from '../../../../../libs/topic/topic-state/topic-state.resource';
 import { TOPIC_PATH_ROOT, TopicPath } from '../../../../../libs/topic/topic.resource';
 import TopicService from '../../../../../libs/topic/topic.service';
 import LoginUser from '../../../../../libs/user/instance/LoginUser';
@@ -130,9 +134,24 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               </span>
             }
             key="3"
-            disabled={loginUser.isStudent()}>
+            disabled={
+              data.topic.thesis.creatorId !== loginUser.getId() &&
+              data.topic.creatorId !== loginUser.getId()
+            }>
             <TopicPrivateInfo topic={data.topic} />
           </Tabs.TabPane>
+          {data.topic.status === TopicStateAction.APPROVED && (
+            <Tabs.TabPane
+              tab={
+                <span>
+                  <Icon component={FileChartLineIcon} />
+                  {ProgressReportTerminology.PR_1}
+                </span>
+              }
+              key="4">
+              <ProgressReportInfo topicId={topicId} thesisCreatorId={data.topic.thesis.creatorId} />
+            </Tabs.TabPane>
+          )}
         </Tabs>
       )}
     </Card>

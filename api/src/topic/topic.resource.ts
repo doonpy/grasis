@@ -23,8 +23,8 @@ export const TopicPath = {
   SPECIFY: ':id',
   CHANGE_STATUS: ':id/change-status',
   CHANGE_REGISTER_STATUS: ':id/change-register-status',
-  REGISTER_TOPIC: ':id/register-topic/:studentId',
-  CHANGE_STUDENT_REGISTER_STATUS: ':id/register-topic/:studentId/change'
+  REGISTER_TOPIC: ':id/register-topic',
+  CHANGE_STUDENT_REGISTER_STATUS: ':id/change-register-topic-status'
 };
 
 export const TopicError = {

@@ -13,7 +13,8 @@
     "install:dependencies": "yarn install",
     "check-type": "tsc",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && rm -rf .next/ && npm install && yarn dev",
-    "prune:dependencies": "npm prune --production"
+    "prune:dependencies": "npm prune --production",
+    "type-check": "tsc"
   },
   "dependencies": {
     "@ant-design/icons": "^4.2.2",

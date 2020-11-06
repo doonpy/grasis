@@ -34,3 +34,5 @@ export type UserForListView = Pick<
   User,
   'username' | 'firstname' | 'lastname' | 'gender' | 'status'
 >;
+
+export type UserForFastView = Pick<User, 'firstname' | 'lastname'>;

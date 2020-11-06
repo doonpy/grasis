@@ -23,6 +23,8 @@ import {
   commonOffsetValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
+import { LecturerService } from '../lecturer/lecturer.service';
+import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { PermissionGuard } from './guards/permission.guard';
 import { ThesisPermissionGuard } from './guards/thesis-permission.guard';
@@ -31,6 +33,8 @@ import { TopicStudentRegisterGuard } from './guards/topic-student-register.guard
 import { ParseTopicChangeStatusPipe } from './pipes/parse-topic-change-status.pipe';
 import { ParseTopicChangeStudentRegisterStatusPipe } from './pipes/parse-topic-change-student-register-status.pipe';
 import { ParseTopicRequestBodyPipe } from './pipes/parse-topic-request-body.pipe';
+import { TopicStateService } from './topic-state/topic-state.service';
+import { TopicStudentService } from './topic-student/topic-student.service';
 import {
   Topic,
   TopicChangeStatusRequestBody,
@@ -49,16 +53,19 @@ import {
   topicUpdateValidationSchema
 } from './topic.validation';
 
-@UseGuards(JwtAuthGuard, ThesisPermissionGuard)
+@UseGuards(JwtAuthGuard)
 @Controller(TopicPath.ROOT)
 export class TopicController {
   constructor(
     private readonly topicService: TopicService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly topicStudentService: TopicStudentService,
+    private readonly topicStateService: TopicStateService,
+    private readonly lecturerService: LecturerService
   ) {}
 
   @Post()
-  @UseGuards(TopicLecturerRegisterGuard)
+  @UseGuards(ThesisPermissionGuard, TopicLecturerRegisterGuard)
   public async create(
     @Query(
       TopicQuery.THESIS_ID,
@@ -81,6 +88,7 @@ export class TopicController {
   }
 
   @Get()
+  @UseGuards(ThesisPermissionGuard)
   public async getMany(
     @Query(
       TopicQuery.THESIS_ID,
@@ -131,7 +139,19 @@ export class TopicController {
   ): Promise<TopicGetByIdResponse> {
     const loginUserId = req.user?.userId as number;
     const loginUser = await this.userService.findById(loginUserId);
-    const topic = await this.topicService.getById(id, loginUser);
+    const topic = await this.topicService.getById(id);
+    if (loginUser.isAdmin === IsAdmin.TRUE || loginUser.id === topic.creatorId) {
+      topic.approver = await this.lecturerService.getById(topic.approverId);
+      topic.states = await this.topicStateService.getMany(topic.id);
+    }
+
+    if (
+      loginUser.isAdmin === IsAdmin.TRUE ||
+      loginUser.id === topic.creatorId ||
+      loginUser.userType === UserType.STUDENT
+    ) {
+      topic.students = await this.topicStudentService.getMany(topic.id);
+    }
 
     return {
       statusCode: HttpStatus.OK,
@@ -230,7 +250,7 @@ export class TopicController {
       ParseIntPipe
     )
     id: number,
-    @Param(
+    @Query(
       TopicQuery.STUDENT_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
@@ -252,7 +272,7 @@ export class TopicController {
       ParseIntPipe
     )
     id: number,
-    @Param(
+    @Query(
       TopicQuery.STUDENT_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),

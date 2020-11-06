@@ -10,10 +10,10 @@ export const TOPIC_API_ROOT = '/topics';
 export const TopicApi = {
   GET_MANY: `${TOPIC_API_ROOT}?thesisId=@0&offset=@1&keyword=@2`,
   SPECIFY: `${TOPIC_API_ROOT}/@0?thesisId=@1`,
-  CHANGE_STATUS: `${TOPIC_API_ROOT}/@1/change-status`,
-  CHANGE_REGISTER_STATUS: `${TOPIC_API_ROOT}/@1/change-register-status`,
-  REGISTER_TOPIC: `${TOPIC_API_ROOT}/@1/register-topic/@2`,
-  CHANGE_STUDENT_REGISTER_STATUS: `${TOPIC_API_ROOT}/@1/register-topic/@2/change`
+  CHANGE_STATUS: `${TOPIC_API_ROOT}/@0/change-status?thesisId=@1`,
+  CHANGE_REGISTER_STATUS: `${TOPIC_API_ROOT}/@0/change-register-status?thesisId=@1`,
+  REGISTER_TOPIC: `${TOPIC_API_ROOT}/@0/register-topic?thesisId=@1&studentId=@2`,
+  CHANGE_STUDENT_REGISTER_STATUS: `${TOPIC_API_ROOT}/@0/change-register-topic-status?thesisId=@1&studentId=@2`
 };
 
 export const TOPIC_PATH_ROOT = `${THESIS_PATH_ROOT}/@0/topic`;

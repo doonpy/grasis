@@ -11,13 +11,13 @@ import { AvatarModule } from './avatar/avatar.module';
 import { CommonPath, DatabaseType, EnvFileName } from './common/common.resource';
 import { getDatabaseConfig } from './database/database.helper';
 import { LecturerModule } from './lecturer/lecturer.module';
+import { ProgressReportModule } from './progress-report/progress-report.module';
 import { RefreshModule } from './refresh/refresh.module';
 import { StudentModule } from './student/student.module';
 import { ThesisModule } from './thesis/thesis.module';
 import { TopicModule } from './topic/topic.module';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
-import { ProgressReportModule } from './progress-report/progress-report.module';
 
 function getEnvFilePath(): string {
   let configFolderPath = './config/';

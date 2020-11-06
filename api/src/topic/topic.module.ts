@@ -14,6 +14,6 @@ import { TopicService } from './topic.service';
   imports: [TypeOrmModule.forFeature([TopicEntity, TopicStateEntity, TopicStudentEntity])],
   providers: [TopicService, TopicStateService, TopicStudentService],
   controllers: [TopicController],
-  exports: [TopicService]
+  exports: [TopicService, TopicStudentService]
 })
 export class TopicModule {}

@@ -14,6 +14,7 @@ import { TopicStudent } from '../topic/topic-student/topic-student.interface';
 import { TopicStudentColumn } from '../topic/topic-student/topic-student.resouce';
 import { UserEntity } from '../user/user.entity';
 import { User } from '../user/user.interface';
+import { StudentForFastView } from './student.interface';
 import { IsGraduate, STUDENT_TABLE, StudentColumn } from './student.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: STUDENT_TABLE })
@@ -67,4 +68,14 @@ export class StudentEntity extends CommonEntity {
   @OneToMany(() => TopicStudentEntity, ({ student }) => student)
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: TopicStudentColumn.STUDENT_ID })
   public topics!: TopicStudent[];
+
+  public convertToFastView(): StudentForFastView {
+    return {
+      id: this.id,
+      deletedAt: this.deletedAt,
+      studentId: this.studentId,
+      firstname: this.user.firstname,
+      lastname: this.user.lastname
+    };
+  }
 }

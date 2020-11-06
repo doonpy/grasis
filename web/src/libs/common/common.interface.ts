@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 
 import { BreadcrumbItemType } from '../../components/Breadcrumb/Breadcrumb';
 import { IsAdmin, UserType } from '../user/user.resource';
