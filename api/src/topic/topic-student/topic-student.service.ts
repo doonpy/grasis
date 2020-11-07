@@ -114,6 +114,10 @@ export class TopicStudentService {
     topicIds: number[],
     studentId: number
   ): Promise<void> {
+    if (topicIds.length === 0) {
+      return;
+    }
+
     await manager.update(
       TopicStudentEntity,
       { ...notDeleteCondition, studentId, topicId: In(topicIds) },

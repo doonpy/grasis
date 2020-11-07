@@ -3,5 +3,8 @@ export const CommonTerminology = {
   COMMON_2: 'Ngày cập nhật',
   COMMON_3: 'Độ phân giải màn hình không phù hợp',
   COMMON_4:
-    'Ứng dụng này chưa hỗ trợ cho các màn hình điện thoại. Vui lòng sử dụng máy tính cá nhân để được trải nghiệm tốt nhất.'
+    'Ứng dụng này chưa hỗ trợ cho các màn hình điện thoại. Vui lòng sử dụng máy tính cá nhân để được trải nghiệm tốt nhất.',
+  COMMON_5: 'Tạo đường dẫn tải',
+  COMMON_6: 'Tải xuống',
+  COMMON_7: 'Tạo đường dẫn tải thành công'
 };

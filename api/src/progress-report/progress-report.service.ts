@@ -5,9 +5,14 @@ import { EntityManager, Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../common/common.resource';
 import { Thesis } from '../thesis/thesis.interface';
+import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
 import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { Topic } from '../topic/topic.interface';
 import { TopicService } from '../topic/topic.service';
+import { getFiles } from '../upload/upload.helper';
+import { UploadDestination } from '../upload/upload.resource';
+import { User } from '../user/user.interface';
+import { UserType } from '../user/user.resource';
 import { ProgressReportEntity } from './progress-report.entity';
 import {
   ProgressReport,
@@ -82,6 +87,7 @@ export class ProgressReportService {
     const reporters = (
       await this.topicStudentService.getStudentsParticipated(topicId)
     ).map(({ student }) => student.convertToFastView());
+    const files = getFiles(`${UploadDestination.PROGRESS_REPORT}/${topicId}`);
 
     return {
       createdAt,
@@ -91,7 +97,8 @@ export class ProgressReportService {
       time,
       place,
       note,
-      reporters
+      reporters,
+      files
     };
   }
 
@@ -102,5 +109,25 @@ export class ProgressReportService {
     if (!moment(time).isBetween(studentTopicRegister, progressReport, 'day', '(]')) {
       throw new BadRequestException(ProgressReportError.ERR_3);
     }
+  }
+
+  public async checkUploadPermission(topicId: number, user: User): Promise<void> {
+    const topic = await this.topicService.getById(topicId);
+    if (topic.thesis.status === ThesisStatus.INACTIVE) {
+      throw new BadRequestException(ProgressReportError.ERR_5);
+    }
+
+    if (topic.thesis.state !== ThesisState.PROGRESS_REPORT) {
+      throw new BadRequestException(ProgressReportError.ERR_6);
+    }
+
+    if (
+      user.userType !== UserType.STUDENT ||
+      !(await this.topicStudentService.hasRegisteredTopic(topicId, user.id))
+    ) {
+      throw new BadRequestException(ProgressReportError.ERR_4);
+    }
+
+    await this.topicService.checkPermission(topicId, user);
   }
 }

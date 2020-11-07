@@ -7,6 +7,8 @@ import { LecturerService } from '../lecturer/lecturer.service';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { StudentService } from '../student/student.service';
 import { ThesisService } from '../thesis/thesis.service';
+import { createDestination } from '../upload/upload.helper';
+import { UploadDestination } from '../upload/upload.resource';
 import { User } from '../user/user.interface';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -429,6 +431,9 @@ export class TopicService {
         await this.progressReportService.createWithTransaction(manager, topic, {
           time: topic.thesis.progressReport
         });
+        // Create progress report folder
+        createDestination(`${UploadDestination.PROGRESS_REPORT}/${topic.id}`);
+
         await manager.save(TopicEntity, topic);
       });
     } else {
@@ -520,7 +525,11 @@ export class TopicService {
           topic.registerStatus = TopicRegisterStatus.DISABLE;
         }
 
-        await manager.save(TopicEntity, topic);
+        await manager.update(
+          TopicEntity,
+          { id: topicId },
+          { currentStudent: topic.currentStudent, registerStatus: topic.registerStatus }
+        );
       });
     } else {
       await this.topicStudentService.changeRegisterStatus(topicId, studentId, status);

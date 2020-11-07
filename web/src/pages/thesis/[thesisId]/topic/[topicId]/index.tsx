@@ -126,20 +126,19 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               currentStudent={data.topic.currentStudent}
             />
           </Tabs.TabPane>
-          <Tabs.TabPane
-            tab={
-              <span>
-                <LockOutlined />
-                {TopicTerminology.TOPIC_13}
-              </span>
-            }
-            key="3"
-            disabled={
-              data.topic.thesis.creatorId !== loginUser.getId() &&
-              data.topic.creatorId !== loginUser.getId()
-            }>
-            <TopicPrivateInfo topic={data.topic} />
-          </Tabs.TabPane>
+          {data.topic.thesis.creatorId !== loginUser.getId() &&
+            data.topic.creatorId !== loginUser.getId() && (
+              <Tabs.TabPane
+                tab={
+                  <span>
+                    <LockOutlined />
+                    {TopicTerminology.TOPIC_13}
+                  </span>
+                }
+                key="3">
+                <TopicPrivateInfo topic={data.topic} />
+              </Tabs.TabPane>
+            )}
           {data.topic.status === TopicStateAction.APPROVED && (
             <Tabs.TabPane
               tab={

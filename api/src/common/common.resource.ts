@@ -11,7 +11,8 @@ export const CommonQuery = {
   OFFSET: 'offset',
   LIMIT: 'limit',
   KEYWORD: 'keyword',
-  SEARCH_TYPES: 'searchTypes'
+  SEARCH_TYPES: 'searchTypes',
+  DOWNLOAD_PATH: '/path'
 };
 
 export const CommonParam = {
@@ -41,7 +42,8 @@ export const CORS_OPTIONS: CorsOptions = {
 
 export const CommonPath = {
   LOGIN: '/login',
-  REFRESH_TOKEN: '/refresh'
+  REFRESH_TOKEN: '/refresh',
+  DOWNLOAD: '/download'
 };
 
 export const CommonColumn = {

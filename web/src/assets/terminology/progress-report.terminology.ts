@@ -7,5 +7,6 @@ export const ProgressReportTerminology = {
   PR_6: 'Giảng viên hướng dẫn',
   PR_7: 'Người tạo khóa luận',
   PR_8: 'Chỉnh sửa',
-  PR_9: 'Chỉnh sửa báo cáo tiến độ'
+  PR_9: 'Chỉnh sửa báo cáo tiến độ',
+  PR_10: 'Tài liệu báo cáo'
 };

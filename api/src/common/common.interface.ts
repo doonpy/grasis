@@ -11,3 +11,14 @@ export interface CommonColumns {
   updatedAt: string;
   deletedAt: string;
 }
+
+export interface FileInfo {
+  name: string;
+  size: number;
+  ctime: Date;
+  mtime: Date;
+}
+
+export interface GenerateDownloadLinkResponse {
+  url: string;
+}

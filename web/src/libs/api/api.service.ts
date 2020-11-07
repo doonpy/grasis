@@ -17,7 +17,7 @@ export default class ApiService {
     };
   }
 
-  private getBaseUrl(): string {
+  public getBaseUrl(): string {
     if (process.env.NEXT_PUBLIC_HEROKU_PR_NUMBER) {
       return `https://grasis-api-pr-${process.env.NEXT_PUBLIC_HEROKU_PR_NUMBER}.herokuapp.com`;
     }

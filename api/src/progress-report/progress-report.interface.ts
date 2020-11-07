@@ -1,4 +1,4 @@
-import { CommonColumns, CommonResponse } from '../common/common.interface';
+import { CommonColumns, CommonResponse, FileInfo } from '../common/common.interface';
 import { StudentForFastView } from '../student/student.interface';
 import { ProgressReportEntity } from './progress-report.entity';
 
@@ -19,4 +19,5 @@ export interface ProgressReportGetByIdResponse extends CommonResponse {
 
 export type ProgressReportForView = Omit<ProgressReport, 'deletedAt' | 'topic'> & {
   reporters: StudentForFastView[];
+  files: FileInfo[];
 };

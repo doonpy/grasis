@@ -9,6 +9,7 @@ import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import StudentFastView from '../Student/StudentFastView';
 import ProgressReportAdminButton from './ProgressReportAdminButton';
+import ProgressReportFiles from './ProgressReportFiles';
 
 interface ComponentProps {
   topicId: number;
@@ -51,6 +52,9 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesisCreatorId
         </Descriptions.Item>
         <Descriptions.Item label={<b>{ProgressReportTerminology.PR_4}</b>} span={2}>
           <TextData text={progressReportData.progressReport.note} isParagraph={true} />
+        </Descriptions.Item>
+        <Descriptions.Item label={<b>{ProgressReportTerminology.PR_10}</b>} span={2}>
+          <ProgressReportFiles files={progressReportData.progressReport.files} topicId={topicId} />
         </Descriptions.Item>
       </Descriptions>
     );

@@ -16,7 +16,7 @@ import { CommonParam, CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { TopicPermissionGuard } from './guards/topic-permission.guard';
+import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import {
   ProgressReportCreateOrUpdateResponse,
   ProgressReportRequestBody

@@ -26,3 +26,7 @@ export const COMMON_PATH = {
 };
 
 export const DEFAULT_PAGE_SIZE = 20;
+
+export const CommonApi = {
+  DOWNLOAD: '/download?path=@0'
+};

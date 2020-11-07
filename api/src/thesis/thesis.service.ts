@@ -244,7 +244,7 @@ export class ThesisService {
         }
       }
 
-      const currentState = this.getThesisCurrentState(currentThesis);
+      const currentState = this.getThesisCurrentState(thesis);
       await this.handleChangeStateWithTransaction(manager, currentThesis, currentState);
       await manager.update(ThesisEntity, { id }, { ...thesis, state: currentState });
     });
@@ -258,7 +258,7 @@ export class ThesisService {
     progressReport,
     review,
     defense
-  }: Thesis): ThesisState {
+  }: Thesis | ThesisRequestBody): ThesisState {
     const currentDate = moment.utc();
     if (currentDate.isBefore(startTime, 'day')) {
       return ThesisState.NOT_START;
