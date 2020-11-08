@@ -152,4 +152,22 @@ export default class TopicService extends CommonService {
       studentId
     ]);
   }
+
+  public hasPermissionWithLoginUser(topic: Topic): boolean {
+    const loginUser = LoginUser.getInstance();
+    if (topic.thesis.creatorId === loginUser.getId()) {
+      return topic.status !== TopicStateAction.NEW && topic.status !== TopicStateAction.WITHDRAW;
+    }
+
+    if (loginUser.isLecturer()) {
+      return topic.creatorId === loginUser.getId();
+    }
+
+    if (loginUser.isStudent()) {
+      const studentIds = topic.students.map(({ studentId }) => studentId);
+      return studentIds.includes(loginUser.getId());
+    }
+
+    return false;
+  }
 }

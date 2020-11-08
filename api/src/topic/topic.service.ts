@@ -6,6 +6,7 @@ import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { StudentService } from '../student/student.service';
+import { ThesisState } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
 import { createDestination } from '../upload/upload.helper';
 import { UploadDestination } from '../upload/upload.resource';
@@ -287,11 +288,15 @@ export class TopicService {
     }
 
     if (user.userType === UserType.LECTURER) {
-      return topic.creatorId === user.id || topic.status === TopicStateAction.APPROVED;
+      return topic.creatorId === user.id;
     }
 
     if (user.userType === UserType.STUDENT) {
-      return topic.status === TopicStateAction.APPROVED;
+      if (topic.thesis.state === ThesisState.STUDENT_TOPIC_REGISTER) {
+        return topic.status === TopicStateAction.APPROVED;
+      }
+
+      return this.topicStudentService.hasParticipatedTopic(topic.id, user.id);
     }
 
     return false;

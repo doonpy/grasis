@@ -155,4 +155,15 @@ export class TopicStudentService {
       cache: true
     });
   }
+
+  public async hasParticipatedTopic(topicId: number, studentId: number): Promise<boolean> {
+    return (
+      (await this.topicStudentRepository.count({
+        ...notDeleteCondition,
+        topicId,
+        studentId,
+        status: TopicStudentStatus.APPROVED
+      })) > 0
+    );
+  }
 }

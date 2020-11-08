@@ -28,7 +28,6 @@ import { THESIS_PATH_ROOT, ThesisPath } from '../../../../../libs/thesis/thesis.
 import { TopicStateAction } from '../../../../../libs/topic/topic-state/topic-state.resource';
 import { TOPIC_PATH_ROOT, TopicPath } from '../../../../../libs/topic/topic.resource';
 import TopicService from '../../../../../libs/topic/topic.service';
-import LoginUser from '../../../../../libs/user/instance/LoginUser';
 import { UserType } from '../../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
@@ -44,7 +43,6 @@ const { confirm } = Modal;
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const topicService = TopicService.getInstance();
-  const loginUser = LoginUser.getInstance();
   const thesisId = parseInt(params.thesisId);
   const topicId = parseInt(params.topicId);
   const { data, isLoading } = topicService.useTopic(thesisId, topicId);
@@ -126,31 +124,34 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               currentStudent={data.topic.currentStudent}
             />
           </Tabs.TabPane>
-          {data.topic.thesis.creatorId !== loginUser.getId() &&
-            data.topic.creatorId !== loginUser.getId() && (
-              <Tabs.TabPane
-                tab={
-                  <span>
-                    <LockOutlined />
-                    {TopicTerminology.TOPIC_13}
-                  </span>
-                }
-                key="3">
-                <TopicPrivateInfo topic={data.topic} />
-              </Tabs.TabPane>
-            )}
-          {data.topic.status === TopicStateAction.APPROVED && (
+          {topicService.hasPermissionWithLoginUser(data.topic) && (
             <Tabs.TabPane
               tab={
                 <span>
-                  <Icon component={FileChartLineIcon} />
-                  {ProgressReportTerminology.PR_1}
+                  <LockOutlined />
+                  {TopicTerminology.TOPIC_13}
                 </span>
               }
-              key="4">
-              <ProgressReportInfo topicId={topicId} thesisCreatorId={data.topic.thesis.creatorId} />
+              key="3">
+              <TopicPrivateInfo topic={data.topic} />
             </Tabs.TabPane>
           )}
+          {data.topic.status === TopicStateAction.APPROVED &&
+            topicService.hasPermissionWithLoginUser(data.topic) && (
+              <Tabs.TabPane
+                tab={
+                  <span>
+                    <Icon component={FileChartLineIcon} />
+                    {ProgressReportTerminology.PR_1}
+                  </span>
+                }
+                key="4">
+                <ProgressReportInfo
+                  topicId={topicId}
+                  thesisCreatorId={data.topic.thesis.creatorId}
+                />
+              </Tabs.TabPane>
+            )}
         </Tabs>
       )}
     </Card>

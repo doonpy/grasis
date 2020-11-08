@@ -21,7 +21,6 @@ export class PermissionGuard implements CanActivate {
 
     const { userId } = request.user!;
     const loginUser = await this.userService.findById(userId);
-    await this.thesisService.checkThesisExistById(parseInt(thesisId));
     await this.thesisService.checkThesisPermission(parseInt(thesisId), loginUser);
 
     return true;
