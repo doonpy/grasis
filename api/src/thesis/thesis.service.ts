@@ -323,6 +323,7 @@ export class ThesisService {
       const deletedAt = new Date();
       await this.thesisLecturerService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
       await this.thesisStudentService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
+      await this.topicService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
       await manager.update(ThesisEntity, { id }, { deletedAt });
     });
   }

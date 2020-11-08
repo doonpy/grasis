@@ -328,11 +328,7 @@ export class TopicService {
     }
 
     await this.connection.transaction(async (manager) => {
-      const deletedAt = new Date();
-      const stateIds = currentTopic.states.map(({ id }) => id);
-      await this.topicStateService.deleteByIdsWithTransaction(manager, stateIds, deletedAt);
-      await this.topicStudentService.deleteByTopicIdsWithTransaction(manager, topicId, deletedAt);
-      await manager.update(TopicEntity, { id: topicId }, { deletedAt });
+      await this.deleteCascadeWithTransaction(manager, topicId, new Date());
     });
   }
 
@@ -614,5 +610,30 @@ export class TopicService {
     if ((await this.topicRepository.count({ ...notDeleteCondition, id: topicId })) === 0) {
       throw new BadRequestException(TopicError.ERR_5);
     }
+  }
+
+  public async deleteByThesisIdWithTransaction(
+    manager: EntityManager,
+    thesisId: number,
+    deletedAt = new Date()
+  ): Promise<void> {
+    const topics = await manager.find(TopicEntity, {
+      where: { ...notDeleteCondition, thesisId },
+      cache: true
+    });
+    for (const topic of topics) {
+      await this.deleteCascadeWithTransaction(manager, topic.id, deletedAt);
+    }
+  }
+
+  private async deleteCascadeWithTransaction(
+    manager: EntityManager,
+    topicId: number,
+    deletedAt = new Date()
+  ): Promise<void> {
+    await this.topicStateService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
+    await this.topicStudentService.deleteByTopicIdsWithTransaction(manager, topicId, deletedAt);
+    await this.progressReportService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
+    await manager.update(TopicEntity, { id: topicId }, { deletedAt });
   }
 }

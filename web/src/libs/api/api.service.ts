@@ -93,4 +93,10 @@ export default class ApiService {
 
     return result;
   }
+
+  public async postFile<T>(url: string, body: FormData): Promise<AxiosResponse<T>> {
+    const configs: AxiosRequestConfig = { ...this.baseConfigs };
+    configs.headers['Content-Type'] = `multipart/form-data`;
+    return axios.post<T>(url, body, configs);
+  }
 }

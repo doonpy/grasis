@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class ProgressReport1604655572953 implements MigrationInterface {
+export class ProgressReport1604848361638 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
     await queryRunner.query(
       'CREATE TABLE `progress_report` (`deleted_at` datetime NULL, `created_at` datetime(6) NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_at` datetime(6) NULL DEFAULT CURRENT_TIMESTAMP(6), `id` int NOT NULL AUTO_INCREMENT, `topic_id` int NOT NULL, `time` datetime NOT NULL, `place` varchar(100) CHARACTER SET "utf8mb4" COLLATE "utf8mb4_general_ci" NULL, `note` text CHARACTER SET "utf8mb4" COLLATE "utf8mb4_general_ci" NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB'

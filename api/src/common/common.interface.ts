@@ -15,6 +15,7 @@ export interface CommonColumns {
 export interface FileInfo {
   name: string;
   size: number;
+  type: string;
   ctime: Date;
   mtime: Date;
 }

@@ -1,14 +1,24 @@
-import Icon from '@ant-design/icons';
-import { Button, Descriptions, List, message, Space } from 'antd';
+import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Descriptions, List, message, Modal, Space } from 'antd';
 import React, { useState } from 'react';
 
 import FileAltIcon from '../../assets/svg/regular/file-alt.svg';
+import FilePdfIcon from '../../assets/svg/regular/file-pdf.svg';
+import FileWordIcon from '../../assets/svg/regular/file-word.svg';
 import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { FileInfo } from '../../libs/common/common.interface';
-import { CommonApi } from '../../libs/common/common.resource';
+import {
+  CommonApi,
+  DOWNLOAD_TIME_TO_LIVE,
+  UploadReportMimeType,
+  UploadReportModule
+} from '../../libs/common/common.resource';
+import CommonService from '../../libs/common/common.service';
 import { ProgressReportApi } from '../../libs/progress-report/progress-report.resource';
 import ProgressReportService from '../../libs/progress-report/progress-report.service';
+import LoginUser from '../../libs/user/instance/LoginUser';
 import DateData from '../Common/DateData';
+const { confirm } = Modal;
 
 interface ComponentProps {
   files: FileInfo[];
@@ -17,6 +27,8 @@ interface ComponentProps {
 
 const ProgressReportFiles: React.FC<ComponentProps> = ({ files, topicId }) => {
   const progressReportService = ProgressReportService.getInstance();
+  const commonService = CommonService.getInstance();
+  const loginUser = LoginUser.getInstance();
   const [downloadLinks, setDownloadLinks] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const generateDownloadLink = async (filePath: string, index: number) => {
@@ -32,63 +44,101 @@ const ProgressReportFiles: React.FC<ComponentProps> = ({ files, topicId }) => {
       setDownloadLinks(downloadLinks);
       setLoading(false);
       message.success(CommonTerminology.COMMON_7);
+      setTimeout(() => {
+        downloadLinks[index] = '';
+        setDownloadLinks(downloadLinks);
+      }, DOWNLOAD_TIME_TO_LIVE);
     } catch (error) {
       setLoading(false);
       await progressReportService.requestErrorHandler(error);
     }
   };
 
-  return (
-    <List
-      itemLayout="horizontal"
-      size="small"
-      dataSource={files}
-      renderItem={(file, index) => {
-        const filePath = `${progressReportService.apiService.getBaseUrl()}${progressReportService.replaceParams(
-          ProgressReportApi.GET_DOCUMENT,
-          [topicId, file.name]
-        )}`;
+  const deleteFile = async (filename: string) => {
+    confirm({
+      title: CommonTerminology.COMMON_14,
+      icon: <ExclamationCircleOutlined />,
+      content: CommonTerminology.COMMON_15,
+      okText: CommonTerminology.COMMON_16,
+      cancelText: CommonTerminology.COMMON_17,
+      cancelButtonProps: { type: 'primary', danger: true },
+      async onOk() {
+        try {
+          await commonService.deleteReport(UploadReportModule.PROGRESS_REPORT, topicId, filename);
+          message.success(CommonTerminology.COMMON_18);
+        } catch (error) {
+          await commonService.requestErrorHandler(error);
+        }
+      }
+    });
+  };
 
-        return (
-          <List.Item>
-            <List.Item.Meta
-              avatar={<Icon type="primary" component={FileAltIcon} />}
-              title={
-                <Space>
-                  <b>{file.name}</b>
-                  {!downloadLinks[index] && (
-                    <Button
-                      loading={loading}
-                      type="link"
-                      size="small"
-                      onClick={() => generateDownloadLink(filePath, index)}>
-                      {CommonTerminology.COMMON_5}
-                    </Button>
-                  )}
-                  {downloadLinks[index] && (
-                    <a href={downloadLinks[index]}>{CommonTerminology.COMMON_6}</a>
-                  )}
-                </Space>
-              }
-              description={
-                <Descriptions size="small">
-                  <Descriptions.Item label={<i>{CommonTerminology.COMMON_1}</i>} span={3}>
-                    <i>
-                      <DateData date={file.ctime} />
-                    </i>
-                  </Descriptions.Item>
-                  <Descriptions.Item label={<i>{CommonTerminology.COMMON_2}</i>} span={3}>
-                    <i>
-                      <DateData date={file.mtime} isRelative={true} />
-                    </i>
-                  </Descriptions.Item>
-                </Descriptions>
-              }
-            />
-          </List.Item>
-        );
-      }}
-    />
+  const getFileIcon = (type: string) => {
+    switch (type) {
+      case UploadReportMimeType.WORD:
+        return FileWordIcon;
+      case UploadReportMimeType.PDF:
+        return FilePdfIcon;
+      default:
+        return FileAltIcon;
+    }
+  };
+
+  return (
+    <>
+      <List
+        itemLayout="horizontal"
+        size="small"
+        dataSource={files}
+        renderItem={({ name, type, ctime }: FileInfo, index) => {
+          const filePath = `${progressReportService.apiService.getBaseUrl()}${progressReportService.replaceParams(
+            ProgressReportApi.GET_DOCUMENT,
+            [topicId, name]
+          )}`;
+
+          return (
+            <List.Item>
+              <List.Item.Meta
+                avatar={<Icon component={getFileIcon(type)} />}
+                title={
+                  <Space size="small">
+                    <b>{name}</b>
+                    {!downloadLinks[index] && (
+                      <Button
+                        loading={loading}
+                        type="link"
+                        size="small"
+                        onClick={() => generateDownloadLink(filePath, index)}>
+                        {CommonTerminology.COMMON_5}
+                      </Button>
+                    )}
+                    {downloadLinks[index] && (
+                      <a href={downloadLinks[index]} target="_blank" rel="noreferrer">
+                        {CommonTerminology.COMMON_6}
+                      </a>
+                    )}
+                    {loginUser.isStudent() && (
+                      <Button type="link" size="small" danger onClick={() => deleteFile(name)}>
+                        {CommonTerminology.COMMON_13}
+                      </Button>
+                    )}
+                  </Space>
+                }
+                description={
+                  <Descriptions size="small">
+                    <Descriptions.Item label={<i>{CommonTerminology.COMMON_1}</i>} span={3}>
+                      <i>
+                        <DateData date={ctime} />
+                      </i>
+                    </Descriptions.Item>
+                  </Descriptions>
+                }
+              />
+            </List.Item>
+          );
+        }}
+      />
+    </>
   );
 };
 

@@ -1,17 +1,16 @@
 import {
+  Body,
   Controller,
   DefaultValuePipe,
+  HttpCode,
   HttpStatus,
   ParseIntPipe,
   Post,
-  Query,
   Req,
-  UploadedFile,
   UseGuards,
   UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import fs from 'fs';
 import { diskStorage } from 'multer';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -19,36 +18,28 @@ import { CommonResponse } from '../common/common.interface';
 import { CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { ProgressReportQuery } from '../progress-report/progress-report.resource';
-import { ProgressReportService } from '../progress-report/progress-report.service';
-import { UserService } from '../user/user.service';
+import { UploadReportInterceptor } from './interceptors/upload-report.interceptor';
+import { avatarFileFilter, getAvatarDestination, getAvatarFilename } from './upload.helper';
 import {
-  avatarFileFilter,
-  getAvatarDestination,
-  getAvatarFilename,
-  getProgressReportDestination,
-  getProgressReportFilename,
-  progressReportFileFilter
-} from './upload.helper';
-import {
-  UPLOAD_BODY_PROPERTY,
-  UPLOAD_TEMP_PREFIX,
-  UploadDestination,
+  UPLOAD_REPORT_BODY_PROPERTY,
+  UploadBody,
   UploadFileSize,
-  UploadPath
+  UploadPath,
+  UploadReportModule
 } from './upload.resource';
+import { UploadService } from './upload.service';
+import {
+  uploadFilenameSchemaValidation,
+  uploadReportModuleSchemaValidation
+} from './upload.validation';
 
 @UseGuards(JwtAuthGuard)
 @Controller(UploadPath.ROOT)
 export class UploadController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly progressReportService: ProgressReportService
-  ) {}
-
+  constructor(private readonly uploadService: UploadService) {}
   @Post(UploadPath.AVATAR)
   @UseInterceptors(
-    FileInterceptor(UPLOAD_BODY_PROPERTY, {
+    FileInterceptor(UPLOAD_REPORT_BODY_PROPERTY, {
       fileFilter: avatarFileFilter,
       limits: { fileSize: UploadFileSize.AVATAR },
       storage: diskStorage({
@@ -63,41 +54,37 @@ export class UploadController {
     };
   }
 
-  @Post(UploadPath.PROGRESS_REPORT)
-  @UseInterceptors(
-    FileInterceptor(UPLOAD_BODY_PROPERTY, {
-      fileFilter: progressReportFileFilter,
-      // limits: { fileSize: UploadFileSize.AVATAR },
-      storage: diskStorage({
-        destination: getProgressReportDestination,
-        filename: getProgressReportFilename
-      })
-    })
-  )
-  public async uploadProgressReport(
-    @Query(
-      ProgressReportQuery.TOPIC_ID,
+  @Post(UploadPath.REPORT)
+  @UseInterceptors(UploadReportInterceptor)
+  public uploadReport(): CommonResponse {
+    return {
+      statusCode: HttpStatus.OK
+    };
+  }
+
+  @Post(UploadPath.DELETE_REPORT)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async deleteReport(
+    @Body(
+      UploadBody.TOPIC_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
     )
     topicId: number,
-    @UploadedFile() file: Express.Multer.File,
-    @Req() req: Express.CustomRequest
-  ): Promise<CommonResponse> {
-    const filePath = `${UploadDestination.PROGRESS_REPORT}/${topicId}/${file.filename}`;
-    try {
-      const loginUserId = req.user!.userId;
-      const loginUser = await this.userService.findById(loginUserId);
-      await this.progressReportService.checkUploadPermission(topicId, loginUser);
-      fs.renameSync(filePath, filePath.replace(UPLOAD_TEMP_PREFIX, ''));
-
-      return {
-        statusCode: HttpStatus.OK
-      };
-    } catch (error) {
-      fs.rmSync(filePath);
-      throw error;
-    }
+    @Body(
+      UploadBody.MODULE,
+      new JoiValidationPipe(uploadReportModuleSchemaValidation),
+      ParseIntPipe
+    )
+    module: UploadReportModule,
+    @Body(UploadBody.FILENAME, new JoiValidationPipe(uploadFilenameSchemaValidation))
+    filename: string,
+    @Req() request: Express.CustomRequest
+  ): Promise<void> {
+    const loginUserId = request.user!.userId;
+    await this.uploadService.checkUploadReportPermission(loginUserId, topicId, module);
+    const folderPath = this.uploadService.getReportFolderPath(module, topicId);
+    this.uploadService.deleteFileByPath(`${folderPath}/${filename}`);
   }
 }

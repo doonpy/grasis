@@ -1,11 +1,12 @@
 import { Global, Module } from '@nestjs/common';
-import { MulterModule } from '@nestjs/platform-express';
 
 import { UploadController } from './upload.controller';
+import { UploadService } from './upload.service';
 
 @Global()
 @Module({
-  imports: [MulterModule.register({ dest: './tmp' })],
-  controllers: [UploadController]
+  controllers: [UploadController],
+  providers: [UploadService],
+  exports: [UploadService]
 })
 export class UploadModule {}

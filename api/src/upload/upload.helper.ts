@@ -1,19 +1,17 @@
 import { BadRequestException } from '@nestjs/common';
 import fs from 'fs';
 
-import { FileInfo } from '../common/common.interface';
 import { FileDestinationCallback, FileFilterCallback, FileNameCallback } from './upload.interface';
 import {
   DOWNLOAD_ROOT_FOLDER,
   UPLOAD_ROOT_FOLDER,
-  UPLOAD_TEMP_PREFIX,
+  UPLOAD_TIME_TO_LIVE,
   UploadDestination,
   UploadError
 } from './upload.resource';
 
 function fileFilter(
   validExtensions: string[],
-  req: Express.CustomRequest,
   { originalname }: Express.Multer.File,
   callback: FileFilterCallback
 ): void {
@@ -31,17 +29,17 @@ export function createDestination(path: string): void {
   }
 }
 
-export function getFiles(folderPath: string): FileInfo[] {
-  const result: FileInfo[] = [];
-  const files = fs.readdirSync(folderPath);
-  for (const file of files) {
-    const filePath = `${folderPath}/${file}`;
-    const { size, ctime, mtime } = fs.statSync(filePath);
-    result.push({ name: file, size, ctime, mtime });
-  }
-
-  return result;
-}
+// export function getFiles(folderPath: string): FileInfo[] {
+//   const result: FileInfo[] = [];
+//   const files = fs.readdirSync(folderPath);
+//   for (const file of files) {
+//     const filePath = `${folderPath}/${file}`;
+//     const { size, ctime, mtime } = fs.statSync(filePath);
+//     result.push({ name: file, size, ctime, mtime });
+//   }
+//
+//   return result;
+// }
 
 export function checkFileExist(filePath: string): void {
   if (!fs.existsSync(filePath)) {
@@ -56,6 +54,9 @@ export function getDownloadPath(fileName: string, filePath: string): string {
   const fullDownloadPath = `${downloadPath}/${fileName}`;
   createDestination(downloadPath);
   fs.copyFileSync(fullSrcPath, fullDownloadPath);
+  setTimeout(() => {
+    fs.rmSync(fullDownloadPath, { force: true });
+  }, UPLOAD_TIME_TO_LIVE);
 
   return fullDownloadPath.replace(/^\./, '');
 }
@@ -68,7 +69,7 @@ export function avatarFileFilter(
   callback: FileFilterCallback
 ): void {
   const imageExtensions = ['jpg', 'jpeg', 'png'];
-  fileFilter(imageExtensions, req, file, callback);
+  fileFilter(imageExtensions, file, callback);
 }
 
 export function getAvatarDestination(
@@ -87,37 +88,4 @@ export function getAvatarFilename(
 ): void {
   const userId = req.user.userId;
   callback(null, userId.toString());
-}
-
-// PROGRESS REPORT
-
-export function progressReportFileFilter(
-  req: Express.CustomRequest,
-  file: Express.Multer.File,
-  callback: FileFilterCallback
-): void {
-  const imageExtensions = ['doc', 'docx', 'pdf'];
-  fileFilter(imageExtensions, req, file, callback);
-}
-
-export function getProgressReportDestination(
-  req: Express.CustomRequest,
-  file: Express.Multer.File,
-  callback: FileDestinationCallback
-): void {
-  const topicId = req.query!.topicId;
-  const folderPath = `${UploadDestination.PROGRESS_REPORT}/${topicId}`;
-  if (!fs.existsSync(folderPath)) {
-    callback(new BadRequestException(UploadError.ERR_2), '');
-  }
-
-  callback(null, folderPath);
-}
-
-export function getProgressReportFilename(
-  req: Express.CustomRequest | any,
-  file: Express.Multer.File,
-  callback: FileNameCallback
-): void {
-  callback(null, `${UPLOAD_TEMP_PREFIX}${file.originalname}`);
 }

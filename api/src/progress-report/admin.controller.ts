@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
-  Delete,
-  HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -49,20 +47,5 @@ export class ProgressReportAdminController {
       statusCode: HttpStatus.OK,
       id
     };
-  }
-
-  @Delete(ProgressReportPath.SPECIFY)
-  @UseGuards(TopicPermissionGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  public async deleteById(
-    @Param(
-      CommonParam.ID,
-      new JoiValidationPipe(commonIdValidateSchema),
-      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
-      ParseIntPipe
-    )
-    id: number
-  ): Promise<void> {
-    await this.progressReportService.deleteById(id);
   }
 }

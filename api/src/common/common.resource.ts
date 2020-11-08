@@ -12,7 +12,7 @@ export const CommonQuery = {
   LIMIT: 'limit',
   KEYWORD: 'keyword',
   SEARCH_TYPES: 'searchTypes',
-  DOWNLOAD_PATH: '/path'
+  DOWNLOAD_PATH: 'path'
 };
 
 export const CommonParam = {

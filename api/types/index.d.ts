@@ -23,6 +23,7 @@ declare global {
       user?: User;
       useragent?: Details;
       query?: Record<string, any>;
+      fileCount?: number;
     }
   }
 

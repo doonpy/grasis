@@ -9,8 +9,8 @@ import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
 import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { Topic } from '../topic/topic.interface';
 import { TopicService } from '../topic/topic.service';
-import { getFiles } from '../upload/upload.helper';
 import { UploadDestination } from '../upload/upload.resource';
+import { UploadService } from '../upload/upload.service';
 import { User } from '../user/user.interface';
 import { UserType } from '../user/user.resource';
 import { ProgressReportEntity } from './progress-report.entity';
@@ -28,7 +28,8 @@ export class ProgressReportService {
     private readonly progressRepository: Repository<ProgressReport>,
     @Inject(forwardRef(() => TopicService))
     private readonly topicService: TopicService,
-    private readonly topicStudentService: TopicStudentService
+    private readonly topicStudentService: TopicStudentService,
+    private readonly uploadService: UploadService
   ) {}
 
   public async createWithTransaction(
@@ -76,10 +77,12 @@ export class ProgressReportService {
     await this.progressRepository.update({ id }, { ...currentProgressReport, ...data });
   }
 
-  public async deleteById(id: number): Promise<void> {
-    const currentProgressReport = await this.getById(id);
-    currentProgressReport.deletedAt = new Date();
-    await this.progressRepository.save(currentProgressReport);
+  public async deleteByTopicIdWithTransaction(
+    manager: EntityManager,
+    topicId: number,
+    deletedAt = new Date()
+  ): Promise<void> {
+    await manager.update(ProgressReportEntity, { ...notDeleteCondition, topicId }, { deletedAt });
   }
 
   public async getByTopicIdForView(topicId: number): Promise<ProgressReportForView> {
@@ -87,7 +90,7 @@ export class ProgressReportService {
     const reporters = (
       await this.topicStudentService.getStudentsParticipated(topicId)
     ).map(({ student }) => student.convertToFastView());
-    const files = getFiles(`${UploadDestination.PROGRESS_REPORT}/${topicId}`);
+    const files = this.uploadService.getFiles(`${UploadDestination.PROGRESS_REPORT}/${topicId}`);
 
     return {
       createdAt,

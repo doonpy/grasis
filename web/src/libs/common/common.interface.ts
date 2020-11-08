@@ -37,6 +37,7 @@ export type NextPageWithLayout<
 export interface FileInfo {
   name: string;
   size: number;
+  type: string;
   ctime: Date;
   mtime: Date;
 }
