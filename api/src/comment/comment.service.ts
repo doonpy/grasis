@@ -59,12 +59,14 @@ export class CommentService {
         where: conditions,
         cache: true,
         skip: offset,
-        take: limit
+        take: limit,
+        order: { createdAt: 'DESC' }
       })
-    ).map(({ id, content, createdAt, creator }) => ({
+    ).map(({ id, content, createdAt, mode, creator }) => ({
       id,
       content,
       createdAt,
+      mode,
       creatorInfo: this.userService.convertToCommentView(creator)
     }));
   }

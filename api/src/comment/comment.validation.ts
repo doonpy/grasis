@@ -23,8 +23,9 @@ export const topicValidateSchema = commonIdValidateSchema.concat(
 export const commentValidateSchema = Joi.object<CommentRequestBody>({
   content: Joi.string().min(1).max(65535).required().messages({
     'string.base': 'Nội dung bình luận phải là chuỗi.',
+    'string.min': 'Nội dung bình luận không được rỗng.',
     'string.max': 'Nội dung bình luận không quá 65,535 kí tự.',
-    'any.require': 'Nội dung bình luận là thông tin bắt buộc.'
+    'any.required': 'Nội dung bình luận là thông tin bắt buộc.'
   }),
   mode: Joi.number().integer().valid(CommentMode.PRIVATE, CommentMode.PUBLIC).required().messages({
     'number.base': 'Chế độ bình luận không hợp lệ (NUMBER).',

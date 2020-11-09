@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AvatarModule } from './avatar/avatar.module';
+import { CommentModule } from './comment/comment.module';
 import { CommonPath, DatabaseType, EnvFileName } from './common/common.resource';
 import { getDatabaseConfig } from './database/database.helper';
 import { LecturerModule } from './lecturer/lecturer.module';
@@ -18,7 +19,6 @@ import { ThesisModule } from './thesis/thesis.module';
 import { TopicModule } from './topic/topic.module';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
-import { CommentModule } from './comment/comment.module';
 
 function getEnvFilePath(): string {
   let configFolderPath = './config/';

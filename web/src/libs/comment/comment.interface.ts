@@ -1,16 +1,15 @@
 import { CommonColumns, CommonResponse } from '../common/common.interface';
+import { ThesisState } from '../thesis/thesis.resource';
 import { UserForCommentView } from '../user/user.interface';
-import { CommentEntity } from './comment.entity';
+import { CommentMode } from './comment.resource';
 
-export type Comment = CommentEntity;
-
-export type CommentRequestBody = Omit<
-  Comment,
-  keyof CommonColumns | 'id' | 'user' | 'topic' | 'creator' | 'creatorId'
->;
-
-export interface CommentCreateResponse extends CommonResponse {
+export interface Comment extends CommonColumns {
   id: number;
+  topicId: number;
+  creatorId: number;
+  content: string;
+  mode: CommentMode;
+  state: ThesisState;
 }
 
 export type CommentForView = Pick<Comment, 'id' | 'content' | 'mode' | 'createdAt'> & {
@@ -20,4 +19,9 @@ export type CommentForView = Pick<Comment, 'id' | 'content' | 'mode' | 'createdA
 export interface CommentGetManyResponse extends CommonResponse {
   comments: CommentForView[];
   total: number;
+}
+
+export interface UseComment {
+  isLoading: boolean;
+  data?: CommentGetManyResponse;
 }

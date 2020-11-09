@@ -49,3 +49,5 @@ export type UserForListView = Pick<
 >;
 
 export type UserForFastView = Pick<User, 'firstname' | 'lastname'>;
+
+export type UserForCommentView = Pick<User, 'id' | 'firstname' | 'lastname'>;
