@@ -5,6 +5,8 @@ import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { ProgressReportTerminology } from '../../assets/terminology/progress-report.terminology';
 import { UPLOAD_REPORT_LIMIT_FILES, UploadReportModule } from '../../libs/common/common.resource';
 import ProgressReportService from '../../libs/progress-report/progress-report.service';
+import { Thesis } from '../../libs/thesis/thesis.interface';
+import ThesisService from '../../libs/thesis/thesis.service';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import DateData from '../Common/DateData';
 import ReportUpload from '../Common/ReportUpload';
@@ -12,14 +14,16 @@ import TextData from '../Common/TextData';
 import StudentFastView from '../Student/StudentFastView';
 import ProgressReportAdminButton from './ProgressReportAdminButton';
 import ProgressReportFiles from './ProgressReportFiles';
+import ProgressReportIsPassed from './ProgressReportIsPassed';
 
 interface ComponentProps {
   topicId: number;
-  thesisCreatorId: number;
+  thesis: Thesis;
 }
 
-const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesisCreatorId }) => {
+const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesis }) => {
   const progressReportService = ProgressReportService.getInstance();
+  const thesisService = ThesisService.getInstance();
   const loginUser = LoginUser.getInstance();
   const { data } = progressReportService.useProgressReport(topicId);
 
@@ -29,7 +33,7 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesisCreatorId
         column={4}
         title={
           loginUser.isAdmin() &&
-          loginUser.getId() === thesisCreatorId && (
+          loginUser.getId() === thesis.creatorId && (
             <ProgressReportAdminButton progressReport={data.progressReport} />
           )
         }>
@@ -52,17 +56,20 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesisCreatorId
             ))}
           </Space>
         </Descriptions.Item>
-        <Descriptions.Item label={<b>{ProgressReportTerminology.PR_4}</b>} span={4}>
+        <Descriptions.Item label={<b>{ProgressReportTerminology.PR_4}</b>} span={2}>
           <TextData text={data.progressReport.note} isParagraph={true} />
         </Descriptions.Item>
+        <Descriptions.Item label={<b>{ProgressReportTerminology.PR_12}</b>} span={2}>
+          <ProgressReportIsPassed isPassed={data.progressReport.isPassed} />
+        </Descriptions.Item>
         <Descriptions.Item label={<b>{ProgressReportTerminology.PR_10}</b>} span={2}>
+          {data.progressReport.files.length < UPLOAD_REPORT_LIMIT_FILES &&
+            thesisService.isProgressReportState(thesis) &&
+            loginUser.isStudent() && (
+              <ReportUpload topicId={topicId} module={UploadReportModule.PROGRESS_REPORT} />
+            )}
           <ProgressReportFiles files={data.progressReport.files} topicId={topicId} />
         </Descriptions.Item>
-        {data.progressReport.files.length < UPLOAD_REPORT_LIMIT_FILES && loginUser.isStudent() && (
-          <Descriptions.Item label={<b>{ProgressReportTerminology.PR_11}</b>} span={2}>
-            <ReportUpload topicId={topicId} module={UploadReportModule.PROGRESS_REPORT} />
-          </Descriptions.Item>
-        )}
       </Descriptions>
     );
   } else {

@@ -4,7 +4,8 @@ export const ProgressReportColumn = {
   TOPIC_ID: 'topic_id',
   TIME: 'time',
   PLACE: 'place',
-  NOTE: 'note'
+  NOTE: 'note',
+  IS_PASSED: 'is_passed'
 };
 
 export const ProgressReportError = {
@@ -13,7 +14,8 @@ export const ProgressReportError = {
   ERR_3: 'Thời gian báo cáo tiến độ không hợp lệ.',
   ERR_4: 'Bạn không phải sinh viên thực hiện đề tài này.',
   ERR_5: 'Khóa luận đang ngưng hoạt động.',
-  ERR_6: 'Hiện tại không phải thời gian báo cáo tiến độ.'
+  ERR_6: 'Hiện tại không phải thời gian báo cáo tiến độ.',
+  ERR_7: 'Kết quả không hợp lệ.'
 };
 
 export const ProgressReportPath = {
@@ -21,7 +23,8 @@ export const ProgressReportPath = {
   ADMIN_ROOT: 'admin/progress-reports',
   SPECIFY: '/:id',
   GET_BY_TOPIC_ID: '/with-topic',
-  GET_DOCUMENT: '/doc'
+  GET_DOCUMENT: '/doc',
+  ADMIN_CHANGE_RESULT: '/:id/change-result'
 };
 
 export const ProgressReportQuery = {
@@ -31,3 +34,13 @@ export const ProgressReportQuery = {
 };
 
 export const PROGRESS_REPORT_UPLOAD_FOLDER = 'progress-report';
+
+export enum IsPassed {
+  NOT_DECIDED = 1,
+  TRUE,
+  FALSE
+}
+
+export const ProgressReportBody = {
+  IS_PASSED: 'isPassed'
+};

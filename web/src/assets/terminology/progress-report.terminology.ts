@@ -9,5 +9,12 @@ export const ProgressReportTerminology = {
   PR_8: 'Chỉnh sửa',
   PR_9: 'Chỉnh sửa báo cáo tiến độ',
   PR_10: 'Tài liệu báo cáo',
-  PR_11: 'Tải lên tài liệu báo cáo'
+  PR_12: 'Kết quả',
+  PR_13: 'Cho phép phản biện',
+  PR_14: 'Dừng phát triển',
+  PR_15: 'Chưa có',
+  PR_16: 'Bạn có chắc muốn thay đổi kết quả của báo cáo tiến độ này?',
+  PR_17: 'Xác nhận',
+  PR_18: 'Hủy',
+  PR_19: 'Thay đổi kết quả thành công.'
 };

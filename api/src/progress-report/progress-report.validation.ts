@@ -1,6 +1,7 @@
 import Joi from '@hapi/joi';
 
 import { ProgressReportRequestBody } from './progress-report.interface';
+import { IsPassed } from './progress-report.resource';
 
 const progressReportValidationSchema = Joi.object<ProgressReportRequestBody>({
   time: Joi.string().isoDate().messages({
@@ -23,3 +24,14 @@ export const progressReportCreateValidationSchema = progressReportValidationSche
     })
   })
 );
+
+export const progressReportIsPassedValidationSchema = Joi.number()
+  .integer()
+  .valid(IsPassed.FALSE, IsPassed.TRUE)
+  .required()
+  .messages({
+    'number.base': 'Kết quả không hợp lệ (NUMBER).',
+    'number.integer': 'Kết quả không hợp lệ (INTERGER).',
+    'any.only': 'Kết quả không hợp lệ (VALID).',
+    'any.required': 'Kết quả là thông tin bắt buộc.'
+  });

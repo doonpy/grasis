@@ -164,10 +164,21 @@ export default class TopicService extends CommonService {
     }
 
     if (loginUser.isStudent()) {
-      const studentIds = topic.students.map(({ studentId }) => studentId);
+      const studentIds = topic.students
+        .filter(({ status }) => status === TopicStudentStatus.APPROVED)
+        .map(({ studentId }) => studentId);
       return studentIds.includes(loginUser.getId());
     }
 
     return false;
+  }
+
+  public hasPrivateContentPermission(topic: Topic): boolean {
+    const loginUser = LoginUser.getInstance();
+    if (loginUser.getId() === topic.thesis.creatorId) {
+      return true;
+    }
+
+    return loginUser.getId() === topic.creatorId;
   }
 }

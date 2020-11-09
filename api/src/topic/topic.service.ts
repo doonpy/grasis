@@ -268,9 +268,7 @@ export class TopicService {
       {
         relations: {
           creator: { user: {} },
-          thesis: true,
-          states: true,
-          students: true
+          thesis: true
         },
         cache: true
       }
@@ -343,7 +341,14 @@ export class TopicService {
     data: TopicChangeStatusRequestBody
   ): Promise<void> {
     const { action, note } = data;
-    const topic = await this.getById(topicId);
+    const topic = await this.topicRepository.findOne(
+      { ...notDeleteCondition, id: topicId },
+      { relations: { states: true, thesis: true }, cache: true }
+    );
+    if (!topic) {
+      throw new BadRequestException(TopicError.ERR_5);
+    }
+
     const creatorActions = [
       TopicStateAction.SEND_REQUEST,
       TopicStateAction.WITHDRAW,
@@ -442,8 +447,15 @@ export class TopicService {
     }
   }
 
-  public async changeRegisterStatus(topicId: number, user: User): Promise<void> {
-    const topic = await this.getById(topicId);
+  public async changeRegisterStatus(id: number, user: User): Promise<void> {
+    const topic = await this.topicRepository.findOne(
+      { ...notDeleteCondition, id },
+      { cache: true }
+    );
+    if (!topic) {
+      throw new BadRequestException(TopicError.ERR_5);
+    }
+
     if (topic.creatorId !== user.id) {
       throw new BadRequestException(TopicError.ERR_6);
     }

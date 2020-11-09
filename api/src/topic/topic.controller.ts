@@ -24,7 +24,7 @@ import {
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { LecturerService } from '../lecturer/lecturer.service';
-import { IsAdmin, UserType } from '../user/user.resource';
+import { IsAdmin } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { PermissionGuard } from './guards/permission.guard';
 import { ThesisPermissionGuard } from './guards/thesis-permission.guard';
@@ -140,17 +140,10 @@ export class TopicController {
     const loginUserId = req.user?.userId as number;
     const loginUser = await this.userService.findById(loginUserId);
     const topic = await this.topicService.getById(id);
+    topic.students = await this.topicStudentService.getMany(topic.id);
     if (loginUser.isAdmin === IsAdmin.TRUE || loginUser.id === topic.creatorId) {
       topic.approver = await this.lecturerService.getById(topic.approverId);
       topic.states = await this.topicStateService.getMany(topic.id);
-    }
-
-    if (
-      loginUser.isAdmin === IsAdmin.TRUE ||
-      loginUser.id === topic.creatorId ||
-      loginUser.userType === UserType.STUDENT
-    ) {
-      topic.students = await this.topicStudentService.getMany(topic.id);
     }
 
     return {

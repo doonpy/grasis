@@ -124,7 +124,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               currentStudent={data.topic.currentStudent}
             />
           </Tabs.TabPane>
-          {topicService.hasPermissionWithLoginUser(data.topic) && (
+          {topicService.hasPrivateContentPermission(data.topic) && (
             <Tabs.TabPane
               tab={
                 <span>
@@ -146,10 +146,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
                   </span>
                 }
                 key="4">
-                <ProgressReportInfo
-                  topicId={topicId}
-                  thesisCreatorId={data.topic.thesis.creatorId}
-                />
+                <ProgressReportInfo topicId={topicId} thesis={data.topic.thesis} />
               </Tabs.TabPane>
             )}
         </Tabs>

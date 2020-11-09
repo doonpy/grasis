@@ -8,7 +8,7 @@ import {
 } from '../common/common.resource';
 import { TopicEntity } from '../topic/topic.entity';
 import { Topic } from '../topic/topic.interface';
-import { PROGRESS_REPORT_TABLE, ProgressReportColumn } from './progress-report.resource';
+import { IsPassed, PROGRESS_REPORT_TABLE, ProgressReportColumn } from './progress-report.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: PROGRESS_REPORT_TABLE })
 export class ProgressReportEntity extends CommonEntity {
@@ -43,6 +43,13 @@ export class ProgressReportEntity extends CommonEntity {
     nullable: true
   })
   public note!: string | null;
+
+  @Column({
+    name: ProgressReportColumn.IS_PASSED,
+    type: 'tinyint',
+    default: IsPassed.NOT_DECIDED
+  })
+  public isPassed!: IsPassed;
 
   @ManyToOne(() => TopicEntity, ({ progressReports }) => progressReports)
   @JoinColumn({ name: ProgressReportColumn.TOPIC_ID, referencedColumnName: CommonColumn.ID })

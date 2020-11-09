@@ -19,6 +19,7 @@ import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { getDownloadPath } from '../upload/upload.helper';
 import { UploadDestination } from '../upload/upload.resource';
+import { ProgressReportGuard } from './guards/progress-report.guard';
 import { ProgressReportGetByIdResponse } from './progress-report.interface';
 import { ProgressReportPath, ProgressReportQuery } from './progress-report.resource';
 import { ProgressReportService } from './progress-report.service';
@@ -47,6 +48,7 @@ export class ProgressReportController {
   }
 
   @Get(ProgressReportPath.GET_DOCUMENT)
+  @UseGuards(ProgressReportGuard)
   public async downloadDoc(
     @Query(
       ProgressReportQuery.TOPIC_ID,

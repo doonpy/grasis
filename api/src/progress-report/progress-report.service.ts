@@ -19,7 +19,7 @@ import {
   ProgressReportForView,
   ProgressReportRequestBody
 } from './progress-report.interface';
-import { ProgressReportError } from './progress-report.resource';
+import { IsPassed, ProgressReportError } from './progress-report.resource';
 
 @Injectable()
 export class ProgressReportService {
@@ -86,7 +86,9 @@ export class ProgressReportService {
   }
 
   public async getByTopicIdForView(topicId: number): Promise<ProgressReportForView> {
-    const { createdAt, updatedAt, id, time, place, note } = await this.getByTopicId(topicId);
+    const { createdAt, updatedAt, id, time, place, note, isPassed } = await this.getByTopicId(
+      topicId
+    );
     const reporters = (
       await this.topicStudentService.getStudentsParticipated(topicId)
     ).map(({ student }) => student.convertToFastView());
@@ -101,7 +103,8 @@ export class ProgressReportService {
       place,
       note,
       reporters,
-      files
+      files,
+      isPassed
     };
   }
 
@@ -132,5 +135,13 @@ export class ProgressReportService {
     }
 
     await this.topicService.checkPermission(topicId, user);
+  }
+
+  public async changeResult(id: number, result: IsPassed): Promise<void> {
+    if (result === IsPassed.NOT_DECIDED) {
+      throw new BadRequestException(ProgressReportError.ERR_7);
+    }
+
+    await this.progressRepository.update({ ...notDeleteCondition, id }, { isPassed: result });
   }
 }

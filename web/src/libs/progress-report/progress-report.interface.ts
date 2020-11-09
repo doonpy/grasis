@@ -3,6 +3,7 @@ import { Moment } from 'moment';
 import { CommonColumns, CommonResponse, FileInfo } from '../common/common.interface';
 import { StudentForFastView } from '../student/student.interface';
 import { Topic } from '../topic/topic.interface';
+import { IsPassed } from './progress-report.resource';
 
 export interface ProgressReport extends CommonColumns {
   id: number;
@@ -10,6 +11,7 @@ export interface ProgressReport extends CommonColumns {
   time: string | Moment;
   place: string | null;
   note: string | null;
+  isPassed: IsPassed;
   topic: Topic;
 }
 
