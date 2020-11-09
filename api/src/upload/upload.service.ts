@@ -71,4 +71,10 @@ export class UploadService {
 
     return result;
   }
+
+  public createFolder(folderPath: string): void {
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+    }
+  }
 }

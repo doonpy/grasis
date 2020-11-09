@@ -18,6 +18,7 @@ import { ThesisModule } from './thesis/thesis.module';
 import { TopicModule } from './topic/topic.module';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
+import { CommentModule } from './comment/comment.module';
 
 function getEnvFilePath(): string {
   let configFolderPath = './config/';
@@ -50,7 +51,8 @@ function getEnvFilePath(): string {
     RefreshModule,
     ThesisModule,
     TopicModule,
-    ProgressReportModule
+    ProgressReportModule,
+    CommentModule
   ],
   controllers: [AppController],
   providers: [AppService]

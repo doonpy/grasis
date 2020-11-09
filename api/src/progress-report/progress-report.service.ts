@@ -25,7 +25,7 @@ import { IsPassed, ProgressReportError } from './progress-report.resource';
 export class ProgressReportService {
   constructor(
     @InjectRepository(ProgressReportEntity)
-    private readonly progressRepository: Repository<ProgressReport>,
+    private readonly progressReportRepository: Repository<ProgressReport>,
     @Inject(forwardRef(() => TopicService))
     private readonly topicService: TopicService,
     private readonly topicStudentService: TopicStudentService,
@@ -38,13 +38,13 @@ export class ProgressReportService {
     data: ProgressReportRequestBody
   ): Promise<ProgressReport> {
     await this.checkValidTime(topic.thesis, data.time);
-    const entity = this.progressRepository.create({ ...data, topic });
+    const entity = this.progressReportRepository.create({ ...data, topic });
 
-    return this.progressRepository.save(entity);
+    return this.progressReportRepository.save(entity);
   }
 
   public async getById(id: number): Promise<ProgressReport> {
-    const progressReport = await this.progressRepository.findOne({
+    const progressReport = await this.progressReportRepository.findOne({
       where: { ...notDeleteCondition, id },
       cache: true
     });
@@ -56,7 +56,7 @@ export class ProgressReportService {
   }
 
   public async getByTopicId(topicId: number): Promise<ProgressReport> {
-    const progressReport = await this.progressRepository.findOne(
+    const progressReport = await this.progressReportRepository.findOne(
       { ...notDeleteCondition, topicId },
       { cache: true }
     );
@@ -74,7 +74,7 @@ export class ProgressReportService {
       await this.checkValidTime(thesis, data.time);
     }
 
-    await this.progressRepository.update({ id }, { ...currentProgressReport, ...data });
+    await this.progressReportRepository.update({ id }, { ...currentProgressReport, ...data });
   }
 
   public async deleteByTopicIdWithTransaction(
@@ -138,10 +138,12 @@ export class ProgressReportService {
   }
 
   public async changeResult(id: number, result: IsPassed): Promise<void> {
-    if (result === IsPassed.NOT_DECIDED) {
-      throw new BadRequestException(ProgressReportError.ERR_7);
-    }
+    await this.progressReportRepository.update({ ...notDeleteCondition, id }, { isPassed: result });
+  }
 
-    await this.progressRepository.update({ ...notDeleteCondition, id }, { isPassed: result });
+  public async checkExistById(id: number): Promise<void> {
+    if ((await this.progressReportRepository.count({ ...notDeleteCondition, id })) === 0) {
+      throw new BadRequestException(ProgressReportError.ERR_2);
+    }
   }
 }

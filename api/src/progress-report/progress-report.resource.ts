@@ -14,8 +14,7 @@ export const ProgressReportError = {
   ERR_3: 'Thời gian báo cáo tiến độ không hợp lệ.',
   ERR_4: 'Bạn không phải sinh viên thực hiện đề tài này.',
   ERR_5: 'Khóa luận đang ngưng hoạt động.',
-  ERR_6: 'Hiện tại không phải thời gian báo cáo tiến độ.',
-  ERR_7: 'Kết quả không hợp lệ.'
+  ERR_6: 'Hiện tại không phải thời gian báo cáo tiến độ.'
 };
 
 export const ProgressReportPath = {
@@ -24,7 +23,9 @@ export const ProgressReportPath = {
   SPECIFY: '/:id',
   GET_BY_TOPIC_ID: '/with-topic',
   GET_DOCUMENT: '/doc',
-  ADMIN_CHANGE_RESULT: '/:id/change-result'
+  ADMIN_CHANGE_RESULT: '/:id/change-result',
+  COMMENT: '/:id/comments',
+  COMMENT_SPECIFY: '/comments/:commentId'
 };
 
 export const ProgressReportQuery = {

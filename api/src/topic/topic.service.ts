@@ -2,14 +2,15 @@ import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/com
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, FindOptionsWhere, In, Like, Repository } from 'typeorm';
 
+import { CommentService } from '../comment/comment.service';
 import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { StudentService } from '../student/student.service';
 import { ThesisState } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
-import { createDestination } from '../upload/upload.helper';
 import { UploadDestination } from '../upload/upload.resource';
+import { UploadService } from '../upload/upload.service';
 import { User } from '../user/user.interface';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -38,7 +39,9 @@ export class TopicService {
     private readonly connection: Connection,
     private readonly topicStudentService: TopicStudentService,
     private readonly studentService: StudentService,
-    private readonly progressReportService: ProgressReportService
+    private readonly progressReportService: ProgressReportService,
+    private readonly uploadService: UploadService,
+    private readonly commentService: CommentService
   ) {}
 
   public async create(thesisId: number, topicBody: TopicRequestBody): Promise<Topic> {
@@ -438,7 +441,7 @@ export class TopicService {
           time: topic.thesis.progressReport
         });
         // Create progress report folder
-        createDestination(`${UploadDestination.PROGRESS_REPORT}/${topic.id}`);
+        this.uploadService.createFolder(`${UploadDestination.PROGRESS_REPORT}/${topic.id}`);
 
         await manager.save(TopicEntity, topic);
       });
@@ -651,6 +654,7 @@ export class TopicService {
     await this.topicStateService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
     await this.topicStudentService.deleteByTopicIdsWithTransaction(manager, topicId, deletedAt);
     await this.progressReportService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
+    await this.commentService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
     await manager.update(TopicEntity, { id: topicId }, { deletedAt });
   }
 }

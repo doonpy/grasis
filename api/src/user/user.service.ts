@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../common/common.resource';
 import { UserEntity } from './user.entity';
-import { User, UserAuth, UserRequestBody } from './user.interface';
+import { User, UserAuth, UserForCommentView, UserRequestBody } from './user.interface';
 import { IsAdmin, UserError, UserStatus, UserType } from './user.resource';
 
 @Injectable()
@@ -149,5 +149,11 @@ export class UserService {
     ) {
       throw new BadRequestException(UserError.ERR_7);
     }
+  }
+
+  public convertToCommentView(user: User): UserForCommentView {
+    const { id, firstname, lastname } = user;
+
+    return { id, firstname, lastname };
   }
 }
