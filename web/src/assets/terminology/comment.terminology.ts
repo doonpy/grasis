@@ -9,5 +9,6 @@ export const CommentTerminology = {
   COMMENT_8: 'Bạn có chắc muốn xóa bình luận này?',
   COMMENT_9: 'Lưu ý: Hành động này không thể phục hồi.',
   COMMENT_10: 'Hủy',
-  COMMENT_11: 'Xóa bình luận thành công.'
+  COMMENT_11: 'Xóa bình luận thành công.',
+  COMMENT_12: 'Đây là bình luận riêng tư'
 };

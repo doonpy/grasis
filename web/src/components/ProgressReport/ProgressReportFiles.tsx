@@ -87,6 +87,7 @@ const ProgressReportFiles: React.FC<ComponentProps> = ({ files, topicId }) => {
   return (
     <>
       <List
+        bordered
         itemLayout="horizontal"
         size="small"
         dataSource={files}

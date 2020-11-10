@@ -35,6 +35,7 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesis }) => {
     return (
       <>
         <Descriptions
+          layout="vertical"
           column={4}
           title={
             loginUser.isAdmin() &&
@@ -42,6 +43,13 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesis }) => {
               <ProgressReportAdminButton progressReport={data.progressReport} />
             )
           }>
+          <Descriptions.Item label={<b>{ProgressReportTerminology.PR_5}</b>} span={2}>
+            <Space direction="vertical">
+              {data.progressReport.reporters.map((reporter, index) => (
+                <StudentFastView key={index} student={reporter} />
+              ))}
+            </Space>
+          </Descriptions.Item>
           <Descriptions.Item label={<b>{ProgressReportTerminology.PR_2}</b>} span={2}>
             <DateData date={data.progressReport.time} />
           </Descriptions.Item>
@@ -54,14 +62,7 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesis }) => {
           <Descriptions.Item label={<b>{CommonTerminology.COMMON_2}</b>} span={2}>
             <DateData date={data.progressReport.updatedAt} isRelative={true} />
           </Descriptions.Item>
-          <Descriptions.Item label={<b>{ProgressReportTerminology.PR_5}</b>} span={2}>
-            <Space direction="vertical">
-              {data.progressReport.reporters.map((reporter, index) => (
-                <StudentFastView key={index} student={reporter} />
-              ))}
-            </Space>
-          </Descriptions.Item>
-          <Descriptions.Item label={<b>{ProgressReportTerminology.PR_4}</b>} span={2}>
+          <Descriptions.Item label={<b>{ProgressReportTerminology.PR_4}</b>} span={4}>
             <TextData text={data.progressReport.note} isParagraph={true} />
           </Descriptions.Item>
           <Descriptions.Item label={<b>{ProgressReportTerminology.PR_12}</b>} span={2}>

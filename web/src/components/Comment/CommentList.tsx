@@ -1,8 +1,9 @@
 import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Comment, List, message, Modal, Space, Tag, Tooltip } from 'antd';
+import { Button, Comment, List, message, Modal, Space, Tooltip } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination';
 import React, { useEffect, useState } from 'react';
 
+import LockAltIcon from '../../assets/svg/regular/lock-alt.svg';
 import TrashAltIcon from '../../assets/svg/regular/trash-alt.svg';
 import { CommentTerminology } from '../../assets/terminology/comment.terminology';
 import { CommentMode } from '../../libs/comment/comment.resource';
@@ -91,7 +92,9 @@ export const CommentList: React.FC<ComponentProps> = ({ topicId, state }) => {
                 <Space>
                   <DateData date={createdAt} isRelative={true} />
                   {mode === CommentMode.PRIVATE && (
-                    <Tag color="red">{CommentTerminology.COMMENT_5}</Tag>
+                    <Tooltip title={CommentTerminology.COMMENT_12}>
+                      <Icon component={LockAltIcon} style={{ color: '#2f54eb' }} />
+                    </Tooltip>
                   )}
                   {id === loginUser.getId() && (
                     <Tooltip title={CommentTerminology.COMMENT_7}>
