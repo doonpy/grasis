@@ -92,7 +92,9 @@ export class ProgressReportService {
     const reporters = (
       await this.topicStudentService.getStudentsParticipated(topicId)
     ).map(({ student }) => student.convertToFastView());
-    const files = this.uploadService.getFiles(`${UploadDestination.PROGRESS_REPORT}/${topicId}`);
+    const files = await this.uploadService.getReportFiles(
+      `${UploadDestination.PROGRESS_REPORT}/${topicId}`
+    );
 
     return {
       createdAt,

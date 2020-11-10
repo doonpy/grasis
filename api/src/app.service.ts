@@ -21,12 +21,6 @@ export class AppService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap(): Promise<void> {
-    if (isReviewData()) {
-      Logger.log(chalk.yellow('Recreate database schema...'));
-      await this.connection.synchronize(true);
-      Logger.log(chalk.yellow(`Recreate database schema... Done!`));
-    }
-
     if (isProductionMode() && !isReviewData()) {
       Logger.log(chalk.yellow('Run migrations...'));
       await this.connection.runMigrations({ transaction: true });

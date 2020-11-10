@@ -25,12 +25,14 @@ export const COMMON_ENTITY_OPTIONS: EntityOptions = {
 };
 
 export const DatabaseType = {
+  REVIEW: 'review',
   STAGING: 'staging',
   PRODUCTION: 'production'
 };
 
 export const EnvFileName = {
   LOCAL: 'local.env',
+  REVIEW: 'review.env',
   STAGING: 'staging.env',
   PRODUCTION: 'production.env'
 };

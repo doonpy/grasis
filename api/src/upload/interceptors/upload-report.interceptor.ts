@@ -38,7 +38,7 @@ export class UploadReportInterceptor implements NestInterceptor {
       })
     });
 
-    await new Promise((resolve, reject) =>
+    await new Promise((resolve, reject) => {
       multerInstance.array(UPLOAD_REPORT_BODY_PROPERTY, UPLOAD_REPORT_LIMIT_FILES)(
         ctx.getRequest(),
         ctx.getResponse(),
@@ -49,8 +49,8 @@ export class UploadReportInterceptor implements NestInterceptor {
           }
           resolve();
         }
-      )
-    );
+      );
+    });
 
     return next.handle();
   }
@@ -60,16 +60,8 @@ export class UploadReportInterceptor implements NestInterceptor {
     { mimetype }: Express.Multer.File,
     callback: multer.FileFilterCallback
   ): Promise<void> {
-    const reportModule: UploadReportModule = parseInt(req.body!.module);
-    const { error } = uploadReportModuleSchemaValidation.validate(reportModule);
-    if (error) {
-      return callback(new BadRequestException(error.message));
-    }
-
-    const topicId = parseInt(req.body!.topicId);
-    const userId = req.user!.userId;
     try {
-      await this.uploadService.checkUploadReportPermission(userId, topicId, reportModule);
+      await this.checkPermission(req);
     } catch (error) {
       return callback(error);
     }
@@ -99,18 +91,42 @@ export class UploadReportInterceptor implements NestInterceptor {
     file: Express.Multer.File,
     callback: FileDestinationCallback
   ): void {
-    const module: UploadReportModule = parseInt(req.body!.module);
+    const folderPath = this.getFolderPathFromRequest(req);
+    try {
+      this.checkDestination(folderPath);
+    } catch (error) {
+      callback(error, '');
+    }
+
+    callback(null, folderPath);
+  }
+
+  private async checkPermission(req: Express.CustomRequest): Promise<void> {
+    const reportModule: UploadReportModule = parseInt(req.body!.module);
+    const { error } = uploadReportModuleSchemaValidation.validate(reportModule);
+    if (error) {
+      throw new BadRequestException(error.message);
+    }
+
     const topicId = parseInt(req.body!.topicId);
-    const folderPath = this.uploadService.getReportFolderPath(module, topicId);
+    const userId = req.user!.userId;
+    await this.uploadService.checkPermission(userId, topicId, reportModule);
+  }
+
+  private checkDestination(folderPath: string): void {
     if (!folderPath || !fs.existsSync(folderPath)) {
-      return callback(new BadRequestException(UploadError.ERR_2), '');
+      throw new BadRequestException(UploadError.ERR_2);
     }
 
     const currentFileAmount = fs.readdirSync(folderPath).length;
     if (currentFileAmount + 1 > UPLOAD_REPORT_LIMIT_FILES) {
-      return callback(new BadRequestException(UploadError.ERR_7), '');
+      throw new BadRequestException(UploadError.ERR_7);
     }
+  }
 
-    callback(null, folderPath);
+  private getFolderPathFromRequest(req: Express.CustomRequest): string {
+    const module: UploadReportModule = parseInt(req.body!.module);
+    const topicId = parseInt(req.body!.topicId);
+    return this.uploadService.getReportFolderPath(module, topicId);
   }
 }

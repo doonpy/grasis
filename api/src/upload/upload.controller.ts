@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Req,
+  UploadedFiles,
   UseGuards,
   UseInterceptors
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { isProductionMode } from '../common/common.helper';
 import { CommonResponse } from '../common/common.interface';
 import { CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
@@ -57,7 +59,13 @@ export class UploadController {
 
   @Post(UploadPath.REPORT)
   @UseInterceptors(UploadReportInterceptor)
-  public uploadReport(): CommonResponse {
+  public async uploadReport(
+    @UploadedFiles() files: Express.Multer.File[]
+  ): Promise<CommonResponse> {
+    if (isProductionMode()) {
+      await this.uploadService.uploadToS3(files);
+    }
+
     return {
       statusCode: HttpStatus.OK
     };
@@ -84,8 +92,8 @@ export class UploadController {
     @Req() request: Express.CustomRequest
   ): Promise<void> {
     const loginUserId = request.user!.userId;
-    await this.uploadService.checkUploadReportPermission(loginUserId, topicId, module);
+    await this.uploadService.checkPermission(loginUserId, topicId, module);
     const folderPath = this.uploadService.getReportFolderPath(module, topicId);
-    this.uploadService.deleteFileByPath(`${folderPath}/${filename}`);
+    await this.uploadService.deleteFileByPath(`${folderPath}/${filename}`);
   }
 }

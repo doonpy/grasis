@@ -2,6 +2,8 @@ import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/com
 import fs from 'fs';
 import mime from 'mime-types';
 
+import { AwsService } from '../aws/aws.service';
+import { isProductionMode } from '../common/common.helper';
 import { FileInfo } from '../common/common.interface';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { UserService } from '../user/user.service';
@@ -19,10 +21,11 @@ export class UploadService {
   constructor(
     private readonly userService: UserService,
     @Inject(forwardRef(() => ProgressReportService))
-    private readonly progressReportService: ProgressReportService
+    private readonly progressReportService: ProgressReportService,
+    private readonly awsService: AwsService
   ) {}
 
-  public async checkUploadReportPermission(
+  public async checkPermission(
     userId: number,
     topicId: number,
     reportModule: UploadReportModule
@@ -56,9 +59,12 @@ export class UploadService {
     return result;
   }
 
-  public deleteFileByPath(filePath: string): void {
+  public async deleteFileByPath(filePath: string): Promise<void> {
     this.checkFileExist(filePath);
     fs.rmSync(filePath, { force: true });
+    if (isProductionMode()) {
+      await this.awsService.deleteObjectOnS3(filePath);
+    }
   }
 
   public checkFileExist(filePath: string): void {
@@ -67,8 +73,16 @@ export class UploadService {
     }
   }
 
-  public getFiles(folderPath: string): FileInfo[] {
+  public async getReportFiles(folderPath: string): Promise<FileInfo[]> {
     const result: FileInfo[] = [];
+    if (!fs.existsSync(folderPath)) {
+      this.createFolder(folderPath);
+
+      if (isProductionMode()) {
+        await this.awsService.downloadReportFilesFromS3(folderPath);
+      }
+    }
+
     const files = fs.readdirSync(folderPath);
     for (const file of files) {
       const filePath = `${folderPath}/${file}`;
@@ -97,5 +111,12 @@ export class UploadService {
     }, UPLOAD_TIME_TO_LIVE);
 
     return fullDownloadPath.replace(/^\./, '');
+  }
+
+  public async uploadToS3(files: Express.Multer.File[]): Promise<void> {
+    for (const { path } of files) {
+      const fileStream = fs.createReadStream(path);
+      await this.awsService.uploadFileToS3(path, fileStream);
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { PROGRESS_REPORT_UPLOAD_FOLDER } from '../progress-report/progress-report.resource';
 
-export const UPLOAD_ROOT_FOLDER = './files';
+export const UPLOAD_ROOT_FOLDER = `./files`;
 
 export const DOWNLOAD_ROOT_FOLDER = './download';
 
