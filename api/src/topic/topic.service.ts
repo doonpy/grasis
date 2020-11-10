@@ -285,7 +285,10 @@ export class TopicService {
 
   public async hasPermission(topic: Topic, user: User): Promise<boolean> {
     if (topic.thesis.creatorId === user.id) {
-      return topic.status !== TopicStateAction.NEW && topic.status !== TopicStateAction.WITHDRAW;
+      return (
+        (topic.status !== TopicStateAction.NEW && topic.status !== TopicStateAction.WITHDRAW) ||
+        topic.creatorId === user.id
+      );
     }
 
     if (user.userType === UserType.LECTURER) {
