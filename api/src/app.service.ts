@@ -2,7 +2,7 @@ import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import chalk from 'chalk';
 import { Connection } from 'typeorm';
 
-import { isProductionMode } from './common/common.helper';
+import { isProductionMode, isReviewData } from './common/common.helper';
 import { LecturerService } from './lecturer/lecturer.service';
 import { UserRequestBody } from './user/user.interface';
 import { IsAdmin } from './user/user.resource';
@@ -21,10 +21,16 @@ export class AppService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap(): Promise<void> {
-    if (isProductionMode()) {
-      Logger.log(chalk.yellow(`=> Run migrations...`));
+    if (isReviewData()) {
+      Logger.log(chalk.yellow('Recreate database schema...'));
+      await this.connection.synchronize(true);
+      Logger.log(chalk.yellow(`Recreate database schema... Done!`));
+    }
+
+    if (isProductionMode() && !isReviewData()) {
+      Logger.log(chalk.yellow('Run migrations...'));
       await this.connection.runMigrations({ transaction: true });
-      Logger.log(chalk.yellow(`=> Run migrations... Done!`));
+      Logger.log(chalk.yellow('Run migrations... Done!'));
     }
 
     if (
