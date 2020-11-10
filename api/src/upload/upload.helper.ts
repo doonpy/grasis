@@ -2,13 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 import fs from 'fs';
 
 import { FileDestinationCallback, FileFilterCallback, FileNameCallback } from './upload.interface';
-import {
-  DOWNLOAD_ROOT_FOLDER,
-  UPLOAD_ROOT_FOLDER,
-  UPLOAD_TIME_TO_LIVE,
-  UploadDestination,
-  UploadError
-} from './upload.resource';
+import { UploadDestination, UploadError } from './upload.resource';
 
 function fileFilter(
   validExtensions: string[],
@@ -29,36 +23,10 @@ export function createDestination(path: string): void {
   }
 }
 
-// export function getFiles(folderPath: string): FileInfo[] {
-//   const result: FileInfo[] = [];
-//   const files = fs.readdirSync(folderPath);
-//   for (const file of files) {
-//     const filePath = `${folderPath}/${file}`;
-//     const { size, ctime, mtime } = fs.statSync(filePath);
-//     result.push({ name: file, size, ctime, mtime });
-//   }
-//
-//   return result;
-// }
-
 export function checkFileExist(filePath: string): void {
   if (!fs.existsSync(filePath)) {
     throw new BadRequestException(UploadError.ERR_3);
   }
-}
-
-export function getDownloadPath(fileName: string, filePath: string): string {
-  const fullSrcPath = `${filePath}/${fileName}`;
-  checkFileExist(fullSrcPath);
-  const downloadPath = filePath.replace(UPLOAD_ROOT_FOLDER, DOWNLOAD_ROOT_FOLDER);
-  const fullDownloadPath = `${downloadPath}/${fileName}`;
-  createDestination(downloadPath);
-  fs.copyFileSync(fullSrcPath, fullDownloadPath);
-  setTimeout(() => {
-    fs.rmSync(fullDownloadPath, { force: true });
-  }, UPLOAD_TIME_TO_LIVE);
-
-  return fullDownloadPath.replace(/^\./, '');
 }
 
 // AVATAR

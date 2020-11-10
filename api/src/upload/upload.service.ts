@@ -5,7 +5,14 @@ import mime from 'mime-types';
 import { FileInfo } from '../common/common.interface';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { UserService } from '../user/user.service';
-import { UploadDestination, UploadError, UploadReportModule } from './upload.resource';
+import {
+  DOWNLOAD_ROOT_FOLDER,
+  UPLOAD_ROOT_FOLDER,
+  UPLOAD_TIME_TO_LIVE,
+  UploadDestination,
+  UploadError,
+  UploadReportModule
+} from './upload.resource';
 
 @Injectable()
 export class UploadService {
@@ -76,5 +83,19 @@ export class UploadService {
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath, { recursive: true });
     }
+  }
+
+  public getDownloadPath(fileName: string, filePath: string): string {
+    const fullSrcPath = `${filePath}/${fileName}`;
+    this.checkFileExist(fullSrcPath);
+    const downloadPath = filePath.replace(UPLOAD_ROOT_FOLDER, DOWNLOAD_ROOT_FOLDER);
+    const fullDownloadPath = `${downloadPath}/${fileName}`;
+    this.createFolder(downloadPath);
+    fs.copyFileSync(fullSrcPath, fullDownloadPath);
+    setTimeout(() => {
+      fs.rmSync(fullDownloadPath, { force: true });
+    }, UPLOAD_TIME_TO_LIVE);
+
+    return fullDownloadPath.replace(/^\./, '');
   }
 }

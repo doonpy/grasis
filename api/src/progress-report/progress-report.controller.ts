@@ -17,8 +17,8 @@ import {
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
-import { getDownloadPath } from '../upload/upload.helper';
 import { UploadDestination } from '../upload/upload.resource';
+import { UploadService } from '../upload/upload.service';
 import { ProgressReportGuard } from './guards/progress-report.guard';
 import { ProgressReportGetByIdResponse } from './progress-report.interface';
 import { ProgressReportPath, ProgressReportQuery } from './progress-report.resource';
@@ -27,7 +27,10 @@ import { ProgressReportService } from './progress-report.service';
 @UseGuards(JwtAuthGuard, TopicPermissionGuard)
 @Controller(ProgressReportPath.ROOT)
 export class ProgressReportController {
-  constructor(private readonly progressReportService: ProgressReportService) {}
+  constructor(
+    private readonly progressReportService: ProgressReportService,
+    private readonly uploadService: UploadService
+  ) {}
 
   @Get(ProgressReportPath.GET_BY_TOPIC_ID)
   public async getByTopicId(
@@ -60,7 +63,10 @@ export class ProgressReportController {
     @Query(ProgressReportQuery.FILE_NAME, new JoiValidationPipe(commonFilenameValidationSchema))
     filename: string
   ): Promise<GenerateDownloadLinkResponse> {
-    const path = getDownloadPath(filename, `${UploadDestination.PROGRESS_REPORT}/${topicId}`);
+    const path = this.uploadService.getDownloadPath(
+      filename,
+      `${UploadDestination.PROGRESS_REPORT}/${topicId}`
+    );
 
     return { url: path };
   }

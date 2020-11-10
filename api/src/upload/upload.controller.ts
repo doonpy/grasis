@@ -37,6 +37,7 @@ import {
 @Controller(UploadPath.ROOT)
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
+
   @Post(UploadPath.AVATAR)
   @UseInterceptors(
     FileInterceptor(UPLOAD_REPORT_BODY_PROPERTY, {
