@@ -8,9 +8,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AvatarModule } from './avatar/avatar.module';
+import { AwsModule } from './aws/aws.module';
+import { CommentModule } from './comment/comment.module';
 import { CommonPath, DatabaseType, EnvFileName } from './common/common.resource';
 import { getDatabaseConfig } from './database/database.helper';
 import { LecturerModule } from './lecturer/lecturer.module';
+import { ProgressReportModule } from './progress-report/progress-report.module';
 import { RefreshModule } from './refresh/refresh.module';
 import { StudentModule } from './student/student.module';
 import { ThesisModule } from './thesis/thesis.module';
@@ -21,6 +24,9 @@ import { UserModule } from './user/user.module';
 function getEnvFilePath(): string {
   let configFolderPath = './config/';
   switch (process.env.DB_TYPE) {
+    case DatabaseType.REVIEW:
+      configFolderPath += EnvFileName.REVIEW;
+      break;
     case DatabaseType.STAGING:
       configFolderPath += EnvFileName.STAGING;
       break;
@@ -48,7 +54,10 @@ function getEnvFilePath(): string {
     AvatarModule,
     RefreshModule,
     ThesisModule,
-    TopicModule
+    TopicModule,
+    ProgressReportModule,
+    CommentModule,
+    AwsModule
   ],
   controllers: [AppController],
   providers: [AppService]

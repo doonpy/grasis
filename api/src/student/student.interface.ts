@@ -1,11 +1,11 @@
 import { CommonColumns, CommonFindManyResponse, CommonResponse } from '../common/common.interface';
-import { UserForListView } from '../user/user.interface';
+import { UserForFastView, UserForListView } from '../user/user.interface';
 import { StudentEntity } from './student.entity';
 
 export type Student = StudentEntity;
 
 export type StudentRequestBody = WithOptional<
-  Omit<Student, keyof CommonColumns | 'id' | 'theses' | 'user'>,
+  Omit<Student, keyof CommonColumns | 'id' | 'theses' | 'user' | 'convertToFastView'>,
   'studentId' | 'studentClass' | 'schoolYear' | 'isGraduate'
 >;
 
@@ -34,3 +34,5 @@ export interface StudentSearchAttendeesResponse extends CommonResponse {
 }
 
 export type StudentForListView = Pick<Student, 'id' | 'studentId'> & UserForListView;
+
+export type StudentForFastView = Pick<Student, 'id' | 'studentId' | 'deletedAt'> & UserForFastView;

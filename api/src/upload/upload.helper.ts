@@ -1,41 +1,59 @@
 import { BadRequestException } from '@nestjs/common';
 import fs from 'fs';
 
-import { UPLOAD_DESTINATION } from './upload.resource';
+import { FileDestinationCallback, FileFilterCallback, FileNameCallback } from './upload.interface';
+import { UploadDestination, UploadError } from './upload.resource';
 
-type FileFilterCallback = (error: Error | null, acceptFile: boolean) => void;
-type AvatarDestinationCallback = (error: Error | null, destination: string) => void;
-type AvatarFileNameCallback = (error: Error | null, destination: string) => void;
-
-export function avatarFileFilter(
-  req: Express.CustomRequest,
+function fileFilter(
+  validExtensions: string[],
   { originalname }: Express.Multer.File,
   callback: FileFilterCallback
 ): void {
-  if (!originalname.match(/\.(jpg|jpeg|png)$/)) {
-    return callback(new BadRequestException('Chỉ chấp nhận tệp tin ảnh!'), false);
+  const validPattern = new RegExp(`.(${validExtensions.join('|')})$`);
+  if (!originalname.match(validPattern)) {
+    return callback(new BadRequestException(UploadError.ERR_1), false);
   }
 
   callback(null, true);
 }
 
+export function createDestination(path: string): void {
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path, { recursive: true });
+  }
+}
+
+export function checkFileExist(filePath: string): void {
+  if (!fs.existsSync(filePath)) {
+    throw new BadRequestException(UploadError.ERR_3);
+  }
+}
+
+// AVATAR
+
+export function avatarFileFilter(
+  req: Express.CustomRequest,
+  file: Express.Multer.File,
+  callback: FileFilterCallback
+): void {
+  const imageExtensions = ['jpg', 'jpeg', 'png'];
+  fileFilter(imageExtensions, file, callback);
+}
+
 export function getAvatarDestination(
   req: Express.CustomRequest,
   file: Express.Multer.File,
-  callback: AvatarDestinationCallback
+  callback: FileDestinationCallback
 ): void {
-  if (!fs.existsSync(UPLOAD_DESTINATION.AVATAR)) {
-    fs.mkdirSync(UPLOAD_DESTINATION.AVATAR, { recursive: true });
-  }
-
-  callback(null, UPLOAD_DESTINATION.AVATAR);
+  createDestination(UploadDestination.AVATAR);
+  callback(null, UploadDestination.AVATAR);
 }
 
 export function getAvatarFilename(
   req: Express.CustomRequest | any,
   file: Express.Multer.File,
-  callback: AvatarFileNameCallback
+  callback: FileNameCallback
 ): void {
-  const userId = req.user.user.id;
+  const userId = req.user.userId;
   callback(null, userId.toString());
 }

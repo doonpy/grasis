@@ -8,6 +8,9 @@ import {
 } from '../common/common.resource';
 import { LecturerEntity } from '../lecturer/lecturer.entity';
 import { Lecturer } from '../lecturer/lecturer.interface';
+import { ProgressReportEntity } from '../progress-report/progress-report.entity';
+import { ProgressReport } from '../progress-report/progress-report.interface';
+import { ProgressReportColumn } from '../progress-report/progress-report.resource';
 import { ThesisEntity } from '../thesis/thesis.entity';
 import { Thesis } from '../thesis/thesis.interface';
 import { TopicStateEntity } from './topic-state/topic-state.entity';
@@ -78,4 +81,8 @@ export class TopicEntity extends CommonEntity {
   @OneToMany(() => TopicStudentEntity, ({ topic }) => topic)
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: TopicStudentColumn.TOPIC_ID })
   public students!: TopicStudent[];
+
+  @OneToMany(() => ProgressReportEntity, ({ topic }) => topic)
+  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ProgressReportColumn.TOPIC_ID })
+  public progressReports!: ProgressReport[];
 }

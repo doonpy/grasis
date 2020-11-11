@@ -1,12 +1,12 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { IsAdmin } from '../../user/user.resource';
+import { CommonColumn } from '../../common/common.resource';
 import { UserService } from '../../user/user.service';
 import { ThesisError } from '../thesis.resource';
 import { ThesisService } from '../thesis.service';
 
 @Injectable()
-export class ThesisPermissionGuard implements CanActivate {
+export class PermissionGuard implements CanActivate {
   constructor(
     private readonly userService: UserService,
     private readonly thesisService: ThesisService
@@ -14,26 +14,14 @@ export class ThesisPermissionGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Express.CustomRequest>();
-    const { userId } = request.user!;
-    let thesisId: number | undefined = undefined;
-    if (request.params && request.params.id) {
-      thesisId = parseInt(request.params.id);
-    }
-
-    if (request.params && request.params.thesisId) {
-      thesisId = parseInt(request.params.thesisId);
-    }
-
+    const thesisId: string = request.params![CommonColumn.ID];
     if (!thesisId) {
-      throw new BadRequestException(ThesisError.ERR_8);
+      throw new BadRequestException(ThesisError.ERR_7);
     }
 
+    const { userId } = request.user!;
     const loginUser = await this.userService.findById(userId);
-    if (loginUser.isAdmin === IsAdmin.TRUE) {
-      return true;
-    }
-
-    await this.thesisService.checkThesisPermission(thesisId, loginUser);
+    await this.thesisService.checkThesisPermission(parseInt(thesisId), loginUser);
 
     return true;
   }

@@ -23,14 +23,18 @@ import {
   commonOffsetValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { ThesisPermissionGuard } from '../thesis/guards/thesis-permission.guard';
+import { LecturerService } from '../lecturer/lecturer.service';
+import { IsAdmin } from '../user/user.resource';
 import { UserService } from '../user/user.service';
+import { PermissionGuard } from './guards/permission.guard';
+import { ThesisPermissionGuard } from './guards/thesis-permission.guard';
 import { TopicLecturerRegisterGuard } from './guards/topic-lecturer-register.guard';
-import { TopicPermissionGuard } from './guards/topic-permission.guard';
 import { TopicStudentRegisterGuard } from './guards/topic-student-register.guard';
 import { ParseTopicChangeStatusPipe } from './pipes/parse-topic-change-status.pipe';
 import { ParseTopicChangeStudentRegisterStatusPipe } from './pipes/parse-topic-change-student-register-status.pipe';
 import { ParseTopicRequestBodyPipe } from './pipes/parse-topic-request-body.pipe';
+import { TopicStateService } from './topic-state/topic-state.service';
+import { TopicStudentService } from './topic-student/topic-student.service';
 import {
   Topic,
   TopicChangeStatusRequestBody,
@@ -40,7 +44,7 @@ import {
   TopicGetManyResponse,
   TopicRequestBody
 } from './topic.interface';
-import { TopicParam, TopicPath } from './topic.resource';
+import { TopicPath, TopicQuery } from './topic.resource';
 import { TopicService } from './topic.service';
 import {
   topicChangeActionValidationSchema,
@@ -49,19 +53,22 @@ import {
   topicUpdateValidationSchema
 } from './topic.validation';
 
-@UseGuards(JwtAuthGuard, ThesisPermissionGuard)
+@UseGuards(JwtAuthGuard)
 @Controller(TopicPath.ROOT)
 export class TopicController {
   constructor(
     private readonly topicService: TopicService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly topicStudentService: TopicStudentService,
+    private readonly topicStateService: TopicStateService,
+    private readonly lecturerService: LecturerService
   ) {}
 
   @Post()
-  @UseGuards(TopicLecturerRegisterGuard)
+  @UseGuards(ThesisPermissionGuard, TopicLecturerRegisterGuard)
   public async create(
-    @Param(
-      TopicParam.THESIS_ID,
+    @Query(
+      TopicQuery.THESIS_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
@@ -81,9 +88,10 @@ export class TopicController {
   }
 
   @Get()
+  @UseGuards(ThesisPermissionGuard)
   public async getMany(
-    @Param(
-      TopicParam.THESIS_ID,
+    @Query(
+      TopicQuery.THESIS_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
@@ -118,7 +126,7 @@ export class TopicController {
   }
 
   @Get(TopicPath.SPECIFY)
-  @UseGuards(TopicPermissionGuard)
+  @UseGuards(PermissionGuard)
   public async getById(
     @Param(
       CommonParam.ID,
@@ -131,7 +139,12 @@ export class TopicController {
   ): Promise<TopicGetByIdResponse> {
     const loginUserId = req.user?.userId as number;
     const loginUser = await this.userService.findById(loginUserId);
-    const topic = await this.topicService.getById(id, loginUser);
+    const topic = await this.topicService.getById(id);
+    topic.students = await this.topicStudentService.getMany(topic.id);
+    if (loginUser.isAdmin === IsAdmin.TRUE || loginUser.id === topic.creatorId) {
+      topic.approver = await this.lecturerService.getById(topic.approverId);
+      topic.states = await this.topicStateService.getMany(topic.id);
+    }
 
     return {
       statusCode: HttpStatus.OK,
@@ -140,7 +153,7 @@ export class TopicController {
   }
 
   @Patch(TopicPath.SPECIFY)
-  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(PermissionGuard, TopicLecturerRegisterGuard)
   public async updateById(
     @Param(
       CommonParam.ID,
@@ -165,7 +178,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(TopicPath.SPECIFY)
-  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(PermissionGuard, TopicLecturerRegisterGuard)
   public async deleteById(
     @Param(
       CommonParam.ID,
@@ -183,7 +196,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_STATUS)
-  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(PermissionGuard, TopicLecturerRegisterGuard)
   public async changeStatus(
     @Param(
       CommonParam.ID,
@@ -203,7 +216,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_REGISTER_STATUS)
-  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(PermissionGuard, TopicStudentRegisterGuard)
   public async changeRegisterStatus(
     @Param(
       CommonParam.ID,
@@ -221,7 +234,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.REGISTER_TOPIC)
-  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(PermissionGuard, TopicStudentRegisterGuard)
   public async registerTopic(
     @Param(
       CommonParam.ID,
@@ -230,8 +243,8 @@ export class TopicController {
       ParseIntPipe
     )
     id: number,
-    @Param(
-      TopicParam.STUDENT_ID,
+    @Query(
+      TopicQuery.STUDENT_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
@@ -243,7 +256,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_STUDENT_REGISTER_STATUS)
-  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(PermissionGuard, TopicStudentRegisterGuard)
   public async changStudentRegisterStatus(
     @Param(
       CommonParam.ID,
@@ -252,8 +265,8 @@ export class TopicController {
       ParseIntPipe
     )
     id: number,
-    @Param(
-      TopicParam.STUDENT_ID,
+    @Query(
+      TopicQuery.STUDENT_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe

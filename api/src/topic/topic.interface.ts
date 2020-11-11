@@ -17,6 +17,9 @@ export type TopicRequestBody = WithOptional<
     | 'currentStateId'
     | 'status'
     | 'thesisId'
+    | 'states'
+    | 'students'
+    | 'progressReports'
   >,
   'description'
 >;

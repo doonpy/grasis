@@ -33,3 +33,15 @@ export type NextPageWithLayout<
   LP extends CommonPageProps = CommonPageProps,
   Q extends ParsedUrlQuery = Record<string, any>
 > = NextPage<P, Q> & Layout<LP>;
+
+export interface FileInfo {
+  name: string;
+  size: number;
+  type: string;
+  ctime: Date;
+  mtime: Date;
+}
+
+export interface GenerateDownloadLinkResponse {
+  url: string;
+}

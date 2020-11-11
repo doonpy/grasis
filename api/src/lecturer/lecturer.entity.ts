@@ -11,6 +11,7 @@ import { ThesisLecturer } from '../thesis/thesis-lecturer/thesis-lecturer.interf
 import { ThesisLecturerColumn } from '../thesis/thesis-lecturer/thesis-lecturer.resource';
 import { UserEntity } from '../user/user.entity';
 import { User } from '../user/user.interface';
+import { LecturerForFastView } from './lecturer.interface';
 import { LECTURER_TABLE, LecturerColumn } from './lecturer.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: LECTURER_TABLE })
@@ -52,4 +53,14 @@ export class LecturerEntity extends CommonEntity {
   @OneToOne(() => UserEntity, { cascade: true })
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: CommonColumn.ID })
   public user!: User;
+
+  public convertToFastView(): LecturerForFastView {
+    return {
+      id: this.id,
+      deletedAt: this.deletedAt,
+      lecturerId: this.lecturerId,
+      firstname: this.user.firstname,
+      lastname: this.user.lastname
+    };
+  }
 }

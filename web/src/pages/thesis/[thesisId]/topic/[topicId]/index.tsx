@@ -1,4 +1,4 @@
-import {
+import Icon, {
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
@@ -12,9 +12,12 @@ import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 
+import FileChartLineIcon from '../../../../../assets/svg/regular/file-chart-line.svg';
+import { ProgressReportTerminology } from '../../../../../assets/terminology/progress-report.terminology';
 import { ThesisTerminology } from '../../../../../assets/terminology/thesis.terminology';
 import { TopicTerminology } from '../../../../../assets/terminology/topic.terminology';
 import MainLayout from '../../../../../components/Layout/MainLayout';
+import ProgressReportInfo from '../../../../../components/ProgressReport/ProgressReportInfo';
 import TopicInfo from '../../../../../components/Topic/TopicInfo';
 import TopicPrivateInfo from '../../../../../components/Topic/TopicPrivateInfo';
 import TopicStudentInfo from '../../../../../components/Topic/TopicStudentsInfo';
@@ -22,9 +25,9 @@ import { CommonPageProps, NextPageWithLayout } from '../../../../../libs/common/
 import { SIDER_KEYS } from '../../../../../libs/common/common.resource';
 import CommonService from '../../../../../libs/common/common.service';
 import { THESIS_PATH_ROOT, ThesisPath } from '../../../../../libs/thesis/thesis.resource';
+import { TopicStateAction } from '../../../../../libs/topic/topic-state/topic-state.resource';
 import { TOPIC_PATH_ROOT, TopicPath } from '../../../../../libs/topic/topic.resource';
 import TopicService from '../../../../../libs/topic/topic.service';
-import LoginUser from '../../../../../libs/user/instance/LoginUser';
 import { UserType } from '../../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
@@ -40,7 +43,6 @@ const { confirm } = Modal;
 
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const topicService = TopicService.getInstance();
-  const loginUser = LoginUser.getInstance();
   const thesisId = parseInt(params.thesisId);
   const topicId = parseInt(params.topicId);
   const { data, isLoading } = topicService.useTopic(thesisId, topicId);
@@ -122,17 +124,31 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               currentStudent={data.topic.currentStudent}
             />
           </Tabs.TabPane>
-          <Tabs.TabPane
-            tab={
-              <span>
-                <LockOutlined />
-                {TopicTerminology.TOPIC_13}
-              </span>
-            }
-            key="3"
-            disabled={loginUser.isStudent()}>
-            <TopicPrivateInfo topic={data.topic} />
-          </Tabs.TabPane>
+          {topicService.hasPrivateContentPermission(data.topic) && (
+            <Tabs.TabPane
+              tab={
+                <span>
+                  <LockOutlined />
+                  {TopicTerminology.TOPIC_13}
+                </span>
+              }
+              key="3">
+              <TopicPrivateInfo topic={data.topic} />
+            </Tabs.TabPane>
+          )}
+          {data.topic.status === TopicStateAction.APPROVED &&
+            topicService.hasPermissionWithLoginUser(data.topic) && (
+              <Tabs.TabPane
+                tab={
+                  <span>
+                    <Icon component={FileChartLineIcon} />
+                    {ProgressReportTerminology.PR_1}
+                  </span>
+                }
+                key="4">
+                <ProgressReportInfo topicId={topicId} thesis={data.topic.thesis} />
+              </Tabs.TabPane>
+            )}
         </Tabs>
       )}
     </Card>

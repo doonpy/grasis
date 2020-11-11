@@ -3,18 +3,14 @@ import { Avatar, Space } from 'antd';
 import React from 'react';
 
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
-import { Student } from '../../libs/student/student.interface';
+import { StudentForFastView } from '../../libs/student/student.interface';
 
 interface ComponentProps {
-  student: Student;
+  student: StudentForFastView;
 }
 
-const StudentInfo: React.FC<ComponentProps> = ({
-  student: {
-    id,
-    studentId,
-    user: { firstname, lastname }
-  }
+const StudentFastView: React.FC<ComponentProps> = ({
+  student: { id, studentId, firstname, lastname }
 }) => {
   const fullName = `${lastname || ''} ${firstname || ''}`;
   const studentIdStr = studentId ? `(${studentId})` : '';
@@ -29,4 +25,4 @@ const StudentInfo: React.FC<ComponentProps> = ({
   );
 };
 
-export default StudentInfo;
+export default StudentFastView;

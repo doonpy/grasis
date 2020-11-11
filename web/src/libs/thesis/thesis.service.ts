@@ -11,12 +11,13 @@ import {
   UseThesisStudents
 } from './thesis-student/thesis-student.interface';
 import {
+  Thesis,
   ThesisFindManyResponse,
   ThesisGetByIdResponse,
   UseTheses,
   UseThesis
 } from './thesis.interface';
-import { ThesisApi } from './thesis.resource';
+import { ThesisApi, ThesisState } from './thesis.resource';
 
 export default class ThesisService extends CommonService {
   private static instance: ThesisService;
@@ -93,5 +94,9 @@ export default class ThesisService extends CommonService {
     }
 
     return { data, isLoading: !data };
+  }
+
+  public isProgressReportState({ state }: Thesis): boolean {
+    return state === ThesisState.PROGRESS_REPORT;
   }
 }

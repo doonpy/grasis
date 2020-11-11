@@ -114,6 +114,10 @@ export class TopicStudentService {
     topicIds: number[],
     studentId: number
   ): Promise<void> {
+    if (topicIds.length === 0) {
+      return;
+    }
+
     await manager.update(
       TopicStudentEntity,
       { ...notDeleteCondition, studentId, topicId: In(topicIds) },
@@ -133,10 +137,33 @@ export class TopicStudentService {
     manager: EntityManager,
     topicIds: number[]
   ): Promise<void> {
+    if (topicIds.length === 0) {
+      return;
+    }
+
     await manager.update(
       TopicStudentEntity,
       { ...notDeleteCondition, topicId: In(topicIds), status: TopicStudentStatus.PENDING },
       { status: TopicStudentStatus.REJECTED }
+    );
+  }
+
+  public async getStudentsParticipated(topicId: number): Promise<TopicStudent[]> {
+    return this.topicStudentRepository.find({
+      relations: { student: { user: true } },
+      where: { ...notDeleteCondition, topicId, status: TopicStudentStatus.APPROVED },
+      cache: true
+    });
+  }
+
+  public async hasParticipatedTopic(topicId: number, studentId: number): Promise<boolean> {
+    return (
+      (await this.topicStudentRepository.count({
+        ...notDeleteCondition,
+        topicId,
+        studentId,
+        status: TopicStudentStatus.APPROVED
+      })) > 0
     );
   }
 }

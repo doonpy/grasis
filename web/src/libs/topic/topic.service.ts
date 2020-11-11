@@ -38,7 +38,11 @@ export default class TopicService extends CommonService {
   ): Promise<AxiosResponse<TopicCreateOrUpdateResponse>> {
     await this.apiService.bindAuthorizationForClient();
 
-    return this.apiService.post<TopicCreateOrUpdateResponse>(TOPIC_API_ROOT, topic, [thesisId]);
+    return this.apiService.post<TopicCreateOrUpdateResponse>(
+      `${TOPIC_API_ROOT}?thesisId=@0`,
+      topic,
+      [thesisId]
+    );
   }
 
   public useTopics(
@@ -60,7 +64,7 @@ export default class TopicService extends CommonService {
 
   public useTopic(thesisId = 0, topicId = 0) {
     const { data } = useSWR<TopicGetByIdResponse>(
-      this.replaceParams(TopicApi.SPECIFY, [thesisId, topicId])
+      this.replaceParams(TopicApi.SPECIFY, [topicId, thesisId])
     );
 
     return { data, isLoading: !data };
@@ -74,8 +78,8 @@ export default class TopicService extends CommonService {
     await this.apiService.bindAuthorizationForClient();
 
     return this.apiService.patch<TopicCreateOrUpdateResponse>(TopicApi.SPECIFY, topic, [
-      thesisId,
-      topicId
+      topicId,
+      thesisId
     ]);
   }
 
@@ -84,14 +88,14 @@ export default class TopicService extends CommonService {
 
     const {
       data: { topic }
-    } = await this.apiService.get<TopicGetByIdResponse>(TopicApi.SPECIFY, [thesisId, topicId]);
+    } = await this.apiService.get<TopicGetByIdResponse>(TopicApi.SPECIFY, [topicId, thesisId]);
 
     return topic;
   }
 
   public async deleteById(thesisId: number, topicId: number): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.delete(TopicApi.SPECIFY, [thesisId, topicId]);
+    await this.apiService.delete(TopicApi.SPECIFY, [topicId, thesisId]);
   }
 
   public async changeStatus(
@@ -101,7 +105,7 @@ export default class TopicService extends CommonService {
     note?: string
   ): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(TopicApi.CHANGE_STATUS, { action, note }, [thesisId, topicId]);
+    await this.apiService.post(TopicApi.CHANGE_STATUS, { action, note }, [topicId, thesisId]);
   }
 
   public canEdit({ creatorId, status }: Topic): boolean {
@@ -115,12 +119,12 @@ export default class TopicService extends CommonService {
 
   public async changeRegisterStatus(thesisId: number, topicId: number): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(TopicApi.CHANGE_REGISTER_STATUS, {}, [thesisId, topicId]);
+    await this.apiService.post(TopicApi.CHANGE_REGISTER_STATUS, {}, [topicId, thesisId]);
   }
 
   public async registerTopic(thesisId: number, topicId: number, studentId: number): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(TopicApi.REGISTER_TOPIC, {}, [thesisId, topicId, studentId]);
+    await this.apiService.post(TopicApi.REGISTER_TOPIC, {}, [topicId, thesisId, studentId]);
   }
 
   public hasStudentParticipated(students: TopicStudent[]): boolean {
@@ -143,9 +147,38 @@ export default class TopicService extends CommonService {
   ): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
     await this.apiService.post(TopicApi.CHANGE_STUDENT_REGISTER_STATUS, { status }, [
-      thesisId,
       topicId,
+      thesisId,
       studentId
     ]);
+  }
+
+  public hasPermissionWithLoginUser(topic: Topic): boolean {
+    const loginUser = LoginUser.getInstance();
+    if (topic.thesis.creatorId === loginUser.getId()) {
+      return topic.status !== TopicStateAction.NEW && topic.status !== TopicStateAction.WITHDRAW;
+    }
+
+    if (loginUser.isLecturer()) {
+      return topic.creatorId === loginUser.getId();
+    }
+
+    if (loginUser.isStudent()) {
+      const studentIds = topic.students
+        .filter(({ status }) => status === TopicStudentStatus.APPROVED)
+        .map(({ studentId }) => studentId);
+      return studentIds.includes(loginUser.getId());
+    }
+
+    return false;
+  }
+
+  public hasPrivateContentPermission(topic: Topic): boolean {
+    const loginUser = LoginUser.getInstance();
+    if (loginUser.getId() === topic.thesis.creatorId) {
+      return true;
+    }
+
+    return loginUser.getId() === topic.creatorId;
   }
 }

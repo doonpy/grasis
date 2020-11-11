@@ -61,7 +61,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       title={TopicTerminology.TOPIC_6}
       extra={
         <Space size="large">
-          <SearchBox onSearch={onSearch} />
+          <SearchBox onSearch={onSearch} disabled={isLoading} />
           {loginUser.isLecturer() &&
             thesisData &&
             thesisData.thesis.state === ThesisState.LECTURER_TOPIC_REGISTER && (

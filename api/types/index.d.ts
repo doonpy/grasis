@@ -18,13 +18,12 @@ declare global {
       headers: IncomingHttpHeaders & {
         refresh?: string;
       };
-      params?: {
-        id?: string;
-        thesisId?: string;
-      };
-      body?: any;
+      params?: Record<string, any>;
+      body?: Record<string, any>;
       user?: User;
       useragent?: Details;
+      query?: Record<string, any>;
+      fileCount?: number;
     }
   }
 

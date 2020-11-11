@@ -11,7 +11,8 @@ export const CommonQuery = {
   OFFSET: 'offset',
   LIMIT: 'limit',
   KEYWORD: 'keyword',
-  SEARCH_TYPES: 'searchTypes'
+  SEARCH_TYPES: 'searchTypes',
+  DOWNLOAD_PATH: 'path'
 };
 
 export const CommonParam = {
@@ -24,12 +25,14 @@ export const COMMON_ENTITY_OPTIONS: EntityOptions = {
 };
 
 export const DatabaseType = {
+  REVIEW: 'review',
   STAGING: 'staging',
   PRODUCTION: 'production'
 };
 
 export const EnvFileName = {
   LOCAL: 'local.env',
+  REVIEW: 'review.env',
   STAGING: 'staging.env',
   PRODUCTION: 'production.env'
 };
@@ -41,7 +44,8 @@ export const CORS_OPTIONS: CorsOptions = {
 
 export const CommonPath = {
   LOGIN: '/login',
-  REFRESH_TOKEN: '/refresh'
+  REFRESH_TOKEN: '/refresh',
+  DOWNLOAD: '/download'
 };
 
 export const CommonColumn = {

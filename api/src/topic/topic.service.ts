@@ -2,9 +2,12 @@ import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/com
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, FindOptionsWhere, In, Like, Repository } from 'typeorm';
 
+import { CommentService } from '../comment/comment.service';
 import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
+import { ProgressReportService } from '../progress-report/progress-report.service';
 import { StudentService } from '../student/student.service';
+import { ThesisState } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
 import { User } from '../user/user.interface';
 import { IsAdmin, UserType } from '../user/user.resource';
@@ -33,7 +36,9 @@ export class TopicService {
     private readonly lecturerService: LecturerService,
     private readonly connection: Connection,
     private readonly topicStudentService: TopicStudentService,
-    private readonly studentService: StudentService
+    private readonly studentService: StudentService,
+    private readonly progressReportService: ProgressReportService,
+    private readonly commentService: CommentService
   ) {}
 
   public async create(thesisId: number, topicBody: TopicRequestBody): Promise<Topic> {
@@ -257,12 +262,13 @@ export class TopicService {
     );
   }
 
-  public async getById(id: number, loginUser: User): Promise<Topic> {
+  public async getById(id: number): Promise<Topic> {
     const topic = await this.topicRepository.findOne(
       { ...notDeleteCondition, id },
       {
         relations: {
-          creator: { user: {} }
+          creator: { user: {} },
+          thesis: true
         },
         cache: true
       }
@@ -271,27 +277,15 @@ export class TopicService {
       throw new BadRequestException(TopicError.ERR_5);
     }
 
-    if (loginUser.isAdmin === IsAdmin.TRUE || loginUser.id === topic.creatorId) {
-      topic.approver = await this.lecturerService.getById(topic.approverId);
-      topic.states = await this.topicStateService.getMany(topic.id);
-    }
-
-    if (
-      loginUser.isAdmin === IsAdmin.TRUE ||
-      loginUser.id === topic.creatorId ||
-      loginUser.userType === UserType.STUDENT
-    ) {
-      topic.students = await this.topicStudentService.getMany(topic.id);
-    }
-
     return topic;
   }
 
-  public async hasPermission(id: number, user: User): Promise<boolean> {
-    const topic = await this.getById(id, user);
-
-    if (user.isAdmin === IsAdmin.TRUE) {
-      return topic.status !== TopicStateAction.NEW || topic.creatorId === user.id;
+  public async hasPermission(topic: Topic, user: User): Promise<boolean> {
+    if (topic.thesis.creatorId === user.id) {
+      return (
+        (topic.status !== TopicStateAction.NEW && topic.status !== TopicStateAction.WITHDRAW) ||
+        topic.creatorId === user.id
+      );
     }
 
     if (user.userType === UserType.LECTURER) {
@@ -299,20 +293,26 @@ export class TopicService {
     }
 
     if (user.userType === UserType.STUDENT) {
-      return topic.status === TopicStateAction.APPROVED;
+      if (topic.thesis.state === ThesisState.STUDENT_TOPIC_REGISTER) {
+        return topic.status === TopicStateAction.APPROVED;
+      }
+
+      return this.topicStudentService.hasParticipatedTopic(topic.id, user.id);
     }
 
     return false;
   }
 
   public async checkPermission(id: number, user: User): Promise<void> {
-    if (!(await this.hasPermission(id, user))) {
+    const topic = await this.getById(id);
+    await this.thesisService.checkThesisPermission(topic.thesisId, user);
+    if (!(await this.hasPermission(topic, user))) {
       throw new BadRequestException(TopicError.ERR_6);
     }
   }
 
   public async updateById(topicId: number, user: User, data: TopicRequestBody): Promise<Topic> {
-    const currentTopic = await this.getById(topicId, user);
+    const currentTopic = await this.getById(topicId);
     if (!this.canEdit(user, currentTopic)) {
       throw new BadRequestException(TopicError.ERR_6);
     }
@@ -328,17 +328,13 @@ export class TopicService {
   }
 
   public async deleteById(topicId: number, user: User): Promise<void> {
-    const currentTopic = await this.getById(topicId, user);
+    const currentTopic = await this.getById(topicId);
     if (!this.canEdit(user, currentTopic)) {
       throw new BadRequestException(TopicError.ERR_6);
     }
 
     await this.connection.transaction(async (manager) => {
-      const deletedAt = new Date();
-      const stateIds = currentTopic.states.map(({ id }) => id);
-      await this.topicStateService.deleteByIdsWithTransaction(manager, stateIds, deletedAt);
-      await this.topicStudentService.deleteByTopicIdsWithTransaction(manager, topicId, deletedAt);
-      await manager.update(TopicEntity, { id: topicId }, { deletedAt });
+      await this.deleteCascadeWithTransaction(manager, topicId, new Date());
     });
   }
 
@@ -348,7 +344,14 @@ export class TopicService {
     data: TopicChangeStatusRequestBody
   ): Promise<void> {
     const { action, note } = data;
-    const topic = await this.getById(topicId, user);
+    const topic = await this.topicRepository.findOne(
+      { ...notDeleteCondition, id: topicId },
+      { relations: { states: true, thesis: true }, cache: true }
+    );
+    if (!topic) {
+      throw new BadRequestException(TopicError.ERR_5);
+    }
+
     const creatorActions = [
       TopicStateAction.SEND_REQUEST,
       TopicStateAction.WITHDRAW,
@@ -430,11 +433,30 @@ export class TopicService {
         note: note || null
       })
     );
-    await this.topicRepository.save(topic);
+
+    if (action === TopicStateAction.APPROVED) {
+      await this.connection.transaction(async (manager) => {
+        // Create progress report appointment
+        await this.progressReportService.createWithTransaction(manager, topic, {
+          time: topic.thesis.progressReport
+        });
+
+        await manager.save(TopicEntity, topic);
+      });
+    } else {
+      await this.topicRepository.save(topic);
+    }
   }
 
-  public async changeRegisterStatus(topicId: number, user: User): Promise<void> {
-    const topic = await this.getById(topicId, user);
+  public async changeRegisterStatus(id: number, user: User): Promise<void> {
+    const topic = await this.topicRepository.findOne(
+      { ...notDeleteCondition, id },
+      { cache: true }
+    );
+    if (!topic) {
+      throw new BadRequestException(TopicError.ERR_5);
+    }
+
     if (topic.creatorId !== user.id) {
       throw new BadRequestException(TopicError.ERR_6);
     }
@@ -457,8 +479,8 @@ export class TopicService {
   }
 
   public async registerTopic(topicId: number, studentId: number): Promise<void> {
-    const student = await this.studentService.findById(studentId);
-    const topic = await this.getById(topicId, student.user);
+    await this.studentService.checkStudentExistById(studentId);
+    const topic = await this.getById(topicId);
     if (topic.status !== TopicStateAction.APPROVED) {
       throw new BadRequestException(TopicError.ERR_8);
     }
@@ -480,7 +502,7 @@ export class TopicService {
     studentId: number,
     status: TopicStudentStatus
   ): Promise<void> {
-    const topic = await this.getById(topicId, user);
+    const topic = await this.getById(topicId);
     if (user.userType !== UserType.LECTURER && topic.creatorId !== user.id) {
       throw new BadRequestException(TopicError.ERR_14);
     }
@@ -517,7 +539,11 @@ export class TopicService {
           topic.registerStatus = TopicRegisterStatus.DISABLE;
         }
 
-        await manager.save(TopicEntity, topic);
+        await manager.update(
+          TopicEntity,
+          { id: topicId },
+          { currentStudent: topic.currentStudent, registerStatus: topic.registerStatus }
+        );
       });
     } else {
       await this.topicStudentService.changeRegisterStatus(topicId, studentId, status);
@@ -596,5 +622,37 @@ export class TopicService {
       { ...notDeleteCondition, thesisId, registerStatus: TopicRegisterStatus.ENABLE },
       { registerStatus: TopicRegisterStatus.DISABLE }
     );
+  }
+
+  public async checkTopicIsExisted(topicId: number): Promise<void> {
+    if ((await this.topicRepository.count({ ...notDeleteCondition, id: topicId })) === 0) {
+      throw new BadRequestException(TopicError.ERR_5);
+    }
+  }
+
+  public async deleteByThesisIdWithTransaction(
+    manager: EntityManager,
+    thesisId: number,
+    deletedAt = new Date()
+  ): Promise<void> {
+    const topics = await manager.find(TopicEntity, {
+      where: { ...notDeleteCondition, thesisId },
+      cache: true
+    });
+    for (const topic of topics) {
+      await this.deleteCascadeWithTransaction(manager, topic.id, deletedAt);
+    }
+  }
+
+  private async deleteCascadeWithTransaction(
+    manager: EntityManager,
+    topicId: number,
+    deletedAt = new Date()
+  ): Promise<void> {
+    await this.topicStateService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
+    await this.topicStudentService.deleteByTopicIdsWithTransaction(manager, topicId, deletedAt);
+    await this.progressReportService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
+    await this.commentService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
+    await manager.update(TopicEntity, { id: topicId }, { deletedAt });
   }
 }

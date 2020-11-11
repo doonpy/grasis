@@ -3,7 +3,7 @@ import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '
 import { ThesisError, ThesisState, ThesisStatus } from '../../thesis/thesis.resource';
 import { ThesisService } from '../../thesis/thesis.service';
 import { UserService } from '../../user/user.service';
-import { TopicError } from '../topic.resource';
+import { TopicError, TopicQuery } from '../topic.resource';
 
 @Injectable()
 export class TopicLecturerRegisterGuard implements CanActivate {
@@ -14,8 +14,7 @@ export class TopicLecturerRegisterGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Express.CustomRequest>();
-    const { thesisId } = request.params!;
-
+    const thesisId: string = request.query![TopicQuery.THESIS_ID];
     if (!thesisId) {
       throw new BadRequestException(ThesisError.ERR_7);
     }

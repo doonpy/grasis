@@ -22,3 +22,9 @@ export const commonIdValidateSchema = Joi.number()
   .min(1)
   .message('ID tối thiểu là 1.')
   .error(() => new Error('ID phải là số.'));
+
+export const commonFilenameValidationSchema = Joi.string().min(1).required().messages({
+  'string.base': 'Tên tệp tin phải là chuỗi.',
+  'string.min': 'Tên tệp tin phải có ít nhất 1 kí tự',
+  'any.required': 'Tên tệp tin là thông tin bắt buộc'
+});

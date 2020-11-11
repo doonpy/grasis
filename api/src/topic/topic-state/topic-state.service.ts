@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, In, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../../common/common.resource';
 import { TopicStateEntity } from './topic-state.entity';
@@ -25,11 +25,11 @@ export class TopicStateService {
     });
   }
 
-  public async deleteByIdsWithTransaction(
+  public async deleteByTopicIdWithTransaction(
     manager: EntityManager,
-    ids: number[],
+    topicId: number,
     deletedAt = new Date()
   ): Promise<void> {
-    await manager.update(TopicStateEntity, { id: In(ids) }, { deletedAt });
+    await manager.update(TopicStateEntity, { ...notDeleteCondition, topicId }, { deletedAt });
   }
 }

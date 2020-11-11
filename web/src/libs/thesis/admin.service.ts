@@ -86,7 +86,7 @@ export default class ThesisAdminService extends CommonService {
     studentAttendees,
     ...remainProps
   }: ThesisForEdit): ThesisRequestBody {
-    const result: ThesisRequestBody = {};
+    const result: ThesisRequestBody = { attendees: { lecturers: [], students: [] } };
     result.duration = [moment(startTime), moment(endTime)];
     result.lecturerTopicRegister = moment(lecturerTopicRegister);
     result.studentTopicRegister = moment(studentTopicRegister);

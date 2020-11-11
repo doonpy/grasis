@@ -4,23 +4,28 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   Req,
   Request,
+  Res,
   UseGuards
 } from '@nestjs/common';
+import { Response } from 'express';
 
 import { AppService } from './app.service';
 import { AuthService, JwtToken } from './auth/auth.service';
 import { LocalAuthGuard } from './auth/guards/local-auth.guard';
-import { CommonPath } from './common/common.resource';
+import { CommonPath, CommonQuery } from './common/common.resource';
 import { RefreshService } from './refresh/refresh.service';
+import { UploadService } from './upload/upload.service';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly authService: AuthService,
-    private readonly refreshService: RefreshService
+    private readonly refreshService: RefreshService,
+    private readonly uploadService: UploadService
   ) {}
 
   @Get()
@@ -43,5 +48,13 @@ export class AppController {
     const { userId } = await this.refreshService.getPayloadFromRefreshToken(refreshToken);
 
     return this.authService.login(userId, req.useragent);
+  }
+
+  @Get(CommonPath.DOWNLOAD)
+  public downloadFile(@Query(CommonQuery.DOWNLOAD_PATH) path: string, @Res() res: Response): void {
+    this.uploadService.checkFileExist(process.cwd() + path);
+    const pathParts = path.split('/');
+    const filename = pathParts[pathParts.length - 1];
+    res.download(path, filename, { root: process.cwd() });
   }
 }

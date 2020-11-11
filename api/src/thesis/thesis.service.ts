@@ -168,17 +168,20 @@ export class ThesisService {
     return thesis;
   }
 
-  public async hasPermission(id: number, loginUser: User): Promise<boolean> {
-    if (loginUser.isAdmin === IsAdmin.TRUE) {
-      return true;
+  public async hasPermission(id: number, user: User): Promise<boolean> {
+    if (user.isAdmin === IsAdmin.TRUE) {
+      const thesis = await this.getById(id);
+      if (thesis.creatorId === user.id) {
+        return true;
+      }
     }
 
-    if (loginUser.userType === UserType.LECTURER) {
-      return this.thesisLecturerService.hasPermission(id, loginUser);
+    if (user.userType === UserType.LECTURER) {
+      return this.thesisLecturerService.hasPermission(id, user);
     }
 
-    if (loginUser.userType === UserType.STUDENT) {
-      return this.thesisStudentService.hasPermission(id, loginUser);
+    if (user.userType === UserType.STUDENT) {
+      return this.thesisStudentService.hasPermission(id, user);
     }
 
     return false;
@@ -217,14 +220,10 @@ export class ThesisService {
     return thesisForEdit;
   }
 
-  public async updateById(id: number, data: ThesisRequestBody): Promise<Thesis> {
+  public async updateById(id: number, data: ThesisRequestBody): Promise<void> {
     const { attendees, ...thesis } = data;
     this.validateThesisStateDate(thesis as Thesis);
-    const currentThesis = await this.thesisRepository.findOne({ id, ...notDeleteCondition });
-
-    if (!currentThesis) {
-      throw new BadRequestException(ThesisError.ERR_7);
-    }
+    const currentThesis = await this.getById(id);
 
     return await this.connection.transaction(async (manager) => {
       if (attendees) {
@@ -245,43 +244,9 @@ export class ThesisService {
         }
       }
 
-      if (thesis.subject) {
-        currentThesis.subject = thesis.subject;
-      }
-
-      if (thesis.startTime) {
-        currentThesis.startTime = thesis.startTime;
-      }
-
-      if (thesis.endTime) {
-        currentThesis.endTime = thesis.endTime;
-      }
-
-      if (thesis.lecturerTopicRegister) {
-        currentThesis.lecturerTopicRegister = thesis.lecturerTopicRegister;
-      }
-
-      if (thesis.studentTopicRegister) {
-        currentThesis.studentTopicRegister = thesis.studentTopicRegister;
-      }
-
-      if (thesis.progressReport) {
-        currentThesis.progressReport = thesis.progressReport;
-      }
-
-      if (thesis.review) {
-        currentThesis.review = thesis.review;
-      }
-
-      if (thesis.defense) {
-        currentThesis.defense = thesis.defense;
-      }
-
-      const currentState = this.getThesisCurrentState(currentThesis);
+      const currentState = this.getThesisCurrentState(thesis);
       await this.handleChangeStateWithTransaction(manager, currentThesis, currentState);
-      currentThesis.state = currentState;
-
-      return await manager.save(currentThesis);
+      await manager.update(ThesisEntity, { id }, { ...thesis, state: currentState });
     });
   }
 
@@ -293,7 +258,7 @@ export class ThesisService {
     progressReport,
     review,
     defense
-  }: Thesis): ThesisState {
+  }: Thesis | ThesisRequestBody): ThesisState {
     const currentDate = moment.utc();
     if (currentDate.isBefore(startTime, 'day')) {
       return ThesisState.NOT_START;
@@ -307,15 +272,15 @@ export class ThesisService {
       return ThesisState.LECTURER_TOPIC_REGISTER;
     }
 
-    if (currentDate.isBetween(lecturerTopicRegister, studentTopicRegister, 'day', '[)')) {
+    if (currentDate.isBetween(lecturerTopicRegister, studentTopicRegister, 'day', '(]')) {
       return ThesisState.STUDENT_TOPIC_REGISTER;
     }
 
-    if (currentDate.isBetween(studentTopicRegister, progressReport, 'day', '[)')) {
+    if (currentDate.isBetween(studentTopicRegister, progressReport, 'day', '(]')) {
       return ThesisState.PROGRESS_REPORT;
     }
 
-    if (currentDate.isBetween(progressReport, review, 'day', '[)')) {
+    if (currentDate.isBetween(progressReport, review, 'day', '(]')) {
       return ThesisState.REVIEW;
     }
 
@@ -358,6 +323,7 @@ export class ThesisService {
       const deletedAt = new Date();
       await this.thesisLecturerService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
       await this.thesisStudentService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
+      await this.topicService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
       await manager.update(ThesisEntity, { id }, { deletedAt });
     });
   }

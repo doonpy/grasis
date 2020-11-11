@@ -11,7 +11,7 @@ import { StudentSearchAttendeesResponse } from '../student/student.interface';
 import { StudentApi } from '../student/student.resource';
 import { ThesisAttendeeTarget } from '../thesis/thesis.resource';
 import CommonRedirect, { RenderSide } from './common.redirect';
-import { COMMON_PATH } from './common.resource';
+import { COMMON_PATH, CommonApi, UploadReportModule } from './common.resource';
 
 let instance: CommonService;
 
@@ -88,5 +88,19 @@ export default class CommonService {
     });
 
     return result;
+  }
+
+  public async uploadReport(data: FormData): Promise<void> {
+    await this.apiService.bindAuthorizationForClient();
+    await this.apiService.postFile(CommonApi.UPLOAD_REPORT, data);
+  }
+
+  public async deleteReport(
+    module: UploadReportModule,
+    topicId: number,
+    filename: string
+  ): Promise<void> {
+    await this.apiService.bindAuthorizationForClient();
+    await this.apiService.post(CommonApi.DELETE_REPORT, { module, topicId, filename });
   }
 }
