@@ -2,10 +2,12 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Get,
   HttpCode,
   HttpStatus,
   ParseIntPipe,
   Post,
+  Query,
   Req,
   UploadedFiles,
   UseGuards,
@@ -17,23 +19,24 @@ import { diskStorage } from 'multer';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { isProductionMode } from '../common/common.helper';
 import { CommonResponse } from '../common/common.interface';
-import { CommonQueryValue } from '../common/common.resource';
-import { commonIdValidateSchema } from '../common/common.validation';
+import { CommonQueryValue, ReportModule } from '../common/common.resource';
+import {
+  commonIdValidateSchema,
+  filenameSchemaValidation,
+  reportModuleSchemaValidation
+} from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
+import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { UploadReportInterceptor } from './interceptors/upload-report.interceptor';
 import { avatarFileFilter, getAvatarDestination, getAvatarFilename } from './upload.helper';
+import { GetReportsResponse } from './upload.interface';
 import {
   UPLOAD_REPORT_BODY_PROPERTY,
   UploadBody,
   UploadFileSize,
-  UploadPath,
-  UploadReportModule
+  UploadPath
 } from './upload.resource';
 import { UploadService } from './upload.service';
-import {
-  uploadFilenameSchemaValidation,
-  uploadReportModuleSchemaValidation
-} from './upload.validation';
 
 @UseGuards(JwtAuthGuard)
 @Controller(UploadPath.ROOT)
@@ -54,6 +57,27 @@ export class UploadController {
   public uploadAvatar(): CommonResponse {
     return {
       statusCode: HttpStatus.OK
+    };
+  }
+
+  @Get(UploadPath.REPORT)
+  @UseGuards(TopicPermissionGuard)
+  public async getManyReport(
+    @Query(
+      UploadBody.TOPIC_ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    topicId: number,
+    @Query(UploadBody.MODULE, new JoiValidationPipe(reportModuleSchemaValidation), ParseIntPipe)
+    module: ReportModule
+  ): Promise<GetReportsResponse> {
+    const reports = await this.uploadService.getReportFiles(topicId, module);
+
+    return {
+      statusCode: HttpStatus.OK,
+      reports
     };
   }
 
@@ -81,13 +105,9 @@ export class UploadController {
       ParseIntPipe
     )
     topicId: number,
-    @Body(
-      UploadBody.MODULE,
-      new JoiValidationPipe(uploadReportModuleSchemaValidation),
-      ParseIntPipe
-    )
-    module: UploadReportModule,
-    @Body(UploadBody.FILENAME, new JoiValidationPipe(uploadFilenameSchemaValidation))
+    @Body(UploadBody.MODULE, new JoiValidationPipe(reportModuleSchemaValidation), ParseIntPipe)
+    module: ReportModule,
+    @Body(UploadBody.FILENAME, new JoiValidationPipe(filenameSchemaValidation))
     filename: string,
     @Req() request: Express.CustomRequest
   ): Promise<void> {

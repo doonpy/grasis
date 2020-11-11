@@ -22,7 +22,6 @@ export const ProgressReportPath = {
   ADMIN_ROOT: 'admin/progress-reports',
   SPECIFY: '/:id',
   GET_BY_TOPIC_ID: '/with-topic',
-  GET_DOCUMENT: '/doc',
   ADMIN_CHANGE_RESULT: '/:id/change-result',
   COMMENT: '/:id/comments',
   COMMENT_SPECIFY: '/comments/:commentId'
@@ -33,8 +32,6 @@ export const ProgressReportQuery = {
   THESIS_ID: 'thesisId',
   FILE_NAME: 'filename'
 };
-
-export const PROGRESS_REPORT_UPLOAD_FOLDER = 'progress-report';
 
 export enum IsPassed {
   NOT_DECIDED = 1,

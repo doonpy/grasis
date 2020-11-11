@@ -9,7 +9,7 @@ export function transformException(error: Error | undefined): Error | undefined 
   }
   switch (error.message) {
     case multerExceptions.LIMIT_FILE_SIZE:
-      return new PayloadTooLargeException(error.message);
+      return new PayloadTooLargeException(UploadError.ERR_8);
     case multerExceptions.LIMIT_FILE_COUNT:
     case multerExceptions.LIMIT_FIELD_KEY:
     case multerExceptions.LIMIT_FIELD_VALUE:

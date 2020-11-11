@@ -5,7 +5,7 @@ export enum TopicRegisterStatus {
   ENABLE
 }
 
-export const TOPIC_API_ROOT = '/topics';
+export const TOPIC_API_ROOT = 'topics';
 
 export const TopicApi = {
   GET_MANY: `${TOPIC_API_ROOT}?thesisId=@0&offset=@1&keyword=@2`,

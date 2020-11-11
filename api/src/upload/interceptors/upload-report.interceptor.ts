@@ -9,20 +9,21 @@ import fs from 'fs';
 import multer, { diskStorage } from 'multer';
 import { Observable } from 'rxjs';
 
+import { ReportModule } from '../../common/common.resource';
+import {
+  filenameSchemaValidation,
+  reportModuleSchemaValidation
+} from '../../common/common.validation';
 import { transformException } from '../multer/multer.util';
 import { FileDestinationCallback, FileNameCallback } from '../upload.interface';
 import {
   UPLOAD_REPORT_BODY_PROPERTY,
   UPLOAD_REPORT_LIMIT_FILES,
   UploadError,
-  UploadReportMimeType,
-  UploadReportModule
+  UploadFileSize,
+  UploadReportMimeTypes
 } from '../upload.resource';
 import { UploadService } from '../upload.service';
-import {
-  uploadFilenameSchemaValidation,
-  uploadReportModuleSchemaValidation
-} from '../upload.validation';
 
 @Injectable()
 export class UploadReportInterceptor implements NestInterceptor {
@@ -31,6 +32,7 @@ export class UploadReportInterceptor implements NestInterceptor {
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const ctx = context.switchToHttp();
     const multerInstance = multer({
+      limits: { fileSize: UploadFileSize.REPORT },
       fileFilter: this.fileFilter.bind(this),
       storage: diskStorage({
         filename: this.getFilename.bind(this),
@@ -66,7 +68,7 @@ export class UploadReportInterceptor implements NestInterceptor {
       return callback(error);
     }
 
-    if (mimetype !== UploadReportMimeType.WORD && mimetype !== UploadReportMimeType.PDF) {
+    if (!UploadReportMimeTypes.includes(mimetype)) {
       return callback(new BadRequestException(UploadError.ERR_1));
     }
 
@@ -78,7 +80,7 @@ export class UploadReportInterceptor implements NestInterceptor {
     { originalname }: Express.Multer.File,
     callback: FileNameCallback
   ): void {
-    const { error } = uploadFilenameSchemaValidation.validate(originalname);
+    const { error } = filenameSchemaValidation.validate(originalname);
     if (error) {
       return callback(new BadRequestException(error.message), '');
     }
@@ -102,8 +104,8 @@ export class UploadReportInterceptor implements NestInterceptor {
   }
 
   private async checkPermission(req: Express.CustomRequest): Promise<void> {
-    const reportModule: UploadReportModule = parseInt(req.body!.module);
-    const { error } = uploadReportModuleSchemaValidation.validate(reportModule);
+    const reportModule: ReportModule = parseInt(req.body!.module);
+    const { error } = reportModuleSchemaValidation.validate(reportModule);
     if (error) {
       throw new BadRequestException(error.message);
     }
@@ -125,7 +127,7 @@ export class UploadReportInterceptor implements NestInterceptor {
   }
 
   private getFolderPathFromRequest(req: Express.CustomRequest): string {
-    const module: UploadReportModule = parseInt(req.body!.module);
+    const module: ReportModule = parseInt(req.body!.module);
     const topicId = parseInt(req.body!.topicId);
     return this.uploadService.getReportFolderPath(module, topicId);
   }

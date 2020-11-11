@@ -1,6 +1,5 @@
 import useSWR from 'swr';
 
-import { GenerateDownloadLinkResponse } from '../common/common.interface';
 import CommonService from '../common/common.service';
 import { ProgressReportGetByIdResponse, UseProgressReport } from './progress-report.interface';
 import { IsPassed, ProgressReportApi } from './progress-report.resource';
@@ -26,12 +25,6 @@ export default class ProgressReportService extends CommonService {
     );
 
     return { data, isLoading: !data };
-  }
-
-  public async generateDownloadUrl(fileUrl: string): Promise<string> {
-    await this.apiService.bindAuthorizationForClient();
-    const { data } = await this.apiService.get<GenerateDownloadLinkResponse>(fileUrl);
-    return data.url;
   }
 
   public async changeResult(id: number, topicId: number, result: IsPassed): Promise<void> {

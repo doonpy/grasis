@@ -9,8 +9,6 @@ import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
 import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { Topic } from '../topic/topic.interface';
 import { TopicService } from '../topic/topic.service';
-import { UploadDestination } from '../upload/upload.resource';
-import { UploadService } from '../upload/upload.service';
 import { User } from '../user/user.interface';
 import { UserType } from '../user/user.resource';
 import { ProgressReportEntity } from './progress-report.entity';
@@ -28,8 +26,7 @@ export class ProgressReportService {
     private readonly progressReportRepository: Repository<ProgressReport>,
     @Inject(forwardRef(() => TopicService))
     private readonly topicService: TopicService,
-    private readonly topicStudentService: TopicStudentService,
-    private readonly uploadService: UploadService
+    private readonly topicStudentService: TopicStudentService
   ) {}
 
   public async createWithTransaction(
@@ -92,9 +89,6 @@ export class ProgressReportService {
     const reporters = (
       await this.topicStudentService.getStudentsParticipated(topicId)
     ).map(({ student }) => student.convertToFastView());
-    const files = await this.uploadService.getReportFiles(
-      `${UploadDestination.PROGRESS_REPORT}/${topicId}`
-    );
 
     return {
       createdAt,
@@ -105,7 +99,6 @@ export class ProgressReportService {
       place,
       note,
       reporters,
-      files,
       isPassed
     };
   }
@@ -141,11 +134,5 @@ export class ProgressReportService {
 
   public async changeResult(id: number, result: IsPassed): Promise<void> {
     await this.progressReportRepository.update({ ...notDeleteCondition, id }, { isPassed: result });
-  }
-
-  public async checkExistById(id: number): Promise<void> {
-    if ((await this.progressReportRepository.count({ ...notDeleteCondition, id })) === 0) {
-      throw new BadRequestException(ProgressReportError.ERR_2);
-    }
   }
 }
