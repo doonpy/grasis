@@ -9,8 +9,6 @@ import { ProgressReportService } from '../progress-report/progress-report.servic
 import { StudentService } from '../student/student.service';
 import { ThesisState } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
-import { UploadDestination } from '../upload/upload.resource';
-import { UploadService } from '../upload/upload.service';
 import { User } from '../user/user.interface';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -40,7 +38,6 @@ export class TopicService {
     private readonly topicStudentService: TopicStudentService,
     private readonly studentService: StudentService,
     private readonly progressReportService: ProgressReportService,
-    private readonly uploadService: UploadService,
     private readonly commentService: CommentService
   ) {}
 
@@ -292,7 +289,7 @@ export class TopicService {
     }
 
     if (user.userType === UserType.LECTURER) {
-      return topic.creatorId === user.id;
+      return topic.creatorId === user.id || topic.status === TopicStateAction.APPROVED;
     }
 
     if (user.userType === UserType.STUDENT) {
@@ -443,8 +440,6 @@ export class TopicService {
         await this.progressReportService.createWithTransaction(manager, topic, {
           time: topic.thesis.progressReport
         });
-        // Create progress report folder
-        this.uploadService.createFolder(`${UploadDestination.PROGRESS_REPORT}/${topic.id}`);
 
         await manager.save(TopicEntity, topic);
       });
