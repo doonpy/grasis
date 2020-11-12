@@ -7,12 +7,12 @@ import {
   commonStringColumnOptions
 } from '../common/common.resource';
 import { ThesisLecturerEntity } from '../thesis/thesis-lecturer/thesis-lecturer.entity';
-import { ThesisLecturer } from '../thesis/thesis-lecturer/thesis-lecturer.interface';
 import { ThesisLecturerColumn } from '../thesis/thesis-lecturer/thesis-lecturer.resource';
+import { ThesisLecturer } from '../thesis/thesis-lecturer/thesis-lecturer.type';
 import { UserEntity } from '../user/user.entity';
-import { User } from '../user/user.interface';
-import { LecturerForFastView } from './lecturer.interface';
+import { User } from '../user/user.type';
 import { LECTURER_TABLE, LecturerColumn } from './lecturer.resource';
+import { LecturerForFastView } from './lecturer.type';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: LECTURER_TABLE })
 export class LecturerEntity extends CommonEntity {

@@ -7,7 +7,7 @@ import MinusCircleIcon from '../../assets/svg/regular/minus-circle.svg';
 import SignInAltIcon from '../../assets/svg/regular/sign-in-alt.svg';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
-import { Topic } from '../../libs/topic/topic.interface';
+import { Topic } from '../../libs/topic/topic.type';
 import { TopicRegisterStatus } from '../../libs/topic/topic.resource';
 import TopicService from '../../libs/topic/topic.service';
 import LoginUser from '../../libs/user/instance/LoginUser';

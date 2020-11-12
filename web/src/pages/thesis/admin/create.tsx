@@ -7,11 +7,11 @@ import { ThesisTerminology } from '../../../assets/terminology/thesis.terminolog
 import MainLayout from '../../../components/Layout/MainLayout';
 import ThesisAttendeesSelectFormItem from '../../../components/Thesis/ThesisAttendeesSelectFormItem';
 import ThesisFormItem from '../../../components/Thesis/ThesisFormItem';
-import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../libs/common/common.resource';
+import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.type';
 import ThesisAdminService from '../../../libs/thesis/admin.service';
-import { ThesisRequestBody } from '../../../libs/thesis/thesis.interface';
 import { THESIS_PATH_ROOT, ThesisAttendeeTarget } from '../../../libs/thesis/thesis.resource';
+import { ThesisRequestBody } from '../../../libs/thesis/thesis.type';
 import { UserType } from '../../../libs/user/user.resource';
 
 const Create: NextPageWithLayout = () => {

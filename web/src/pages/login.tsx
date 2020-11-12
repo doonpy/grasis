@@ -23,7 +23,7 @@ import { LoginTerminology } from '../assets/terminology/login.terminology';
 import Copyright from '../components/Copyright/Copyright';
 import { COMMON_PATH } from '../libs/common/common.resource';
 import CommonService from '../libs/common/common.service';
-import { LoginInputs } from '../libs/user/user.interface';
+import { LoginInputs } from '../libs/user/user.type';
 import UserService from '../libs/user/user.service';
 
 const Login: NextPage = () => {

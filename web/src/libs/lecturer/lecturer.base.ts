@@ -1,6 +1,6 @@
 import CommonService from '../common/common.service';
 import UserService from '../user/user.service';
-import { Lecturer, LecturerForm } from './lecturer.interface';
+import { Lecturer, LecturerForm } from './lecturer.type';
 
 export default class LecturerBase extends CommonService {
   constructor() {

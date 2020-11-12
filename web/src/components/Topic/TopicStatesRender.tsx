@@ -2,12 +2,12 @@ import Icon from '@ant-design/icons';
 import { Space, Tag, Timeline } from 'antd';
 import React from 'react';
 
-import { TopicState } from '../../libs/topic/topic-state/topic-state.interface';
 import {
   TopicStateActionColor,
   TopicStateActionIcon,
   TopicStateActionText
 } from '../../libs/topic/topic-state/topic-state.resource';
+import { TopicState } from '../../libs/topic/topic-state/topic-state.type';
 import LecturerComment from '../Lecturer/LecturerComment';
 
 interface ComponentProps {

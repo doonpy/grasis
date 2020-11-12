@@ -1,4 +1,4 @@
-import { CommonResponse } from '../../common/common.interface';
+import { CommonResponse } from '../../common/common.type';
 import { Gender } from '../../user/user.resource';
 import { ThesisStudentEntity } from './thesis-student.entity';
 

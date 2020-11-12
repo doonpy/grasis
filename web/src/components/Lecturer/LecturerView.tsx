@@ -4,7 +4,7 @@ import React from 'react';
 
 import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { LecturerTerminology } from '../../assets/terminology/lecturer.terminology';
-import { Lecturer } from '../../libs/lecturer/lecturer.interface';
+import { Lecturer } from '../../libs/lecturer/lecturer.type';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import LecturerLevelRender from './LecturerLevelRender';

@@ -4,6 +4,7 @@ import useSWR from 'swr';
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import UserService from '../user/user.service';
 import StudentBase from './student.base';
+import { STUDENT_API_ADMIN_ROOT, StudentApi } from './student.resource';
 import {
   CreateStudentResponse,
   FindManyStudentResponse,
@@ -11,8 +12,7 @@ import {
   StudentForm,
   UseStudent,
   UseStudents
-} from './student.interface';
-import { STUDENT_API_ADMIN_ROOT, StudentApi } from './student.resource';
+} from './student.type';
 
 export default class StudentAdminService extends StudentBase {
   private static instance: StudentAdminService;

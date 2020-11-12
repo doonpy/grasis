@@ -7,8 +7,8 @@ import React from 'react';
 
 import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import { sortByDate, sortByNumber, sortByString } from '../../libs/common/common.helper';
-import { ThesisForListView } from '../../libs/thesis/thesis.interface';
 import { THESIS_PATH_ROOT, ThesisState, ThesisStatus } from '../../libs/thesis/thesis.resource';
+import { ThesisForListView } from '../../libs/thesis/thesis.type';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import ThesisCreatorRender from './ThesisCreatorRender';

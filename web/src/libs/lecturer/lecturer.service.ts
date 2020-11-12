@@ -1,7 +1,7 @@
 import { TransferItem } from 'antd/lib/transfer';
 
 import LecturerBase from './lecturer.base';
-import { LecturerSearchAttendee } from './lecturer.interface';
+import { LecturerSearchAttendee } from './lecturer.type';
 
 export default class LecturerService extends LecturerBase {
   private static instance: LecturerService;

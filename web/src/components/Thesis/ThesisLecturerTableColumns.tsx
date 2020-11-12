@@ -9,7 +9,7 @@ import UserTerminology from '../../assets/terminology/user.terminology';
 import { sortByNumber, sortByString } from '../../libs/common/common.helper';
 import CommonService from '../../libs/common/common.service';
 import { LecturerPath } from '../../libs/lecturer/lecturer.resource';
-import { ThesisLecturerForView } from '../../libs/thesis/thesis-lecturer/thesis-lecturer.interface';
+import { ThesisLecturerForView } from '../../libs/thesis/thesis-lecturer/thesis-lecturer.type';
 import { Gender } from '../../libs/user/user.resource';
 import TextData from '../Common/TextData';
 import UserGenderRender from '../User/UserGenderRender';

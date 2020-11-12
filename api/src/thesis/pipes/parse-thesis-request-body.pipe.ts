@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 
-import { RawThesisRequestBody, ThesisRequestBody } from '../thesis.interface';
+import { RawThesisRequestBody, ThesisRequestBody } from '../thesis.type';
 
 @Injectable()
 export class ParseThesisRequestBodyPipe

@@ -1,9 +1,9 @@
-import { CommonColumns, CommonResponse } from '../common/common.interface';
-import { Lecturer } from '../lecturer/lecturer.interface';
-import { Thesis } from '../thesis/thesis.interface';
-import { TopicState } from './topic-state/topic-state.interface';
+import { CommonColumns, CommonResponse } from '../common/common.type';
+import { Lecturer } from '../lecturer/lecturer.type';
+import { Thesis } from '../thesis/thesis.type';
 import { TopicStateAction } from './topic-state/topic-state.resource';
-import { TopicStudent } from './topic-student/topic-student.interface';
+import { TopicState } from './topic-state/topic-state.type';
+import { TopicStudent } from './topic-student/topic-student.type';
 import { TopicRegisterStatus } from './topic.resource';
 
 export interface Topic extends CommonColumns {

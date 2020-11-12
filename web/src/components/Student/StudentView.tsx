@@ -2,8 +2,8 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { Col, Row, Space, Typography } from 'antd';
 import React from 'react';
 
-import { Student } from '../../libs/student/student.interface';
 import { IsGraduate } from '../../libs/student/student.resource';
+import { Student } from '../../libs/student/student.type';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import StudentIsGraduate from './StudentIsGraduate';

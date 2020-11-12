@@ -9,7 +9,7 @@ import ProgressReportAdminService from '../../libs/progress-report/admin.service
 import {
   ProgressReportForView,
   ProgressReportRequestBody
-} from '../../libs/progress-report/progress-report.interface';
+} from '../../libs/progress-report/progress-report.type';
 import ThesisService from '../../libs/thesis/thesis.service';
 
 interface ComponentProps {

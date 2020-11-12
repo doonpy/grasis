@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Details } from 'express-useragent';
 
-import { CreateRefresh } from '../refresh/refresh.interface';
 import { RefreshService } from '../refresh/refresh.service';
-import { UserAuth } from '../user/user.interface';
+import { CreateRefresh } from '../refresh/refresh.type';
+import { UserAuth } from '../user/user.type';
 import { UserService } from '../user/user.service';
 import { JWT_TOKEN_EXPIRE_TIME } from './auth.resource';
 import { Payload } from './strategies/jwt.strategy';

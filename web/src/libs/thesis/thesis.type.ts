@@ -1,10 +1,10 @@
 import { Moment } from 'moment';
 
-import { CommonColumns, CommonResponse } from '../common/common.interface';
-import { Lecturer, LecturerSearchAttendee } from '../lecturer/lecturer.interface';
-import { StudentSearchAttendee } from '../student/student.interface';
-import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.interface';
-import { ThesisStudent } from './thesis-student/thesis-student.interface';
+import { CommonColumns, CommonResponse } from '../common/common.type';
+import { Lecturer, LecturerSearchAttendee } from '../lecturer/lecturer.type';
+import { StudentSearchAttendee } from '../student/student.type';
+import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
+import { ThesisStudent } from './thesis-student/thesis-student.type';
 import { ThesisState, ThesisStatus } from './thesis.resource';
 
 export interface Thesis extends CommonColumns {

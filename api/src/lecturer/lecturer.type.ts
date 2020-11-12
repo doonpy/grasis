@@ -1,5 +1,5 @@
-import { CommonColumns, CommonFindManyResponse, CommonResponse } from '../common/common.interface';
-import { UserForFastView, UserForListView } from '../user/user.interface';
+import { CommonColumns, CommonFindManyResponse, CommonResponse } from '../common/common.type';
+import { UserForFastView, UserForListView } from '../user/user.type';
 import { LecturerEntity } from './lecturer.entity';
 
 export type Lecturer = LecturerEntity;

@@ -13,8 +13,8 @@ import {
 import { Response } from 'express';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonResponse } from '../common/common.interface';
 import { CommonQueryValue, ReportModule } from '../common/common.resource';
+import { CommonResponse } from '../common/common.type';
 import {
   commonFilenameValidationSchema,
   commonIdValidateSchema

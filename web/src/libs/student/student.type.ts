@@ -1,6 +1,6 @@
-import { CommonColumns, CommonResponse } from '../common/common.interface';
-import { Thesis } from '../thesis/thesis.interface';
-import { User, UserForFastView, UserForListView, UserRequestBody } from '../user/user.interface';
+import { CommonColumns, CommonResponse } from '../common/common.type';
+import { Thesis } from '../thesis/thesis.type';
+import { User, UserForFastView, UserForListView, UserRequestBody } from '../user/user.type';
 import { IsGraduate } from './student.resource';
 
 export interface Student extends CommonColumns {

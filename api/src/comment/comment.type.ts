@@ -1,5 +1,5 @@
-import { CommonColumns, CommonResponse } from '../common/common.interface';
-import { UserForCommentView } from '../user/user.interface';
+import { CommonColumns, CommonResponse } from '../common/common.type';
+import { UserForCommentView } from '../user/user.type';
 import { CommentEntity } from './comment.entity';
 
 export type Comment = CommentEntity;

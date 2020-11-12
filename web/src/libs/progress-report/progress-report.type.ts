@@ -1,8 +1,8 @@
 import { Moment } from 'moment';
 
-import { CommonColumns, CommonResponse } from '../common/common.interface';
-import { StudentForFastView } from '../student/student.interface';
-import { Topic } from '../topic/topic.interface';
+import { CommonColumns, CommonResponse } from '../common/common.type';
+import { StudentForFastView } from '../student/student.type';
+import { Topic } from '../topic/topic.type';
 import { IsPassed } from './progress-report.resource';
 
 export interface ProgressReport extends CommonColumns {

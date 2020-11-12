@@ -1,6 +1,6 @@
-import { CommonColumns } from '../../common/common.interface';
-import { Lecturer } from '../../lecturer/lecturer.interface';
-import { Topic } from '../topic.interface';
+import { CommonColumns } from '../../common/common.type';
+import { Lecturer } from '../../lecturer/lecturer.type';
+import { Topic } from '../topic.type';
 import { TopicStateAction } from './topic-state.resource';
 
 export interface TopicState extends CommonColumns {

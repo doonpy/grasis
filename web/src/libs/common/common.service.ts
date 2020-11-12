@@ -5,10 +5,10 @@ import { StatusCodes } from 'http-status-codes';
 
 import ApiService from '../api/api.service';
 import JwtClient from '../jwt/jwt.client';
-import { LecturerSearchAttendeesResponse } from '../lecturer/lecturer.interface';
 import { LecturerApi } from '../lecturer/lecturer.resource';
-import { StudentSearchAttendeesResponse } from '../student/student.interface';
+import { LecturerSearchAttendeesResponse } from '../lecturer/lecturer.type';
 import { StudentApi } from '../student/student.resource';
+import { StudentSearchAttendeesResponse } from '../student/student.type';
 import { ThesisAttendeeTarget } from '../thesis/thesis.resource';
 import CommonRedirect, { RenderSide } from './common.redirect';
 import { COMMON_PATH } from './common.resource';

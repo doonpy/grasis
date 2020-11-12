@@ -1,5 +1,5 @@
-import { CommonColumns, CommonResponse } from '../common/common.interface';
-import { StudentForFastView } from '../student/student.interface';
+import { CommonColumns, CommonResponse } from '../common/common.type';
+import { StudentForFastView } from '../student/student.type';
 import { ProgressReportEntity } from './progress-report.entity';
 
 export type ProgressReport = ProgressReportEntity;

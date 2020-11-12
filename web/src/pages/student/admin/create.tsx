@@ -7,11 +7,11 @@ import { StudentTerminology } from '../../../assets/terminology/student.terminol
 import MainLayout from '../../../components/Layout/MainLayout';
 import StudentFormItem from '../../../components/Student/StudentFormItem';
 import UserFormItem from '../../../components/User/UserFormItem';
-import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../libs/common/common.resource';
+import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.type';
 import StudentAdminService from '../../../libs/student/admin.service';
-import { StudentForm } from '../../../libs/student/student.interface';
 import { STUDENT_ADMIN_PATH_ROOT } from '../../../libs/student/student.resource';
+import { StudentForm } from '../../../libs/student/student.type';
 import { UserType } from '../../../libs/user/user.resource';
 
 const Create: NextPageWithLayout = () => {

@@ -1,6 +1,6 @@
-import { CommonColumns, CommonResponse } from '../common/common.interface';
-import { LecturerSearchAttendee } from '../lecturer/lecturer.interface';
-import { StudentSearchAttendee } from '../student/student.interface';
+import { CommonColumns, CommonResponse } from '../common/common.type';
+import { LecturerSearchAttendee } from '../lecturer/lecturer.type';
+import { StudentSearchAttendee } from '../student/student.type';
 import { ThesisEntity } from './thesis.entity';
 import { ThesisState, ThesisStatus } from './thesis.resource';
 

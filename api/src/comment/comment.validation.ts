@@ -2,8 +2,8 @@ import Joi from '@hapi/joi';
 
 import { commonIdValidateSchema } from '../common/common.validation';
 import { ThesisState } from '../thesis/thesis.resource';
-import { CommentRequestBody } from './comment.interface';
 import { CommentMode } from './comment.resource';
+import { CommentRequestBody } from './comment.type';
 
 export const stateValidateSchema = Joi.number()
   .integer()

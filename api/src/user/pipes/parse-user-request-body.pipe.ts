@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 
-import { RawUserRequestBody, UserRequestBody } from '../user.interface';
+import { RawUserRequestBody, UserRequestBody } from '../user.type';
 
 @Injectable()
 export class ParseUserRequestBodyPipe

@@ -3,14 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, FindOptionsWhere, In, Like, Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../../common/common.resource';
-import { LecturerSearchAttendee } from '../../lecturer/lecturer.interface';
 import { LecturerError } from '../../lecturer/lecturer.resource';
 import { LecturerService } from '../../lecturer/lecturer.service';
-import { User } from '../../user/user.interface';
-import { Thesis } from '../thesis.interface';
+import { LecturerSearchAttendee } from '../../lecturer/lecturer.type';
+import { User } from '../../user/user.type';
 import { ThesisStatus } from '../thesis.resource';
+import { Thesis } from '../thesis.type';
 import { ThesisLecturerEntity } from './thesis-lecturer.entity';
-import { ThesisLecturer, ThesisLecturerForView } from './thesis-lecturer.interface';
+import { ThesisLecturer, ThesisLecturerForView } from './thesis-lecturer.type';
 
 @Injectable()
 export class ThesisLecturerService {

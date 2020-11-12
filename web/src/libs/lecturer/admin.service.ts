@@ -4,6 +4,7 @@ import useSWR from 'swr';
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import UserService from '../user/user.service';
 import LecturerBase from './lecturer.base';
+import { LECTURER_API_ADMIN_ROOT, LecturerApi } from './lecturer.resource';
 import {
   CreateLecturerResponse,
   FindManyLecturerResponse,
@@ -11,8 +12,7 @@ import {
   LecturerForm,
   UseLecturer,
   UseLecturers
-} from './lecturer.interface';
-import { LECTURER_API_ADMIN_ROOT, LecturerApi } from './lecturer.resource';
+} from './lecturer.type';
 
 export default class LecturerAdminService extends LecturerBase {
   private static instance: LecturerAdminService;

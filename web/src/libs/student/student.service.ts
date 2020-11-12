@@ -3,13 +3,13 @@ import useSWR from 'swr';
 
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import StudentBase from './student.base';
+import { STUDENT_API_ROOT, StudentApi } from './student.resource';
 import {
   FindManyStudentResponse,
   StudentRequestBody,
   StudentSearchAttendee,
   UseStudents
-} from './student.interface';
-import { STUDENT_API_ROOT, StudentApi } from './student.resource';
+} from './student.type';
 
 export default class StudentService extends StudentBase {
   private static instance: StudentService;

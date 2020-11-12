@@ -35,6 +35,8 @@ import { ParseTopicChangeStudentRegisterStatusPipe } from './pipes/parse-topic-c
 import { ParseTopicRequestBodyPipe } from './pipes/parse-topic-request-body.pipe';
 import { TopicStateService } from './topic-state/topic-state.service';
 import { TopicStudentService } from './topic-student/topic-student.service';
+import { TopicPath, TopicQuery } from './topic.resource';
+import { TopicService } from './topic.service';
 import {
   Topic,
   TopicChangeStatusRequestBody,
@@ -43,9 +45,7 @@ import {
   TopicGetByIdResponse,
   TopicGetManyResponse,
   TopicRequestBody
-} from './topic.interface';
-import { TopicPath, TopicQuery } from './topic.resource';
-import { TopicService } from './topic.service';
+} from './topic.type';
 import {
   topicChangeActionValidationSchema,
   topicChangeStudentRegisterStatusValidationSchema,

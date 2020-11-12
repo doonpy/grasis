@@ -5,8 +5,8 @@ import Link from 'next/link';
 import React from 'react';
 
 import { sortByString } from '../../libs/common/common.helper';
-import { LecturerForListView } from '../../libs/lecturer/lecturer.interface';
 import { LECTURER_ADMIN_PATH_ROOT } from '../../libs/lecturer/lecturer.resource';
+import { LecturerForListView } from '../../libs/lecturer/lecturer.type';
 import TextData from '../Common/TextData';
 import { UserAdminTableColumns } from '../User/UserAdminTableColumns';
 

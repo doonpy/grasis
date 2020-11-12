@@ -3,8 +3,8 @@ import React from 'react';
 
 import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
-import { ThesisForView } from '../../libs/thesis/thesis.interface';
 import { ThesisState } from '../../libs/thesis/thesis.resource';
+import { ThesisForView } from '../../libs/thesis/thesis.type';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import ThesisCreatorRender from './ThesisCreatorRender';

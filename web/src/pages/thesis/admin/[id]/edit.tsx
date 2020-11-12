@@ -8,16 +8,13 @@ import { ThesisTerminology } from '../../../../assets/terminology/thesis.termino
 import MainLayout from '../../../../components/Layout/MainLayout';
 import ThesisAttendeesSelectFormItem from '../../../../components/Thesis/ThesisAttendeesSelectFormItem';
 import ThesisFormItem from '../../../../components/Thesis/ThesisFormItem';
-import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
-import { LecturerSearchAttendee } from '../../../../libs/lecturer/lecturer.interface';
-import {
-  StudentRequestBody,
-  StudentSearchAttendee
-} from '../../../../libs/student/student.interface';
+import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.type';
+import { LecturerSearchAttendee } from '../../../../libs/lecturer/lecturer.type';
+import { StudentRequestBody, StudentSearchAttendee } from '../../../../libs/student/student.type';
 import ThesisAdminService from '../../../../libs/thesis/admin.service';
-import { ThesisRequestBody } from '../../../../libs/thesis/thesis.interface';
 import { THESIS_PATH_ROOT, ThesisAttendeeTarget } from '../../../../libs/thesis/thesis.resource';
+import { ThesisRequestBody } from '../../../../libs/thesis/thesis.type';
 import { UserType } from '../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {

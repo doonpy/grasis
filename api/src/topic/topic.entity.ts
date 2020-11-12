@@ -7,18 +7,18 @@ import {
   commonStringColumnOptions
 } from '../common/common.resource';
 import { LecturerEntity } from '../lecturer/lecturer.entity';
-import { Lecturer } from '../lecturer/lecturer.interface';
+import { Lecturer } from '../lecturer/lecturer.type';
 import { ProgressReportEntity } from '../progress-report/progress-report.entity';
-import { ProgressReport } from '../progress-report/progress-report.interface';
 import { ProgressReportColumn } from '../progress-report/progress-report.resource';
+import { ProgressReport } from '../progress-report/progress-report.type';
 import { ThesisEntity } from '../thesis/thesis.entity';
-import { Thesis } from '../thesis/thesis.interface';
+import { Thesis } from '../thesis/thesis.type';
 import { TopicStateEntity } from './topic-state/topic-state.entity';
-import { TopicState } from './topic-state/topic-state.interface';
 import { TopicStateAction, TopicStateColumn } from './topic-state/topic-state.resource';
+import { TopicState } from './topic-state/topic-state.type';
 import { TopicStudentEntity } from './topic-student/topic_student.entity';
-import { TopicStudent } from './topic-student/topic-student.interface';
 import { TopicStudentColumn } from './topic-student/topic-student.resouce';
+import { TopicStudent } from './topic-student/topic-student.type';
 import { TOPIC_TABLE, TopicColumn, TopicRegisterStatus } from './topic.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: TOPIC_TABLE })

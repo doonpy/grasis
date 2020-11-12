@@ -9,7 +9,7 @@ import { ProgressReportService } from '../progress-report/progress-report.servic
 import { StudentService } from '../student/student.service';
 import { ThesisState } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
-import { User } from '../user/user.interface';
+import { User } from '../user/user.type';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import {
@@ -21,8 +21,8 @@ import { TopicStateService } from './topic-state/topic-state.service';
 import { TopicStudentStatus } from './topic-student/topic-student.resouce';
 import { TopicStudentService } from './topic-student/topic-student.service';
 import { TopicEntity } from './topic.entity';
-import { Topic, TopicChangeStatusRequestBody, TopicRequestBody } from './topic.interface';
 import { TopicError, TopicRegisterStatus } from './topic.resource';
+import { Topic, TopicChangeStatusRequestBody, TopicRequestBody } from './topic.type';
 
 @Injectable()
 export class TopicService {

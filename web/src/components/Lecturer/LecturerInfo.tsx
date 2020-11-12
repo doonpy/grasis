@@ -3,7 +3,7 @@ import { Avatar, Space } from 'antd';
 import React from 'react';
 
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
-import { Lecturer } from '../../libs/lecturer/lecturer.interface';
+import { Lecturer } from '../../libs/lecturer/lecturer.type';
 
 interface ComponentProps {
   lecturer: Lecturer;

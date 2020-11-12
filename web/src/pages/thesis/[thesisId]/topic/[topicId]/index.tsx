@@ -21,9 +21,9 @@ import ProgressReportInfo from '../../../../../components/ProgressReport/Progres
 import TopicInfo from '../../../../../components/Topic/TopicInfo';
 import TopicPrivateInfo from '../../../../../components/Topic/TopicPrivateInfo';
 import TopicStudentInfo from '../../../../../components/Topic/TopicStudentsInfo';
-import { CommonPageProps, NextPageWithLayout } from '../../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../../libs/common/common.resource';
 import CommonService from '../../../../../libs/common/common.service';
+import { CommonPageProps, NextPageWithLayout } from '../../../../../libs/common/common.type';
 import { THESIS_PATH_ROOT, ThesisPath } from '../../../../../libs/thesis/thesis.resource';
 import { TopicStateAction } from '../../../../../libs/topic/topic-state/topic-state.resource';
 import { TOPIC_PATH_ROOT, TopicPath } from '../../../../../libs/topic/topic.resource';

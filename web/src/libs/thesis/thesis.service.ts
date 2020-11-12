@@ -5,19 +5,16 @@ import CommonService from '../common/common.service';
 import {
   ThesisGetLecturersResponse,
   UseThesisLecturers
-} from './thesis-lecturer/thesis-lecturer.interface';
-import {
-  ThesisGetStudentsResponse,
-  UseThesisStudents
-} from './thesis-student/thesis-student.interface';
+} from './thesis-lecturer/thesis-lecturer.type';
+import { ThesisGetStudentsResponse, UseThesisStudents } from './thesis-student/thesis-student.type';
+import { ThesisApi, ThesisState } from './thesis.resource';
 import {
   Thesis,
   ThesisFindManyResponse,
   ThesisGetByIdResponse,
   UseTheses,
   UseThesis
-} from './thesis.interface';
-import { ThesisApi, ThesisState } from './thesis.resource';
+} from './thesis.type';
 
 export default class ThesisService extends CommonService {
   private static instance: ThesisService;

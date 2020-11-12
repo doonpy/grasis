@@ -20,15 +20,15 @@ import { commonIdValidateSchema } from '../common/common.validation';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { ParseThesisRequestBodyPipe } from './pipes/parse-thesis-request-body.pipe';
+import { THESIS_ADMIN_ROOT_PATH, ThesisPath } from './thesis.resource';
+import { ThesisService } from './thesis.service';
 import {
   Thesis,
   ThesisCreateOrUpdateResponse,
   ThesisGetByIdForEditResponse,
   ThesisRequestBody,
   ThesisSwitchStatusResponse
-} from './thesis.interface';
-import { THESIS_ADMIN_ROOT_PATH, ThesisPath } from './thesis.resource';
-import { ThesisService } from './thesis.service';
+} from './thesis.type';
 import { thesisCreateValidationSchema, thesisUpdateValidationSchema } from './thesis.validation';
 
 @UseGuards(JwtAuthGuard, AdminGuard)

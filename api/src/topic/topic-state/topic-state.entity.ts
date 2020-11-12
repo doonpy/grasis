@@ -7,9 +7,9 @@ import {
   commonStringColumnOptions
 } from '../../common/common.resource';
 import { LecturerEntity } from '../../lecturer/lecturer.entity';
-import { Lecturer } from '../../lecturer/lecturer.interface';
+import { Lecturer } from '../../lecturer/lecturer.type';
 import { TopicEntity } from '../topic.entity';
-import { Topic } from '../topic.interface';
+import { Topic } from '../topic.type';
 import { TOPIC_STATE_TABLE, TopicStateAction, TopicStateColumn } from './topic-state.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: TOPIC_STATE_TABLE })

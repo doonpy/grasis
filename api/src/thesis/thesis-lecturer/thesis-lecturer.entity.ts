@@ -3,9 +3,9 @@ import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { CommonEntity } from '../../common/common.entity';
 import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../../common/common.resource';
 import { LecturerEntity } from '../../lecturer/lecturer.entity';
-import { Lecturer } from '../../lecturer/lecturer.interface';
+import { Lecturer } from '../../lecturer/lecturer.type';
 import { ThesisEntity } from '../thesis.entity';
-import { Thesis } from '../thesis.interface';
+import { Thesis } from '../thesis.type';
 import { THESIS_LECTURER_TABLE, ThesisLecturerColumn } from './thesis-lecturer.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: THESIS_LECTURER_TABLE })

@@ -1,6 +1,6 @@
-import { CommonColumns, CommonResponse } from '../common/common.interface';
+import { CommonColumns, CommonResponse } from '../common/common.type';
 import { ThesisState } from '../thesis/thesis.resource';
-import { UserForCommentView } from '../user/user.interface';
+import { UserForCommentView } from '../user/user.type';
 import { CommentMode } from './comment.resource';
 
 export interface Comment extends CommonColumns {

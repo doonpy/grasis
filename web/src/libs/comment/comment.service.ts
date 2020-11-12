@@ -3,8 +3,8 @@ import useSWR from 'swr';
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { ThesisState } from '../thesis/thesis.resource';
-import { CommentGetManyResponse, UseComment } from './comment.interface';
 import { COMMENT_API_ROOT, CommentApi, CommentMode } from './comment.resource';
+import { CommentGetManyResponse, UseComment } from './comment.type';
 
 export default class CommentService extends CommonService {
   private static instance: CommentService;

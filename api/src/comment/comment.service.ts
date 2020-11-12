@@ -8,8 +8,8 @@ import { TopicService } from '../topic/topic.service';
 import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { CommentEntity } from './comment.entity';
-import { Comment, CommentForView, CommentRequestBody } from './comment.interface';
 import { CommentError, CommentMode } from './comment.resource';
+import { Comment, CommentForView, CommentRequestBody } from './comment.type';
 
 @Injectable()
 export class CommentService {
