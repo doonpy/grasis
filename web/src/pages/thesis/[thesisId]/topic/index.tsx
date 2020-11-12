@@ -11,9 +11,9 @@ import { TopicTerminology } from '../../../../assets/terminology/topic.terminolo
 import SearchBox from '../../../../components/Common/SearchBox';
 import MainLayout from '../../../../components/Layout/MainLayout';
 import { TopicTableColumns } from '../../../../components/Topic/TopicTableColumns';
-import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../../libs/common/common.resource';
 import CommonService from '../../../../libs/common/common.service';
+import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.type';
 import { THESIS_PATH_ROOT, ThesisPath, ThesisState } from '../../../../libs/thesis/thesis.resource';
 import ThesisService from '../../../../libs/thesis/thesis.service';
 import { TopicPath } from '../../../../libs/topic/topic.resource';

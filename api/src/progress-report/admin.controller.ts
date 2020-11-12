@@ -17,12 +17,12 @@ import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { ProgressReportGuard } from './guards/progress-report.guard';
+import { IsPassed, ProgressReportBody, ProgressReportPath } from './progress-report.resource';
+import { ProgressReportService } from './progress-report.service';
 import {
   ProgressReportCreateOrUpdateResponse,
   ProgressReportRequestBody
-} from './progress-report.interface';
-import { IsPassed, ProgressReportBody, ProgressReportPath } from './progress-report.resource';
-import { ProgressReportService } from './progress-report.service';
+} from './progress-report.type';
 import {
   progressReportCreateValidationSchema,
   progressReportIsPassedValidationSchema

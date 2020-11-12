@@ -1,4 +1,4 @@
-import { User } from '../user.interface';
+import { User } from '../user.type';
 import { IsAdmin, UserType } from '../user.resource';
 
 export default class LoginUser {

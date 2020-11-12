@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 
-import { RawTopicRequestBody, TopicRequestBody } from '../topic.interface';
+import { RawTopicRequestBody, TopicRequestBody } from '../topic.type';
 
 @Injectable()
 export class ParseTopicRequestBodyPipe

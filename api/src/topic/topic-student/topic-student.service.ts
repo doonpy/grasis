@@ -5,8 +5,8 @@ import { EntityManager, In, Not, Repository } from 'typeorm';
 import { notDeleteCondition } from '../../common/common.resource';
 import { TopicError } from '../topic.resource';
 import { TopicStudentEntity } from './topic_student.entity';
-import { TopicStudent } from './topic-student.interface';
 import { TopicStudentStatus } from './topic-student.resouce';
+import { TopicStudent } from './topic-student.type';
 
 @Injectable()
 export class TopicStudentService {

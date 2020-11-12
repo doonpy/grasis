@@ -1,4 +1,4 @@
-import { CommonResponse, FileInfo } from '../common/common.interface';
+import { CommonResponse, FileInfo } from '../common/common.type';
 
 export interface GetReportsResponse extends CommonResponse {
   reports: FileInfo[];

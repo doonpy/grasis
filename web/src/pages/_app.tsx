@@ -7,8 +7,8 @@ import NProgress from 'nprogress';
 import React from 'react';
 import { SWRConfig } from 'swr';
 
-import { CommonPageProps, NextPageWithLayout } from '../libs/common/common.interface';
 import CommonService from '../libs/common/common.service';
+import { CommonPageProps, NextPageWithLayout } from '../libs/common/common.type';
 
 NProgress.configure({ showSpinner: false });
 

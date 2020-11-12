@@ -5,17 +5,17 @@ import { Connection, EntityManager, FindOptionsWhere, Like, Repository } from 't
 import { notDeleteCondition } from '../common/common.resource';
 import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
 import { ThesisService } from '../thesis/thesis.service';
-import { UserRequestBody } from '../user/user.interface';
+import { UserRequestBody } from '../user/user.type';
 import { UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { LecturerEntity } from './lecturer.entity';
+import { LecturerError, LecturerSearchType } from './lecturer.resource';
 import {
   Lecturer,
   LecturerForListView,
   LecturerRequestBody,
   LecturerSearchAttendee
-} from './lecturer.interface';
-import { LecturerError, LecturerSearchType } from './lecturer.resource';
+} from './lecturer.type';
 
 @Injectable()
 export class LecturerService {

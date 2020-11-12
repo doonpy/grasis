@@ -4,7 +4,7 @@ import React, { ChangeEvent, useState } from 'react';
 
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
-import { Topic } from '../../libs/topic/topic.interface';
+import { Topic } from '../../libs/topic/topic.type';
 import TopicService from '../../libs/topic/topic.service';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import AvatarForComment from '../Avatar/AvatarForComment';

@@ -15,9 +15,9 @@ import { UserTypes } from '../common/decorators/user-type.decorator';
 import { UserTypeGuard } from '../common/guards/user-type.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { UserType } from '../user/user.resource';
-import { Student, StudentFindByIdResponse } from './student.interface';
 import { StudentPath } from './student.resource';
 import { StudentService } from './student.service';
+import { Student, StudentFindByIdResponse } from './student.type';
 
 @UseGuards(JwtAuthGuard)
 @Controller(StudentPath.ROOT)

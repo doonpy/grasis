@@ -11,7 +11,7 @@ import {
   Remember,
   User,
   UserRequestBody
-} from './user.interface';
+} from './user.type';
 import { IsAdmin, UserApi, UserStatus, UserType } from './user.resource';
 
 export default class UserService extends CommonService {

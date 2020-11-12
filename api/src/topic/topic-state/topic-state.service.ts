@@ -4,7 +4,7 @@ import { EntityManager, Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../../common/common.resource';
 import { TopicStateEntity } from './topic-state.entity';
-import { TopicState } from './topic-state.interface';
+import { TopicState } from './topic-state.type';
 
 @Injectable()
 export class TopicStateService {

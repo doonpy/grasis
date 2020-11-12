@@ -1,7 +1,7 @@
-import { CommonResponse } from '../../common/common.interface';
-import { Student } from '../../student/student.interface';
+import { CommonResponse } from '../../common/common.type';
+import { Student } from '../../student/student.type';
 import { Gender } from '../../user/user.resource';
-import { Thesis } from '../thesis.interface';
+import { Thesis } from '../thesis.type';
 
 export interface ThesisStudent {
   thesisId: number;

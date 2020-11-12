@@ -1,6 +1,6 @@
-import { CommonColumns } from '../../common/common.interface';
-import { Student } from '../../student/student.interface';
-import { Topic } from '../topic.interface';
+import { CommonColumns } from '../../common/common.type';
+import { Student } from '../../student/student.type';
+import { Topic } from '../topic.type';
 import { TopicStudentStatus } from './topic-student.resource';
 
 export interface TopicStudent extends CommonColumns {

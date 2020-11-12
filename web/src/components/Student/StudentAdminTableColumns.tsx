@@ -5,8 +5,8 @@ import Link from 'next/link';
 import React from 'react';
 
 import { sortByString } from '../../libs/common/common.helper';
-import { StudentForListView } from '../../libs/student/student.interface';
 import { STUDENT_ADMIN_PATH_ROOT } from '../../libs/student/student.resource';
+import { StudentForListView } from '../../libs/student/student.type';
 import TextData from '../Common/TextData';
 import { UserAdminTableColumns } from '../User/UserAdminTableColumns';
 

@@ -7,15 +7,15 @@ import {
   commonStringColumnOptions
 } from '../common/common.resource';
 import { ThesisStudentEntity } from '../thesis/thesis-student/thesis-student.entity';
-import { ThesisStudent } from '../thesis/thesis-student/thesis-student.interface';
 import { ThesisStudentColumn } from '../thesis/thesis-student/thesis-student.resource';
+import { ThesisStudent } from '../thesis/thesis-student/thesis-student.type';
 import { TopicStudentEntity } from '../topic/topic-student/topic_student.entity';
-import { TopicStudent } from '../topic/topic-student/topic-student.interface';
 import { TopicStudentColumn } from '../topic/topic-student/topic-student.resouce';
+import { TopicStudent } from '../topic/topic-student/topic-student.type';
 import { UserEntity } from '../user/user.entity';
-import { User } from '../user/user.interface';
-import { StudentForFastView } from './student.interface';
+import { User } from '../user/user.type';
 import { IsGraduate, STUDENT_TABLE, StudentColumn } from './student.resource';
+import { StudentForFastView } from './student.type';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: STUDENT_TABLE })
 export class StudentEntity extends CommonEntity {

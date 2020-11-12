@@ -5,8 +5,8 @@ import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import LoginUser from '../user/instance/LoginUser';
 import { TopicStateAction } from './topic-state/topic-state.resource';
-import { TopicStudent } from './topic-student/topic-student.interface';
 import { TopicStudentStatus } from './topic-student/topic-student.resource';
+import { TopicStudent } from './topic-student/topic-student.type';
 import {
   Topic,
   TopicCreateOrUpdateResponse,
@@ -14,7 +14,7 @@ import {
   TopicGetByIdResponse,
   TopicRequestBody,
   UseTopics
-} from './topic.interface';
+} from './topic.type';
 import { TOPIC_API_ROOT, TopicApi } from './topic.resource';
 
 export default class TopicService extends CommonService {

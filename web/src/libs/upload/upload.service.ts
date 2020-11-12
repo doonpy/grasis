@@ -2,7 +2,7 @@ import useSWR from 'swr';
 
 import { ReportModule } from '../common/common.resource';
 import CommonService from '../common/common.service';
-import { GetReportsResponse, UseReports } from './upload.interface';
+import { GetReportsResponse, UseReports } from './upload.type';
 import { UploadApi } from './upload.resource';
 
 export default class UploadService extends CommonService {

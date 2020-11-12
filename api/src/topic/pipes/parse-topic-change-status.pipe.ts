@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 
-import { RawTopicChangeStatusRequestBody, TopicChangeStatusRequestBody } from '../topic.interface';
+import { RawTopicChangeStatusRequestBody, TopicChangeStatusRequestBody } from '../topic.type';
 
 @Injectable()
 export class ParseTopicChangeStatusPipe

@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi';
 
-import { UserRequestBody, UserRequestBodyForUser } from './user.interface';
+import { UserRequestBody, UserRequestBodyForUser } from './user.type';
 import { Gender, IsAdmin, UserStatus } from './user.resource';
 
 export const userUpdateValidationSchema = Joi.object<UserRequestBody>({

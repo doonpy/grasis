@@ -4,8 +4,8 @@ import mime from 'mime-types';
 
 import { AwsService } from '../aws/aws.service';
 import { isProductionMode } from '../common/common.helper';
-import { FileInfo } from '../common/common.interface';
 import { ReportModule } from '../common/common.resource';
+import { FileInfo } from '../common/common.type';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { UserService } from '../user/user.service';
 import { UPLOAD_ROOT_FOLDER, UploadDestination, UploadError } from './upload.resource';

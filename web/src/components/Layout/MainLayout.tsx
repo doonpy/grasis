@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 import styles from '../../assets/css/components/layout/main-layout.module.css';
-import { CommonPageProps } from '../../libs/common/common.interface';
 import { COMMON_PATH } from '../../libs/common/common.resource';
+import { CommonPageProps } from '../../libs/common/common.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import { IsAdmin } from '../../libs/user/user.resource';
 import UserService from '../../libs/user/user.service';

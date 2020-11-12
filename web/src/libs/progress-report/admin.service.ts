@@ -1,11 +1,11 @@
 import { AxiosResponse } from 'axios';
 
 import CommonService from '../common/common.service';
+import { ProgressReportApi } from './progress-report.resource';
 import {
   ProgressReportCreateOrUpdateResponse,
   ProgressReportRequestBody
-} from './progress-report.interface';
-import { ProgressReportApi } from './progress-report.resource';
+} from './progress-report.type';
 
 export default class ProgressReportAdminService extends CommonService {
   private static instance: ProgressReportAdminService;

@@ -4,20 +4,20 @@ import moment from 'moment';
 import { EntityManager, Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../common/common.resource';
-import { Thesis } from '../thesis/thesis.interface';
 import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
+import { Thesis } from '../thesis/thesis.type';
 import { TopicStudentService } from '../topic/topic-student/topic-student.service';
-import { Topic } from '../topic/topic.interface';
 import { TopicService } from '../topic/topic.service';
-import { User } from '../user/user.interface';
+import { Topic } from '../topic/topic.type';
+import { User } from '../user/user.type';
 import { UserType } from '../user/user.resource';
 import { ProgressReportEntity } from './progress-report.entity';
+import { IsPassed, ProgressReportError } from './progress-report.resource';
 import {
   ProgressReport,
   ProgressReportForView,
   ProgressReportRequestBody
-} from './progress-report.interface';
-import { IsPassed, ProgressReportError } from './progress-report.resource';
+} from './progress-report.type';
 
 @Injectable()
 export class ProgressReportService {

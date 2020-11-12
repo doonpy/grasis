@@ -13,9 +13,9 @@ import { CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
-import { ProgressReportGetByIdResponse } from './progress-report.interface';
 import { ProgressReportPath, ProgressReportQuery } from './progress-report.resource';
 import { ProgressReportService } from './progress-report.service';
+import { ProgressReportGetByIdResponse } from './progress-report.type';
 
 @UseGuards(JwtAuthGuard, TopicPermissionGuard)
 @Controller(ProgressReportPath.ROOT)

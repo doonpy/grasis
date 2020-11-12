@@ -24,11 +24,13 @@ import {
 import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { ParseUserRequestBodyPipe } from '../user/pipes/parse-user-request-body.pipe';
-import { UserRequestBody } from '../user/user.interface';
+import { UserRequestBody } from '../user/user.type';
 import {
   userCreateValidationSchemaForStudent,
   userUpdateValidationSchemaForStudent
 } from '../user/user.validation';
+import { StudentBodyProps, StudentPath, StudentSearchType } from './student.resource';
+import { StudentService } from './student.service';
 import {
   Student,
   StudentCreateOrUpdateResponse,
@@ -36,9 +38,7 @@ import {
   StudentFindManyResponse,
   StudentRequestBody,
   StudentSearchAttendeesResponse
-} from './student.interface';
-import { StudentBodyProps, StudentPath, StudentSearchType } from './student.resource';
-import { StudentService } from './student.service';
+} from './student.type';
 import { studentValidationSchema } from './student.validation';
 
 @UseGuards(JwtAuthGuard, AdminGuard)

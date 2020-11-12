@@ -3,7 +3,7 @@ import { Injectable, PipeTransform } from '@nestjs/common';
 import {
   RawTopicChangeStudentRegisterStatusRequestBody,
   TopicChangeStudentRegisterStatusRequestBody
-} from '../topic.interface';
+} from '../topic.type';
 
 @Injectable()
 export class ParseTopicChangeStudentRegisterStatusPipe

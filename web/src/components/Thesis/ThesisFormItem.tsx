@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 
 import styles from '../../assets/css/components/thesis/thesis-form-item.module.css';
 import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
-import { ThesisRequestBody } from '../../libs/thesis/thesis.interface';
+import { ThesisRequestBody } from '../../libs/thesis/thesis.type';
 
 interface ComponentProps {
   initThesis?: ThesisRequestBody;

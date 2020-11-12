@@ -1,4 +1,4 @@
-import { CommonColumns } from '../common/common.interface';
+import { CommonColumns } from '../common/common.type';
 import { UserEntity } from './user.entity';
 
 export type User = UserEntity;

@@ -7,16 +7,16 @@ import {
   commonStringColumnOptions
 } from '../common/common.resource';
 import { LecturerEntity } from '../lecturer/lecturer.entity';
-import { Lecturer } from '../lecturer/lecturer.interface';
+import { Lecturer } from '../lecturer/lecturer.type';
 import { TopicEntity } from '../topic/topic.entity';
-import { Topic } from '../topic/topic.interface';
 import { TopicColumn } from '../topic/topic.resource';
+import { Topic } from '../topic/topic.type';
 import { ThesisLecturerEntity } from './thesis-lecturer/thesis-lecturer.entity';
-import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.interface';
 import { ThesisLecturerColumn } from './thesis-lecturer/thesis-lecturer.resource';
+import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
 import { ThesisStudentEntity } from './thesis-student/thesis-student.entity';
-import { ThesisStudent } from './thesis-student/thesis-student.interface';
 import { ThesisStudentColumn } from './thesis-student/thesis-student.resource';
+import { ThesisStudent } from './thesis-student/thesis-student.type';
 import { THESIS_TABLE, ThesisColumn, ThesisState, ThesisStatus } from './thesis.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: THESIS_TABLE })

@@ -6,7 +6,7 @@ import {
   Topic,
   TopicChangeStatusRequestBody,
   TopicChangeStudentRegisterStatusRequestBody
-} from './topic.interface';
+} from './topic.type';
 
 const topicValidationSchema = Joi.object<Topic>({
   subject: Joi.string().messages({ 'string.base': 'Tiêu đề phải là chuỗi.' }),

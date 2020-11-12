@@ -5,12 +5,12 @@ import { LessThanOrEqual, Repository } from 'typeorm';
 
 import { Payload } from '../auth/strategies/jwt.strategy';
 import { RefreshEntity } from './refresh.entity';
-import { CreateRefresh, GetRefresh, Refresh } from './refresh.interface';
 import {
   REFRESH_ERROR,
   REFRESH_EXPIRE_TIME,
   REFRESH_EXPIRE_TIME_BY_DAYS
 } from './refresh.resource';
+import { CreateRefresh, GetRefresh, Refresh } from './refresh.type';
 
 @Injectable()
 export class RefreshService {

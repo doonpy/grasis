@@ -1,8 +1,8 @@
 import Joi from '@hapi/joi';
 
 import { userUpdateValidationSchemaForUser } from '../user/user.validation';
-import { StudentRequestBody } from './student.interface';
 import { IsGraduate } from './student.resource';
+import { StudentRequestBody } from './student.type';
 
 export const studentValidationSchema = Joi.object<StudentRequestBody>({
   studentId: Joi.string().allow(null, '').length(8).messages({

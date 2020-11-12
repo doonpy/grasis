@@ -2,14 +2,14 @@ import { AxiosResponse } from 'axios';
 import moment, { Moment } from 'moment';
 
 import CommonService from '../common/common.service';
+import { THESIS_API_ADMIN_ROOT, ThesisApi } from './thesis.resource';
 import {
   ThesisCreateOrUpdateResponse,
   ThesisForEdit,
   ThesisGetByIdForEditResponse,
   ThesisRequestBody,
   ThesisSwitchStatusResponse
-} from './thesis.interface';
-import { THESIS_API_ADMIN_ROOT, ThesisApi } from './thesis.resource';
+} from './thesis.type';
 
 export default class ThesisAdminService extends CommonService {
   private static instance: ThesisAdminService;

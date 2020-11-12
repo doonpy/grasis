@@ -23,13 +23,9 @@ import {
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { ThesisState } from '../thesis/thesis.resource';
-import {
-  CommentCreateResponse,
-  CommentGetManyResponse,
-  CommentRequestBody
-} from './comment.interface';
 import { CommentPath, CommentQuery } from './comment.resource';
 import { CommentService } from './comment.service';
+import { CommentCreateResponse, CommentGetManyResponse, CommentRequestBody } from './comment.type';
 import {
   commentValidateSchema,
   stateValidateSchema,

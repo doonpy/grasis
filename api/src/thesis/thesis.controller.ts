@@ -20,17 +20,13 @@ import {
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { PermissionGuard } from './guards/permission.guard';
-import { ThesisGetThesisLecturersResponse } from './thesis-lecturer/thesis-lecturer.interface';
 import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
-import { ThesisGetThesisStudentsResponse } from './thesis-student/thesis-student.interface';
+import { ThesisGetThesisLecturersResponse } from './thesis-lecturer/thesis-lecturer.type';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
-import {
-  ThesisForListView,
-  ThesisGetByIdResponse,
-  ThesisGetManyResponse
-} from './thesis.interface';
+import { ThesisGetThesisStudentsResponse } from './thesis-student/thesis-student.type';
 import { THESIS_ROOT_PATH, ThesisPath } from './thesis.resource';
 import { ThesisService } from './thesis.service';
+import { ThesisForListView, ThesisGetByIdResponse, ThesisGetManyResponse } from './thesis.type';
 
 @UseGuards(JwtAuthGuard)
 @Controller(THESIS_ROOT_PATH)

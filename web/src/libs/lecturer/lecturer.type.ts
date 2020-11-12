@@ -1,12 +1,12 @@
-import { CommonColumns, CommonResponse } from '../common/common.interface';
-import { Thesis } from '../thesis/thesis.interface';
+import { CommonColumns, CommonResponse } from '../common/common.type';
+import { Thesis } from '../thesis/thesis.type';
 import {
   User,
   UserForFastView,
   UserForListView,
   UserRequestBody,
   UserViewType
-} from '../user/user.interface';
+} from '../user/user.type';
 
 export interface Lecturer extends CommonColumns {
   id: number;

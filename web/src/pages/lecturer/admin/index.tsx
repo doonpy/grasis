@@ -9,8 +9,8 @@ import { LecturerTerminology } from '../../../assets/terminology/lecturer.termin
 import SearchBox from '../../../components/Common/SearchBox';
 import MainLayout from '../../../components/Layout/MainLayout';
 import { LecturerTableColumns } from '../../../components/Lecturer/LecturerTableColumns';
-import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../libs/common/common.resource';
+import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.type';
 import LecturerAdminService from '../../../libs/lecturer/admin.service';
 import { LecturerPath } from '../../../libs/lecturer/lecturer.resource';
 import { UserType } from '../../../libs/user/user.resource';

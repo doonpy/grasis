@@ -15,7 +15,7 @@ import {
   reportModuleSchemaValidation
 } from '../../common/common.validation';
 import { transformException } from '../multer/multer.util';
-import { FileDestinationCallback, FileNameCallback } from '../upload.interface';
+import { FileDestinationCallback, FileNameCallback } from '../upload.type';
 import {
   UPLOAD_REPORT_BODY_PROPERTY,
   UPLOAD_REPORT_LIMIT_FILES,

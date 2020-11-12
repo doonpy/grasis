@@ -3,7 +3,7 @@ import { Avatar, Space } from 'antd';
 import React from 'react';
 
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
-import { CreatorInfo } from '../../libs/thesis/thesis.interface';
+import { CreatorInfo } from '../../libs/thesis/thesis.type';
 
 interface ComponentProps {
   creatorInfo: CreatorInfo;

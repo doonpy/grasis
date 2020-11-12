@@ -1,7 +1,7 @@
 import { Comment } from 'antd';
 import React from 'react';
 
-import { Lecturer } from '../../libs/lecturer/lecturer.interface';
+import { Lecturer } from '../../libs/lecturer/lecturer.type';
 import AvatarForComment from '../Avatar/AvatarForComment';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';

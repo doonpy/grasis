@@ -1,7 +1,7 @@
 import { ReportModule } from '../common/common.resource';
 import CommonService from '../common/common.service';
-import { DownloadPathResponse } from './download.interface';
 import { DownloadApi } from './download.resource';
+import { DownloadPathResponse } from './download.type';
 
 export default class DownloadService extends CommonService {
   private static instance: DownloadService;

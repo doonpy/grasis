@@ -1,7 +1,7 @@
 import Joi from '@hapi/joi';
 
 import { commonIdValidateSchema } from '../common/common.validation';
-import { ThesisRequestBody } from './thesis.interface';
+import { ThesisRequestBody } from './thesis.type';
 
 const thesisValidationSchema = Joi.object<ThesisRequestBody>({
   subject: Joi.string().max(100).messages({

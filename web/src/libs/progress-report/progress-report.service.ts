@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 
 import CommonService from '../common/common.service';
-import { ProgressReportGetByIdResponse, UseProgressReport } from './progress-report.interface';
 import { IsPassed, ProgressReportApi } from './progress-report.resource';
+import { ProgressReportGetByIdResponse, UseProgressReport } from './progress-report.type';
 
 export default class ProgressReportService extends CommonService {
   private static instance: ProgressReportService;

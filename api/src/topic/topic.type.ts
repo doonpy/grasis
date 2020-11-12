@@ -1,4 +1,4 @@
-import { CommonColumns, CommonResponse } from '../common/common.interface';
+import { CommonColumns, CommonResponse } from '../common/common.type';
 import { TopicStateAction } from './topic-state/topic-state.resource';
 import { TopicStudentStatus } from './topic-student/topic-student.resouce';
 import { TopicEntity } from './topic.entity';

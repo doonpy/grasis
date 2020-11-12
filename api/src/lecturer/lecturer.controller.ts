@@ -12,9 +12,9 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommonParam, CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { Lecturer, LecturerFindByIdResponse } from './lecturer.interface';
 import { LecturerPath } from './lecturer.resource';
 import { LecturerService } from './lecturer.service';
+import { Lecturer, LecturerFindByIdResponse } from './lecturer.type';
 
 @UseGuards(JwtAuthGuard)
 @Controller(LecturerPath.ROOT)

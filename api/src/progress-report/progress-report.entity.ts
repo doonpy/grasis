@@ -7,7 +7,7 @@ import {
   commonStringColumnOptions
 } from '../common/common.resource';
 import { TopicEntity } from '../topic/topic.entity';
-import { Topic } from '../topic/topic.interface';
+import { Topic } from '../topic/topic.type';
 import { IsPassed, PROGRESS_REPORT_TABLE, ProgressReportColumn } from './progress-report.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: PROGRESS_REPORT_TABLE })

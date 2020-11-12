@@ -6,9 +6,9 @@ import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
 import EditIcon from '../../assets/svg/regular/edit.svg';
 import MinusCircleIcon from '../../assets/svg/regular/minus-circle.svg';
 import { ProgressReportTerminology } from '../../assets/terminology/progress-report.terminology';
-import { ProgressReportForView } from '../../libs/progress-report/progress-report.interface';
 import { IsPassed } from '../../libs/progress-report/progress-report.resource';
 import ProgressReportService from '../../libs/progress-report/progress-report.service';
+import { ProgressReportForView } from '../../libs/progress-report/progress-report.type';
 import ProgressReportEditModal from './ProgressReportEditModal';
 
 const { confirm } = Modal;

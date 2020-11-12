@@ -3,7 +3,7 @@ import { Avatar, Space } from 'antd';
 import React from 'react';
 
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
-import { StudentForFastView } from '../../libs/student/student.interface';
+import { StudentForFastView } from '../../libs/student/student.type';
 
 interface ComponentProps {
   student: StudentForFastView;

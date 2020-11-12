@@ -26,8 +26,10 @@ import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { DeleteUserGuard } from '../user/guards/delete-user.guard';
 import { UpdateUserGuard } from '../user/guards/update-user.guard';
 import { ParseUserRequestBodyPipe } from '../user/pipes/parse-user-request-body.pipe';
-import { UserRequestBody } from '../user/user.interface';
+import { UserRequestBody } from '../user/user.type';
 import { userCreateValidationSchema, userUpdateValidationSchema } from '../user/user.validation';
+import { LecturerBodyProps, LecturerPath, LecturerSearchType } from './lecturer.resource';
+import { LecturerService } from './lecturer.service';
 import {
   Lecturer,
   LecturerCreateOrUpdateResponse,
@@ -35,9 +37,7 @@ import {
   LecturerFindManyResponse,
   LecturerRequestBody,
   LecturerSearchAttendeesResponse
-} from './lecturer.interface';
-import { LecturerBodyProps, LecturerPath, LecturerSearchType } from './lecturer.resource';
-import { LecturerService } from './lecturer.service';
+} from './lecturer.type';
 import { lecturerValidationSchema } from './lecturer.validation';
 
 @UseGuards(JwtAuthGuard, AdminGuard)

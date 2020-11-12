@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../common/common.resource';
 import { UserEntity } from './user.entity';
-import { User, UserAuth, UserForCommentView, UserRequestBody } from './user.interface';
+import { User, UserAuth, UserForCommentView, UserRequestBody } from './user.type';
 import { IsAdmin, UserError, UserStatus, UserType } from './user.resource';
 
 @Injectable()

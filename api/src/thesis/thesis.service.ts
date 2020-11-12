@@ -19,22 +19,22 @@ import { LecturerService } from '../lecturer/lecturer.service';
 import { StudentError } from '../student/student.resource';
 import { StudentService } from '../student/student.service';
 import { TopicService } from '../topic/topic.service';
-import { User } from '../user/user.interface';
+import { User } from '../user/user.type';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
-import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.interface';
 import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
-import { ThesisStudent } from './thesis-student/thesis-student.interface';
+import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
+import { ThesisStudent } from './thesis-student/thesis-student.type';
 import { ThesisEntity } from './thesis.entity';
+import { ThesisError, ThesisState, ThesisStatus } from './thesis.resource';
 import {
   Thesis,
   ThesisForEdit,
   ThesisForListView,
   ThesisForView,
   ThesisRequestBody
-} from './thesis.interface';
-import { ThesisError, ThesisState, ThesisStatus } from './thesis.resource';
+} from './thesis.type';
 
 @Injectable()
 export class ThesisService {

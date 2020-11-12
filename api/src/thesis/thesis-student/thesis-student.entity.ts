@@ -3,9 +3,9 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { CommonEntity } from '../../common/common.entity';
 import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../../common/common.resource';
 import { StudentEntity } from '../../student/student.entity';
-import { Student } from '../../student/student.interface';
+import { Student } from '../../student/student.type';
 import { ThesisEntity } from '../thesis.entity';
-import { Thesis } from '../thesis.interface';
+import { Thesis } from '../thesis.type';
 import { THESIS_STUDENT_TABLE, ThesisStudentColumn } from './thesis-student.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: THESIS_STUDENT_TABLE })

@@ -1,4 +1,4 @@
-import { CommonColumns, CommonResponse } from '../common/common.interface';
+import { CommonColumns, CommonResponse } from '../common/common.type';
 import { Gender, IsAdmin, UserStatus, UserType } from './user.resource';
 
 export interface User {

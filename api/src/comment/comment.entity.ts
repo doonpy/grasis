@@ -8,9 +8,9 @@ import {
 } from '../common/common.resource';
 import { ThesisState } from '../thesis/thesis.resource';
 import { TopicEntity } from '../topic/topic.entity';
-import { Topic } from '../topic/topic.interface';
+import { Topic } from '../topic/topic.type';
 import { UserEntity } from '../user/user.entity';
-import { User } from '../user/user.interface';
+import { User } from '../user/user.type';
 import { COMMENT_TABLE, CommentColumn, CommentMode } from './comment.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: COMMENT_TABLE })

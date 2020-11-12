@@ -18,8 +18,8 @@ import { diskStorage } from 'multer';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { isProductionMode } from '../common/common.helper';
-import { CommonResponse } from '../common/common.interface';
 import { CommonQueryValue, ReportModule } from '../common/common.resource';
+import { CommonResponse } from '../common/common.type';
 import {
   commonIdValidateSchema,
   filenameSchemaValidation,
@@ -29,7 +29,7 @@ import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { UploadReportInterceptor } from './interceptors/upload-report.interceptor';
 import { avatarFileFilter, getAvatarDestination, getAvatarFilename } from './upload.helper';
-import { GetReportsResponse } from './upload.interface';
+import { GetReportsResponse } from './upload.type';
 import {
   UPLOAD_REPORT_BODY_PROPERTY,
   UploadBody,

@@ -7,15 +7,15 @@ import React, { useEffect, useState } from 'react';
 import MainLayout from '../../../../components/Layout/MainLayout';
 import LecturerFormItem from '../../../../components/Lecturer/LecturerFormItem';
 import UserFormItem from '../../../../components/User/UserFormItem';
-import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.interface';
 import { SIDER_KEYS } from '../../../../libs/common/common.resource';
 import CommonService from '../../../../libs/common/common.service';
+import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.type';
 import LecturerAdminService from '../../../../libs/lecturer/admin.service';
-import { LecturerForm } from '../../../../libs/lecturer/lecturer.interface';
 import {
   LECTURER_ADMIN_PATH_ROOT,
   LecturerPath
 } from '../../../../libs/lecturer/lecturer.resource';
+import { LecturerForm } from '../../../../libs/lecturer/lecturer.type';
 import { UserType } from '../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {

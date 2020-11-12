@@ -9,8 +9,8 @@ import UserPlusIcon from '../../assets/svg/regular/user-plus.svg';
 import UsersClassIcon from '../../assets/svg/regular/users-class.svg';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { DEFAULT_PAGE_SIZE } from '../../libs/common/common.resource';
-import { TopicStudent } from '../../libs/topic/topic-student/topic-student.interface';
 import { TopicStudentStatus } from '../../libs/topic/topic-student/topic-student.resource';
+import { TopicStudent } from '../../libs/topic/topic-student/topic-student.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import { TopicStudentTableColumns } from './TopicStudentTableColumns';
 

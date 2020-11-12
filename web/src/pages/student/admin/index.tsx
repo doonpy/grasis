@@ -9,8 +9,8 @@ import { StudentTerminology } from '../../../assets/terminology/student.terminol
 import SearchBox from '../../../components/Common/SearchBox';
 import MainLayout from '../../../components/Layout/MainLayout';
 import { StudentAdminTableColumns } from '../../../components/Student/StudentAdminTableColumns';
-import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
 import { DEFAULT_PAGE_SIZE, SIDER_KEYS } from '../../../libs/common/common.resource';
+import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.type';
 import StudentAdminService from '../../../libs/student/admin.service';
 import { StudentPath } from '../../../libs/student/student.resource';
 import { UserType } from '../../../libs/user/user.resource';

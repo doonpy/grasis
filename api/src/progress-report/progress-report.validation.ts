@@ -1,7 +1,7 @@
 import Joi from '@hapi/joi';
 
-import { ProgressReportRequestBody } from './progress-report.interface';
 import { IsPassed } from './progress-report.resource';
+import { ProgressReportRequestBody } from './progress-report.type';
 
 const progressReportValidationSchema = Joi.object<ProgressReportRequestBody>({
   time: Joi.string().isoDate().messages({

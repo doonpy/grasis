@@ -3,7 +3,7 @@ import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 
 import MainLayout from '../../../components/Layout/MainLayout';
-import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.interface';
+import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.type';
 import { UserType } from '../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {

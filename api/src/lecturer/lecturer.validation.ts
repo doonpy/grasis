@@ -1,7 +1,7 @@
 import Joi from '@hapi/joi';
 
-import { Lecturer } from './lecturer.interface';
 import { LECTURER_LEVELS } from './lecturer.resource';
+import { Lecturer } from './lecturer.type';
 
 const LEVEL_PATTERN = new RegExp(`^((${LECTURER_LEVELS.join('|')});?)*$`);
 
