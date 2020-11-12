@@ -1,4 +1,6 @@
 api/dist
+api/upload
+api/download
 web/.next
 web-remove
 */**/node_modules
