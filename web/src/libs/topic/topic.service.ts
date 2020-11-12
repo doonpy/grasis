@@ -56,7 +56,7 @@ export default class TopicService extends CommonService {
       this.replaceParams(TopicApi.GET_MANY, [thesisId, offset, keyword || ''])
     );
     if (data) {
-      data.topics = data.topics.map((topics) => ({ ...topics, key: topics.id.toString() }));
+      data.topics = data.topics.map((topic, index) => ({ ...topic, key: index.toString() }));
     }
 
     return { data, isLoading: !data };

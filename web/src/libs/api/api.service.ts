@@ -99,4 +99,8 @@ export default class ApiService {
     configs.headers['Content-Type'] = `multipart/form-data`;
     return axios.post<T>(url, body, configs);
   }
+
+  public getFullUrl(path: string): string {
+    return `${this.getBaseUrl()}/${path}`;
+  }
 }

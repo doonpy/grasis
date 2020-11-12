@@ -5,16 +5,10 @@ import mime from 'mime-types';
 import { AwsService } from '../aws/aws.service';
 import { isProductionMode } from '../common/common.helper';
 import { FileInfo } from '../common/common.interface';
+import { ReportModule } from '../common/common.resource';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { UserService } from '../user/user.service';
-import {
-  DOWNLOAD_ROOT_FOLDER,
-  UPLOAD_ROOT_FOLDER,
-  UPLOAD_TIME_TO_LIVE,
-  UploadDestination,
-  UploadError,
-  UploadReportModule
-} from './upload.resource';
+import { UPLOAD_ROOT_FOLDER, UploadDestination, UploadError } from './upload.resource';
 
 @Injectable()
 export class UploadService {
@@ -28,35 +22,33 @@ export class UploadService {
   public async checkPermission(
     userId: number,
     topicId: number,
-    reportModule: UploadReportModule
+    reportModule: ReportModule
   ): Promise<void> {
     const user = await this.userService.findById(userId);
     switch (reportModule) {
-      case UploadReportModule.PROGRESS_REPORT:
+      case ReportModule.PROGRESS_REPORT:
         await this.progressReportService.checkUploadPermission(topicId, user);
         break;
-      case UploadReportModule.REVIEW:
+      case ReportModule.REVIEW:
         break;
-      case UploadReportModule.DEFENSE:
+      case ReportModule.DEFENSE:
         break;
       default:
         throw new BadRequestException(UploadError.ERR_4);
     }
   }
 
-  public getReportFolderPath(module: UploadReportModule, topicId: number): string {
-    let result: string;
+  public getReportFolderPath(module: ReportModule, topicId: number): string {
+    let result = UploadDestination.REPORT_ROOT;
     switch (module) {
-      case UploadReportModule.PROGRESS_REPORT:
-        result = `${UploadDestination.PROGRESS_REPORT}/${topicId}`;
+      case ReportModule.PROGRESS_REPORT:
+        result += `/${topicId}/${UploadDestination.PROGRESS_REPORT}`;
         break;
-      case UploadReportModule.REVIEW:
-      case UploadReportModule.DEFENSE:
-      default:
-        result = '';
+      case ReportModule.REVIEW:
+      case ReportModule.DEFENSE:
     }
 
-    return result;
+    return `${UPLOAD_ROOT_FOLDER}/${result}`;
   }
 
   public async deleteFileByPath(filePath: string): Promise<void> {
@@ -68,12 +60,13 @@ export class UploadService {
   }
 
   public checkFileExist(filePath: string): void {
-    if (!fs.existsSync(filePath)) {
+    if (!fs.existsSync(`${filePath}`)) {
       throw new BadRequestException(UploadError.ERR_3);
     }
   }
 
-  public async getReportFiles(folderPath: string): Promise<FileInfo[]> {
+  public async getReportFiles(topicId: number, module: ReportModule): Promise<FileInfo[]> {
+    const folderPath = this.getReportFolderPath(module, topicId);
     const result: FileInfo[] = [];
     if (!fs.existsSync(folderPath)) {
       this.createFolder(folderPath);
@@ -97,20 +90,6 @@ export class UploadService {
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath, { recursive: true });
     }
-  }
-
-  public getDownloadPath(fileName: string, filePath: string): string {
-    const fullSrcPath = `${filePath}/${fileName}`;
-    this.checkFileExist(fullSrcPath);
-    const downloadPath = filePath.replace(UPLOAD_ROOT_FOLDER, DOWNLOAD_ROOT_FOLDER);
-    const fullDownloadPath = `${downloadPath}/${fileName}`;
-    this.createFolder(downloadPath);
-    fs.copyFileSync(fullSrcPath, fullDownloadPath);
-    setTimeout(() => {
-      fs.rmSync(fullDownloadPath, { force: true });
-    }, UPLOAD_TIME_TO_LIVE);
-
-    return fullDownloadPath.replace(/^\./, '');
   }
 
   public async uploadToS3(files: Express.Multer.File[]): Promise<void> {

@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 
-import { CommonColumns, CommonResponse, FileInfo } from '../common/common.interface';
+import { CommonColumns, CommonResponse } from '../common/common.interface';
 import { StudentForFastView } from '../student/student.interface';
 import { Topic } from '../topic/topic.interface';
 import { IsPassed } from './progress-report.resource';
@@ -34,7 +34,6 @@ export interface ProgressReportGetByIdResponse extends CommonResponse {
 
 export type ProgressReportForView = Omit<ProgressReport, 'deletedAt' | 'topic'> & {
   reporters: StudentForFastView[];
-  files: FileInfo[];
 };
 
 export interface UseProgressReport {

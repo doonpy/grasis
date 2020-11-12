@@ -4,46 +4,49 @@ import { RcFile } from 'antd/lib/upload';
 import { DraggerProps } from 'antd/lib/upload/Dragger';
 import React, { useState } from 'react';
 
-import { CommonTerminology } from '../../assets/terminology/common.terminology';
+import { UploadTerminology } from '../../assets/terminology/upload.terminology';
+import { FILENAME_PATTERN, ReportModule } from '../../libs/common/common.resource';
 import {
-  FILENAME_PATTERN,
+  UPLOAD_REPORT_LIMIT_FILES,
   UploadBody,
-  UploadReportMimeType,
-  UploadReportModule
-} from '../../libs/common/common.resource';
-import CommonService from '../../libs/common/common.service';
+  UploadReportMimeTypes
+} from '../../libs/upload/upload.resource';
+import UploadService from '../../libs/upload/upload.service';
 
 interface ComponentProps {
   topicId: number;
-  module: UploadReportModule;
+  module: ReportModule;
+  currentAmount: number;
 }
 
-const ReportUpload: React.FC<ComponentProps> = ({ topicId, module }) => {
-  const commonService = CommonService.getInstance();
+const ReportFileUpload: React.FC<ComponentProps> = ({ topicId, module, currentAmount }) => {
+  const uploadService = UploadService.getInstance();
   const [uploadFiles, setUploadFiles] = useState<RcFile[]>([]);
   const [uploading, setUploading] = useState<boolean>(false);
   const props: DraggerProps = {
     multiple: true,
     fileList: uploadFiles,
-    onChange: ({ file }) => {
-      if (file.type !== UploadReportMimeType.WORD && file.type !== UploadReportMimeType.PDF) {
-        message.error(`"${file.name}" - ${CommonTerminology.COMMON_9}`);
+    onChange: ({ file, fileList }) => {
+      if (!UploadReportMimeTypes.includes(file.type)) {
+        message.error(`"${file.name}" - ${UploadTerminology.UPLOAD_1}`);
       }
 
       if (!FILENAME_PATTERN.test(file.name)) {
-        message.error(`"${file.name}" - ${CommonTerminology.COMMON_19}`);
+        message.error(`"${file.name}" - ${UploadTerminology.UPLOAD_2}`);
+      }
+
+      if (fileList.length + currentAmount > UPLOAD_REPORT_LIMIT_FILES) {
+        message.error(UploadTerminology.UPLOAD_12);
       }
     },
     beforeUpload: (file, fileList) => {
-      console.log(file);
-      if (
-        FILENAME_PATTERN.test(file.name) &&
-        (file.type === UploadReportMimeType.WORD || file.type === UploadReportMimeType.PDF)
-      ) {
+      if (FILENAME_PATTERN.test(file.name) && UploadReportMimeTypes.includes(file.type)) {
         const newFileList = fileList.filter(
           ({ name }) => uploadFiles.findIndex((uploadFile) => uploadFile.name === name) === -1
         );
-        setUploadFiles([...uploadFiles, ...newFileList]);
+        setUploadFiles(
+          [...uploadFiles, ...newFileList].slice(0 - UPLOAD_REPORT_LIMIT_FILES + currentAmount)
+        );
       }
 
       return false;
@@ -63,33 +66,32 @@ const ReportUpload: React.FC<ComponentProps> = ({ topicId, module }) => {
         formData.append(UploadBody.FILES, file);
       });
 
-      await commonService.uploadReport(formData);
+      await uploadService.uploadReport(formData);
       setUploadFiles([]);
       setUploading(false);
-      message.success(CommonTerminology.COMMON_10);
+      message.success(UploadTerminology.UPLOAD_3);
     } catch (error) {
       setUploading(false);
-      await commonService.requestErrorHandler(error);
+      await uploadService.requestErrorHandler(error);
     }
   };
 
   return (
-    <Space align="start" direction="vertical">
-      <Upload {...props}>
-        <Button size="small" type="primary" icon={<UploadOutlined />}>
-          {CommonTerminology.COMMON_12}
-        </Button>
-      </Upload>
+    <Space align="start">
       <Button
-        size="small"
         type="primary"
         onClick={handleUpload}
         disabled={uploadFiles.length === 0}
         loading={uploading}>
-        {CommonTerminology.COMMON_11}
+        {UploadTerminology.UPLOAD_5}
       </Button>
+      <Upload {...props}>
+        <Button type="primary" icon={<UploadOutlined />}>
+          {UploadTerminology.UPLOAD_4}
+        </Button>
+      </Upload>
     </Space>
   );
 };
 
-export default ReportUpload;
+export default ReportFileUpload;

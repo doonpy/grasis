@@ -18,7 +18,7 @@ export enum UserType {
   LECTURER
 }
 
-export const USER_API_ROOT = '/users';
+export const USER_API_ROOT = 'users';
 
 export const UserApi = {
   ROOT: '/users',

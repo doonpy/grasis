@@ -5,7 +5,7 @@ export const StudentPath = {
   SPECIFY: `${STUDENT_PATH_ROOT}/@0`
 };
 
-export const STUDENT_API_ROOT = '/students';
+export const STUDENT_API_ROOT = 'students';
 
 export const STUDENT_API_ADMIN_ROOT = '/admin/students';
 

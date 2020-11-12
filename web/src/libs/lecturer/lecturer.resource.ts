@@ -5,7 +5,7 @@ export const LecturerPath = {
   SPECIFY: `${LECTURER_PATH_ROOT}/@0`
 };
 
-export const LECTURER_API_ROOT = '/lecturers';
+export const LECTURER_API_ROOT = 'lecturers';
 
 export const LECTURER_API_ADMIN_ROOT = '/admin/lecturers';
 

@@ -41,7 +41,3 @@ export interface FileInfo {
   ctime: Date;
   mtime: Date;
 }
-
-export interface GenerateDownloadLinkResponse {
-  url: string;
-}

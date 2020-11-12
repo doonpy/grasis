@@ -3,7 +3,7 @@ export enum CommentMode {
   PUBLIC
 }
 
-export const COMMENT_API_ROOT = '/comments';
+export const COMMENT_API_ROOT = 'comments';
 
 export const CommentApi = {
   SPECIFY: `${COMMENT_API_ROOT}/@0`,

@@ -34,7 +34,7 @@ export enum ThesisStatus {
   ACTIVE = 2
 }
 
-export const THESIS_API_ROOT = '/theses';
+export const THESIS_API_ROOT = 'theses';
 
 export const THESIS_API_ADMIN_ROOT = `/admin/theses`;
 

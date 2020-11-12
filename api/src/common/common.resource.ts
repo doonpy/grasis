@@ -11,8 +11,7 @@ export const CommonQuery = {
   OFFSET: 'offset',
   LIMIT: 'limit',
   KEYWORD: 'keyword',
-  SEARCH_TYPES: 'searchTypes',
-  DOWNLOAD_PATH: 'path'
+  SEARCH_TYPES: 'searchTypes'
 };
 
 export const CommonParam = {
@@ -44,8 +43,7 @@ export const CORS_OPTIONS: CorsOptions = {
 
 export const CommonPath = {
   LOGIN: '/login',
-  REFRESH_TOKEN: '/refresh',
-  DOWNLOAD: '/download'
+  REFRESH_TOKEN: '/refresh'
 };
 
 export const CommonColumn = {
@@ -63,3 +61,9 @@ export const commonStringColumnOptions: ColumnOptions = {
   charset: 'utf8mb4',
   collation: 'utf8mb4_general_ci'
 };
+
+export enum ReportModule {
+  PROGRESS_REPORT = 1,
+  REVIEW,
+  DEFENSE
+}
