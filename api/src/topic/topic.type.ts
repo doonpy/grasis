@@ -1,7 +1,7 @@
 import { CommonColumns, CommonResponse } from '../common/common.type';
+import { TopicEntity } from './entities/topic.entity';
 import { TopicStateAction } from './topic-state/topic-state.resource';
 import { TopicStudentStatus } from './topic-student/topic-student.resouce';
-import { TopicEntity } from './topic.entity';
 
 export type Topic = TopicEntity;
 
@@ -19,7 +19,7 @@ export type TopicRequestBody = WithOptional<
     | 'thesisId'
     | 'states'
     | 'students'
-    | 'progressReports'
+    | 'progressReport'
   >,
   'description'
 >;

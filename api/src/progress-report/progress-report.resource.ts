@@ -33,12 +33,6 @@ export const ProgressReportQuery = {
   FILE_NAME: 'filename'
 };
 
-export enum IsPassed {
-  NOT_DECIDED = 1,
-  TRUE,
-  FALSE
-}
-
 export const ProgressReportBody = {
   IS_PASSED: 'isPassed'
 };

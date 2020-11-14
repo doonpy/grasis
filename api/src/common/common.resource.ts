@@ -18,6 +18,10 @@ export const CommonParam = {
   ID: 'id'
 };
 
+export const CommonBody = {
+  STATE_RESULT: 'result'
+};
+
 export const COMMON_ENTITY_OPTIONS: EntityOptions = {
   database: process.env.DB_MSSQL_DATABASE,
   engine: 'InnoDB'
@@ -66,4 +70,10 @@ export enum ReportModule {
   PROGRESS_REPORT = 1,
   REVIEW,
   DEFENSE
+}
+
+export enum RequestDataType {
+  PARAM = 1,
+  QUERY,
+  BODY
 }

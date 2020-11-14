@@ -7,15 +7,16 @@ import LoginUser from '../user/instance/LoginUser';
 import { TopicStateAction } from './topic-state/topic-state.resource';
 import { TopicStudentStatus } from './topic-student/topic-student.resource';
 import { TopicStudent } from './topic-student/topic-student.type';
+import { TOPIC_API_ROOT, TopicApi } from './topic.resource';
 import {
   Topic,
   TopicCreateOrUpdateResponse,
   TopicFindManyResponse,
   TopicGetByIdResponse,
   TopicRequestBody,
+  UseTopic,
   UseTopics
 } from './topic.type';
-import { TOPIC_API_ROOT, TopicApi } from './topic.resource';
 
 export default class TopicService extends CommonService {
   private static instance: TopicService;
@@ -62,7 +63,7 @@ export default class TopicService extends CommonService {
     return { data, isLoading: !data };
   }
 
-  public useTopic(thesisId = 0, topicId = 0) {
+  public useTopic(thesisId = 0, topicId = 0): UseTopic {
     const { data } = useSWR<TopicGetByIdResponse>(
       this.replaceParams(TopicApi.SPECIFY, [topicId, thesisId])
     );

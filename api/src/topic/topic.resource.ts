@@ -24,7 +24,8 @@ export const TopicPath = {
   CHANGE_STATUS: ':id/change-status',
   CHANGE_REGISTER_STATUS: ':id/change-register-status',
   REGISTER_TOPIC: ':id/register-topic',
-  CHANGE_STUDENT_REGISTER_STATUS: ':id/change-register-topic-status'
+  CHANGE_STUDENT_REGISTER_STATUS: ':id/change-register-topic-status',
+  GET_REVIEW: ':id/review'
 };
 
 export const TopicError = {
@@ -49,4 +50,17 @@ export const TopicError = {
 export const TopicQuery = {
   THESIS_ID: 'thesisId',
   STUDENT_ID: 'studentId'
+};
+
+export enum StateResult {
+  NOT_DECIDED = 1,
+  TRUE,
+  FALSE
+}
+
+export const TopicStateBaseColumn = {
+  TIME: 'time',
+  PLACE: 'place',
+  NOTE: 'note',
+  RESULT: 'result'
 };

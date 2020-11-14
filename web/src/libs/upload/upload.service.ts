@@ -2,8 +2,8 @@ import useSWR from 'swr';
 
 import { ReportModule } from '../common/common.resource';
 import CommonService from '../common/common.service';
-import { GetReportsResponse, UseReports } from './upload.type';
 import { UploadApi } from './upload.resource';
+import { GetReportsResponse, UseReports } from './upload.type';
 
 export default class UploadService extends CommonService {
   private static instance: UploadService;
@@ -33,7 +33,7 @@ export default class UploadService extends CommonService {
 
   public async uploadReport(data: FormData): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.postFile(UploadApi.UPLOAD_REPORT, data);
+    await this.apiService.postFile(UploadApi.REPORT, data);
   }
 
   public async deleteReport(

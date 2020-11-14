@@ -11,29 +11,31 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonParam, CommonQueryValue } from '../common/common.resource';
+import { CommonParam, CommonQueryValue, RequestDataType } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
+import { UseRequestDataType } from '../common/decorators/request-data-type.decorator';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
+import { StateResult } from '../topic/topic.resource';
+import { stateResultValidationSchema } from '../topic/topic.validation';
 import { ProgressReportGuard } from './guards/progress-report.guard';
-import { IsPassed, ProgressReportBody, ProgressReportPath } from './progress-report.resource';
+import { ProgressReportBody, ProgressReportPath } from './progress-report.resource';
 import { ProgressReportService } from './progress-report.service';
 import {
   ProgressReportCreateOrUpdateResponse,
   ProgressReportRequestBody
 } from './progress-report.type';
-import {
-  progressReportCreateValidationSchema,
-  progressReportIsPassedValidationSchema
-} from './progress-report.validation';
+import { progressReportCreateValidationSchema } from './progress-report.validation';
 
-@UseGuards(JwtAuthGuard, AdminGuard, TopicPermissionGuard)
+@UseGuards(JwtAuthGuard, AdminGuard)
 @Controller(ProgressReportPath.ADMIN_ROOT)
 export class ProgressReportAdminController {
   constructor(private readonly progressReportService: ProgressReportService) {}
 
   @Patch(ProgressReportPath.SPECIFY)
+  @UseRequestDataType(RequestDataType.QUERY)
+  @UseGuards(TopicPermissionGuard)
   public async updateById(
     @Param(
       CommonParam.ID,
@@ -54,7 +56,8 @@ export class ProgressReportAdminController {
   }
 
   @Post(ProgressReportPath.ADMIN_CHANGE_RESULT)
-  @UseGuards(ProgressReportGuard)
+  @UseRequestDataType(RequestDataType.QUERY)
+  @UseGuards(ProgressReportGuard, TopicPermissionGuard)
   public async changeResult(
     @Param(
       CommonParam.ID,
@@ -63,11 +66,8 @@ export class ProgressReportAdminController {
       ParseIntPipe
     )
     id: number,
-    @Body(
-      ProgressReportBody.IS_PASSED,
-      new JoiValidationPipe(progressReportIsPassedValidationSchema)
-    )
-    result: IsPassed
+    @Body(ProgressReportBody.IS_PASSED, new JoiValidationPipe(stateResultValidationSchema))
+    result: StateResult
   ): Promise<void> {
     await this.progressReportService.changeResult(id, result);
   }

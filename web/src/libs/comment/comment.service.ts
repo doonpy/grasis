@@ -1,8 +1,7 @@
 import useSWR from 'swr';
 
-import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
+import { DEFAULT_PAGE_SIZE, ReportModule } from '../common/common.resource';
 import CommonService from '../common/common.service';
-import { ThesisState } from '../thesis/thesis.resource';
 import { COMMENT_API_ROOT, CommentApi, CommentMode } from './comment.resource';
 import { CommentGetManyResponse, UseComment } from './comment.type';
 
@@ -23,13 +22,13 @@ export default class CommentService extends CommonService {
 
   public useComments(
     topicId: number,
-    state: ThesisState,
+    module: ReportModule,
     pageNumber = 0,
     pageSize: number = DEFAULT_PAGE_SIZE
   ): UseComment {
     const offset = (pageNumber - 1) * pageSize;
     const { data } = useSWR<CommentGetManyResponse>(
-      this.replaceParams(CommentApi.GET_MANY, [topicId, state, offset])
+      this.replaceParams(CommentApi.GET_MANY, [topicId, module, offset])
     );
     if (data) {
       data.comments = data.comments.map((comment, index) => ({
@@ -44,11 +43,11 @@ export default class CommentService extends CommonService {
   public async addComment(
     topicId: number,
     mode: CommentMode,
-    state: ThesisState,
+    module: ReportModule,
     content: string
   ): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(COMMENT_API_ROOT, { topicId, mode, state, content });
+    await this.apiService.post(COMMENT_API_ROOT, { topicId, mode, module, content });
   }
 
   public async deleteById(id: number): Promise<void> {

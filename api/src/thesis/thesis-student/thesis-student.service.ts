@@ -258,4 +258,11 @@ export class ThesisStudentService {
       }
     ];
   }
+
+  public async getByIds(ids: { thesisId: number; studentId: number }[]): Promise<ThesisStudent[]> {
+    return this.thesisStudentRepository.findByIds(ids, {
+      where: { ...notDeleteCondition },
+      cache: true
+    });
+  }
 }

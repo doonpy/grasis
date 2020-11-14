@@ -6,12 +6,15 @@ import { CommentService } from '../comment/comment.service';
 import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { ProgressReportService } from '../progress-report/progress-report.service';
+import { ReviewService } from '../review/review.service';
 import { StudentService } from '../student/student.service';
 import { ThesisState } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
-import { User } from '../user/user.type';
+import { Thesis } from '../thesis/thesis.type';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
+import { User } from '../user/user.type';
+import { TopicEntity } from './entities/topic.entity';
 import {
   CANCELLED_STATE_NOTE,
   NEW_STATE_NOTE,
@@ -20,8 +23,7 @@ import {
 import { TopicStateService } from './topic-state/topic-state.service';
 import { TopicStudentStatus } from './topic-student/topic-student.resouce';
 import { TopicStudentService } from './topic-student/topic-student.service';
-import { TopicEntity } from './topic.entity';
-import { TopicError, TopicRegisterStatus } from './topic.resource';
+import { StateResult, TopicError, TopicRegisterStatus } from './topic.resource';
 import { Topic, TopicChangeStatusRequestBody, TopicRequestBody } from './topic.type';
 
 @Injectable()
@@ -38,7 +40,8 @@ export class TopicService {
     private readonly topicStudentService: TopicStudentService,
     private readonly studentService: StudentService,
     private readonly progressReportService: ProgressReportService,
-    private readonly commentService: CommentService
+    private readonly commentService: CommentService,
+    private readonly reviewService: ReviewService
   ) {}
 
   public async create(thesisId: number, topicBody: TopicRequestBody): Promise<Topic> {
@@ -437,7 +440,7 @@ export class TopicService {
     if (action === TopicStateAction.APPROVED) {
       await this.connection.transaction(async (manager) => {
         // Create progress report appointment
-        await this.progressReportService.createWithTransaction(manager, topic, {
+        await this.progressReportService.createWithTransaction(manager, topic.id, {
           time: topic.thesis.progressReport
         });
 
@@ -653,6 +656,30 @@ export class TopicService {
     await this.topicStudentService.deleteByTopicIdsWithTransaction(manager, topicId, deletedAt);
     await this.progressReportService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
     await this.commentService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
+    await this.reviewService.deleteByIdWithTransaction(manager, topicId, deletedAt);
     await manager.update(TopicEntity, { id: topicId }, { deletedAt });
+  }
+
+  public async createReviewWithTransaction(manager: EntityManager, thesis: Thesis): Promise<void> {
+    const topics = await manager.find(TopicEntity, {
+      relations: { progressReport: true, review: true },
+      where: { ...notDeleteCondition, thesisId: thesis.id },
+      cache: true
+    });
+    for (const topic of topics) {
+      if (!topic.progressReport || topic.review) {
+        continue;
+      }
+
+      const {
+        progressReport: { isPassed }
+      } = topic;
+      if (isPassed === StateResult.TRUE) {
+        await this.reviewService.createWithTransaction(manager, {
+          id: topic.id,
+          time: thesis.review
+        });
+      }
+    }
   }
 }

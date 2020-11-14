@@ -4,8 +4,8 @@ import { Details } from 'express-useragent';
 
 import { RefreshService } from '../refresh/refresh.service';
 import { CreateRefresh } from '../refresh/refresh.type';
-import { UserAuth } from '../user/user.type';
 import { UserService } from '../user/user.service';
+import { UserAuth } from '../user/user.type';
 import { JWT_TOKEN_EXPIRE_TIME } from './auth.resource';
 import { Payload } from './strategies/jwt.strategy';
 

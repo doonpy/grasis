@@ -4,9 +4,9 @@ import { Connection, EntityManager, FindOptionsWhere, Like, Not, Repository } fr
 
 import { notDeleteCondition } from '../common/common.resource';
 import { ThesisStudentService } from '../thesis/thesis-student/thesis-student.service';
-import { UserRequestBody } from '../user/user.type';
 import { UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
+import { UserRequestBody } from '../user/user.type';
 import { StudentEntity } from './student.entity';
 import { IsGraduate, StudentError, StudentSearchType } from './student.resource';
 import {

@@ -2,7 +2,7 @@ export const UPLOAD_API_ROOT = 'upload';
 
 export const UploadApi = {
   GET_REPORTS: `${UPLOAD_API_ROOT}/report?topicId=@0&module=@1`,
-  UPLOAD_REPORT: `${UPLOAD_API_ROOT}/report`,
+  REPORT: `${UPLOAD_API_ROOT}/report`,
   DELETE_REPORT: `${UPLOAD_API_ROOT}/delete-report`
 };
 

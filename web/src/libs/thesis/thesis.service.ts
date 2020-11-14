@@ -2,6 +2,7 @@ import useSWR from 'swr';
 
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import CommonService from '../common/common.service';
+import { LecturerForFastView } from '../lecturer/lecturer.type';
 import {
   ThesisGetLecturersResponse,
   UseThesisLecturers
@@ -12,6 +13,7 @@ import {
   Thesis,
   ThesisFindManyResponse,
   ThesisGetByIdResponse,
+  ThesisSearchLecturerInThesis,
   UseTheses,
   UseThesis
 } from './thesis.type';
@@ -95,5 +97,20 @@ export default class ThesisService extends CommonService {
 
   public isProgressReportState({ state }: Thesis): boolean {
     return state === ThesisState.PROGRESS_REPORT;
+  }
+
+  public async searchLecturerInThesis(
+    keyword: string,
+    thesisId: number
+  ): Promise<LecturerForFastView[]> {
+    await this.apiService.bindAuthorizationForClient();
+    const { result } = (
+      await this.apiService.get<ThesisSearchLecturerInThesis>(ThesisApi.SEARCH_THESIS_LECTURERS, [
+        thesisId,
+        keyword
+      ])
+    ).data;
+
+    return result;
   }
 }

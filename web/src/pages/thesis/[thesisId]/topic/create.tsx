@@ -12,9 +12,9 @@ import { SIDER_KEYS } from '../../../../libs/common/common.resource';
 import CommonService from '../../../../libs/common/common.service';
 import { CommonPageProps, NextPageWithLayout } from '../../../../libs/common/common.type';
 import { THESIS_PATH_ROOT, ThesisPath } from '../../../../libs/thesis/thesis.resource';
-import { TopicRequestBody } from '../../../../libs/topic/topic.type';
 import { TOPIC_PATH_ROOT, TopicPath } from '../../../../libs/topic/topic.resource';
 import TopicService from '../../../../libs/topic/topic.service';
+import { TopicRequestBody } from '../../../../libs/topic/topic.type';
 import { UserType } from '../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {

@@ -12,7 +12,8 @@ export const UPLOAD_REPORT_BODY_PROPERTY = 'files';
 export const UploadDestination = {
   AVATAR: `${UPLOAD_ROOT_FOLDER}/avatar`,
   REPORT_ROOT: 'report',
-  PROGRESS_REPORT: 'progress-report'
+  PROGRESS_REPORT: 'progress-report',
+  REVIEW: 'review'
 };
 
 export const UploadFileSize = {

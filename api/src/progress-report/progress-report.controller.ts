@@ -9,20 +9,23 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonQueryValue } from '../common/common.resource';
+import { CommonQueryValue, RequestDataType } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
+import { UseRequestDataType } from '../common/decorators/request-data-type.decorator';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { ProgressReportPath, ProgressReportQuery } from './progress-report.resource';
 import { ProgressReportService } from './progress-report.service';
 import { ProgressReportGetByIdResponse } from './progress-report.type';
 
-@UseGuards(JwtAuthGuard, TopicPermissionGuard)
+@UseGuards(JwtAuthGuard)
 @Controller(ProgressReportPath.ROOT)
 export class ProgressReportController {
   constructor(private readonly progressReportService: ProgressReportService) {}
 
   @Get(ProgressReportPath.GET_BY_TOPIC_ID)
+  @UseRequestDataType(RequestDataType.QUERY)
+  @UseGuards(TopicPermissionGuard)
   public async getByTopicId(
     @Query(
       ProgressReportQuery.TOPIC_ID,

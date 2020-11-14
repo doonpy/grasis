@@ -10,8 +10,8 @@ import { sortByDate, sortByNumber, sortByString } from '../../libs/common/common
 import CommonService from '../../libs/common/common.service';
 import { Lecturer } from '../../libs/lecturer/lecturer.type';
 import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
-import { Topic } from '../../libs/topic/topic.type';
 import { TopicPath, TopicRegisterStatus } from '../../libs/topic/topic.resource';
+import { Topic } from '../../libs/topic/topic.type';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import LecturerInfo from '../Lecturer/LecturerInfo';

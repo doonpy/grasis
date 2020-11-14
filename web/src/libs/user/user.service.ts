@@ -5,14 +5,8 @@ import useSWR from 'swr';
 import { COMMON_PATH, COOKIES } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { TokenResponse } from '../jwt/jwt.base';
-import {
-  FindUserByIdResponse,
-  LoginInputs,
-  Remember,
-  User,
-  UserRequestBody
-} from './user.type';
 import { IsAdmin, UserApi, UserStatus, UserType } from './user.resource';
+import { FindUserByIdResponse, LoginInputs, Remember, User, UserRequestBody } from './user.type';
 
 export default class UserService extends CommonService {
   private static instance: UserService;

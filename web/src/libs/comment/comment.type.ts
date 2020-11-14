@@ -1,5 +1,5 @@
+import { ReportModule } from '../common/common.resource';
 import { CommonColumns, CommonResponse } from '../common/common.type';
-import { ThesisState } from '../thesis/thesis.resource';
 import { UserForCommentView } from '../user/user.type';
 import { CommentMode } from './comment.resource';
 
@@ -9,7 +9,7 @@ export interface Comment extends CommonColumns {
   creatorId: number;
   content: string;
   mode: CommentMode;
-  state: ThesisState;
+  module: ReportModule;
 }
 
 export type CommentForView = Pick<Comment, 'id' | 'content' | 'mode' | 'createdAt'> & {

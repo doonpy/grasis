@@ -15,7 +15,6 @@ import {
   reportModuleSchemaValidation
 } from '../../common/common.validation';
 import { transformException } from '../multer/multer.util';
-import { FileDestinationCallback, FileNameCallback } from '../upload.type';
 import {
   UPLOAD_REPORT_BODY_PROPERTY,
   UPLOAD_REPORT_LIMIT_FILES,
@@ -24,6 +23,7 @@ import {
   UploadReportMimeTypes
 } from '../upload.resource';
 import { UploadService } from '../upload.service';
+import { FileDestinationCallback, FileNameCallback } from '../upload.type';
 
 @Injectable()
 export class UploadReportInterceptor implements NestInterceptor {

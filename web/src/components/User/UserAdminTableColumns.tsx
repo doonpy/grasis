@@ -2,8 +2,8 @@ import React from 'react';
 
 import UserTerminology from '../../assets/terminology/user.terminology';
 import { sortByNumber, sortByString } from '../../libs/common/common.helper';
-import { UserForListView } from '../../libs/user/user.type';
 import { Gender, UserStatus } from '../../libs/user/user.resource';
+import { UserForListView } from '../../libs/user/user.type';
 import TextData from '../Common/TextData';
 import UserGenderRender from './UserGenderRender';
 import UserStatusRender from './UserStatusRender';

@@ -1,13 +1,13 @@
 import Joi from '@hapi/joi';
 
+import { ReportModule } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
-import { ThesisState } from '../thesis/thesis.resource';
 import { CommentMode } from './comment.resource';
 import { CommentRequestBody } from './comment.type';
 
-export const stateValidateSchema = Joi.number()
+export const commentModuleValidateSchema = Joi.number()
   .integer()
-  .valid(ThesisState.PROGRESS_REPORT, ThesisState.REVIEW, ThesisState.DEFENSE)
+  .valid(ReportModule.PROGRESS_REPORT, ReportModule.REVIEW, ReportModule.DEFENSE)
   .required()
   .messages({
     'number.base': 'Giai đoạn bình luận không hợp lệ (NUMBER).',
@@ -34,5 +34,5 @@ export const commentValidateSchema = Joi.object<CommentRequestBody>({
     'any.required': 'Chế độ bình luận là thông tin bắt buộc.'
   }),
   topicId: topicValidateSchema,
-  state: stateValidateSchema
+  module: commentModuleValidateSchema
 });

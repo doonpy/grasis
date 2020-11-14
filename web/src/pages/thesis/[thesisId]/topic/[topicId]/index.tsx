@@ -10,14 +10,14 @@ import { Button, Card, Modal, Space, Tabs } from 'antd';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
-import React from 'react';
+import React, { useState } from 'react';
 
-import FileChartLineIcon from '../../../../../assets/svg/regular/file-chart-line.svg';
-import { ProgressReportTerminology } from '../../../../../assets/terminology/progress-report.terminology';
+import FileSearchIcon from '../../../../../assets/svg/regular/file-search.svg';
+import { ReviewTerminology } from '../../../../../assets/terminology/review.terminology';
 import { ThesisTerminology } from '../../../../../assets/terminology/thesis.terminology';
 import { TopicTerminology } from '../../../../../assets/terminology/topic.terminology';
 import MainLayout from '../../../../../components/Layout/MainLayout';
-import ProgressReportInfo from '../../../../../components/ProgressReport/ProgressReportInfo';
+import ReviewInfo from '../../../../../components/Topic/State/Review/ReviewInfo';
 import TopicInfo from '../../../../../components/Topic/TopicInfo';
 import TopicPrivateInfo from '../../../../../components/Topic/TopicPrivateInfo';
 import TopicStudentInfo from '../../../../../components/Topic/TopicStudentsInfo';
@@ -25,8 +25,7 @@ import { SIDER_KEYS } from '../../../../../libs/common/common.resource';
 import CommonService from '../../../../../libs/common/common.service';
 import { CommonPageProps, NextPageWithLayout } from '../../../../../libs/common/common.type';
 import { THESIS_PATH_ROOT, ThesisPath } from '../../../../../libs/thesis/thesis.resource';
-import { TopicStateAction } from '../../../../../libs/topic/topic-state/topic-state.resource';
-import { TOPIC_PATH_ROOT, TopicPath } from '../../../../../libs/topic/topic.resource';
+import { TOPIC_PATH_ROOT, TopicPath, TopicTabKey } from '../../../../../libs/topic/topic.resource';
 import TopicService from '../../../../../libs/topic/topic.service';
 import { UserType } from '../../../../../libs/user/user.resource';
 
@@ -46,6 +45,11 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const thesisId = parseInt(params.thesisId);
   const topicId = parseInt(params.topicId);
   const { data, isLoading } = topicService.useTopic(thesisId, topicId);
+  const [currentTab, setCurrentTab] = useState<string>(TopicTabKey.INFO);
+
+  const onTabChange = (activeKey: string) => {
+    setCurrentTab(activeKey);
+  };
 
   const showDeleteConfirm = () => {
     confirm({
@@ -98,7 +102,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
         )
       }>
       {data && (
-        <Tabs defaultActiveKey="1">
+        <Tabs defaultActiveKey={currentTab} onChange={onTabChange}>
           <Tabs.TabPane
             tab={
               <span>
@@ -106,7 +110,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
                 {TopicTerminology.TOPIC_12}
               </span>
             }
-            key="1">
+            key={TopicTabKey.INFO}>
             <TopicInfo topic={data.topic} />
           </Tabs.TabPane>
           <Tabs.TabPane
@@ -116,7 +120,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
                 {TopicTerminology.TOPIC_46}
               </span>
             }
-            key="2">
+            key={TopicTabKey.STUDENT_INFO}>
             <TopicStudentInfo
               students={data.topic.students}
               creatorId={data.topic.creatorId}
@@ -132,23 +136,37 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
                   {TopicTerminology.TOPIC_13}
                 </span>
               }
-              key="3">
+              key={TopicTabKey.PRIVATE_CONTENT}>
               <TopicPrivateInfo topic={data.topic} />
             </Tabs.TabPane>
           )}
-          {data.topic.status === TopicStateAction.APPROVED &&
-            topicService.hasPermissionWithLoginUser(data.topic) && (
-              <Tabs.TabPane
-                tab={
-                  <span>
-                    <Icon component={FileChartLineIcon} />
-                    {ProgressReportTerminology.PR_1}
-                  </span>
-                }
-                key="4">
-                <ProgressReportInfo topicId={topicId} thesis={data.topic.thesis} />
-              </Tabs.TabPane>
-            )}
+          {/*{data.topic.status === TopicStateAction.APPROVED &&*/}
+          {/*  topicService.hasPermissionWithLoginUser(data.topic) && (*/}
+          {/*    <Tabs.TabPane*/}
+          {/*      tab={*/}
+          {/*        <span>*/}
+          {/*          <Icon component={FileChartLineIcon} />*/}
+          {/*          {ProgressReportTerminology.PR_1}*/}
+          {/*        </span>*/}
+          {/*      }*/}
+          {/*      key="4">*/}
+          {/*      <ProgressReportInfo topicId={topicId} thesis={data.topic.thesis} />*/}
+          {/*    </Tabs.TabPane>*/}
+          {/*  )}*/}
+          <Tabs.TabPane
+            tab={
+              <span>
+                <Icon component={FileSearchIcon} />
+                {ReviewTerminology.REVIEW_3}
+              </span>
+            }
+            key={TopicTabKey.REVIEW}>
+            <ReviewInfo
+              topicId={topicId}
+              thesis={data.topic.thesis}
+              canFetch={currentTab === TopicTabKey.REVIEW}
+            />
+          </Tabs.TabPane>
         </Tabs>
       )}
     </Card>

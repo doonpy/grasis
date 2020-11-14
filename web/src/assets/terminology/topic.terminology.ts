@@ -53,5 +53,13 @@ export const TopicTerminology = {
   TOPIC_51: 'Số lượt đăng ký',
   TOPIC_52: 'Số lượng sinh viên được chấp nhận',
   TOPIC_53: 'Còn trống',
-  TOPIC_54: 'Đề tài'
+  TOPIC_54: 'Đề tài',
+  TOPIC_55: 'Thời gian',
+  TOPIC_56: 'Địa điểm',
+  TOPIC_57: 'Ghi chú',
+  TOPIC_58: 'Sinh viên báo cáo',
+  TOPIC_59: 'Chỉnh sửa',
+  TOPIC_60: 'Tài liệu báo cáo',
+  TOPIC_61: 'Thay đổi kết quả thành công.',
+  TOPIC_62: 'Điểm số'
 };

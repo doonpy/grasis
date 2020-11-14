@@ -1,6 +1,5 @@
 import Joi from '@hapi/joi';
 
-import { IsPassed } from './progress-report.resource';
 import { ProgressReportRequestBody } from './progress-report.type';
 
 const progressReportValidationSchema = Joi.object<ProgressReportRequestBody>({
@@ -24,14 +23,3 @@ export const progressReportCreateValidationSchema = progressReportValidationSche
     })
   })
 );
-
-export const progressReportIsPassedValidationSchema = Joi.number()
-  .integer()
-  .valid(IsPassed.FALSE, IsPassed.TRUE)
-  .required()
-  .messages({
-    'number.base': 'Kết quả không hợp lệ (NUMBER).',
-    'number.integer': 'Kết quả không hợp lệ (INTERGER).',
-    'any.only': 'Kết quả không hợp lệ (VALID).',
-    'any.required': 'Kết quả là thông tin bắt buộc.'
-  });

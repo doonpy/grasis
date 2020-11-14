@@ -7,6 +7,7 @@ import { isProductionMode } from '../common/common.helper';
 import { ReportModule } from '../common/common.resource';
 import { FileInfo } from '../common/common.type';
 import { ProgressReportService } from '../progress-report/progress-report.service';
+import { ReviewService } from '../review/review.service';
 import { UserService } from '../user/user.service';
 import { UPLOAD_ROOT_FOLDER, UploadDestination, UploadError } from './upload.resource';
 
@@ -16,7 +17,8 @@ export class UploadService {
     private readonly userService: UserService,
     @Inject(forwardRef(() => ProgressReportService))
     private readonly progressReportService: ProgressReportService,
-    private readonly awsService: AwsService
+    private readonly awsService: AwsService,
+    private readonly reviewService: ReviewService
   ) {}
 
   public async checkPermission(
@@ -30,6 +32,7 @@ export class UploadService {
         await this.progressReportService.checkUploadPermission(topicId, user);
         break;
       case ReportModule.REVIEW:
+        await this.reviewService.checkUploadPermission(topicId, user);
         break;
       case ReportModule.DEFENSE:
         break;
@@ -45,6 +48,8 @@ export class UploadService {
         result += `/${topicId}/${UploadDestination.PROGRESS_REPORT}`;
         break;
       case ReportModule.REVIEW:
+        result += `/${topicId}/${UploadDestination.REVIEW}`;
+        break;
       case ReportModule.DEFENSE:
     }
 
@@ -68,6 +73,10 @@ export class UploadService {
   public async getReportFiles(topicId: number, module: ReportModule): Promise<FileInfo[]> {
     const folderPath = this.getReportFolderPath(module, topicId);
     const result: FileInfo[] = [];
+    if (folderPath === `${UPLOAD_ROOT_FOLDER}/${UploadDestination.REPORT_ROOT}`) {
+      return result;
+    }
+
     if (!fs.existsSync(folderPath)) {
       this.createFolder(folderPath);
 

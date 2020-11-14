@@ -13,12 +13,13 @@ import {
 import { Response } from 'express';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonQueryValue, ReportModule } from '../common/common.resource';
+import { CommonQueryValue, ReportModule, RequestDataType } from '../common/common.resource';
 import { CommonResponse } from '../common/common.type';
 import {
   commonFilenameValidationSchema,
   commonIdValidateSchema
 } from '../common/common.validation';
+import { UseRequestDataType } from '../common/decorators/request-data-type.decorator';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import {
@@ -49,9 +50,10 @@ export class DownloadController {
   }
 
   @Post(DownloadPath.REPORT)
+  @UseRequestDataType(RequestDataType.BODY)
   @UseGuards(JwtAuthGuard, TopicPermissionGuard)
   public async getDownloadReportLink(
-    @Query(
+    @Body(
       DownloadReportQuery.TOPIC_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),

@@ -19,9 +19,9 @@ import { LecturerService } from '../lecturer/lecturer.service';
 import { StudentError } from '../student/student.resource';
 import { StudentService } from '../student/student.service';
 import { TopicService } from '../topic/topic.service';
-import { User } from '../user/user.type';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
+import { User } from '../user/user.type';
 import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
 import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
@@ -546,6 +546,10 @@ export class ThesisService {
     if (state !== ThesisState.STUDENT_TOPIC_REGISTER) {
       await this.topicService.rejectTopicRegisterByThesisIdWithTransaction(manager, thesis.id);
       await this.topicService.disableRegisterStatusByThesisIdWithTransaction(manager, thesis.id);
+    }
+
+    if (state === ThesisState.REVIEW) {
+      await this.topicService.createReviewWithTransaction(manager, thesis);
     }
   }
 

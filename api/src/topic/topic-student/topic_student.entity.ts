@@ -4,7 +4,7 @@ import { CommonEntity } from '../../common/common.entity';
 import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../../common/common.resource';
 import { StudentEntity } from '../../student/student.entity';
 import { Student } from '../../student/student.type';
-import { TopicEntity } from '../topic.entity';
+import { TopicEntity } from '../entities/topic.entity';
 import { Topic } from '../topic.type';
 import {
   TOPIC_STUDENT_TABLE,

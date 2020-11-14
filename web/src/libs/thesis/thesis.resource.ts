@@ -45,7 +45,8 @@ export const ThesisApi = {
   GET_MANY: `${THESIS_API_ROOT}?offset=@0&keyword=@1`,
   GET_THESIS_STUDENTS: `${THESIS_API_ROOT}/@0/thesis-students?offset=@1&keyword=@2`,
   GET_THESIS_LECTURERS: `${THESIS_API_ROOT}/@0/thesis-lecturers?offset=@1&keyword=@2`,
-  SPECIFY: `${THESIS_API_ROOT}/@0`
+  SPECIFY: `${THESIS_API_ROOT}/@0`,
+  SEARCH_THESIS_LECTURERS: `${THESIS_API_ROOT}/@0/thesis-lecturers/search?&keyword=@1`
 };
 
 export enum ThesisAttendeeTarget {

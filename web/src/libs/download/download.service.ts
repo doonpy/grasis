@@ -26,11 +26,11 @@ export default class DownloadService extends CommonService {
     await this.apiService.bindAuthorizationForClient();
     const {
       data: { path }
-    } = await this.apiService.post<DownloadPathResponse>(
-      DownloadApi.GET_DOWNLOAD_REPORT,
-      { module, filename },
-      [topicId]
-    );
+    } = await this.apiService.post<DownloadPathResponse>(DownloadApi.GET_DOWNLOAD_REPORT, {
+      module,
+      filename,
+      topicId
+    });
     window.open(
       this.apiService.getFullUrl(this.replaceParams(DownloadApi.DOWNLOAD_REPORT, [path]))
     );

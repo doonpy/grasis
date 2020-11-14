@@ -3,8 +3,8 @@ import { Col, Row, Space, Typography } from 'antd';
 import React from 'react';
 
 import UserTerminology from '../../assets/terminology/user.terminology';
-import { User } from '../../libs/user/user.type';
 import { IsAdmin, UserStatus, UserType } from '../../libs/user/user.resource';
+import { User } from '../../libs/user/user.type';
 import TextData from '../Common/TextData';
 import UserGenderRender from './UserGenderRender';
 import UserIsAdminRender from './UserIsAdmin';

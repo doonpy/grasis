@@ -7,12 +7,12 @@ import { notDeleteCondition } from '../common/common.resource';
 import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
 import { Thesis } from '../thesis/thesis.type';
 import { TopicStudentService } from '../topic/topic-student/topic-student.service';
+import { StateResult } from '../topic/topic.resource';
 import { TopicService } from '../topic/topic.service';
-import { Topic } from '../topic/topic.type';
-import { User } from '../user/user.type';
 import { UserType } from '../user/user.resource';
+import { User } from '../user/user.type';
 import { ProgressReportEntity } from './progress-report.entity';
-import { IsPassed, ProgressReportError } from './progress-report.resource';
+import { ProgressReportError } from './progress-report.resource';
 import {
   ProgressReport,
   ProgressReportForView,
@@ -31,11 +31,10 @@ export class ProgressReportService {
 
   public async createWithTransaction(
     manager: EntityManager,
-    topic: Topic,
+    topicId: number,
     data: ProgressReportRequestBody
   ): Promise<ProgressReport> {
-    await this.checkValidTime(topic.thesis, data.time);
-    const entity = this.progressReportRepository.create({ ...data, topic });
+    const entity = this.progressReportRepository.create({ ...data, topicId });
 
     return this.progressReportRepository.save(entity);
   }
@@ -132,7 +131,7 @@ export class ProgressReportService {
     await this.topicService.checkPermission(topicId, user);
   }
 
-  public async changeResult(id: number, result: IsPassed): Promise<void> {
+  public async changeResult(id: number, result: StateResult): Promise<void> {
     await this.progressReportRepository.update({ ...notDeleteCondition, id }, { isPassed: result });
   }
 }

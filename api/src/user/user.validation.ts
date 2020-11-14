@@ -1,7 +1,7 @@
 import Joi from '@hapi/joi';
 
-import { UserRequestBody, UserRequestBodyForUser } from './user.type';
 import { Gender, IsAdmin, UserStatus } from './user.resource';
+import { UserRequestBody, UserRequestBodyForUser } from './user.type';
 
 export const userUpdateValidationSchema = Joi.object<UserRequestBody>({
   username: Joi.string().max(50).messages({

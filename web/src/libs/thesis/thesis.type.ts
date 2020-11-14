@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 
 import { CommonColumns, CommonResponse } from '../common/common.type';
-import { Lecturer, LecturerSearchAttendee } from '../lecturer/lecturer.type';
+import { Lecturer, LecturerForFastView, LecturerSearchAttendee } from '../lecturer/lecturer.type';
 import { StudentSearchAttendee } from '../student/student.type';
 import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
 import { ThesisStudent } from './thesis-student/thesis-student.type';
@@ -96,3 +96,7 @@ export interface CreatorInfo {
 }
 
 export type ThesisForView = Omit<Thesis, 'deletedAt' | 'creator'> & { creatorInfo: CreatorInfo };
+
+export interface ThesisSearchLecturerInThesis extends CommonResponse {
+  result: LecturerForFastView[];
+}

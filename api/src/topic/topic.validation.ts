@@ -2,6 +2,7 @@ import Joi from '@hapi/joi';
 
 import { TopicStateAction } from './topic-state/topic-state.resource';
 import { TopicStudentStatus } from './topic-student/topic-student.resouce';
+import { StateResult } from './topic.resource';
 import {
   Topic,
   TopicChangeStatusRequestBody,
@@ -87,3 +88,14 @@ export const topicChangeStudentRegisterStatusValidationSchema = Joi.object<
       'any.required': 'Trạng thái phê duyệt là thông tin bắt buộc.'
     })
 });
+
+export const stateResultValidationSchema = Joi.number()
+  .integer()
+  .valid(StateResult.FALSE, StateResult.TRUE)
+  .required()
+  .messages({
+    'number.base': 'Kết quả không hợp lệ (NUMBER).',
+    'number.integer': 'Kết quả không hợp lệ (INTERGER).',
+    'any.only': 'Kết quả không hợp lệ (VALID).',
+    'any.required': 'Kết quả là thông tin bắt buộc.'
+  });

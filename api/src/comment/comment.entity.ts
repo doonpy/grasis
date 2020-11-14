@@ -4,10 +4,10 @@ import { CommonEntity } from '../common/common.entity';
 import {
   COMMON_ENTITY_OPTIONS,
   CommonColumn,
-  commonStringColumnOptions
+  commonStringColumnOptions,
+  ReportModule
 } from '../common/common.resource';
-import { ThesisState } from '../thesis/thesis.resource';
-import { TopicEntity } from '../topic/topic.entity';
+import { TopicEntity } from '../topic/entities/topic.entity';
 import { Topic } from '../topic/topic.type';
 import { UserEntity } from '../user/user.entity';
 import { User } from '../user/user.type';
@@ -45,10 +45,10 @@ export class CommentEntity extends CommonEntity {
   public mode!: CommentMode;
 
   @Column({
-    name: CommentColumn.STATE,
+    name: CommentColumn.MODULE,
     type: 'tinyint'
   })
-  public state!: ThesisState;
+  public module!: ReportModule;
 
   @ManyToOne(() => TopicEntity, (topic) => topic)
   @JoinColumn({ name: CommentColumn.TOPIC_ID, referencedColumnName: CommonColumn.ID })

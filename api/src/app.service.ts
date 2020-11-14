@@ -4,9 +4,9 @@ import { Connection } from 'typeorm';
 
 import { isProductionMode, isReviewData } from './common/common.helper';
 import { LecturerService } from './lecturer/lecturer.service';
-import { UserRequestBody } from './user/user.type';
 import { IsAdmin } from './user/user.resource';
 import { UserService } from './user/user.service';
+import { UserRequestBody } from './user/user.type';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {

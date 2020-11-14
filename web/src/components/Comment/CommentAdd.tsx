@@ -4,16 +4,16 @@ import React, { ChangeEvent, useState } from 'react';
 import { CommentTerminology } from '../../assets/terminology/comment.terminology';
 import { CommentMode } from '../../libs/comment/comment.resource';
 import CommentService from '../../libs/comment/comment.service';
-import { ThesisState } from '../../libs/thesis/thesis.resource';
+import { ReportModule } from '../../libs/common/common.resource';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import AvatarForComment from '../Avatar/AvatarForComment';
 
 interface ComponentProps {
   topicId: number;
-  state: ThesisState;
+  module: ReportModule;
 }
 
-const CommentAdd: React.FC<ComponentProps> = ({ topicId, state }) => {
+const CommentAdd: React.FC<ComponentProps> = ({ topicId, module }) => {
   const loginUser = LoginUser.getInstance();
   const commentService = CommentService.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
@@ -31,7 +31,7 @@ const CommentAdd: React.FC<ComponentProps> = ({ topicId, state }) => {
   const onSubmit = async () => {
     try {
       setLoading(true);
-      await commentService.addComment(topicId, mode, state, content);
+      await commentService.addComment(topicId, mode, module, content);
       setContent('');
       message.success(CommentTerminology.COMMENT_6);
       setLoading(false);

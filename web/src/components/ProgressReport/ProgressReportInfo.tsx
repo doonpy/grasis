@@ -6,7 +6,6 @@ import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { ProgressReportTerminology } from '../../assets/terminology/progress-report.terminology';
 import { ReportModule } from '../../libs/common/common.resource';
 import ProgressReportService from '../../libs/progress-report/progress-report.service';
-import { ThesisState } from '../../libs/thesis/thesis.resource';
 import ThesisService from '../../libs/thesis/thesis.service';
 import { Thesis } from '../../libs/thesis/thesis.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
@@ -75,8 +74,8 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesis }) => {
             />
           </Descriptions.Item>
           <Descriptions.Item label={<b>{CommentTerminology.COMMENT_1}</b>} span={4}>
-            <CommentAdd topicId={topicId} state={ThesisState.PROGRESS_REPORT} />
-            <CommentList topicId={topicId} state={ThesisState.PROGRESS_REPORT} />
+            <CommentAdd topicId={topicId} module={ReportModule.PROGRESS_REPORT} />
+            <CommentList topicId={topicId} module={ReportModule.PROGRESS_REPORT} />
           </Descriptions.Item>
         </Descriptions>
       </>

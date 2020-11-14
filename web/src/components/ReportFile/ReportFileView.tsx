@@ -1,12 +1,11 @@
 import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Descriptions, List, message, Modal, Space } from 'antd';
+import { Button, List, message, Modal, Space } from 'antd';
 import React, { useState } from 'react';
 
 import FileAltIcon from '../../assets/svg/regular/file-alt.svg';
 import FilePdfIcon from '../../assets/svg/regular/file-pdf.svg';
 import FilePowerPointIcon from '../../assets/svg/regular/file-powerpoint.svg';
 import FileWordIcon from '../../assets/svg/regular/file-word.svg';
-import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { DownloadTerminology } from '../../assets/terminology/download.terminology';
 import { UploadTerminology } from '../../assets/terminology/upload.terminology';
 import { removeFilenamePrefix } from '../../libs/common/common.helper';
@@ -35,7 +34,7 @@ const ReportFileView: React.FC<ComponentProps> = ({ topicId, module, canAction }
   const downloadReport = async (filename: string) => {
     try {
       setLoading(true);
-      await downloadService.downloadReport(topicId, ReportModule.PROGRESS_REPORT, filename);
+      await downloadService.downloadReport(topicId, module, filename);
       setLoading(false);
       message.success(DownloadTerminology.DOWNLOAD_1);
     } catch (error) {
@@ -90,7 +89,7 @@ const ReportFileView: React.FC<ComponentProps> = ({ topicId, module, canAction }
           canAction && (
             <ReportFileUpload
               topicId={topicId}
-              module={ReportModule.PROGRESS_REPORT}
+              module={module}
               currentAmount={(data?.reports || []).length}
             />
           )
@@ -118,13 +117,9 @@ const ReportFileView: React.FC<ComponentProps> = ({ topicId, module, canAction }
                 </Space>
               }
               description={
-                <Descriptions size="small">
-                  <Descriptions.Item label={<i>{CommonTerminology.COMMON_1}</i>} span={3}>
-                    <i>
-                      <DateData date={ctime} />
-                    </i>
-                  </Descriptions.Item>
-                </Descriptions>
+                <i>
+                  <DateData date={ctime} />
+                </i>
               }
             />
           </List.Item>

@@ -1,8 +1,8 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { ProgressReportQuery } from '../../progress-report/progress-report.resource';
 import { UserService } from '../../user/user.service';
+import { getTopicIdFromRequest } from '../topic.helper';
 import { TopicError } from '../topic.resource';
 import { TopicService } from '../topic.service';
 
@@ -16,14 +16,14 @@ export class TopicPermissionGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Express.CustomRequest>();
-    const topicId: string = request.query![ProgressReportQuery.TOPIC_ID];
+    const topicId = getTopicIdFromRequest(context, this.reflector);
     if (!topicId) {
       throw new BadRequestException(TopicError.ERR_5);
     }
 
     const { userId } = request.user!;
     const loginUser = await this.userService.findById(userId);
-    await this.topicService.checkPermission(parseInt(topicId), loginUser);
+    await this.topicService.checkPermission(topicId, loginUser);
 
     return true;
   }

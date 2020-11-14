@@ -41,6 +41,7 @@ export class DownloadService {
         path = this.uploadService.getReportFolderPath(ReportModule.PROGRESS_REPORT, topicId);
         break;
       case ReportModule.REVIEW:
+        path = this.uploadService.getReportFolderPath(ReportModule.REVIEW, topicId);
         break;
       case ReportModule.DEFENSE:
         break;
