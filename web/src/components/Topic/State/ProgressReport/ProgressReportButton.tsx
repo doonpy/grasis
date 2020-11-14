@@ -5,28 +5,29 @@ import React, { useState } from 'react';
 import CheckCircleIcon from '../../../../assets/svg/regular/check-circle.svg';
 import MinusCircleIcon from '../../../../assets/svg/regular/minus-circle.svg';
 import { CommonTerminology } from '../../../../assets/terminology/common.terminology';
-import { ReviewTerminology } from '../../../../assets/terminology/review.terminology';
+import { ProgressReportTerminology } from '../../../../assets/terminology/progress-report.terminology';
 import { TopicTerminology } from '../../../../assets/terminology/topic.terminology';
-import { ReviewResultText } from '../../../../libs/review/review.resource';
-import ReviewService from '../../../../libs/review/review.service';
-import { ProgressReport } from '../../../../libs/review/review.type';
+import { ProgressReportResultText } from '../../../../libs/progress-report/progress-report.resource';
+import ProgressReportService from '../../../../libs/progress-report/progress-report.service';
+import { ProgressReportForView } from '../../../../libs/progress-report/progress-report.type';
 import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
 
 const { confirm } = Modal;
 
 interface ComponentProps {
-  review: ProgressReport;
+  progressReport: ProgressReportForView;
+  thesisCreatorId: number;
 }
 
-const ReviewerButton: React.FC<ComponentProps> = ({ review }) => {
-  const progressReportService = ReviewService.getInstance();
+const ProgressReportButton: React.FC<ComponentProps> = ({ progressReport, thesisCreatorId }) => {
+  const progressReportService = ProgressReportService.getInstance();
   const loginUser = LoginUser.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
 
   const onClickChangeResult = async (result: StateResult) => {
     confirm({
-      title: ReviewTerminology.REVIEW_6,
+      title: ProgressReportTerminology.PR_16,
       icon: <ExclamationCircleOutlined />,
       okText: CommonTerminology.COMMON_9,
       cancelText: CommonTerminology.COMMON_10,
@@ -34,7 +35,7 @@ const ReviewerButton: React.FC<ComponentProps> = ({ review }) => {
       async onOk() {
         try {
           setLoading(true);
-          await progressReportService.changeResult(review.id, result);
+          await progressReportService.changeResult(progressReport.id, result);
           message.success(TopicTerminology.TOPIC_61);
           setLoading(false);
         } catch (error) {
@@ -46,7 +47,7 @@ const ReviewerButton: React.FC<ComponentProps> = ({ review }) => {
   };
 
   const buttonRender = () => {
-    switch (review.result) {
+    switch (progressReport.result) {
       case StateResult.NOT_DECIDED:
         return (
           <>
@@ -55,7 +56,7 @@ const ReviewerButton: React.FC<ComponentProps> = ({ review }) => {
               type="primary"
               icon={<Icon component={CheckCircleIcon} />}
               onClick={() => onClickChangeResult(StateResult.TRUE)}>
-              {ReviewResultText[StateResult.FALSE]}
+              {ProgressReportResultText[StateResult.FALSE]}
             </Button>
             <Button
               loading={loading}
@@ -63,7 +64,7 @@ const ReviewerButton: React.FC<ComponentProps> = ({ review }) => {
               icon={<Icon component={MinusCircleIcon} />}
               onClick={() => onClickChangeResult(StateResult.FALSE)}
               danger>
-              {ReviewResultText[StateResult.TRUE]}
+              {ProgressReportResultText[StateResult.TRUE]}
             </Button>
           </>
         );
@@ -75,7 +76,7 @@ const ReviewerButton: React.FC<ComponentProps> = ({ review }) => {
             icon={<Icon component={MinusCircleIcon} />}
             onClick={() => onClickChangeResult(StateResult.FALSE)}
             danger>
-            {ReviewResultText[StateResult.FALSE]}
+            {ProgressReportResultText[StateResult.FALSE]}
           </Button>
         );
       case StateResult.FALSE:
@@ -85,7 +86,7 @@ const ReviewerButton: React.FC<ComponentProps> = ({ review }) => {
             type="primary"
             icon={<Icon component={CheckCircleIcon} />}
             onClick={() => onClickChangeResult(StateResult.TRUE)}>
-            {ReviewResultText[StateResult.TRUE]}
+            {ProgressReportResultText[StateResult.TRUE]}
           </Button>
         );
       default:
@@ -93,11 +94,11 @@ const ReviewerButton: React.FC<ComponentProps> = ({ review }) => {
     }
   };
 
-  if (!review.reviewerView || review.reviewerView.id !== loginUser.getId()) {
+  if (thesisCreatorId !== loginUser.getId()) {
     return <></>;
   }
 
   return <Space>{buttonRender()}</Space>;
 };
 
-export default ReviewerButton;
+export default ProgressReportButton;

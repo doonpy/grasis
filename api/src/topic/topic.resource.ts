@@ -61,6 +61,5 @@ export enum StateResult {
 export const TopicStateBaseColumn = {
   TIME: 'time',
   PLACE: 'place',
-  NOTE: 'note',
-  RESULT: 'result'
+  NOTE: 'note'
 };

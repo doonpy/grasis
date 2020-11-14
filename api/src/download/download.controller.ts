@@ -7,21 +7,21 @@ import {
   ParseIntPipe,
   Post,
   Query,
+  Req,
   Res,
   UseGuards
 } from '@nestjs/common';
 import { Response } from 'express';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonQueryValue, ReportModule, RequestDataType } from '../common/common.resource';
+import { CommonQueryValue, ReportModule } from '../common/common.resource';
 import { CommonResponse } from '../common/common.type';
 import {
   commonFilenameValidationSchema,
   commonIdValidateSchema
 } from '../common/common.validation';
-import { UseRequestDataType } from '../common/decorators/request-data-type.decorator';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
+import { TopicService } from '../topic/topic.service';
 import {
   DOWNLOAD_ROOT_FOLDER,
   DownloadPath,
@@ -36,7 +36,10 @@ interface DownloadReportLinkResponse extends CommonResponse {
 
 @Controller(DownloadPath.ROOT)
 export class DownloadController {
-  constructor(private readonly downloadService: DownloadService) {}
+  constructor(
+    private readonly downloadService: DownloadService,
+    private readonly topicService: TopicService
+  ) {}
 
   @Get(DownloadPath.REPORT)
   public downloadReport(
@@ -50,8 +53,7 @@ export class DownloadController {
   }
 
   @Post(DownloadPath.REPORT)
-  @UseRequestDataType(RequestDataType.BODY)
-  @UseGuards(JwtAuthGuard, TopicPermissionGuard)
+  @UseGuards(JwtAuthGuard)
   public async getDownloadReportLink(
     @Body(
       DownloadReportQuery.TOPIC_ID,
@@ -68,8 +70,11 @@ export class DownloadController {
     )
     module: ReportModule,
     @Body(DownloadReportQuery.FILE_NAME, new JoiValidationPipe(commonFilenameValidationSchema))
-    filename: string
+    filename: string,
+    @Req() request: Express.CustomRequest
   ): Promise<DownloadReportLinkResponse> {
+    const loginUserId = request.user!.userId;
+    await this.topicService.checkPermission(topicId, loginUserId);
     const sourcePath = this.downloadService.getSourcePath(topicId, module);
     const path = this.downloadService.getDownloadPath(filename, sourcePath);
 

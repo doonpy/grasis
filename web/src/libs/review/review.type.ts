@@ -19,10 +19,10 @@ export type ReviewRequestBody = WithOptional<
 >;
 
 export interface ReviewGetByIdResponse extends CommonResponse {
-  review: ReviewForView;
+  review: ProgressReport;
 }
 
-export type ReviewForView = Omit<TopicStateBaseForView, 'deletedAt'> &
+export type ProgressReport = Omit<TopicStateBaseForView, 'deletedAt'> &
   Pick<Review, 'reviewerId'> & {
     result: StateResult;
     reviewerView: LecturerForFastView | null;

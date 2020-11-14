@@ -6,29 +6,28 @@ import React, { useEffect, useState } from 'react';
 
 import EditIcon from '../../../../assets/svg/regular/edit.svg';
 import { CommonTerminology } from '../../../../assets/terminology/common.terminology';
-import { ReviewTerminology } from '../../../../assets/terminology/review.terminology';
+import { ProgressReportTerminology } from '../../../../assets/terminology/progress-report.terminology';
 import { TopicTerminology } from '../../../../assets/terminology/topic.terminology';
-import ReviewAdminService from '../../../../libs/review/admin.service';
-import { REVIEWER_ID_FIELD } from '../../../../libs/review/review.resource';
-import { ProgressReport, ReviewRequestBody } from '../../../../libs/review/review.type';
+import ProgressReportAdminService from '../../../../libs/progress-report/admin.service';
+import {
+  ProgressReportForView,
+  ProgressReportRequestBody
+} from '../../../../libs/progress-report/progress-report.type';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
-import ThesisSelectLecturerInThesis from '../../../Thesis/ThesisSelectLecturerInThesis';
 import StateEditBaseItem from '../StateEditBaseItem';
 
 interface ComponentProps {
-  thesisId: number;
-  review: ProgressReport;
+  progressReport: ProgressReportForView;
   validDateRange: [string | Moment, string | Moment];
   thesisCreatorId: number;
 }
 
-const ReviewEdit: React.FC<ComponentProps> = ({
-  thesisId,
-  review,
+const ProgressReportEdit: React.FC<ComponentProps> = ({
+  progressReport,
   validDateRange,
   thesisCreatorId
 }) => {
-  const adminService = ReviewAdminService.getInstance();
+  const adminService = ProgressReportAdminService.getInstance();
   const loginUser = LoginUser.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
@@ -45,11 +44,11 @@ const ReviewEdit: React.FC<ComponentProps> = ({
   const handleCancel = () => {
     setVisible(false);
   };
-  const onFormSubmit = async (formValues: ReviewRequestBody) => {
+  const onFormSubmit = async (formValues: ProgressReportRequestBody) => {
     setLoading(true);
     try {
-      await adminService.updateById(review.id, formValues);
-      message.success(ReviewTerminology.REVIEW_11);
+      await adminService.updateById(progressReport.id, formValues);
+      message.success(ProgressReportTerminology.PR_21);
       setLoading(false);
       setVisible(false);
     } catch (error) {
@@ -60,10 +59,10 @@ const ReviewEdit: React.FC<ComponentProps> = ({
 
   useEffect(() => {
     if (!visible) {
-      review.time = moment(review.time);
-      form.setFieldsValue(review);
+      progressReport.time = moment(progressReport.time);
+      form.setFieldsValue(progressReport);
     }
-  }, [review]);
+  }, [progressReport]);
 
   if (!loginUser.isAdmin() || loginUser.getId() !== thesisCreatorId) {
     return <></>;
@@ -72,18 +71,12 @@ const ReviewEdit: React.FC<ComponentProps> = ({
   return (
     <>
       <Drawer
-        title={ReviewTerminology.REVIEW_2}
+        title={ProgressReportTerminology.PR_9}
         width={720}
         onClose={handleCancel}
         visible={visible}>
         <Form form={form} requiredMark={true} layout="vertical" onFinish={onFormSubmit}>
           <StateEditBaseItem validDateRange={validDateRange} />
-          <ThesisSelectLecturerInThesis
-            thesisId={thesisId}
-            fieldName={REVIEWER_ID_FIELD}
-            defaultValue={review.reviewerView}
-            label={ReviewTerminology.REVIEW_5}
-          />
           <Space>
             <Button loading={loading} onClick={handleCancel}>
               {CommonTerminology.COMMON_10}
@@ -101,4 +94,4 @@ const ReviewEdit: React.FC<ComponentProps> = ({
   );
 };
 
-export default ReviewEdit;
+export default ProgressReportEdit;

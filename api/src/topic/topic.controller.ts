@@ -26,9 +26,9 @@ import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { IsAdmin } from '../user/user.resource';
 import { UserService } from '../user/user.service';
-import { PermissionGuard } from './guards/permission.guard';
 import { ThesisPermissionGuard } from './guards/thesis-permission.guard';
 import { TopicLecturerRegisterGuard } from './guards/topic-lecturer-register.guard';
+import { TopicPermissionGuard } from './guards/topic-permission.guard';
 import { TopicStudentRegisterGuard } from './guards/topic-student-register.guard';
 import { ParseTopicChangeStatusPipe } from './pipes/parse-topic-change-status.pipe';
 import { ParseTopicChangeStudentRegisterStatusPipe } from './pipes/parse-topic-change-student-register-status.pipe';
@@ -126,7 +126,7 @@ export class TopicController {
   }
 
   @Get(TopicPath.SPECIFY)
-  @UseGuards(PermissionGuard)
+  @UseGuards(TopicPermissionGuard)
   public async getById(
     @Param(
       CommonParam.ID,
@@ -153,7 +153,7 @@ export class TopicController {
   }
 
   @Patch(TopicPath.SPECIFY)
-  @UseGuards(PermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
   public async updateById(
     @Param(
       CommonParam.ID,
@@ -178,7 +178,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(TopicPath.SPECIFY)
-  @UseGuards(PermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
   public async deleteById(
     @Param(
       CommonParam.ID,
@@ -196,7 +196,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_STATUS)
-  @UseGuards(PermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
   public async changeStatus(
     @Param(
       CommonParam.ID,
@@ -216,7 +216,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_REGISTER_STATUS)
-  @UseGuards(PermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
   public async changeRegisterStatus(
     @Param(
       CommonParam.ID,
@@ -234,7 +234,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.REGISTER_TOPIC)
-  @UseGuards(PermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
   public async registerTopic(
     @Param(
       CommonParam.ID,
@@ -256,7 +256,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_STUDENT_REGISTER_STATUS)
-  @UseGuards(PermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
   public async changStudentRegisterStatus(
     @Param(
       CommonParam.ID,

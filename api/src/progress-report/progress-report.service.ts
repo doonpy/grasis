@@ -34,7 +34,7 @@ export class ProgressReportService {
     topicId: number,
     data: ProgressReportRequestBody
   ): Promise<ProgressReport> {
-    const entity = this.progressReportRepository.create({ ...data, topicId });
+    const entity = this.progressReportRepository.create({ ...data, id: topicId });
 
     return this.progressReportRepository.save(entity);
   }
@@ -51,21 +51,9 @@ export class ProgressReportService {
     return progressReport;
   }
 
-  public async getByTopicId(topicId: number): Promise<ProgressReport> {
-    const progressReport = await this.progressReportRepository.findOne(
-      { ...notDeleteCondition, topicId },
-      { cache: true }
-    );
-    if (!progressReport) {
-      throw new BadRequestException(ProgressReportError.ERR_2);
-    }
-
-    return progressReport;
-  }
-
   public async updateById(id: number, data: ProgressReportRequestBody): Promise<void> {
     const currentProgressReport = await this.getById(id);
-    const { thesis } = await this.topicService.getById(currentProgressReport.topicId);
+    const { thesis } = await this.topicService.getById(id);
     if (data.time) {
       await this.checkValidTime(thesis, data.time);
     }
@@ -75,30 +63,27 @@ export class ProgressReportService {
 
   public async deleteByTopicIdWithTransaction(
     manager: EntityManager,
-    topicId: number,
+    id: number,
     deletedAt = new Date()
   ): Promise<void> {
-    await manager.update(ProgressReportEntity, { ...notDeleteCondition, topicId }, { deletedAt });
+    await manager.update(ProgressReportEntity, { ...notDeleteCondition, id }, { deletedAt });
   }
 
-  public async getByTopicIdForView(topicId: number): Promise<ProgressReportForView> {
-    const { createdAt, updatedAt, id, time, place, note, isPassed } = await this.getByTopicId(
-      topicId
-    );
+  public async getByIdForView(id: number): Promise<ProgressReportForView> {
+    const { createdAt, updatedAt, time, place, note, result } = await this.getById(id);
     const reporters = (
-      await this.topicStudentService.getStudentsParticipated(topicId)
+      await this.topicStudentService.getStudentsParticipated(id)
     ).map(({ student }) => student.convertToFastView());
 
     return {
       createdAt,
       updatedAt,
       id,
-      topicId,
       time,
       place,
       note,
       reporters,
-      isPassed
+      result
     };
   }
 
@@ -127,11 +112,9 @@ export class ProgressReportService {
     ) {
       throw new BadRequestException(ProgressReportError.ERR_4);
     }
-
-    await this.topicService.checkPermission(topicId, user);
   }
 
   public async changeResult(id: number, result: StateResult): Promise<void> {
-    await this.progressReportRepository.update({ ...notDeleteCondition, id }, { isPassed: result });
+    await this.progressReportRepository.update({ ...notDeleteCondition, id }, { result });
   }
 }

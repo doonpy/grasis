@@ -12,11 +12,14 @@ import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useState } from 'react';
 
+import FileChartLineIcon from '../../../../../assets/svg/regular/file-chart-line.svg';
 import FileSearchIcon from '../../../../../assets/svg/regular/file-search.svg';
+import { ProgressReportTerminology } from '../../../../../assets/terminology/progress-report.terminology';
 import { ReviewTerminology } from '../../../../../assets/terminology/review.terminology';
 import { ThesisTerminology } from '../../../../../assets/terminology/thesis.terminology';
 import { TopicTerminology } from '../../../../../assets/terminology/topic.terminology';
 import MainLayout from '../../../../../components/Layout/MainLayout';
+import ProgressReportInfo from '../../../../../components/Topic/State/ProgressReport/ProgressReportInfo';
 import ReviewInfo from '../../../../../components/Topic/State/Review/ReviewInfo';
 import TopicInfo from '../../../../../components/Topic/TopicInfo';
 import TopicPrivateInfo from '../../../../../components/Topic/TopicPrivateInfo';
@@ -140,19 +143,20 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               <TopicPrivateInfo topic={data.topic} />
             </Tabs.TabPane>
           )}
-          {/*{data.topic.status === TopicStateAction.APPROVED &&*/}
-          {/*  topicService.hasPermissionWithLoginUser(data.topic) && (*/}
-          {/*    <Tabs.TabPane*/}
-          {/*      tab={*/}
-          {/*        <span>*/}
-          {/*          <Icon component={FileChartLineIcon} />*/}
-          {/*          {ProgressReportTerminology.PR_1}*/}
-          {/*        </span>*/}
-          {/*      }*/}
-          {/*      key="4">*/}
-          {/*      <ProgressReportInfo topicId={topicId} thesis={data.topic.thesis} />*/}
-          {/*    </Tabs.TabPane>*/}
-          {/*  )}*/}
+          <Tabs.TabPane
+            tab={
+              <span>
+                <Icon component={FileChartLineIcon} />
+                {ProgressReportTerminology.PR_1}
+              </span>
+            }
+            key={TopicTabKey.PROGRESS_REPORT}>
+            <ProgressReportInfo
+              topicId={topicId}
+              thesis={data.topic.thesis}
+              canFetch={currentTab === TopicTabKey.PROGRESS_REPORT}
+            />
+          </Tabs.TabPane>
           <Tabs.TabPane
             tab={
               <span>

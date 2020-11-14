@@ -16,5 +16,7 @@ export const ProgressReportTerminology = {
   PR_16: 'Bạn có chắc muốn thay đổi kết quả của báo cáo tiến độ này?',
   PR_17: 'Xác nhận',
   PR_18: 'Hủy',
-  PR_19: 'Thay đổi kết quả thành công.'
+  PR_19: 'Thay đổi kết quả thành công.',
+  PR_20: 'Không có dữ liệu báo cáo tiến độ',
+  PR_21: 'Chỉnh sửa báo cáo tiến độ thành công'
 };

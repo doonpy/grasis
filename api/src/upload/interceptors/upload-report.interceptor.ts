@@ -112,7 +112,7 @@ export class UploadReportInterceptor implements NestInterceptor {
 
     const topicId = parseInt(req.body!.topicId);
     const userId = req.user!.userId;
-    await this.uploadService.checkPermission(userId, topicId, reportModule);
+    await this.uploadService.checkReportPermission(userId, topicId, reportModule);
   }
 
   private checkDestination(folderPath: string): void {

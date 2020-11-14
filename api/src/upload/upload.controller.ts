@@ -18,16 +18,14 @@ import { diskStorage } from 'multer';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { isProductionMode } from '../common/common.helper';
-import { CommonQueryValue, ReportModule, RequestDataType } from '../common/common.resource';
+import { CommonQueryValue, ReportModule } from '../common/common.resource';
 import { CommonResponse } from '../common/common.type';
 import {
   commonIdValidateSchema,
   filenameSchemaValidation,
   reportModuleSchemaValidation
 } from '../common/common.validation';
-import { UseRequestDataType } from '../common/decorators/request-data-type.decorator';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { UploadReportInterceptor } from './interceptors/upload-report.interceptor';
 import { avatarFileFilter, getAvatarDestination, getAvatarFilename } from './upload.helper';
 import {
@@ -62,8 +60,6 @@ export class UploadController {
   }
 
   @Get(UploadPath.REPORT)
-  @UseRequestDataType(RequestDataType.QUERY)
-  @UseGuards(TopicPermissionGuard)
   public async getManyReport(
     @Query(
       UploadBody.TOPIC_ID,
@@ -73,9 +69,11 @@ export class UploadController {
     )
     topicId: number,
     @Query(UploadBody.MODULE, new JoiValidationPipe(reportModuleSchemaValidation), ParseIntPipe)
-    module: ReportModule
+    module: ReportModule,
+    @Req() request: Express.CustomRequest
   ): Promise<GetReportsResponse> {
-    const reports = await this.uploadService.getReportFiles(topicId, module);
+    const loginUserId = request.user!.userId;
+    const reports = await this.uploadService.getReportFiles(topicId, module, loginUserId);
 
     return {
       statusCode: HttpStatus.OK,
@@ -98,8 +96,6 @@ export class UploadController {
   }
 
   @Post(UploadPath.DELETE_REPORT)
-  @UseRequestDataType(RequestDataType.BODY)
-  @UseGuards(TopicPermissionGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteReport(
     @Body(
@@ -116,7 +112,7 @@ export class UploadController {
     @Req() request: Express.CustomRequest
   ): Promise<void> {
     const loginUserId = request.user!.userId;
-    await this.uploadService.checkPermission(loginUserId, topicId, module);
+    await this.uploadService.checkReportPermission(loginUserId, topicId, module);
     const folderPath = this.uploadService.getReportFolderPath(module, topicId);
     await this.uploadService.deleteFileByPath(`${folderPath}/${filename}`);
   }

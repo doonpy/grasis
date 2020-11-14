@@ -1,9 +1,6 @@
 export const REVIEW_TABLE = 'review';
 
 export const ReviewColumn = {
-  TIME: 'time',
-  PLACE: 'place',
-  NOTE: 'note',
   RESULT: 'result',
   REVIEWER_ID: ' reviewer_id'
 };

@@ -306,7 +306,8 @@ export class TopicService {
     return false;
   }
 
-  public async checkPermission(id: number, user: User): Promise<void> {
+  public async checkPermission(id: number, userId: number): Promise<void> {
+    const user = await this.userService.findById(userId);
     const topic = await this.getById(id);
     await this.thesisService.checkThesisPermission(topic.thesisId, user);
     if (!(await this.hasPermission(topic, user))) {
@@ -672,9 +673,9 @@ export class TopicService {
       }
 
       const {
-        progressReport: { isPassed }
+        progressReport: { result }
       } = topic;
-      if (isPassed === StateResult.TRUE) {
+      if (result === StateResult.TRUE) {
         await this.reviewService.createWithTransaction(manager, {
           id: topic.id,
           time: thesis.review

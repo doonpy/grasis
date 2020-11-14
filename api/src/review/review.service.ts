@@ -6,7 +6,6 @@ import { EntityManager, Repository } from 'typeorm';
 import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { LecturerForFastView } from '../lecturer/lecturer.type';
-import { ThesisStudentService } from '../thesis/thesis-student/thesis-student.service';
 import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
 import { Thesis } from '../thesis/thesis.type';
@@ -32,8 +31,7 @@ export class ReviewService {
     private readonly thesisService: ThesisService,
     private readonly userService: UserService,
     @Inject(forwardRef(() => LecturerService))
-    private readonly lecturerService: LecturerService,
-    private readonly thesisStudentService: ThesisStudentService
+    private readonly lecturerService: LecturerService
   ) {}
 
   public async createWithTransaction(
@@ -120,17 +118,10 @@ export class ReviewService {
     ) {
       throw new BadRequestException(ReviewError.ERR_4);
     }
-
-    await this.topicService.checkPermission(topicId, user);
   }
 
   public async changeResult(id: number, userId: number, result: StateResult): Promise<void> {
-    const loginUser = await this.userService.findById(userId);
-    await this.topicService.checkPermission(id, loginUser);
     const review = await this.getById(id);
-    if (review.reviewerId !== userId) {
-      throw new BadRequestException(ReviewError.ERR_7);
-    }
 
     review.result = result;
     await this.reviewRepository.save(review);

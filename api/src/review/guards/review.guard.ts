@@ -1,23 +1,23 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 
+import { CommonParam } from '../../common/common.resource';
 import { ThesisState, ThesisStatus } from '../../thesis/thesis.resource';
-import { getTopicIdFromRequest } from '../../topic/topic.helper';
 import { TopicError } from '../../topic/topic.resource';
 import { TopicService } from '../../topic/topic.service';
 import { ReviewError } from '../review.resource';
 
 @Injectable()
 export class ReviewGuard implements CanActivate {
-  constructor(private readonly topicService: TopicService, private readonly reflector: Reflector) {}
+  constructor(private readonly topicService: TopicService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const topicId = getTopicIdFromRequest(context, this.reflector);
+    const request = context.switchToHttp().getRequest<Express.CustomRequest>();
+    const topicId: string = request.params![CommonParam.ID];
     if (!topicId) {
       throw new BadRequestException(TopicError.ERR_5);
     }
 
-    const topic = await this.topicService.getById(topicId);
+    const topic = await this.topicService.getById(parseInt(topicId));
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(ReviewError.ERR_5);
     }

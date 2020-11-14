@@ -15,19 +15,21 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommonBody, CommonParam, CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { PermissionGuard } from '../topic/guards/permission.guard';
+import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { StateResult } from '../topic/topic.resource';
 import { stateResultValidationSchema } from '../topic/topic.validation';
+import { ReviewerGuard } from './guards/reviewer.guard';
 import { ReviewPath } from './review.resource';
 import { ReviewService } from './review.service';
 import { ReviewGetByIdResponse } from './review.type';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, TopicPermissionGuard)
 @Controller(ReviewPath.ROOT)
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post(ReviewPath.CHANGE_RESULT)
+  @UseGuards(ReviewerGuard)
   public async changeResult(
     @Param(
       CommonParam.ID,
@@ -44,7 +46,6 @@ export class ReviewController {
   }
 
   @Get(ReviewPath.SPECIFY)
-  @UseGuards(PermissionGuard)
   public async getByTopicId(
     @Param(
       CommonParam.ID,

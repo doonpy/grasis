@@ -11,9 +11,8 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonParam, CommonQueryValue, RequestDataType } from '../common/common.resource';
+import { CommonParam, CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
-import { UseRequestDataType } from '../common/decorators/request-data-type.decorator';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
@@ -28,14 +27,12 @@ import {
 } from './progress-report.type';
 import { progressReportCreateValidationSchema } from './progress-report.validation';
 
-@UseGuards(JwtAuthGuard, AdminGuard)
+@UseGuards(JwtAuthGuard, AdminGuard, TopicPermissionGuard)
 @Controller(ProgressReportPath.ADMIN_ROOT)
 export class ProgressReportAdminController {
   constructor(private readonly progressReportService: ProgressReportService) {}
 
   @Patch(ProgressReportPath.SPECIFY)
-  @UseRequestDataType(RequestDataType.QUERY)
-  @UseGuards(TopicPermissionGuard)
   public async updateById(
     @Param(
       CommonParam.ID,
@@ -56,8 +53,7 @@ export class ProgressReportAdminController {
   }
 
   @Post(ProgressReportPath.ADMIN_CHANGE_RESULT)
-  @UseRequestDataType(RequestDataType.QUERY)
-  @UseGuards(ProgressReportGuard, TopicPermissionGuard)
+  @UseGuards(ProgressReportGuard)
   public async changeResult(
     @Param(
       CommonParam.ID,
@@ -66,7 +62,7 @@ export class ProgressReportAdminController {
       ParseIntPipe
     )
     id: number,
-    @Body(ProgressReportBody.IS_PASSED, new JoiValidationPipe(stateResultValidationSchema))
+    @Body(ProgressReportBody.RESULT, new JoiValidationPipe(stateResultValidationSchema))
     result: StateResult
   ): Promise<void> {
     await this.progressReportService.changeResult(id, result);

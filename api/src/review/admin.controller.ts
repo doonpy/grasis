@@ -6,7 +6,6 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Req,
   UseGuards
 } from '@nestjs/common';
 
@@ -15,21 +14,16 @@ import { CommonParam, CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { TopicService } from '../topic/topic.service';
-import { UserService } from '../user/user.service';
+import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { ReviewPath } from './review.resource';
 import { ReviewService } from './review.service';
 import { ReviewCreateOrUpdateResponse, ReviewRequestBody } from './review.type';
 import { reviewCreateValidationSchema } from './review.validation';
 
-@UseGuards(JwtAuthGuard, AdminGuard)
+@UseGuards(JwtAuthGuard, AdminGuard, TopicPermissionGuard)
 @Controller(ReviewPath.ADMIN_ROOT)
 export class ReviewAdminController {
-  constructor(
-    private readonly reviewService: ReviewService,
-    private readonly topicService: TopicService,
-    private readonly userService: UserService
-  ) {}
+  constructor(private readonly reviewService: ReviewService) {}
 
   @Patch(ReviewPath.SPECIFY)
   public async updateById(
@@ -41,11 +35,8 @@ export class ReviewAdminController {
     )
     id: number,
     @Body(new JoiValidationPipe(reviewCreateValidationSchema))
-    body: ReviewRequestBody,
-    @Req() request: Express.CustomRequest
+    body: ReviewRequestBody
   ): Promise<ReviewCreateOrUpdateResponse> {
-    const loginUser = await this.userService.findById(request.user!.userId);
-    await this.topicService.checkPermission(id, loginUser);
     await this.reviewService.updateById(id, body);
 
     return {

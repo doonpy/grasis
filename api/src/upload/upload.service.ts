@@ -8,6 +8,7 @@ import { ReportModule } from '../common/common.resource';
 import { FileInfo } from '../common/common.type';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { ReviewService } from '../review/review.service';
+import { TopicService } from '../topic/topic.service';
 import { UserService } from '../user/user.service';
 import { UPLOAD_ROOT_FOLDER, UploadDestination, UploadError } from './upload.resource';
 
@@ -18,14 +19,16 @@ export class UploadService {
     @Inject(forwardRef(() => ProgressReportService))
     private readonly progressReportService: ProgressReportService,
     private readonly awsService: AwsService,
-    private readonly reviewService: ReviewService
+    private readonly reviewService: ReviewService,
+    private readonly topicService: TopicService
   ) {}
 
-  public async checkPermission(
+  public async checkReportPermission(
     userId: number,
     topicId: number,
     reportModule: ReportModule
   ): Promise<void> {
+    await this.topicService.checkPermission(topicId, userId);
     const user = await this.userService.findById(userId);
     switch (reportModule) {
       case ReportModule.PROGRESS_REPORT:
@@ -70,7 +73,12 @@ export class UploadService {
     }
   }
 
-  public async getReportFiles(topicId: number, module: ReportModule): Promise<FileInfo[]> {
+  public async getReportFiles(
+    topicId: number,
+    module: ReportModule,
+    userId: number
+  ): Promise<FileInfo[]> {
+    await this.topicService.checkPermission(topicId, userId);
     const folderPath = this.getReportFolderPath(module, topicId);
     const result: FileInfo[] = [];
     if (folderPath === `${UPLOAD_ROOT_FOLDER}/${UploadDestination.REPORT_ROOT}`) {
