@@ -23,9 +23,11 @@ export const TopicPath = {
   SPECIFY: ':id',
   CHANGE_STATUS: ':id/change-status',
   CHANGE_REGISTER_STATUS: ':id/change-register-status',
-  REGISTER_TOPIC: ':id/register-topic',
-  CHANGE_STUDENT_REGISTER_STATUS: ':id/change-register-topic-status',
-  GET_REVIEW: ':id/review'
+  REGISTER_TOPIC: ':id/students/:studentId/register-topic',
+  CHANGE_STUDENT_REGISTER_STATUS: ':id/students/:studentId/change-register-topic-status',
+  GET_REVIEW: ':id/review',
+  GET_STUDENTS: ':id/students',
+  GET_STATES: ':id/states'
 };
 
 export const TopicError = {

@@ -61,5 +61,9 @@ export const TopicTerminology = {
   TOPIC_59: 'Chỉnh sửa',
   TOPIC_60: 'Tài liệu báo cáo',
   TOPIC_61: 'Thay đổi kết quả thành công.',
-  TOPIC_62: 'Điểm số'
+  TOPIC_62: 'Điểm số',
+  TOPIC_63: 'Không có dữ liệu đề tài',
+  TOPIC_64: 'Xóa đề tài',
+  TOPIC_65: 'Bạn không có quyền để truy cập vào nội dung này',
+  TOPIC_66: 'Không có dữ liệu phê duyệt'
 };

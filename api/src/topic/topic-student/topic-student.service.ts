@@ -61,11 +61,13 @@ export class TopicStudentService {
     await this.topicStudentRepository.update({ topicId, studentId }, { status });
   }
 
-  public async getMany(topicId: number): Promise<TopicStudent[]> {
+  public async getMany(topicId: number, limit: number, offset: number): Promise<TopicStudent[]> {
     return this.topicStudentRepository.find({
-      relations: { student: { user: {} }, topic: {} },
+      relations: { student: { user: true } },
       where: { ...notDeleteCondition, topicId },
-      cache: true
+      cache: true,
+      take: limit,
+      skip: offset
     });
   }
 

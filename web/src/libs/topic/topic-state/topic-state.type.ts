@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 
-import { CommonColumns } from '../../common/common.type';
-import { Lecturer } from '../../lecturer/lecturer.type';
+import { CommonColumns, CommonResponse } from '../../common/common.type';
+import { Lecturer, LecturerForFastView } from '../../lecturer/lecturer.type';
 import { StudentForFastView } from '../../student/student.type';
 import { Topic } from '../topic.type';
 import { TopicStateAction } from './topic-state.resource';
@@ -25,4 +25,17 @@ export interface TopicStateBase extends CommonColumns {
 
 export interface TopicStateBaseForView extends Omit<TopicStateBase, 'deletedAt'> {
   reporters: StudentForFastView[];
+}
+
+export type TopicStateForView = Omit<TopicState, 'processor'> & {
+  processor: LecturerForFastView;
+};
+
+export interface TopicGetStatesResponse extends CommonResponse {
+  states: TopicStateForView[];
+}
+
+export interface UseTopicStates {
+  data?: TopicGetStatesResponse;
+  isLoading: boolean;
 }

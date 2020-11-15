@@ -24,7 +24,7 @@ import { TopicStateService } from './topic-state/topic-state.service';
 import { TopicStudentStatus } from './topic-student/topic-student.resouce';
 import { TopicStudentService } from './topic-student/topic-student.service';
 import { StateResult, TopicError, TopicRegisterStatus } from './topic.resource';
-import { Topic, TopicChangeStatusRequestBody, TopicRequestBody } from './topic.type';
+import { Topic, TopicChangeStatusRequestBody, TopicForView, TopicRequestBody } from './topic.type';
 
 @Injectable()
 export class TopicService {
@@ -283,6 +283,36 @@ export class TopicService {
     return topic;
   }
 
+  public async getByIdForView(id: number): Promise<TopicForView> {
+    const {
+      subject,
+      status,
+      description,
+      creator,
+      registerStatus,
+      createdAt,
+      updatedAt,
+      currentStudent,
+      maxStudent,
+      approverId
+    } = await this.getById(id);
+    const approver = (await this.lecturerService.getById(approverId)).convertToFastView();
+
+    return {
+      id,
+      subject,
+      description,
+      status,
+      registerStatus,
+      creator: creator.convertToFastView(),
+      currentStudent,
+      maxStudent,
+      createdAt,
+      updatedAt,
+      approver
+    };
+  }
+
   public async hasPermission(topic: Topic, user: User): Promise<boolean> {
     if (topic.thesis.creatorId === user.id) {
       return (
@@ -483,7 +513,17 @@ export class TopicService {
   }
 
   public async registerTopic(topicId: number, studentId: number): Promise<void> {
-    await this.studentService.checkStudentExistById(studentId);
+    const user = await this.userService.findById(studentId);
+    if (user.userType === UserType.STUDENT) {
+      if (await this.topicStudentService.hasRegisteredTopic(topicId, studentId)) {
+        throw new BadRequestException(TopicError.ERR_10);
+      }
+
+      if (await this.topicStudentService.hasParticipatedAnotherTopic(topicId, studentId)) {
+        throw new BadRequestException(TopicError.ERR_15);
+      }
+    }
+
     const topic = await this.getById(topicId);
     if (topic.status !== TopicStateAction.APPROVED) {
       throw new BadRequestException(TopicError.ERR_8);

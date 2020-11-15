@@ -5,7 +5,7 @@ import React from 'react';
 import { ReviewTerminology } from '../../../../assets/terminology/review.terminology';
 import { ReportModule } from '../../../../libs/common/common.resource';
 import ReviewService from '../../../../libs/review/review.service';
-import { Thesis } from '../../../../libs/thesis/thesis.type';
+import ThesisService from '../../../../libs/thesis/thesis.service';
 import TextData from '../../../Common/TextData';
 import LecturerFastView from '../../../Lecturer/LecturerFastView';
 import StateBaseInfo from '../StateBaseInfo';
@@ -15,46 +15,52 @@ import ReviewResult from './ReviewResult';
 
 interface ComponentProps {
   topicId: number;
-  thesis: Thesis;
+  thesisId: number;
   canFetch: boolean;
 }
 
-const ReviewInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) => {
+const ReviewInfo: React.FC<ComponentProps> = ({ topicId, thesisId, canFetch }) => {
   const reviewService = ReviewService.getInstance();
-  const { data } = reviewService.useReview(topicId, canFetch);
-  const validDateRange: [string | Moment, string | Moment] = [thesis.progressReport, thesis.review];
+  const thesisService = ThesisService.getInstance();
+  const { data: thesisData } = thesisService.useThesis(thesisId, canFetch);
+  const { data: reviewData } = reviewService.useReview(topicId, canFetch);
 
-  if (!data) {
+  if (!reviewData || !thesisData) {
     return <Empty description={ReviewTerminology.REVIEW_4} />;
   }
+
+  const validDateRange: [string | Moment, string | Moment] = [
+    thesisData.thesis.progressReport,
+    thesisData.thesis.review
+  ];
 
   return (
     <StateBaseInfo
       module={ReportModule.REVIEW}
-      stateInfo={data.review}
+      stateInfo={reviewData.review}
       adminButton={
         <ReviewEdit
-          thesisId={thesis.id}
-          review={data.review}
+          thesisId={thesisData.thesis.id}
+          review={reviewData.review}
           validDateRange={validDateRange}
-          thesisCreatorId={thesis.creatorId}
+          thesisCreatorId={thesisData.thesis.creatorId}
         />
       }
       extendInfo={[
         {
           label: ReviewTerminology.REVIEW_5,
-          element: data.review.reviewerView ? (
-            <LecturerFastView lecturer={data.review.reviewerView} />
+          element: reviewData.review.reviewerView ? (
+            <LecturerFastView lecturer={reviewData.review.reviewerView} />
           ) : (
             <TextData />
           )
         },
         {
           label: ReviewTerminology.REVIEW_1,
-          element: <ReviewResult result={data.review.result} />
+          element: <ReviewResult result={reviewData.review.result} />
         }
       ]}
-      extra={<ReviewerButton review={data.review} />}
+      extra={<ReviewerButton review={reviewData.review} />}
     />
   );
 };

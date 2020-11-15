@@ -1,4 +1,5 @@
 import { CommonColumns, CommonResponse } from '../common/common.type';
+import { LecturerForFastView } from '../lecturer/lecturer.type';
 import { TopicEntity } from './entities/topic.entity';
 import { TopicStateAction } from './topic-state/topic-state.resource';
 import { TopicStudentStatus } from './topic-student/topic-student.resouce';
@@ -19,7 +20,6 @@ export type TopicRequestBody = WithOptional<
     | 'thesisId'
     | 'states'
     | 'students'
-    | 'progressReport'
   >,
   'description'
 >;
@@ -38,7 +38,7 @@ export interface TopicGetManyResponse extends CommonResponse {
 }
 
 export interface TopicGetByIdResponse extends CommonResponse {
-  topic: Topic;
+  topic: TopicForView;
 }
 
 export interface TopicChangeStatusRequestBody {
@@ -56,4 +56,20 @@ export interface TopicChangeStudentRegisterStatusRequestBody {
 
 export type RawTopicChangeStudentRegisterStatusRequestBody = {
   [K in keyof TopicChangeStudentRegisterStatusRequestBody]?: string;
+};
+
+export type TopicForView = Pick<
+  Topic,
+  | 'id'
+  | 'subject'
+  | 'description'
+  | 'currentStudent'
+  | 'registerStatus'
+  | 'maxStudent'
+  | 'status'
+  | 'createdAt'
+  | 'updatedAt'
+> & {
+  creator: LecturerForFastView;
+  approver: LecturerForFastView;
 };

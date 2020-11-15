@@ -59,20 +59,44 @@ export class ThesisService {
     const loginUser = await this.userService.findById(loginUserId);
 
     if (loginUser.isAdmin === IsAdmin.TRUE) {
-      return (await this.getManyForAdmin(offset, limit, keyword)).map((thesis) =>
-        this.convertToListView(thesis)
+      return (await this.getManyForAdmin(offset, limit, keyword)).map(
+        ({ id, subject, startTime, endTime, state, status, creator }) => ({
+          id,
+          subject,
+          startTime,
+          endTime,
+          state,
+          status,
+          creator: creator.convertToFastView()
+        })
       );
     }
 
     if (loginUser.userType === UserType.LECTURER) {
-      return (await this.getManyForLecturer(loginUserId, offset, limit, keyword)).map((thesis) =>
-        this.convertToListView(thesis)
+      return (await this.getManyForLecturer(loginUserId, offset, limit, keyword)).map(
+        ({ id, subject, startTime, endTime, state, status, creator }) => ({
+          id,
+          subject,
+          startTime,
+          endTime,
+          state,
+          status,
+          creator: creator.convertToFastView()
+        })
       );
     }
 
     if (loginUser.userType === UserType.STUDENT) {
-      return (await this.getManyForStudent(loginUserId, offset, limit, keyword)).map((thesis) =>
-        this.convertToListView(thesis)
+      return (await this.getManyForStudent(loginUserId, offset, limit, keyword)).map(
+        ({ id, subject, startTime, endTime, state, status, creator }) => ({
+          id,
+          subject,
+          startTime,
+          endTime,
+          state,
+          status,
+          creator: creator.convertToFastView()
+        })
       );
     }
 
@@ -553,50 +577,14 @@ export class ThesisService {
     }
   }
 
-  private convertToListView({
-    id,
-    creatorId,
-    subject,
-    startTime,
-    endTime,
-    state,
-    status,
-    creator: {
-      lecturerId,
-      user: { firstname, lastname }
-    }
-  }: Thesis): ThesisForListView {
-    return {
-      id,
-      creatorId,
-      subject,
-      startTime,
-      endTime,
-      state,
-      status,
-      creatorInfo: { lecturerId, firstname, lastname }
-    };
-  }
-
-  private convertToView(thesis: Thesis): ThesisForView {
-    const {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      deletedAt,
-      creator: {
-        lecturerId,
-        user: { firstname, lastname }
-      },
-      ...remain
-    } = thesis;
+  public async getByIdForView(id: number): Promise<ThesisForView> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { deletedAt, creator, ...remain } = await this.getById(id);
 
     return {
       ...remain,
-      creatorInfo: { lecturerId, firstname, lastname }
+      creator: creator.convertToFastView()
     };
-  }
-
-  public async getByIdForView(id: number): Promise<ThesisForView> {
-    return this.convertToView(await this.getById(id));
   }
 
   public async isCreatorActiveThesis(userId: number): Promise<boolean> {

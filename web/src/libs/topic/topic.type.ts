@@ -1,5 +1,5 @@
 import { CommonColumns, CommonResponse } from '../common/common.type';
-import { Lecturer } from '../lecturer/lecturer.type';
+import { Lecturer, LecturerForFastView } from '../lecturer/lecturer.type';
 import { Thesis } from '../thesis/thesis.type';
 import { TopicStateAction } from './topic-state/topic-state.resource';
 import { TopicState } from './topic-state/topic-state.type';
@@ -58,10 +58,26 @@ export interface UseTopics {
 }
 
 export interface TopicGetByIdResponse extends CommonResponse {
-  topic: Topic;
+  topic: TopicForView;
 }
 
 export interface UseTopic {
   isLoading: boolean;
   data?: TopicGetByIdResponse;
 }
+
+export type TopicForView = Pick<
+  Topic,
+  | 'id'
+  | 'subject'
+  | 'description'
+  | 'currentStudent'
+  | 'registerStatus'
+  | 'maxStudent'
+  | 'status'
+  | 'createdAt'
+  | 'updatedAt'
+> & {
+  creator: LecturerForFastView;
+  approver: LecturerForFastView;
+};

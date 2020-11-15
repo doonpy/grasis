@@ -1,22 +1,19 @@
 import { Comment } from 'antd';
 import React from 'react';
 
-import { Lecturer } from '../../libs/lecturer/lecturer.type';
+import { LecturerForFastView } from '../../libs/lecturer/lecturer.type';
 import AvatarForComment from '../Avatar/AvatarForComment';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 
 interface ComponentProps {
-  lecturer: Lecturer;
+  lecturer: LecturerForFastView;
   date: string;
   comment: string | null;
 }
 
 const LecturerComment: React.FC<ComponentProps> = ({
-  lecturer: {
-    lecturerId,
-    user: { id, firstname, lastname }
-  },
+  lecturer: { lecturerId, firstname, lastname, id },
   date,
   comment
 }) => {

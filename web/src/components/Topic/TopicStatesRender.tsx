@@ -7,11 +7,11 @@ import {
   TopicStateActionIcon,
   TopicStateActionText
 } from '../../libs/topic/topic-state/topic-state.resource';
-import { TopicState } from '../../libs/topic/topic-state/topic-state.type';
+import { TopicStateForView } from '../../libs/topic/topic-state/topic-state.type';
 import LecturerComment from '../Lecturer/LecturerComment';
 
 interface ComponentProps {
-  states: TopicState[];
+  states: TopicStateForView[];
 }
 
 const TopicStatesRender: React.FC<ComponentProps> = ({ states }) => {

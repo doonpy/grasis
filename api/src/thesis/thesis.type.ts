@@ -2,7 +2,7 @@ import { CommonColumns, CommonResponse } from '../common/common.type';
 import { LecturerForFastView, LecturerSearchAttendee } from '../lecturer/lecturer.type';
 import { StudentSearchAttendee } from '../student/student.type';
 import { ThesisEntity } from './thesis.entity';
-import { ThesisState, ThesisStatus } from './thesis.resource';
+import { ThesisStatus } from './thesis.resource';
 
 export type Thesis = ThesisEntity;
 
@@ -52,24 +52,16 @@ export interface ThesisSwitchStatusResponse extends CommonResponse {
   currentStatus: ThesisStatus;
 }
 
-export interface ThesisForListView {
-  id: number;
-  creatorId: number;
-  subject: string;
-  startTime: Date;
-  endTime: Date;
-  state: ThesisState;
-  status: ThesisStatus;
-  creatorInfo: CreatorInfo;
-}
+export type ThesisForListView = Pick<
+  Thesis,
+  'id' | 'subject' | 'startTime' | 'endTime' | 'state' | 'status'
+> & {
+  creator: LecturerForFastView;
+};
 
-interface CreatorInfo {
-  firstname: string | null;
-  lastname: string | null;
-  lecturerId: string | null;
-}
-
-export type ThesisForView = Omit<Thesis, 'deletedAt' | 'creator'> & { creatorInfo: CreatorInfo };
+export type ThesisForView = Omit<Thesis, 'deletedAt' | 'creator'> & {
+  creator: LecturerForFastView;
+};
 
 export interface ThesisSearchLecturerInThesis extends CommonResponse {
   result: LecturerForFastView[];

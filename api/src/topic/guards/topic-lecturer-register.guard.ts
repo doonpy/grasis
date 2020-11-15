@@ -1,25 +1,29 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { ThesisError, ThesisState, ThesisStatus } from '../../thesis/thesis.resource';
+import { CommonParam } from '../../common/common.resource';
+import { ThesisState, ThesisStatus } from '../../thesis/thesis.resource';
 import { ThesisService } from '../../thesis/thesis.service';
 import { UserService } from '../../user/user.service';
-import { TopicError, TopicQuery } from '../topic.resource';
+import { TopicError } from '../topic.resource';
+import { TopicService } from '../topic.service';
 
 @Injectable()
 export class TopicLecturerRegisterGuard implements CanActivate {
   constructor(
     private readonly userService: UserService,
-    private readonly thesisService: ThesisService
+    private readonly thesisService: ThesisService,
+    private readonly topicService: TopicService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Express.CustomRequest>();
-    const thesisId: string = request.query![TopicQuery.THESIS_ID];
-    if (!thesisId) {
-      throw new BadRequestException(ThesisError.ERR_7);
+    const topicId: string = request.params![CommonParam.ID];
+    if (!topicId) {
+      throw new BadRequestException(TopicError.ERR_5);
     }
 
-    const thesis = await this.thesisService.getById(parseInt(thesisId));
+    const topic = await this.topicService.getById(parseInt(topicId));
+    const thesis = await this.thesisService.getById(topic.thesisId);
     if (thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(TopicError.ERR_1);
     }

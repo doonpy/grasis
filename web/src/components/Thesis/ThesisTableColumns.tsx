@@ -11,7 +11,7 @@ import { THESIS_PATH_ROOT, ThesisState, ThesisStatus } from '../../libs/thesis/t
 import { ThesisForListView } from '../../libs/thesis/thesis.type';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
-import ThesisCreatorRender from './ThesisCreatorRender';
+import LecturerFastView from '../Lecturer/LecturerFastView';
 import ThesisStateRender from './ThesisStateRender';
 import ThesisStatusRender from './ThesisStatusRender';
 
@@ -44,9 +44,7 @@ export const ThesisTableColumns: ColumnsType<ThesisForListView> = [
     title: ThesisTerminology.THESIS_11,
     key: 'creator',
     sorter: { compare: (a, b) => sortByNumber(a.creatorId, b.creatorId), multiple: 2 },
-    render: (value, { creatorId, creatorInfo }) => (
-      <ThesisCreatorRender creatorId={creatorId} creatorInfo={creatorInfo} />
-    )
+    render: (value, { creator }) => <LecturerFastView lecturer={creator} />
   },
   {
     title: ThesisTerminology.THESIS_12,

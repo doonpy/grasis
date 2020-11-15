@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   DefaultValuePipe,
@@ -11,6 +12,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   Request,
   UseGuards
 } from '@nestjs/common';
@@ -23,8 +25,6 @@ import {
   commonOffsetValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { LecturerService } from '../lecturer/lecturer.service';
-import { IsAdmin } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { ThesisPermissionGuard } from './guards/thesis-permission.guard';
 import { TopicLecturerRegisterGuard } from './guards/topic-lecturer-register.guard';
@@ -34,8 +34,10 @@ import { ParseTopicChangeStatusPipe } from './pipes/parse-topic-change-status.pi
 import { ParseTopicChangeStudentRegisterStatusPipe } from './pipes/parse-topic-change-student-register-status.pipe';
 import { ParseTopicRequestBodyPipe } from './pipes/parse-topic-request-body.pipe';
 import { TopicStateService } from './topic-state/topic-state.service';
+import { TopicGetStatesResponse } from './topic-state/topic-state.type';
 import { TopicStudentService } from './topic-student/topic-student.service';
-import { TopicPath, TopicQuery } from './topic.resource';
+import { TopicGetStudentsResponse, TopicStudentForView } from './topic-student/topic-student.type';
+import { TopicError, TopicPath, TopicQuery } from './topic.resource';
 import { TopicService } from './topic.service';
 import {
   Topic,
@@ -60,12 +62,11 @@ export class TopicController {
     private readonly topicService: TopicService,
     private readonly userService: UserService,
     private readonly topicStudentService: TopicStudentService,
-    private readonly topicStateService: TopicStateService,
-    private readonly lecturerService: LecturerService
+    private readonly topicStateService: TopicStateService
   ) {}
 
   @Post()
-  @UseGuards(ThesisPermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(ThesisPermissionGuard)
   public async create(
     @Query(
       TopicQuery.THESIS_ID,
@@ -127,24 +128,16 @@ export class TopicController {
 
   @Get(TopicPath.SPECIFY)
   @UseGuards(TopicPermissionGuard)
-  public async getById(
+  public async getByIdForView(
     @Param(
       CommonParam.ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
     )
-    id: number,
-    @Request() req: Express.Request
+    id: number
   ): Promise<TopicGetByIdResponse> {
-    const loginUserId = req.user?.userId as number;
-    const loginUser = await this.userService.findById(loginUserId);
-    const topic = await this.topicService.getById(id);
-    topic.students = await this.topicStudentService.getMany(topic.id);
-    if (loginUser.isAdmin === IsAdmin.TRUE || loginUser.id === topic.creatorId) {
-      topic.approver = await this.lecturerService.getById(topic.approverId);
-      topic.states = await this.topicStateService.getMany(topic.id);
-    }
+    const topic = await this.topicService.getByIdForView(id);
 
     return {
       statusCode: HttpStatus.OK,
@@ -243,7 +236,7 @@ export class TopicController {
       ParseIntPipe
     )
     id: number,
-    @Query(
+    @Param(
       TopicQuery.STUDENT_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
@@ -265,7 +258,7 @@ export class TopicController {
       ParseIntPipe
     )
     id: number,
-    @Query(
+    @Param(
       TopicQuery.STUDENT_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
@@ -282,5 +275,89 @@ export class TopicController {
     const loginUserId = req.user?.userId as number;
     const loginUser = await this.userService.findById(loginUserId);
     await this.topicService.changeStudentRegisterStatus(loginUser, id, studentId, body.status);
+  }
+
+  @Get(TopicPath.GET_STUDENTS)
+  @UseGuards(TopicPermissionGuard)
+  public async getStudentsByTopicId(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number,
+    @Query(
+      CommonQuery.OFFSET,
+      new JoiValidationPipe(commonOffsetValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.OFFSET),
+      ParseIntPipe
+    )
+    offset: number,
+    @Query(
+      CommonQuery.LIMIT,
+      new JoiValidationPipe(commonLimitValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.LIMIT),
+      ParseIntPipe
+    )
+    limit: number
+  ): Promise<TopicGetStudentsResponse> {
+    const students: TopicStudentForView[] = (
+      await this.topicStudentService.getMany(id, limit, offset)
+    ).map(
+      ({
+        topicId,
+        status,
+        updatedAt,
+        student: {
+          id,
+          studentId,
+          user: { firstname, lastname, deletedAt }
+        }
+      }) => ({
+        id,
+        topicId,
+        studentId,
+        firstname,
+        lastname,
+        status,
+        deletedAt,
+        updatedAt
+      })
+    );
+
+    return {
+      statusCode: HttpStatus.OK,
+      students
+    };
+  }
+
+  @Get(TopicPath.GET_STATES)
+  @UseGuards(TopicPermissionGuard)
+  public async getTopicStates(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number,
+    @Req() request: Express.CustomRequest
+  ): Promise<TopicGetStatesResponse> {
+    const loginUserId = request.user!.userId;
+    const topic = await this.topicService.getById(id);
+    if (topic.creatorId !== loginUserId || topic.thesis.creatorId !== loginUserId) {
+      throw new BadRequestException(TopicError.ERR_14);
+    }
+
+    const states = (await this.topicStateService.getMany(id)).map(({ processor, ...remain }) => ({
+      ...remain,
+      processor: processor.convertToFastView()
+    }));
+
+    return {
+      statusCode: HttpStatus.OK,
+      states
+    };
   }
 }

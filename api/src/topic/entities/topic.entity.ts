@@ -1,12 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { CommonEntity } from '../../common/common.entity';
 import {
@@ -16,9 +8,7 @@ import {
 } from '../../common/common.resource';
 import { LecturerEntity } from '../../lecturer/lecturer.entity';
 import { Lecturer } from '../../lecturer/lecturer.type';
-import { ProgressReportEntity } from '../../progress-report/progress-report.entity';
 import { ProgressReport } from '../../progress-report/progress-report.type';
-import { ReviewEntity } from '../../review/review.entity';
 import { Review } from '../../review/review.type';
 import { ThesisEntity } from '../../thesis/thesis.entity';
 import { Thesis } from '../../thesis/thesis.type';
@@ -91,11 +81,9 @@ export class TopicEntity extends CommonEntity {
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: TopicStudentColumn.TOPIC_ID })
   public students!: TopicStudent[];
 
-  @OneToOne(() => ProgressReportEntity, (progressReport) => progressReport)
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: CommonColumn.ID })
   public progressReport?: ProgressReport;
 
-  @OneToOne(() => ReviewEntity, (review) => review)
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: CommonColumn.ID })
   public review?: Review;
 }

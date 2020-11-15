@@ -1,14 +1,6 @@
-import Icon, {
-  DeleteOutlined,
-  EditOutlined,
-  ExclamationCircleOutlined,
-  InfoCircleOutlined,
-  LockOutlined,
-  UnorderedListOutlined
-} from '@ant-design/icons';
-import { Button, Card, Modal, Space, Tabs } from 'antd';
+import Icon, { InfoCircleOutlined, LockOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { Card, Tabs } from 'antd';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useState } from 'react';
 
@@ -28,8 +20,7 @@ import { SIDER_KEYS } from '../../../../../libs/common/common.resource';
 import CommonService from '../../../../../libs/common/common.service';
 import { CommonPageProps, NextPageWithLayout } from '../../../../../libs/common/common.type';
 import { THESIS_PATH_ROOT, ThesisPath } from '../../../../../libs/thesis/thesis.resource';
-import { TOPIC_PATH_ROOT, TopicPath, TopicTabKey } from '../../../../../libs/topic/topic.resource';
-import TopicService from '../../../../../libs/topic/topic.service';
+import { TopicTabKey } from '../../../../../libs/topic/topic.resource';
 import { UserType } from '../../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
@@ -41,138 +32,85 @@ interface PageParams extends ParsedUrlQuery {
   topicId: string;
 }
 
-const { confirm } = Modal;
-
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
-  const topicService = TopicService.getInstance();
   const thesisId = parseInt(params.thesisId);
   const topicId = parseInt(params.topicId);
-  const { data, isLoading } = topicService.useTopic(thesisId, topicId);
   const [currentTab, setCurrentTab] = useState<string>(TopicTabKey.INFO);
 
   const onTabChange = (activeKey: string) => {
     setCurrentTab(activeKey);
   };
 
-  const showDeleteConfirm = () => {
-    confirm({
-      title: TopicTerminology.TOPIC_17,
-      icon: <ExclamationCircleOutlined />,
-      content: TopicTerminology.TOPIC_18,
-      okText: TopicTerminology.TOPIC_19,
-      cancelText: TopicTerminology.TOPIC_20,
-      cancelButtonProps: { type: 'primary', danger: true },
-      async onOk() {
-        try {
-          await topicService.deleteById(thesisId, topicId);
-          await topicService.redirectService.redirectTo(
-            topicService.replaceParams(TOPIC_PATH_ROOT, [thesisId])
-          );
-        } catch (error) {
-          await topicService.requestErrorHandler(error);
-        }
-      }
-    });
-  };
-
   return (
-    <Card
-      loading={isLoading}
-      title={TopicTerminology.TOPIC_11}
-      extra={
-        data &&
-        topicService.canEdit(data.topic) && (
-          <Space>
-            <Link href={topicService.replaceParams(TopicPath.EDIT, [thesisId, topicId])}>
-              <Button
-                type="primary"
-                shape="circle"
-                icon={<EditOutlined />}
-                size="large"
-                disabled={isLoading}
-              />
-            </Link>
-            <Button
-              type="primary"
-              danger
-              shape="circle"
-              icon={<DeleteOutlined />}
-              size="large"
-              onClick={showDeleteConfirm}
-              disabled={isLoading}
-            />
-          </Space>
-        )
-      }>
-      {data && (
-        <Tabs defaultActiveKey={currentTab} onChange={onTabChange}>
-          <Tabs.TabPane
-            tab={
-              <span>
-                <InfoCircleOutlined />
-                {TopicTerminology.TOPIC_12}
-              </span>
-            }
-            key={TopicTabKey.INFO}>
-            <TopicInfo topic={data.topic} />
-          </Tabs.TabPane>
-          <Tabs.TabPane
-            tab={
-              <span>
-                <UnorderedListOutlined />
-                {TopicTerminology.TOPIC_46}
-              </span>
-            }
-            key={TopicTabKey.STUDENT_INFO}>
-            <TopicStudentInfo
-              students={data.topic.students}
-              creatorId={data.topic.creatorId}
-              maxStudent={data.topic.maxStudent}
-              currentStudent={data.topic.currentStudent}
-            />
-          </Tabs.TabPane>
-          {topicService.hasPrivateContentPermission(data.topic) && (
-            <Tabs.TabPane
-              tab={
-                <span>
-                  <LockOutlined />
-                  {TopicTerminology.TOPIC_13}
-                </span>
-              }
-              key={TopicTabKey.PRIVATE_CONTENT}>
-              <TopicPrivateInfo topic={data.topic} />
-            </Tabs.TabPane>
-          )}
-          <Tabs.TabPane
-            tab={
-              <span>
-                <Icon component={FileChartLineIcon} />
-                {ProgressReportTerminology.PR_1}
-              </span>
-            }
-            key={TopicTabKey.PROGRESS_REPORT}>
-            <ProgressReportInfo
-              topicId={topicId}
-              thesis={data.topic.thesis}
-              canFetch={currentTab === TopicTabKey.PROGRESS_REPORT}
-            />
-          </Tabs.TabPane>
-          <Tabs.TabPane
-            tab={
-              <span>
-                <Icon component={FileSearchIcon} />
-                {ReviewTerminology.REVIEW_3}
-              </span>
-            }
-            key={TopicTabKey.REVIEW}>
-            <ReviewInfo
-              topicId={topicId}
-              thesis={data.topic.thesis}
-              canFetch={currentTab === TopicTabKey.REVIEW}
-            />
-          </Tabs.TabPane>
-        </Tabs>
-      )}
+    <Card title={TopicTerminology.TOPIC_11}>
+      <Tabs defaultActiveKey={currentTab} onChange={onTabChange}>
+        <Tabs.TabPane
+          tab={
+            <span>
+              <InfoCircleOutlined />
+              {TopicTerminology.TOPIC_12}
+            </span>
+          }
+          key={TopicTabKey.INFO}>
+          <TopicInfo
+            topicId={topicId}
+            thesisId={thesisId}
+            canFetch={currentTab === TopicTabKey.INFO}
+          />
+        </Tabs.TabPane>
+        <Tabs.TabPane
+          tab={
+            <span>
+              <LockOutlined />
+              {TopicTerminology.TOPIC_13}
+            </span>
+          }
+          key={TopicTabKey.PRIVATE_CONTENT}>
+          <TopicPrivateInfo
+            topicId={topicId}
+            thesisId={thesisId}
+            canFetch={currentTab === TopicTabKey.PRIVATE_CONTENT}
+          />
+        </Tabs.TabPane>
+        <Tabs.TabPane
+          tab={
+            <span>
+              <UnorderedListOutlined />
+              {TopicTerminology.TOPIC_46}
+            </span>
+          }
+          key={TopicTabKey.STUDENT_INFO}>
+          <TopicStudentInfo topicId={topicId} canFetch={currentTab === TopicTabKey.STUDENT_INFO} />
+        </Tabs.TabPane>
+        <Tabs.TabPane
+          tab={
+            <span>
+              <Icon component={FileChartLineIcon} />
+              {ProgressReportTerminology.PR_1}
+            </span>
+          }
+          key={TopicTabKey.PROGRESS_REPORT}>
+          <ProgressReportInfo
+            topicId={topicId}
+            thesisId={thesisId}
+            canFetch={currentTab === TopicTabKey.PROGRESS_REPORT}
+          />
+        </Tabs.TabPane>
+        <Tabs.TabPane
+          tab={
+            <span>
+              <Icon component={FileSearchIcon} />
+              {ReviewTerminology.REVIEW_3}
+            </span>
+          }
+          key={TopicTabKey.REVIEW}>
+          <ReviewInfo
+            topicId={topicId}
+            thesisId={thesisId}
+            canFetch={currentTab === TopicTabKey.REVIEW}
+          />
+        </Tabs.TabPane>
+      </Tabs>
     </Card>
   );
 };
@@ -199,10 +137,6 @@ export const getStaticProps: GetStaticProps<CommonPageProps, PageParams> = async
           href: commonService.replaceParams(ThesisPath.SPECIFY, [
             (params && params.thesisId) || NaN
           ])
-        },
-        {
-          text: TopicTerminology.TOPIC_6,
-          href: commonService.replaceParams(TOPIC_PATH_ROOT, [(params && params.thesisId) || NaN])
         },
         {
           text: TopicTerminology.TOPIC_11

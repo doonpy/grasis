@@ -17,7 +17,7 @@ interface ComponentProps {
 const SearchBox: React.FC<ComponentProps> = ({ onSearch, disabled }) => {
   return (
     <Search
-      size="large"
+      size="middle"
       placeholder="Tìm kiếm..."
       onSearch={onSearch}
       enterButton

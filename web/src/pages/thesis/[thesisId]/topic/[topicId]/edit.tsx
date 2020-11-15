@@ -12,7 +12,7 @@ import { SIDER_KEYS } from '../../../../../libs/common/common.resource';
 import CommonService from '../../../../../libs/common/common.service';
 import { CommonPageProps, NextPageWithLayout } from '../../../../../libs/common/common.type';
 import { THESIS_PATH_ROOT, ThesisPath } from '../../../../../libs/thesis/thesis.resource';
-import { TOPIC_PATH_ROOT, TopicPath } from '../../../../../libs/topic/topic.resource';
+import { TopicPath } from '../../../../../libs/topic/topic.resource';
 import TopicService from '../../../../../libs/topic/topic.service';
 import { TopicRequestBody } from '../../../../../libs/topic/topic.type';
 import { UserType } from '../../../../../libs/user/user.resource';
@@ -37,11 +37,9 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
   const handleSubmitButton = async (formValues: TopicRequestBody) => {
     try {
       setLoading(true);
-      const {
-        data: { id }
-      } = await topicService.updateById(thesisId, topicId, formValues);
+      await topicService.updateById(topicId, formValues);
       await topicService.redirectService.redirectTo(
-        topicService.replaceParams(TopicPath.SPECIFY, [thesisId, id])
+        topicService.replaceParams(TopicPath.SPECIFY, [thesisId, topicId])
       );
     } catch (error) {
       await topicService.requestErrorHandler(error);
@@ -116,7 +114,6 @@ export const getStaticProps: GetStaticProps<CommonPageProps, PageParams> = async
             (params && params.thesisId) || NaN
           ])
         },
-        { text: TopicTerminology.TOPIC_6, href: TOPIC_PATH_ROOT },
         {
           text: TopicTerminology.TOPIC_11,
           href: commonService.replaceParams(TopicPath.SPECIFY, [
