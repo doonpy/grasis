@@ -315,10 +315,7 @@ export class TopicService {
 
   public async hasPermission(topic: Topic, user: User): Promise<boolean> {
     if (topic.thesis.creatorId === user.id) {
-      return (
-        (topic.status !== TopicStateAction.NEW && topic.status !== TopicStateAction.WITHDRAW) ||
-        topic.creatorId === user.id
-      );
+      return topic.status !== TopicStateAction.NEW || topic.creatorId === user.id;
     }
 
     if (user.userType === UserType.LECTURER) {
@@ -693,29 +690,34 @@ export class TopicService {
     topicId: number,
     deletedAt = new Date()
   ): Promise<void> {
-    await this.topicStateService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
-    await this.topicStudentService.deleteByTopicIdsWithTransaction(manager, topicId, deletedAt);
-    await this.progressReportService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
-    await this.commentService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt);
-    await this.reviewService.deleteByIdWithTransaction(manager, topicId, deletedAt);
+    await Promise.all([
+      this.topicStateService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt),
+      this.topicStudentService.deleteByTopicIdsWithTransaction(manager, topicId, deletedAt),
+      this.progressReportService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt),
+      this.commentService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt),
+      this.reviewService.deleteByIdWithTransaction(manager, topicId, deletedAt)
+    ]);
     await manager.update(TopicEntity, { id: topicId }, { deletedAt });
   }
 
   public async createReviewWithTransaction(manager: EntityManager, thesis: Thesis): Promise<void> {
     const topics = await manager.find(TopicEntity, {
-      relations: { progressReport: true, review: true },
       where: { ...notDeleteCondition, thesisId: thesis.id },
       cache: true
     });
+    const topicIds = topics.map(({ id }) => id);
+    const [progressReports, reviews] = await Promise.all([
+      this.progressReportService.getByIds(topicIds),
+      this.reviewService.getByIds(topicIds)
+    ]);
     for (const topic of topics) {
-      if (!topic.progressReport || topic.review) {
+      const progressReport = progressReports.find(({ id }) => id === topic.id);
+      const isReviewExisted = reviews.findIndex(({ id }) => id === topic.id) >= 0;
+      if (!progressReport || isReviewExisted) {
         continue;
       }
 
-      const {
-        progressReport: { result }
-      } = topic;
-      if (result === StateResult.TRUE) {
+      if (progressReport.result === StateResult.TRUE) {
         await this.reviewService.createWithTransaction(manager, {
           id: topic.id,
           time: thesis.review

@@ -12,7 +12,8 @@ export const ReviewError = {
   ERR_4: 'Bạn không phải sinh viên thực hiện đề tài này.',
   ERR_5: 'Khóa luận đang ngưng hoạt động.',
   ERR_6: 'Hiện tại không phải thời gian phản biện.',
-  ERR_7: 'Bạn không phải người phản biện đề tài này.'
+  ERR_7: 'Bạn không phải người phản biện đề tài này.',
+  ERR_8: 'Không thể chỉnh sửa tài liệu phản biện đã có kết quả.'
 };
 
 export const ReviewPath = {

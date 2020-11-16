@@ -346,7 +346,7 @@ export class TopicController {
   ): Promise<TopicGetStatesResponse> {
     const loginUserId = request.user!.userId;
     const topic = await this.topicService.getById(id);
-    if (topic.creatorId !== loginUserId || topic.thesis.creatorId !== loginUserId) {
+    if (topic.creatorId !== loginUserId && topic.thesis.creatorId !== loginUserId) {
       throw new BadRequestException(TopicError.ERR_14);
     }
 

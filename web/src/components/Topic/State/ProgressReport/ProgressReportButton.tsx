@@ -56,7 +56,7 @@ const ProgressReportButton: React.FC<ComponentProps> = ({ progressReport, thesis
               type="primary"
               icon={<Icon component={CheckCircleIcon} />}
               onClick={() => onClickChangeResult(StateResult.TRUE)}>
-              {ProgressReportResultText[StateResult.FALSE]}
+              {ProgressReportResultText[StateResult.TRUE]}
             </Button>
             <Button
               loading={loading}
@@ -64,7 +64,7 @@ const ProgressReportButton: React.FC<ComponentProps> = ({ progressReport, thesis
               icon={<Icon component={MinusCircleIcon} />}
               onClick={() => onClickChangeResult(StateResult.FALSE)}
               danger>
-              {ProgressReportResultText[StateResult.TRUE]}
+              {ProgressReportResultText[StateResult.FALSE]}
             </Button>
           </>
         );

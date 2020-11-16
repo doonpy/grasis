@@ -97,7 +97,10 @@ export class ProgressReportService {
   }
 
   public async checkUploadPermission(topicId: number, user: User): Promise<void> {
-    const topic = await this.topicService.getById(topicId);
+    const [topic, progressReport] = await Promise.all([
+      this.topicService.getById(topicId),
+      this.getById(topicId)
+    ]);
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(ProgressReportError.ERR_5);
     }
@@ -112,9 +115,20 @@ export class ProgressReportService {
     ) {
       throw new BadRequestException(ProgressReportError.ERR_4);
     }
+
+    if (progressReport.result !== StateResult.NOT_DECIDED) {
+      throw new BadRequestException(ProgressReportError.ERR_7);
+    }
   }
 
   public async changeResult(id: number, result: StateResult): Promise<void> {
     await this.progressReportRepository.update({ ...notDeleteCondition, id }, { result });
+  }
+
+  public async getByIds(ids: number[]): Promise<ProgressReport[]> {
+    return this.progressReportRepository.findByIds(ids, {
+      where: { ...notDeleteCondition },
+      cache: true
+    });
   }
 }

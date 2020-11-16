@@ -10,7 +10,8 @@ export const ProgressReportError = {
   ERR_3: 'Thời gian báo cáo tiến độ không hợp lệ.',
   ERR_4: 'Bạn không phải sinh viên thực hiện đề tài này.',
   ERR_5: 'Khóa luận đang ngưng hoạt động.',
-  ERR_6: 'Hiện tại không phải thời gian báo cáo tiến độ.'
+  ERR_6: 'Hiện tại không phải thời gian báo cáo tiến độ.',
+  ERR_7: 'Không thể chỉnh sửa tài liệu khi báo cáo tiến độ đã có kết quả.'
 };
 
 export const ProgressReportPath = {

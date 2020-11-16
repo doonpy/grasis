@@ -57,7 +57,8 @@ export class ReviewService {
 
   public async updateById(id: number, data: ReviewRequestBody): Promise<void> {
     const currentReview = await this.getById(id);
-    const thesis = await this.thesisService.getById(id);
+    const topic = await this.topicService.getById(id);
+    const thesis = await this.thesisService.getById(topic.thesisId);
     if (data.time) {
       await this.checkValidTime(thesis, data.time);
     }
@@ -103,7 +104,10 @@ export class ReviewService {
   }
 
   public async checkUploadPermission(topicId: number, user: User): Promise<void> {
-    const topic = await this.topicService.getById(topicId);
+    const [topic, review] = await Promise.all([
+      this.topicService.getById(topicId),
+      this.getById(topicId)
+    ]);
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(ReviewError.ERR_5);
     }
@@ -118,6 +122,10 @@ export class ReviewService {
     ) {
       throw new BadRequestException(ReviewError.ERR_4);
     }
+
+    if (review.result !== StateResult.NOT_DECIDED) {
+      throw new BadRequestException(ReviewError.ERR_8);
+    }
   }
 
   public async changeResult(id: number, userId: number, result: StateResult): Promise<void> {
@@ -125,5 +133,13 @@ export class ReviewService {
 
     review.result = result;
     await this.reviewRepository.save(review);
+  }
+
+  public async isExistedById(id: number): Promise<boolean> {
+    return (await this.reviewRepository.count({ id })) > 0;
+  }
+
+  public async getByIds(ids: number[]): Promise<Review[]> {
+    return this.reviewRepository.findByIds(ids, { where: { ...notDeleteCondition }, cache: true });
   }
 }
