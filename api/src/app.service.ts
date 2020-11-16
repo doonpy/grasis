@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { Connection } from 'typeorm';
 
 import { isProductionMode, isReviewData } from './common/common.helper';
+import { initReviewData } from './database/database.helper';
 import { LecturerService } from './lecturer/lecturer.service';
 import { IsAdmin } from './user/user.resource';
 import { UserService } from './user/user.service';
@@ -25,6 +26,10 @@ export class AppService implements OnApplicationBootstrap {
       Logger.log(chalk.yellow('Run migrations...'));
       await this.connection.runMigrations({ transaction: true });
       Logger.log(chalk.yellow('Run migrations... Done!'));
+    }
+
+    if (!isReviewData()) {
+      await initReviewData(this.connection);
     }
 
     if (

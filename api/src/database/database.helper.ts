@@ -1,4 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist/interfaces/typeorm-options.interface';
+import fs from 'fs';
+import path from 'path';
+import { Connection } from 'typeorm';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 
 import { isProductionMode, isReviewData } from '../common/common.helper';
@@ -25,4 +28,11 @@ export function getDatabaseConfig(): TypeOrmModuleOptions & MysqlConnectionOptio
       duration: 1000
     }
   };
+}
+
+export async function initReviewData(connection: Connection): Promise<void> {
+  const script = fs.readFileSync(path.join(__dirname, '../..', '/data/review-data.sql'), {
+    encoding: 'utf-8'
+  });
+  await connection.query(script);
 }
