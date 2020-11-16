@@ -17,7 +17,12 @@ import { UserService } from '../user/user.service';
 import { User } from '../user/user.type';
 import { ReviewEntity } from './review.entity';
 import { ReviewError } from './review.resource';
-import { Review, ReviewForView, ReviewRequestBody } from './review.type';
+import {
+  Review,
+  ReviewChangeResultRequestBody,
+  ReviewForView,
+  ReviewRequestBody
+} from './review.type';
 
 @Injectable()
 export class ReviewService {
@@ -128,18 +133,36 @@ export class ReviewService {
     }
   }
 
-  public async changeResult(id: number, userId: number, result: StateResult): Promise<void> {
+  public async changeResult(
+    id: number,
+    { result, reviewerComment }: ReviewChangeResultRequestBody
+  ): Promise<void> {
     const review = await this.getById(id);
 
     review.result = result;
+    review.reviewerComment = reviewerComment;
     await this.reviewRepository.save(review);
-  }
-
-  public async isExistedById(id: number): Promise<boolean> {
-    return (await this.reviewRepository.count({ id })) > 0;
   }
 
   public async getByIds(ids: number[]): Promise<Review[]> {
     return this.reviewRepository.findByIds(ids, { where: { ...notDeleteCondition }, cache: true });
+  }
+
+  public async checkResultPermission(topicId: number, user: User): Promise<void> {
+    const [topic, review] = await Promise.all([
+      this.topicService.getById(topicId),
+      this.getById(topicId)
+    ]);
+    if (topic.thesis.status === ThesisStatus.INACTIVE) {
+      throw new BadRequestException(ReviewError.ERR_5);
+    }
+
+    if (topic.thesis.state !== ThesisState.REVIEW) {
+      throw new BadRequestException(ReviewError.ERR_6);
+    }
+
+    if (user.userType !== UserType.LECTURER || user.id !== review.reviewerId) {
+      throw new BadRequestException(ReviewError.ERR_7);
+    }
   }
 }

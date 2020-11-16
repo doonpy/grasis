@@ -9,24 +9,24 @@ import fs from 'fs';
 import multer, { diskStorage } from 'multer';
 import { Observable } from 'rxjs';
 
-import { ReportModule } from '../../common/common.resource';
+import { ResultModule } from '../../common/common.resource';
 import {
   filenameSchemaValidation,
-  reportModuleSchemaValidation
+  resultModuleSchemaValidation
 } from '../../common/common.validation';
 import { transformException } from '../multer/multer.util';
 import {
-  UPLOAD_REPORT_BODY_PROPERTY,
-  UPLOAD_REPORT_LIMIT_FILES,
+  UPLOAD_RESULT_BODY_PROPERTY,
+  UPLOAD_RESULT_LIMIT_FILES,
   UploadError,
   UploadFileSize,
-  UploadReportMimeTypes
+  UploadResultMimeTypes
 } from '../upload.resource';
 import { UploadService } from '../upload.service';
 import { FileDestinationCallback, FileNameCallback } from '../upload.type';
 
 @Injectable()
-export class UploadReportInterceptor implements NestInterceptor {
+export class UploadResultInterceptor implements NestInterceptor {
   constructor(private readonly uploadService: UploadService) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
@@ -36,12 +36,12 @@ export class UploadReportInterceptor implements NestInterceptor {
       fileFilter: this.fileFilter.bind(this),
       storage: diskStorage({
         filename: this.getFilename.bind(this),
-        destination: this.getReportDestination.bind(this)
+        destination: this.getResultDestination.bind(this)
       })
     });
 
     await new Promise((resolve, reject) => {
-      multerInstance.array(UPLOAD_REPORT_BODY_PROPERTY, UPLOAD_REPORT_LIMIT_FILES)(
+      multerInstance.single(UPLOAD_RESULT_BODY_PROPERTY)(
         ctx.getRequest(),
         ctx.getResponse(),
         (err: any) => {
@@ -70,7 +70,7 @@ export class UploadReportInterceptor implements NestInterceptor {
       return callback(error);
     }
 
-    if (!UploadReportMimeTypes.includes(mimetype)) {
+    if (!UploadResultMimeTypes.includes(mimetype)) {
       return callback(new BadRequestException(UploadError.ERR_1));
     }
 
@@ -90,7 +90,7 @@ export class UploadReportInterceptor implements NestInterceptor {
     callback(null, `${new Date().getTime()}_${originalname}`);
   }
 
-  private getReportDestination(
+  private getResultDestination(
     req: Express.CustomRequest,
     file: Express.Multer.File,
     callback: FileDestinationCallback
@@ -102,15 +102,15 @@ export class UploadReportInterceptor implements NestInterceptor {
   }
 
   private async checkPermission(req: Express.CustomRequest): Promise<void> {
-    const reportModule: ReportModule = parseInt(req.body!.module);
-    const { error } = reportModuleSchemaValidation.validate(reportModule);
+    const resultModule: ResultModule = parseInt(req.body!.module);
+    const { error } = resultModuleSchemaValidation.validate(resultModule);
     if (error) {
       throw new BadRequestException(error.message);
     }
 
     const topicId = parseInt(req.body!.topicId);
     const userId = req.user!.userId;
-    await this.uploadService.checkReportPermission(userId, topicId, reportModule);
+    await this.uploadService.checkResultPermission(userId, topicId, resultModule);
   }
 
   private checkDestination(folderPath: string): void {
@@ -119,14 +119,14 @@ export class UploadReportInterceptor implements NestInterceptor {
     }
 
     const currentFileAmount = fs.readdirSync(folderPath).length;
-    if (currentFileAmount + 1 > UPLOAD_REPORT_LIMIT_FILES) {
-      throw new BadRequestException(UploadError.ERR_7);
+    if (currentFileAmount + 1 > UPLOAD_RESULT_LIMIT_FILES) {
+      throw new BadRequestException(UploadError.ERR_9);
     }
   }
 
   private getFolderPathFromRequest(req: Express.CustomRequest): string {
-    const module: ReportModule = parseInt(req.body!.module);
+    const module: ResultModule = parseInt(req.body!.module);
     const topicId = parseInt(req.body!.topicId);
-    return this.uploadService.getReportFolderPath(module, topicId);
+    return this.uploadService.getResultFolderPath(module, topicId);
   }
 }

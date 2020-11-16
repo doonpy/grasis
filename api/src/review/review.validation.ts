@@ -1,7 +1,8 @@
 import Joi from '@hapi/joi';
 
 import { commonIdValidateSchema } from '../common/common.validation';
-import { ReviewRequestBody } from './review.type';
+import { stateResultValidationSchema } from '../topic/topic.validation';
+import { ReviewChangeResultRequestBody, ReviewRequestBody } from './review.type';
 
 const reviewValidationSchema = Joi.object<ReviewRequestBody>({
   time: Joi.string().isoDate().messages({
@@ -25,3 +26,10 @@ export const reviewCreateValidationSchema = reviewValidationSchema.concat(
     })
   })
 );
+
+export const reviewChangeResultValidationSchema = Joi.object<ReviewChangeResultRequestBody>({
+  result: stateResultValidationSchema,
+  reviewerComment: Joi.string().allow(null, '').messages({
+    'string.base': 'Ghi chú phải là chuỗi'
+  })
+});

@@ -7,21 +7,19 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonBody, CommonParam, CommonQueryValue } from '../common/common.resource';
+import { CommonParam, CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
-import { StateResult } from '../topic/topic.resource';
-import { stateResultValidationSchema } from '../topic/topic.validation';
 import { ReviewerGuard } from './guards/reviewer.guard';
 import { ReviewPath } from './review.resource';
 import { ReviewService } from './review.service';
-import { ReviewGetByIdResponse } from './review.type';
+import { ReviewChangeResultRequestBody, ReviewGetByIdResponse } from './review.type';
+import { reviewChangeResultValidationSchema } from './review.validation';
 
 @UseGuards(JwtAuthGuard, TopicPermissionGuard)
 @Controller(ReviewPath.ROOT)
@@ -38,11 +36,10 @@ export class ReviewController {
       ParseIntPipe
     )
     id: number,
-    @Body(CommonBody.STATE_RESULT, new JoiValidationPipe(stateResultValidationSchema))
-    result: StateResult,
-    @Req() request: Express.CustomRequest
+    @Body(new JoiValidationPipe(reviewChangeResultValidationSchema))
+    body: ReviewChangeResultRequestBody
   ): Promise<void> {
-    await this.reviewService.changeResult(id, request.user!.userId, result);
+    await this.reviewService.changeResult(id, body);
   }
 
   @Get(ReviewPath.SPECIFY)

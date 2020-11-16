@@ -1,6 +1,10 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
-import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../common/common.resource';
+import {
+  COMMON_ENTITY_OPTIONS,
+  CommonColumn,
+  commonStringColumnOptions
+} from '../common/common.resource';
 import { LecturerEntity } from '../lecturer/lecturer.entity';
 import { Lecturer } from '../lecturer/lecturer.type';
 import { TopicStateBaseEntity } from '../topic/entities/topic-state-base.entity';
@@ -22,6 +26,14 @@ export class ReviewEntity extends TopicStateBaseEntity {
     nullable: true
   })
   public reviewerId!: number | null;
+
+  @Column({
+    ...commonStringColumnOptions,
+    name: ReviewColumn.REVIEWER_COMMENT,
+    type: 'text',
+    nullable: true
+  })
+  public reviewerComment!: string | null;
 
   @ManyToOne(() => LecturerEntity, (lecturer) => lecturer)
   @JoinColumn({ name: ReviewColumn.REVIEWER_ID, referencedColumnName: CommonColumn.ID })

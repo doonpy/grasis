@@ -72,8 +72,7 @@ export enum ReportModule {
   DEFENSE
 }
 
-export enum RequestDataType {
-  PARAM = 1,
-  QUERY,
-  BODY
+export enum ResultModule {
+  REVIEW = 1,
+  DEFENSE
 }

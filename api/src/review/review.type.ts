@@ -7,7 +7,7 @@ import { ReviewEntity } from './review.entity';
 export type Review = ReviewEntity;
 
 export type ReviewRequestBody = WithOptional<
-  Omit<Review, keyof CommonColumns | 'result' | 'reviewer' | 'topic'>,
+  Omit<Review, keyof CommonColumns | 'result' | 'reviewer' | 'topic' | 'reviewerComment'>,
   'note' | 'place' | 'reviewerId'
 >;
 
@@ -24,3 +24,5 @@ export type ReviewForView = Omit<TopicStateBaseForView, 'deletedAt' | 'topic'> &
     result: StateResult;
     reviewerView: LecturerForFastView | null;
   };
+
+export type ReviewChangeResultRequestBody = Pick<Review, 'reviewerComment' | 'result'>;

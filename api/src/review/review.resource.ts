@@ -2,7 +2,8 @@ export const REVIEW_TABLE = 'review';
 
 export const ReviewColumn = {
   RESULT: 'result',
-  REVIEWER_ID: ' reviewer_id'
+  REVIEWER_ID: ' reviewer_id',
+  REVIEWER_COMMENT: 'reviewer_comment'
 };
 
 export const ReviewError = {

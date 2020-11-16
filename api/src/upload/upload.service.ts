@@ -4,7 +4,7 @@ import mime from 'mime-types';
 
 import { AwsService } from '../aws/aws.service';
 import { isProductionMode } from '../common/common.helper';
-import { ReportModule } from '../common/common.resource';
+import { ReportModule, ResultModule } from '../common/common.resource';
 import { FileInfo } from '../common/common.type';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { ReviewService } from '../review/review.service';
@@ -114,5 +114,35 @@ export class UploadService {
       const fileStream = fs.createReadStream(path);
       await this.awsService.uploadFileToS3(path, fileStream);
     }
+  }
+
+  public async checkResultPermission(
+    userId: number,
+    topicId: number,
+    resultModule: ResultModule
+  ): Promise<void> {
+    await this.topicService.checkPermission(topicId, userId);
+    const user = await this.userService.findById(userId);
+    switch (resultModule) {
+      case ResultModule.REVIEW:
+        await this.reviewService.checkResultPermission(topicId, user);
+        break;
+      case ResultModule.DEFENSE:
+        break;
+      default:
+        throw new BadRequestException(UploadError.ERR_4);
+    }
+  }
+
+  public getResultFolderPath(module: ResultModule, topicId: number): string {
+    let result = UploadDestination.REPORT_ROOT;
+    switch (module) {
+      case ResultModule.REVIEW:
+        result += `/${topicId}/${UploadDestination.REVIEW}/${UploadDestination.REVIEW_RESULT}`;
+        break;
+      case ResultModule.DEFENSE:
+    }
+
+    return `${UPLOAD_ROOT_FOLDER}/${result}`;
   }
 }
