@@ -24,7 +24,8 @@ import { CommonResponse } from '../common/common.type';
 import {
   commonIdValidateSchema,
   filenameSchemaValidation,
-  reportModuleSchemaValidation
+  reportModuleSchemaValidation,
+  resultModuleSchemaValidation
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { UploadReportInterceptor } from './interceptors/upload-report.interceptor';
@@ -151,5 +152,27 @@ export class UploadController {
     await this.uploadService.checkResultPermission(loginUserId, topicId, module);
     const folderPath = this.uploadService.getResultFolderPath(module, topicId);
     await this.uploadService.deleteFileByPath(`${folderPath}/${filename}`);
+  }
+
+  @Get(UploadPath.RESULT)
+  public async getManyResult(
+    @Query(
+      UploadBody.TOPIC_ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    topicId: number,
+    @Query(UploadBody.MODULE, new JoiValidationPipe(resultModuleSchemaValidation), ParseIntPipe)
+    module: ResultModule,
+    @Req() request: Express.CustomRequest
+  ): Promise<GetReportsResponse> {
+    const loginUserId = request.user!.userId;
+    const reports = await this.uploadService.getResultFiles(topicId, module, loginUserId);
+
+    return {
+      statusCode: HttpStatus.OK,
+      reports
+    };
   }
 }

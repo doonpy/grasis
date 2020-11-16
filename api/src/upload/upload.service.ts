@@ -80,27 +80,8 @@ export class UploadService {
   ): Promise<FileInfo[]> {
     await this.topicService.checkPermission(topicId, userId);
     const folderPath = this.getReportFolderPath(module, topicId);
-    const result: FileInfo[] = [];
-    if (folderPath === `${UPLOAD_ROOT_FOLDER}/${UploadDestination.REPORT_ROOT}`) {
-      return result;
-    }
 
-    if (!fs.existsSync(folderPath)) {
-      this.createFolder(folderPath);
-
-      if (isProductionMode()) {
-        await this.awsService.downloadReportFilesFromS3(folderPath);
-      }
-    }
-
-    const files = fs.readdirSync(folderPath);
-    for (const file of files) {
-      const filePath = `${folderPath}/${file}`;
-      const { size, ctime, mtime } = fs.statSync(filePath);
-      result.push({ name: file, size, type: mime.lookup(file) || '', ctime, mtime });
-    }
-
-    return result;
+    return this.getFilesFromPath(folderPath);
   }
 
   public createFolder(folderPath: string): void {
@@ -144,5 +125,40 @@ export class UploadService {
     }
 
     return `${UPLOAD_ROOT_FOLDER}/${result}`;
+  }
+
+  public async getResultFiles(
+    topicId: number,
+    module: ResultModule,
+    userId: number
+  ): Promise<FileInfo[]> {
+    await this.topicService.checkPermission(topicId, userId);
+    const folderPath = this.getResultFolderPath(module, topicId);
+
+    return this.getFilesFromPath(folderPath);
+  }
+
+  private async getFilesFromPath(folderPath: string): Promise<FileInfo[]> {
+    const result: FileInfo[] = [];
+    if (folderPath === `${UPLOAD_ROOT_FOLDER}/${UploadDestination.REPORT_ROOT}`) {
+      return result;
+    }
+
+    if (!fs.existsSync(folderPath)) {
+      this.createFolder(folderPath);
+
+      if (isProductionMode()) {
+        await this.awsService.downloadFilesFromS3(folderPath);
+      }
+    }
+
+    const files = fs.readdirSync(folderPath);
+    for (const file of files) {
+      const filePath = `${folderPath}/${file}`;
+      const { size, ctime, mtime } = fs.statSync(filePath);
+      result.push({ name: file, size, type: mime.lookup(file) || '', ctime, mtime });
+    }
+
+    return result;
   }
 }

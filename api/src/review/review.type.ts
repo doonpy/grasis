@@ -20,9 +20,9 @@ export interface ReviewGetByIdResponse extends CommonResponse {
 }
 
 export type ReviewForView = Omit<TopicStateBaseForView, 'deletedAt' | 'topic'> &
-  Pick<Review, 'reviewerId'> & {
+  Pick<Review, 'reviewerId' | 'reviewerComment'> & {
     result: StateResult;
-    reviewerView: LecturerForFastView | null;
+    reviewer: LecturerForFastView | null;
   };
 
 export type ReviewChangeResultRequestBody = Pick<Review, 'reviewerComment' | 'result'>;

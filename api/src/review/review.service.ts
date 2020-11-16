@@ -80,12 +80,21 @@ export class ReviewService {
   }
 
   public async getByIdForView(id: number): Promise<ReviewForView> {
-    const { createdAt, updatedAt, time, place, note, result, reviewerId } = await this.getById(id);
+    const {
+      createdAt,
+      updatedAt,
+      time,
+      place,
+      note,
+      result,
+      reviewerId,
+      reviewerComment
+    } = await this.getById(id);
     const participates = await this.topicStudentService.getStudentsParticipated(id);
     const reporters = participates.map(({ student }) => student.convertToFastView());
-    let reviewerView: LecturerForFastView | null = null;
+    let reviewer: LecturerForFastView | null = null;
     if (reviewerId) {
-      reviewerView = (await this.lecturerService.getById(reviewerId)).convertToFastView();
+      reviewer = (await this.lecturerService.getById(reviewerId)).convertToFastView();
     }
 
     return {
@@ -98,7 +107,8 @@ export class ReviewService {
       reporters,
       result,
       reviewerId,
-      reviewerView
+      reviewer,
+      reviewerComment
     };
   }
 

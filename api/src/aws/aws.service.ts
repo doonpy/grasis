@@ -41,7 +41,7 @@ export class AwsService {
     }
   }
 
-  public async downloadReportFilesFromS3(folderPath: string): Promise<void> {
+  public async downloadFilesFromS3(folderPath: string): Promise<void> {
     if (!this.s3 || !this.bucketName) {
       return;
     }
