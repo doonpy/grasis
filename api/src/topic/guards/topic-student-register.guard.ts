@@ -23,8 +23,8 @@ export class TopicStudentRegisterGuard implements CanActivate {
     }
 
     const loginUserId = request.user!.userId;
-    await this.topicService.checkPermission(parseInt(topicId), loginUserId);
     const topic = await this.topicService.getById(parseInt(topicId));
+    await this.topicService.checkPermission(topic, loginUserId);
     const thesis = await this.thesisService.getById(topic.thesisId);
     if (thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(TopicError.ERR_1);

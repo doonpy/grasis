@@ -58,6 +58,56 @@ export class TopicService {
     return this.topicRepository.save(topicEntity);
   }
 
+  private async filterTopicHasNotPermission(
+    topics: Topic[],
+    loginUser: number | User
+  ): Promise<Topic[]> {
+    let login: User | undefined;
+    if (typeof loginUser === 'number') {
+      login = await this.userService.findById(loginUser);
+    } else {
+      login = loginUser;
+    }
+
+    const result: Topic[] = [];
+    if (login.userType === UserType.LECTURER) {
+      const topicIds = topics.map(({ id }) => id);
+      const reviews = await this.reviewService.getByIds(topicIds);
+      for (const topic of topics) {
+        if (topic.creatorId === login.id) {
+          result.push(topic);
+          continue;
+        }
+
+        const review = reviews.find((review) => review.id === topic.id);
+        if (!review) {
+          continue;
+        }
+
+        if (await this.reviewService.hasReviewerPermission(review, login)) {
+          result.push(topic);
+        }
+      }
+    }
+
+    if (login.userType === UserType.STUDENT) {
+      const participatingTopicIds = (
+        await this.topicStudentService.getParticipatingTopics(login.id)
+      ).map(({ topicId }) => topicId);
+      for (const topic of topics) {
+        if (
+          (topic.thesis.state === ThesisState.STUDENT_TOPIC_REGISTER &&
+            topic.status === TopicStateAction.APPROVED) ||
+          participatingTopicIds.includes(topic.id)
+        ) {
+          result.push(topic);
+        }
+      }
+    }
+
+    return result;
+  }
+
   public async getMany(
     thesisId: number,
     offset: number,
@@ -76,7 +126,7 @@ export class TopicService {
     }
 
     if (loginUser.userType === UserType.STUDENT) {
-      return this.getManyForStudent(thesisId, offset, limit, keyword);
+      return this.getManyForStudent(thesisId, offset, limit, loginUserId, keyword);
     }
 
     return [];
@@ -139,8 +189,8 @@ export class TopicService {
       status: TopicStateAction.APPROVED
     };
 
-    return this.topicRepository.find({
-      relations: { creator: { user: {} }, thesis: {} },
+    const topics = await this.topicRepository.find({
+      relations: { creator: { user: true }, thesis: true },
       where: keyword
         ? [
             { ...ownerConditions, subject: Like(`%${keyword}%`) },
@@ -153,12 +203,15 @@ export class TopicService {
       take: limit,
       cache: true
     });
+
+    return this.filterTopicHasNotPermission(topics, loginUserId);
   }
 
   private async getManyForStudent(
     thesisId: number,
     offset: number,
     limit: number,
+    loginUser: number,
     keyword?: string
   ): Promise<Topic[]> {
     const conditions: FindOptionsWhere<Topic> = {
@@ -167,8 +220,8 @@ export class TopicService {
       status: TopicStateAction.APPROVED
     };
 
-    return this.topicRepository.find({
-      relations: { creator: { user: {} } },
+    const topics = await this.topicRepository.find({
+      relations: { creator: { user: true }, thesis: true },
       where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
@@ -179,6 +232,8 @@ export class TopicService {
       take: limit,
       cache: true
     });
+
+    return this.filterTopicHasNotPermission(topics, loginUser);
   }
 
   public async getAmount(thesisId: number, loginUserId: number, keyword?: string): Promise<number> {
@@ -189,11 +244,11 @@ export class TopicService {
     }
 
     if (loginUser.userType === UserType.LECTURER) {
-      return this.getAmountForLecturer(thesisId, loginUserId, keyword);
+      return this.getAmountForLecturer(thesisId, loginUser, keyword);
     }
 
     if (loginUser.userType === UserType.STUDENT) {
-      return this.getAmountForStudent(thesisId, keyword);
+      return this.getAmountForStudent(thesisId, loginUser, keyword);
     }
 
     return 0;
@@ -222,13 +277,13 @@ export class TopicService {
 
   private async getAmountForLecturer(
     thesisId: number,
-    loginUserId: number,
+    loginUser: User,
     keyword?: string
   ): Promise<number> {
     const ownerConditions: FindOptionsWhere<Topic> = {
       ...notDeleteCondition,
       thesisId,
-      creatorId: loginUserId
+      creatorId: loginUser.id
     };
     const thesisConditions: FindOptionsWhere<Topic> = {
       ...notDeleteCondition,
@@ -236,33 +291,44 @@ export class TopicService {
       status: TopicStateAction.APPROVED
     };
 
-    return this.topicRepository.count(
-      keyword
+    const topics = await this.topicRepository.find({
+      where: keyword
         ? [
             { ...ownerConditions, subject: Like(`%${keyword}%`) },
             { ...ownerConditions, description: Like(`%${keyword}%`) },
             { ...thesisConditions, subject: Like(`%${keyword}%`) },
             { ...thesisConditions, description: Like(`%${keyword}%`) }
           ]
-        : [ownerConditions, thesisConditions]
-    );
+        : [ownerConditions, thesisConditions],
+      cache: true
+    });
+
+    return (await this.filterTopicHasNotPermission(topics, loginUser)).length;
   }
 
-  private async getAmountForStudent(thesisId: number, keyword?: string): Promise<number> {
+  private async getAmountForStudent(
+    thesisId: number,
+    loginUser: User,
+    keyword?: string
+  ): Promise<number> {
     const conditions: FindOptionsWhere<Topic> = {
       ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
 
-    return this.topicRepository.count(
-      keyword
+    const topics = await this.topicRepository.find({
+      relations: { thesis: true },
+      where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
             { ...conditions, description: Like(`%${keyword}%`) }
           ]
-        : conditions
-    );
+        : conditions,
+      cache: true
+    });
+
+    return (await this.filterTopicHasNotPermission(topics, loginUser)).length;
   }
 
   public async getById(id: number): Promise<Topic> {
@@ -314,28 +380,51 @@ export class TopicService {
   }
 
   public async hasPermission(topic: Topic, user: User): Promise<boolean> {
-    if (topic.thesis.creatorId === user.id) {
+    if (topic.thesis.creatorId === user.id && user.isAdmin === IsAdmin.TRUE) {
       return topic.status !== TopicStateAction.NEW || topic.creatorId === user.id;
     }
 
-    if (user.userType === UserType.LECTURER) {
-      return topic.creatorId === user.id || topic.status === TopicStateAction.APPROVED;
-    }
+    switch (user.userType) {
+      case UserType.LECTURER:
+        if (
+          (topic.thesis.state >= ThesisState.REVIEW &&
+            (await this.reviewService.hasReviewerPermission(topic.id, user))) ||
+          topic.creatorId === user.id
+        ) {
+          return true;
+        }
 
-    if (user.userType === UserType.STUDENT) {
-      if (topic.thesis.state === ThesisState.STUDENT_TOPIC_REGISTER) {
-        return topic.status === TopicStateAction.APPROVED;
-      }
+        break;
+      case UserType.STUDENT:
+        if (
+          (topic.thesis.state === ThesisState.STUDENT_TOPIC_REGISTER &&
+            topic.status === TopicStateAction.APPROVED) ||
+          (await this.topicStudentService.hasParticipatedTopic(topic.id, user.id))
+        ) {
+          return true;
+        }
 
-      return this.topicStudentService.hasParticipatedTopic(topic.id, user.id);
+        break;
     }
 
     return false;
   }
 
-  public async checkPermission(id: number, userId: number): Promise<void> {
-    const user = await this.userService.findById(userId);
-    const topic = await this.getById(id);
+  public async checkPermission(topicId: number | Topic, userId: number | User): Promise<void> {
+    let topic: Topic | undefined;
+    if (typeof topicId === 'number') {
+      topic = await this.getById(topicId);
+    } else {
+      topic = topicId;
+    }
+
+    let user: User | undefined;
+    if (typeof userId === 'number') {
+      user = await this.userService.findById(userId);
+    } else {
+      user = userId;
+    }
+
     await this.thesisService.checkThesisPermission(topic.thesisId, user);
     if (!(await this.hasPermission(topic, user))) {
       throw new BadRequestException(TopicError.ERR_6);

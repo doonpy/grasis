@@ -28,10 +28,15 @@ export default class ReviewService extends CommonService {
     return { data, isLoading: !data };
   }
 
-  public async changeResult(id: number, result: StateResult): Promise<void> {
+  public async changeResult(
+    id: number,
+    result: StateResult,
+    reviewerComment: string
+  ): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
     await this.apiService.post(this.replaceParams(ReviewApi.CHANGE_RESULT, [id]), {
-      result
+      result,
+      reviewerComment
     });
   }
 }

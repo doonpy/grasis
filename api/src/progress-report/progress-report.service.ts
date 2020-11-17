@@ -10,7 +10,7 @@ import { TopicStudentService } from '../topic/topic-student/topic-student.servic
 import { StateResult } from '../topic/topic.resource';
 import { TopicService } from '../topic/topic.service';
 import { UserType } from '../user/user.resource';
-import { User } from '../user/user.type';
+import { UserService } from '../user/user.service';
 import { ProgressReportEntity } from './progress-report.entity';
 import { ProgressReportError } from './progress-report.resource';
 import {
@@ -26,7 +26,8 @@ export class ProgressReportService {
     private readonly progressReportRepository: Repository<ProgressReport>,
     @Inject(forwardRef(() => TopicService))
     private readonly topicService: TopicService,
-    private readonly topicStudentService: TopicStudentService
+    private readonly topicStudentService: TopicStudentService,
+    private readonly userService: UserService
   ) {}
 
   public async createWithTransaction(
@@ -98,11 +99,18 @@ export class ProgressReportService {
     }
   }
 
-  public async checkUploadPermission(topicId: number, user: User): Promise<void> {
-    const [topic, progressReport] = await Promise.all([
-      this.topicService.getById(topicId),
-      this.getById(topicId)
-    ]);
+  public async checkDownloadReportPermission(topicId: number, userId: number): Promise<void> {
+    const topic = await this.topicService.getById(topicId);
+    await this.topicService.checkPermission(topic, userId);
+    if (topic.thesis.status === ThesisStatus.INACTIVE) {
+      throw new BadRequestException(ProgressReportError.ERR_5);
+    }
+  }
+
+  public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
+    const user = await this.userService.findById(userId);
+    const topic = await this.topicService.getById(topicId);
+    await this.topicService.checkPermission(topic, user);
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(ProgressReportError.ERR_5);
     }
@@ -111,16 +119,12 @@ export class ProgressReportService {
       throw new BadRequestException(ProgressReportError.ERR_6);
     }
 
-    if (
-      user.userType !== UserType.STUDENT ||
-      !(await this.topicStudentService.hasRegisteredTopic(topicId, user.id))
-    ) {
+    if (user.userType !== UserType.STUDENT) {
       throw new BadRequestException(ProgressReportError.ERR_4);
     }
 
-    if (progressReport.result !== StateResult.NOT_DECIDED) {
-      throw new BadRequestException(ProgressReportError.ERR_7);
-    }
+    const progressReport = await this.getById(topicId);
+    this.checkResultIsNotDecided(progressReport.result);
   }
 
   public async changeResult(id: number, result: StateResult): Promise<void> {
@@ -139,7 +143,7 @@ export class ProgressReportService {
 
   private checkResultIsNotDecided(result: StateResult): void {
     if (result !== StateResult.NOT_DECIDED) {
-      throw new BadRequestException(ProgressReportError.ERR_8);
+      throw new BadRequestException(ProgressReportError.ERR_7);
     }
   }
 }

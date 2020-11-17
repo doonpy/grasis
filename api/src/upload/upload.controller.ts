@@ -38,7 +38,7 @@ import {
   UploadPath
 } from './upload.resource';
 import { UploadService } from './upload.service';
-import { GetReportsResponse } from './upload.type';
+import { GetFilesResponse } from './upload.type';
 
 @UseGuards(JwtAuthGuard)
 @Controller(UploadPath.ROOT)
@@ -74,13 +74,13 @@ export class UploadController {
     @Query(UploadBody.MODULE, new JoiValidationPipe(reportModuleSchemaValidation), ParseIntPipe)
     module: ReportModule,
     @Req() request: Express.CustomRequest
-  ): Promise<GetReportsResponse> {
+  ): Promise<GetFilesResponse> {
     const loginUserId = request.user!.userId;
     const reports = await this.uploadService.getReportFiles(topicId, module, loginUserId);
 
     return {
       statusCode: HttpStatus.OK,
-      reports
+      files: reports
     };
   }
 
@@ -166,13 +166,13 @@ export class UploadController {
     @Query(UploadBody.MODULE, new JoiValidationPipe(resultModuleSchemaValidation), ParseIntPipe)
     module: ResultModule,
     @Req() request: Express.CustomRequest
-  ): Promise<GetReportsResponse> {
+  ): Promise<GetFilesResponse> {
     const loginUserId = request.user!.userId;
     const reports = await this.uploadService.getResultFiles(topicId, module, loginUserId);
 
     return {
       statusCode: HttpStatus.OK,
-      reports
+      files: reports
     };
   }
 }

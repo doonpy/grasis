@@ -10,7 +10,7 @@ import { ReviewTerminology } from '../../../../assets/terminology/review.termino
 import { TopicTerminology } from '../../../../assets/terminology/topic.terminology';
 import ReviewAdminService from '../../../../libs/review/admin.service';
 import { REVIEWER_ID_FIELD } from '../../../../libs/review/review.resource';
-import { ProgressReport, ReviewRequestBody } from '../../../../libs/review/review.type';
+import { ReviewForView, ReviewRequestBody } from '../../../../libs/review/review.type';
 import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
 import ThesisSelectLecturerInThesis from '../../../Thesis/ThesisSelectLecturerInThesis';
@@ -18,7 +18,7 @@ import StateEditBaseItem from '../StateEditBaseItem';
 
 interface ComponentProps {
   thesisId: number;
-  review: ProgressReport;
+  review: ReviewForView;
   validDateRange: [string | Moment, string | Moment];
   thesisCreatorId: number;
 }
@@ -43,9 +43,11 @@ const ReviewEdit: React.FC<ComponentProps> = ({
   const handleOk = () => {
     form.submit();
   };
+
   const handleCancel = () => {
     setVisible(false);
   };
+
   const onFormSubmit = async (formValues: ReviewRequestBody) => {
     setLoading(true);
     try {

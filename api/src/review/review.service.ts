@@ -6,7 +6,6 @@ import { EntityManager, Repository } from 'typeorm';
 import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { LecturerForFastView } from '../lecturer/lecturer.type';
-import { ProgressReportError } from '../progress-report/progress-report.resource';
 import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
 import { Thesis } from '../thesis/thesis.type';
@@ -120,11 +119,18 @@ export class ReviewService {
     }
   }
 
-  public async checkUploadPermission(topicId: number, user: User): Promise<void> {
-    const [topic, review] = await Promise.all([
-      this.topicService.getById(topicId),
-      this.getById(topicId)
-    ]);
+  public async checkDownloadReportPermission(topicId: number, userId: number): Promise<void> {
+    const topic = await this.topicService.getById(topicId);
+    await this.topicService.checkPermission(topic, userId);
+    if (topic.thesis.status === ThesisStatus.INACTIVE) {
+      throw new BadRequestException(ReviewError.ERR_5);
+    }
+  }
+
+  public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
+    const user = await this.userService.findById(userId);
+    const topic = await this.topicService.getById(topicId);
+    await this.topicService.checkPermission(topic, user);
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(ReviewError.ERR_5);
     }
@@ -133,16 +139,12 @@ export class ReviewService {
       throw new BadRequestException(ReviewError.ERR_6);
     }
 
-    if (
-      user.userType !== UserType.STUDENT ||
-      !(await this.topicStudentService.hasRegisteredTopic(topicId, user.id))
-    ) {
+    if (user.userType !== UserType.STUDENT) {
       throw new BadRequestException(ReviewError.ERR_4);
     }
 
-    if (review.result !== StateResult.NOT_DECIDED) {
-      throw new BadRequestException(ReviewError.ERR_8);
-    }
+    const review = await this.getById(topicId);
+    this.checkResultIsNotDecided(review.result);
   }
 
   public async changeResult(
@@ -161,27 +163,48 @@ export class ReviewService {
     return this.reviewRepository.findByIds(ids, { where: { ...notDeleteCondition }, cache: true });
   }
 
-  public async checkResultPermission(topicId: number, user: User): Promise<void> {
-    const [topic, review] = await Promise.all([
-      this.topicService.getById(topicId),
-      this.getById(topicId)
-    ]);
-    if (topic.thesis.status === ThesisStatus.INACTIVE) {
+  public async checkUploadResultPermission(topicId: number, user: User): Promise<void> {
+    const { thesis } = await this.topicService.getById(topicId);
+    if (thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(ReviewError.ERR_5);
     }
 
-    if (topic.thesis.state !== ThesisState.REVIEW) {
+    if (thesis.state !== ThesisState.REVIEW) {
       throw new BadRequestException(ReviewError.ERR_6);
     }
 
-    if (user.userType !== UserType.LECTURER || user.id !== review.reviewerId) {
+    const review = await this.getById(topicId);
+    if (!(await this.hasReviewerPermission(review, user))) {
       throw new BadRequestException(ReviewError.ERR_7);
     }
+
+    this.checkResultIsNotDecided(review.result);
   }
 
   private checkResultIsNotDecided(result: StateResult): void {
     if (result !== StateResult.NOT_DECIDED) {
       throw new BadRequestException(ReviewError.ERR_9);
     }
+  }
+
+  public async hasReviewerPermission(
+    review: number | Review,
+    user: number | User
+  ): Promise<boolean> {
+    let reviewData: Review | undefined;
+    if (typeof review === 'number') {
+      reviewData = await this.getById(review);
+    } else {
+      reviewData = review;
+    }
+
+    let userData: User | undefined;
+    if (typeof user === 'number') {
+      userData = await this.userService.findById(user);
+    } else {
+      userData = user;
+    }
+
+    return userData.userType === UserType.LECTURER && userData.id === reviewData.reviewerId;
   }
 }

@@ -5,6 +5,7 @@ import { ParsedUrlQuery } from 'querystring';
 import React, { useState } from 'react';
 
 import ChalkBoardTeacherIcon from '../../../assets/svg/regular/chalkboard-teacher.svg';
+import ListAltIcon from '../../../assets/svg/regular/list-alt.svg';
 import UsersClassIcon from '../../../assets/svg/regular/users-class.svg';
 import { ThesisTerminology } from '../../../assets/terminology/thesis.terminology';
 import { TopicTerminology } from '../../../assets/terminology/topic.terminology';
@@ -73,7 +74,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
         <Tabs.TabPane
           tab={
             <span>
-              <InfoCircleOutlined />
+              <Icon component={ListAltIcon} />
               {TopicTerminology.TOPIC_6}
             </span>
           }

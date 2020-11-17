@@ -42,9 +42,11 @@ const ProgressReportEdit: React.FC<ComponentProps> = ({
   const handleOk = () => {
     form.submit();
   };
+
   const handleCancel = () => {
     setVisible(false);
   };
+
   const onFormSubmit = async (formValues: ProgressReportRequestBody) => {
     setLoading(true);
     try {

@@ -1,52 +1,53 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, message, Space, Upload } from 'antd';
 import { RcFile } from 'antd/lib/upload';
-import { DraggerProps } from 'antd/lib/upload/Dragger';
+import { UploadProps } from 'antd/lib/upload/interface';
 import React, { useState } from 'react';
 
 import { UploadTerminology } from '../../assets/terminology/upload.terminology';
-import { FILENAME_PATTERN, ReportModule } from '../../libs/common/common.resource';
-import {
-  UPLOAD_REPORT_LIMIT_FILES,
-  UploadBody,
-  UploadReportMimeTypes
-} from '../../libs/upload/upload.resource';
+import { FILENAME_PATTERN } from '../../libs/common/common.resource';
+import { UploadBody } from '../../libs/upload/upload.resource';
 import UploadService from '../../libs/upload/upload.service';
+import { ExtraRequestBody } from '../../libs/upload/upload.type';
 
 interface ComponentProps {
-  topicId: number;
-  module: ReportModule;
-  currentAmount: number;
+  fileLimit: number;
+  multiple: boolean;
+  validMimeTypes: string[];
+  extraRequestBody: ExtraRequestBody[];
+  action: (formData: FormData) => Promise<void>;
+  currentAmount?: number;
 }
 
-const ReportFileUpload: React.FC<ComponentProps> = ({ topicId, module, currentAmount }) => {
+const UploadBase: React.FC<ComponentProps> = ({
+  currentAmount = 0,
+  fileLimit,
+  multiple,
+  validMimeTypes,
+  extraRequestBody,
+  action
+}) => {
   const uploadService = UploadService.getInstance();
   const [uploadFiles, setUploadFiles] = useState<RcFile[]>([]);
   const [uploading, setUploading] = useState<boolean>(false);
-  const props: DraggerProps = {
-    multiple: true,
+  const props: UploadProps = {
+    multiple,
     fileList: uploadFiles,
-    onChange: ({ file, fileList }) => {
-      if (!UploadReportMimeTypes.includes(file.type)) {
+    onChange: ({ file }) => {
+      if (!validMimeTypes.includes(file.type)) {
         message.error(`"${file.name}" - ${UploadTerminology.UPLOAD_1}`);
       }
 
       if (!FILENAME_PATTERN.test(file.name)) {
         message.error(`"${file.name}" - ${UploadTerminology.UPLOAD_2}`);
       }
-
-      if (fileList.length + currentAmount > UPLOAD_REPORT_LIMIT_FILES) {
-        message.error(UploadTerminology.UPLOAD_12);
-      }
     },
     beforeUpload: (file, fileList) => {
-      if (FILENAME_PATTERN.test(file.name) && UploadReportMimeTypes.includes(file.type)) {
+      if (FILENAME_PATTERN.test(file.name) && validMimeTypes.includes(file.type)) {
         const newFileList = fileList.filter(
           ({ name }) => uploadFiles.findIndex((uploadFile) => uploadFile.name === name) === -1
         );
-        setUploadFiles(
-          [...uploadFiles, ...newFileList].slice(0 - UPLOAD_REPORT_LIMIT_FILES + currentAmount)
-        );
+        setUploadFiles([...uploadFiles, ...newFileList].slice(0 - fileLimit + currentAmount));
       }
 
       return false;
@@ -60,13 +61,19 @@ const ReportFileUpload: React.FC<ComponentProps> = ({ topicId, module, currentAm
     setUploading(true);
     try {
       const formData = new FormData();
-      formData.append(UploadBody.TOPIC_ID, topicId.toString());
-      formData.append(UploadBody.MODULE, module.toString());
-      uploadFiles.forEach((file) => {
-        formData.append(UploadBody.FILES, file);
+      extraRequestBody.forEach(({ name, value }) => {
+        formData.append(name, value);
       });
+      if (multiple) {
+        uploadFiles.forEach((file) => {
+          formData.append(UploadBody.FILES, file);
+        });
+      } else {
+        const file = uploadFiles.shift();
+        formData.append(UploadBody.FILE, file || '');
+      }
 
-      await uploadService.uploadReport(formData);
+      await action(formData);
       setUploadFiles([]);
       setUploading(false);
       message.success(UploadTerminology.UPLOAD_3);
@@ -94,4 +101,4 @@ const ReportFileUpload: React.FC<ComponentProps> = ({ topicId, module, currentAm
   );
 };
 
-export default ReportFileUpload;
+export default UploadBase;

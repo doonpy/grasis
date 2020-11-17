@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Not, Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../../common/common.resource';
+import { ThesisStatus } from '../../thesis/thesis.resource';
 import { TopicError } from '../topic.resource';
 import { TopicStudentEntity } from './topic_student.entity';
 import { TopicStudentStatus } from './topic-student.resouce';
@@ -167,5 +168,17 @@ export class TopicStudentService {
         status: TopicStudentStatus.APPROVED
       })) > 0
     );
+  }
+
+  public async getParticipatingTopics(studentId: number): Promise<TopicStudent[]> {
+    return this.topicStudentRepository.find({
+      where: {
+        ...notDeleteCondition,
+        studentId,
+        status: TopicStudentStatus.APPROVED,
+        topic: { thesis: { status: ThesisStatus.ACTIVE } }
+      },
+      cache: true
+    });
   }
 }

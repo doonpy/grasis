@@ -1,4 +1,4 @@
-import { ReportModule } from '../common/common.resource';
+import { ReportModule, ResultModule } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { DownloadApi } from './download.resource';
 import { DownloadPathResponse } from './download.type';
@@ -33,6 +33,24 @@ export default class DownloadService extends CommonService {
     });
     window.open(
       this.apiService.getFullUrl(this.replaceParams(DownloadApi.DOWNLOAD_REPORT, [path]))
+    );
+  }
+
+  public async downloadResult(
+    topicId: number,
+    module: ResultModule,
+    filename: string
+  ): Promise<void> {
+    await this.apiService.bindAuthorizationForClient();
+    const {
+      data: { path }
+    } = await this.apiService.post<DownloadPathResponse>(DownloadApi.GET_DOWNLOAD_RESULT, {
+      module,
+      filename,
+      topicId
+    });
+    window.open(
+      this.apiService.getFullUrl(this.replaceParams(DownloadApi.DOWNLOAD_RESULT, [path]))
     );
   }
 }

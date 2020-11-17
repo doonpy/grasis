@@ -28,14 +28,12 @@ export class UploadService {
     topicId: number,
     reportModule: ReportModule
   ): Promise<void> {
-    await this.topicService.checkPermission(topicId, userId);
-    const user = await this.userService.findById(userId);
     switch (reportModule) {
       case ReportModule.PROGRESS_REPORT:
-        await this.progressReportService.checkUploadPermission(topicId, user);
+        await this.progressReportService.checkUploadReportPermission(topicId, userId);
         break;
       case ReportModule.REVIEW:
-        await this.reviewService.checkUploadPermission(topicId, user);
+        await this.reviewService.checkUploadReportPermission(topicId, userId);
         break;
       case ReportModule.DEFENSE:
         break;
@@ -102,11 +100,11 @@ export class UploadService {
     topicId: number,
     resultModule: ResultModule
   ): Promise<void> {
-    await this.topicService.checkPermission(topicId, userId);
     const user = await this.userService.findById(userId);
+    await this.topicService.checkPermission(topicId, user);
     switch (resultModule) {
       case ResultModule.REVIEW:
-        await this.reviewService.checkResultPermission(topicId, user);
+        await this.reviewService.checkUploadResultPermission(topicId, user);
         break;
       case ResultModule.DEFENSE:
         break;
@@ -116,10 +114,10 @@ export class UploadService {
   }
 
   public getResultFolderPath(module: ResultModule, topicId: number): string {
-    let result = UploadDestination.REPORT_ROOT;
+    let result = UploadDestination.RESULT_ROOT;
     switch (module) {
       case ResultModule.REVIEW:
-        result += `/${topicId}/${UploadDestination.REVIEW}/${UploadDestination.REVIEW_RESULT}`;
+        result += `/${topicId}/${UploadDestination.REVIEW}`;
         break;
       case ResultModule.DEFENSE:
     }

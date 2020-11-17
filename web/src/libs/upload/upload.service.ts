@@ -1,9 +1,9 @@
 import useSWR from 'swr';
 
-import { ReportModule } from '../common/common.resource';
+import { ReportModule, ResultModule } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { UploadApi } from './upload.resource';
-import { GetReportsResponse, UseReports } from './upload.type';
+import { GetFilesReponse, UseReports, UseResults } from './upload.type';
 
 export default class UploadService extends CommonService {
   private static instance: UploadService;
@@ -20,12 +20,12 @@ export default class UploadService extends CommonService {
     return this.instance;
   }
 
-  public useReports(topicId: number, module: ReportModule): UseReports {
-    const { data } = useSWR<GetReportsResponse>(
-      this.replaceParams(UploadApi.GET_REPORTS, [topicId, module])
+  public useReports(topicId: number, module: ReportModule, canFetch = true): UseReports {
+    const { data } = useSWR<GetFilesReponse>(
+      canFetch ? this.replaceParams(UploadApi.GET_REPORTS, [topicId, module]) : null
     );
     if (data) {
-      data.reports = data.reports.map((report, index) => ({ ...report, key: index.toString() }));
+      data.files = data.files.map((file, index) => ({ ...file, key: index.toString() }));
     }
 
     return { data, isLoading: !data };
@@ -37,11 +37,36 @@ export default class UploadService extends CommonService {
   }
 
   public async deleteReport(
-    module: ReportModule,
     topicId: number,
+    module: ReportModule,
     filename: string
   ): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
     await this.apiService.post(UploadApi.DELETE_REPORT, { module, topicId, filename });
+  }
+
+  public async uploadResult(data: FormData): Promise<void> {
+    await this.apiService.bindAuthorizationForClient();
+    await this.apiService.postFile(UploadApi.RESULT, data);
+  }
+
+  public useResults(topicId: number, module: ResultModule, canFetch = true): UseResults {
+    const { data } = useSWR<GetFilesReponse>(
+      canFetch ? this.replaceParams(UploadApi.GET_RESULTS, [topicId, module]) : null
+    );
+    if (data) {
+      data.files = data.files.map((file, index) => ({ ...file, key: index.toString() }));
+    }
+
+    return { data, isLoading: !data };
+  }
+
+  public async deleteResult(
+    topicId: number,
+    module: ResultModule,
+    filename: string
+  ): Promise<void> {
+    await this.apiService.bindAuthorizationForClient();
+    await this.apiService.post(UploadApi.DELETE_RESULT, { module, topicId, filename });
   }
 }

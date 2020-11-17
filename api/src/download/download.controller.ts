@@ -21,7 +21,6 @@ import {
   commonIdValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { TopicService } from '../topic/topic.service';
 import {
   DOWNLOAD_ROOT_FOLDER,
   DownloadPath,
@@ -36,10 +35,7 @@ interface DownloadReportLinkResponse extends CommonResponse {
 
 @Controller(DownloadPath.ROOT)
 export class DownloadController {
-  constructor(
-    private readonly downloadService: DownloadService,
-    private readonly topicService: TopicService
-  ) {}
+  constructor(private readonly downloadService: DownloadService) {}
 
   @Get(DownloadPath.REPORT)
   public downloadReport(
@@ -74,7 +70,7 @@ export class DownloadController {
     @Req() request: Express.CustomRequest
   ): Promise<DownloadReportLinkResponse> {
     const loginUserId = request.user!.userId;
-    await this.topicService.checkPermission(topicId, loginUserId);
+    await this.downloadService.checkReportPermission(loginUserId, topicId, module);
     const sourcePath = this.downloadService.getSourcePath(topicId, module);
     const path = this.downloadService.getDownloadPath(filename, sourcePath);
 

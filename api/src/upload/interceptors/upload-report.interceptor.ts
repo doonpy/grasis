@@ -65,6 +65,7 @@ export class UploadReportInterceptor implements NestInterceptor {
     try {
       await this.checkPermission(req);
       const folderPath = this.getFolderPathFromRequest(req);
+      this.uploadService.createFolder(folderPath);
       this.checkDestination(folderPath);
     } catch (error) {
       return callback(error);
@@ -96,8 +97,6 @@ export class UploadReportInterceptor implements NestInterceptor {
     callback: FileDestinationCallback
   ): void {
     const folderPath = this.getFolderPathFromRequest(req);
-    this.uploadService.createFolder(folderPath);
-
     callback(null, folderPath);
   }
 

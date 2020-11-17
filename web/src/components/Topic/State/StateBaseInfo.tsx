@@ -10,8 +10,8 @@ import CommentAdd from '../../Comment/CommentAdd';
 import CommentList from '../../Comment/CommentList';
 import DateData from '../../Common/DateData';
 import TextData from '../../Common/TextData';
-import ReportFileView from '../../ReportFile/ReportFileView';
 import StudentFastView from '../../Student/StudentFastView';
+import UploadViewReport from '../../Upload/UploadViewReport';
 
 interface ExtendInfo {
   label: string;
@@ -20,25 +20,26 @@ interface ExtendInfo {
 
 interface ComponentProps {
   stateInfo: TopicStateBaseForView;
-  adminButton: ReactElement;
+  buttons: ReactElement;
   extra?: React.ReactNode;
   module: ReportModule;
   extendInfo?: ExtendInfo[];
+  canFetch: boolean;
 }
 
 const StateBaseInfo: React.FC<ComponentProps> = ({
   stateInfo,
-  adminButton,
+  buttons,
   module,
   extendInfo = [],
-  extra
+  canFetch
 }) => {
   const loginUser = LoginUser.getInstance();
 
   return (
     <Row gutter={24}>
       <Col span={14}>
-        <Descriptions bordered title={adminButton} extra={extra}>
+        <Descriptions bordered title={buttons}>
           <Descriptions.Item label={<b>{TopicTerminology.TOPIC_58}</b>} span={3}>
             <Space direction="vertical">
               {stateInfo.reporters.map((reporter, index) => (
@@ -67,10 +68,11 @@ const StateBaseInfo: React.FC<ComponentProps> = ({
             </Descriptions.Item>
           ))}
           <Descriptions.Item label={<b>{TopicTerminology.TOPIC_60}</b>} span={3}>
-            <ReportFileView
+            <UploadViewReport
               topicId={stateInfo.id}
               module={module}
-              canAction={loginUser.isStudent()}
+              canUpload={loginUser.isStudent()}
+              canFetch={canFetch}
             />
           </Descriptions.Item>
         </Descriptions>
