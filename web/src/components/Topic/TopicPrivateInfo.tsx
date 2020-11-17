@@ -2,7 +2,7 @@ import { Descriptions, Empty } from 'antd';
 import React from 'react';
 
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
-import ThesisService from '../../libs/thesis/thesis.service';
+import { ThesisForView } from '../../libs/thesis/thesis.type';
 import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
 import TopicStateService from '../../libs/topic/topic-state/topic-state.service';
 import TopicService from '../../libs/topic/topic.service';
@@ -14,29 +14,24 @@ import TopicStatusRender from './TopicStatusRender';
 
 interface ComponentProps {
   topicId: number;
-  thesisId: number;
+  thesis: ThesisForView;
   canFetch: boolean;
 }
 
-const TopicPrivateInfo: React.FC<ComponentProps> = ({ topicId, thesisId, canFetch }) => {
+const TopicPrivateInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) => {
   const topicService = TopicService.getInstance();
-  const thesisService = ThesisService.getInstance();
   const loginUser = LoginUser.getInstance();
-  const { data: thesisData } = thesisService.useThesis(thesisId, canFetch);
   const { data: topicData } = topicService.useTopic(topicId, canFetch);
   const topicStateService = TopicStateService.getInstance();
   const { data: topicStateData } = topicStateService.useTopicStates(
     topicId,
-    canFetch &&
-      thesisData &&
-      topicData &&
-      topicService.hasPrivateContentPermission(thesisData.thesis, topicData.topic)
+    canFetch && topicData && topicService.hasPrivateContentPermission(thesis, topicData.topic)
   );
-  if (!topicData || !thesisData) {
+  if (!topicData) {
     return <Empty description={TopicTerminology.TOPIC_63} />;
   }
 
-  if (!topicService.hasPrivateContentPermission(thesisData.thesis, topicData.topic)) {
+  if (!topicService.hasPrivateContentPermission(thesis, topicData.topic)) {
     return <Empty description={TopicTerminology.TOPIC_65} />;
   }
 
@@ -74,7 +69,7 @@ const TopicPrivateInfo: React.FC<ComponentProps> = ({ topicId, thesisId, canFetc
 
     return (
       <Descriptions.Item span={4}>
-        <TopicChangeStatus thesisId={thesisId} topic={topicData.topic} />
+        <TopicChangeStatus thesisId={thesis.id} topic={topicData.topic} />
       </Descriptions.Item>
     );
   };

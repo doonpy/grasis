@@ -5,7 +5,7 @@ import React from 'react';
 import { ProgressReportTerminology } from '../../../../assets/terminology/progress-report.terminology';
 import { ReportModule } from '../../../../libs/common/common.resource';
 import ProgressReportService from '../../../../libs/progress-report/progress-report.service';
-import ThesisService from '../../../../libs/thesis/thesis.service';
+import { ThesisForView } from '../../../../libs/thesis/thesis.type';
 import StateBaseInfo from '../StateBaseInfo';
 import ProgressReportButton from './ProgressReportButton';
 import ProgressReportEdit from './ProgressReportEdit';
@@ -13,23 +13,21 @@ import ProgressReportResult from './ProgressReportResult';
 
 interface ComponentProps {
   topicId: number;
-  thesisId: number;
+  thesis: ThesisForView;
   canFetch: boolean;
 }
 
-const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesisId, canFetch }) => {
+const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) => {
   const progressReportService = ProgressReportService.getInstance();
-  const thesisService = ThesisService.getInstance();
-  const { data: thesisData } = thesisService.useThesis(thesisId, canFetch);
   const { data: progressReportData } = progressReportService.useProgressReport(topicId, canFetch);
 
-  if (!progressReportData || !thesisData) {
+  if (!progressReportData) {
     return <Empty description={ProgressReportTerminology.PR_20} />;
   }
 
   const validDateRange: [string | Moment, string | Moment] = [
-    thesisData.thesis.studentTopicRegister,
-    thesisData.thesis.progressReport
+    thesis.studentTopicRegister,
+    thesis.progressReport
   ];
 
   return (
@@ -40,7 +38,7 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesisId, canFe
         <ProgressReportEdit
           progressReport={progressReportData.progressReport}
           validDateRange={validDateRange}
-          thesisCreatorId={thesisData.thesis.creatorId}
+          thesisCreatorId={thesis.creatorId}
         />
       }
       extendInfo={[
@@ -52,7 +50,7 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topicId, thesisId, canFe
       extra={
         <ProgressReportButton
           progressReport={progressReportData.progressReport}
-          thesisCreatorId={thesisData.thesis.creatorId}
+          thesisCreatorId={thesis.creatorId}
         />
       }
     />

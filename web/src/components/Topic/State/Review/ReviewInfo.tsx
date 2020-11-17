@@ -5,7 +5,7 @@ import React from 'react';
 import { ReviewTerminology } from '../../../../assets/terminology/review.terminology';
 import { ReportModule } from '../../../../libs/common/common.resource';
 import ReviewService from '../../../../libs/review/review.service';
-import ThesisService from '../../../../libs/thesis/thesis.service';
+import { ThesisForView } from '../../../../libs/thesis/thesis.type';
 import TextData from '../../../Common/TextData';
 import LecturerFastView from '../../../Lecturer/LecturerFastView';
 import StateBaseInfo from '../StateBaseInfo';
@@ -15,24 +15,19 @@ import ReviewResult from './ReviewResult';
 
 interface ComponentProps {
   topicId: number;
-  thesisId: number;
+  thesis: ThesisForView;
   canFetch: boolean;
 }
 
-const ReviewInfo: React.FC<ComponentProps> = ({ topicId, thesisId, canFetch }) => {
+const ReviewInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) => {
   const reviewService = ReviewService.getInstance();
-  const thesisService = ThesisService.getInstance();
-  const { data: thesisData } = thesisService.useThesis(thesisId, canFetch);
   const { data: reviewData } = reviewService.useReview(topicId, canFetch);
 
-  if (!reviewData || !thesisData) {
+  if (!reviewData) {
     return <Empty description={ReviewTerminology.REVIEW_4} />;
   }
 
-  const validDateRange: [string | Moment, string | Moment] = [
-    thesisData.thesis.progressReport,
-    thesisData.thesis.review
-  ];
+  const validDateRange: [string | Moment, string | Moment] = [thesis.progressReport, thesis.review];
 
   return (
     <StateBaseInfo
@@ -40,10 +35,10 @@ const ReviewInfo: React.FC<ComponentProps> = ({ topicId, thesisId, canFetch }) =
       stateInfo={reviewData.review}
       adminButton={
         <ReviewEdit
-          thesisId={thesisData.thesis.id}
+          thesisId={thesis.id}
           review={reviewData.review}
           validDateRange={validDateRange}
-          thesisCreatorId={thesisData.thesis.creatorId}
+          thesisCreatorId={thesis.creatorId}
         />
       }
       extendInfo={[

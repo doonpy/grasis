@@ -1,5 +1,5 @@
 import Icon, { InfoCircleOutlined, LockOutlined, UnorderedListOutlined } from '@ant-design/icons';
-import { Card, Tabs } from 'antd';
+import { Card, Empty, Tabs } from 'antd';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useState } from 'react';
@@ -19,7 +19,12 @@ import TopicStudentInfo from '../../../../../components/Topic/TopicStudentsInfo'
 import { SIDER_KEYS } from '../../../../../libs/common/common.resource';
 import CommonService from '../../../../../libs/common/common.service';
 import { CommonPageProps, NextPageWithLayout } from '../../../../../libs/common/common.type';
-import { THESIS_PATH_ROOT, ThesisPath } from '../../../../../libs/thesis/thesis.resource';
+import {
+  THESIS_PATH_ROOT,
+  ThesisPath,
+  ThesisState
+} from '../../../../../libs/thesis/thesis.resource';
+import ThesisService from '../../../../../libs/thesis/thesis.service';
 import { TopicTabKey } from '../../../../../libs/topic/topic.resource';
 import { UserType } from '../../../../../libs/user/user.resource';
 
@@ -36,13 +41,19 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const thesisId = parseInt(params.thesisId);
   const topicId = parseInt(params.topicId);
   const [currentTab, setCurrentTab] = useState<string>(TopicTabKey.INFO);
+  const thesisService = ThesisService.getInstance();
+  const { data, isLoading } = thesisService.useThesis(thesisId);
 
   const onTabChange = (activeKey: string) => {
     setCurrentTab(activeKey);
   };
 
+  if (!data) {
+    return <Empty />;
+  }
+
   return (
-    <Card title={TopicTerminology.TOPIC_11}>
+    <Card title={TopicTerminology.TOPIC_11} loading={isLoading}>
       <Tabs defaultActiveKey={currentTab} onChange={onTabChange}>
         <Tabs.TabPane
           tab={
@@ -68,7 +79,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
           key={TopicTabKey.PRIVATE_CONTENT}>
           <TopicPrivateInfo
             topicId={topicId}
-            thesisId={thesisId}
+            thesis={data.thesis}
             canFetch={currentTab === TopicTabKey.PRIVATE_CONTENT}
           />
         </Tabs.TabPane>
@@ -82,34 +93,38 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
           key={TopicTabKey.STUDENT_INFO}>
           <TopicStudentInfo topicId={topicId} canFetch={currentTab === TopicTabKey.STUDENT_INFO} />
         </Tabs.TabPane>
-        <Tabs.TabPane
-          tab={
-            <span>
-              <Icon component={FileChartLineIcon} />
-              {ProgressReportTerminology.PR_1}
-            </span>
-          }
-          key={TopicTabKey.PROGRESS_REPORT}>
-          <ProgressReportInfo
-            topicId={topicId}
-            thesisId={thesisId}
-            canFetch={currentTab === TopicTabKey.PROGRESS_REPORT}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          tab={
-            <span>
-              <Icon component={FileSearchIcon} />
-              {ReviewTerminology.REVIEW_3}
-            </span>
-          }
-          key={TopicTabKey.REVIEW}>
-          <ReviewInfo
-            topicId={topicId}
-            thesisId={thesisId}
-            canFetch={currentTab === TopicTabKey.REVIEW}
-          />
-        </Tabs.TabPane>
+        {data.thesis.state >= ThesisState.PROGRESS_REPORT && (
+          <Tabs.TabPane
+            tab={
+              <span>
+                <Icon component={FileChartLineIcon} />
+                {ProgressReportTerminology.PR_1}
+              </span>
+            }
+            key={TopicTabKey.PROGRESS_REPORT}>
+            <ProgressReportInfo
+              topicId={topicId}
+              thesis={data.thesis}
+              canFetch={currentTab === TopicTabKey.PROGRESS_REPORT}
+            />
+          </Tabs.TabPane>
+        )}
+        {data.thesis.state >= ThesisState.REVIEW && (
+          <Tabs.TabPane
+            tab={
+              <span>
+                <Icon component={FileSearchIcon} />
+                {ReviewTerminology.REVIEW_3}
+              </span>
+            }
+            key={TopicTabKey.REVIEW}>
+            <ReviewInfo
+              topicId={topicId}
+              thesis={data.thesis}
+              canFetch={currentTab === TopicTabKey.REVIEW}
+            />
+          </Tabs.TabPane>
+        )}
       </Tabs>
     </Card>
   );
