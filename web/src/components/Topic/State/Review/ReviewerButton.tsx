@@ -45,59 +45,34 @@ const ReviewerButton: React.FC<ComponentProps> = ({ review }) => {
     });
   };
 
-  const buttonRender = () => {
-    switch (review.result) {
-      case StateResult.NOT_DECIDED:
-        return (
-          <>
-            <Button
-              loading={loading}
-              type="primary"
-              icon={<Icon component={CheckCircleIcon} />}
-              onClick={() => onClickChangeResult(StateResult.TRUE)}>
-              {ReviewResultText[StateResult.FALSE]}
-            </Button>
-            <Button
-              loading={loading}
-              type="primary"
-              icon={<Icon component={MinusCircleIcon} />}
-              onClick={() => onClickChangeResult(StateResult.FALSE)}
-              danger>
-              {ReviewResultText[StateResult.TRUE]}
-            </Button>
-          </>
-        );
-      case StateResult.TRUE:
-        return (
-          <Button
-            loading={loading}
-            type="primary"
-            icon={<Icon component={MinusCircleIcon} />}
-            onClick={() => onClickChangeResult(StateResult.FALSE)}
-            danger>
-            {ReviewResultText[StateResult.FALSE]}
-          </Button>
-        );
-      case StateResult.FALSE:
-        return (
-          <Button
-            loading={loading}
-            type="primary"
-            icon={<Icon component={CheckCircleIcon} />}
-            onClick={() => onClickChangeResult(StateResult.TRUE)}>
-            {ReviewResultText[StateResult.TRUE]}
-          </Button>
-        );
-      default:
-        return <></>;
-    }
-  };
-
-  if (!review.reviewer || review.reviewer.id !== loginUser.getId()) {
+  if (
+    !review.reviewer ||
+    review.reviewer.id !== loginUser.getId() ||
+    review.result !== StateResult.NOT_DECIDED
+  ) {
     return <></>;
   }
 
-  return <Space>{buttonRender()}</Space>;
+  return (
+    <Space>
+      {' '}
+      <Button
+        loading={loading}
+        type="primary"
+        icon={<Icon component={CheckCircleIcon} />}
+        onClick={() => onClickChangeResult(StateResult.TRUE)}>
+        {ReviewResultText[StateResult.TRUE]}
+      </Button>
+      <Button
+        loading={loading}
+        type="primary"
+        icon={<Icon component={MinusCircleIcon} />}
+        onClick={() => onClickChangeResult(StateResult.FALSE)}
+        danger>
+        {ReviewResultText[StateResult.FALSE]}
+      </Button>
+    </Space>
+  );
 };
 
 export default ReviewerButton;

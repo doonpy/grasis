@@ -11,6 +11,7 @@ import { TopicTerminology } from '../../../../assets/terminology/topic.terminolo
 import ReviewAdminService from '../../../../libs/review/admin.service';
 import { REVIEWER_ID_FIELD } from '../../../../libs/review/review.resource';
 import { ProgressReport, ReviewRequestBody } from '../../../../libs/review/review.type';
+import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
 import ThesisSelectLecturerInThesis from '../../../Thesis/ThesisSelectLecturerInThesis';
 import StateEditBaseItem from '../StateEditBaseItem';
@@ -65,7 +66,11 @@ const ReviewEdit: React.FC<ComponentProps> = ({
     }
   }, [review]);
 
-  if (!loginUser.isAdmin() || loginUser.getId() !== thesisCreatorId) {
+  if (
+    !loginUser.isAdmin() ||
+    loginUser.getId() !== thesisCreatorId ||
+    review.result !== StateResult.NOT_DECIDED
+  ) {
     return <></>;
   }
 

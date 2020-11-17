@@ -13,6 +13,7 @@ import {
   ProgressReportForView,
   ProgressReportRequestBody
 } from '../../../../libs/progress-report/progress-report.type';
+import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
 import StateEditBaseItem from '../StateEditBaseItem';
 
@@ -64,7 +65,11 @@ const ProgressReportEdit: React.FC<ComponentProps> = ({
     }
   }, [progressReport]);
 
-  if (!loginUser.isAdmin() || loginUser.getId() !== thesisCreatorId) {
+  if (
+    !loginUser.isAdmin() ||
+    loginUser.getId() !== thesisCreatorId ||
+    progressReport.result !== StateResult.NOT_DECIDED
+  ) {
     return <></>;
   }
 

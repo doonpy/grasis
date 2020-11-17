@@ -6,6 +6,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { LecturerForFastView } from '../lecturer/lecturer.type';
+import { ProgressReportError } from '../progress-report/progress-report.resource';
 import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
 import { Thesis } from '../thesis/thesis.type';
@@ -62,6 +63,7 @@ export class ReviewService {
 
   public async updateById(id: number, data: ReviewRequestBody): Promise<void> {
     const currentReview = await this.getById(id);
+    this.checkResultIsNotDecided(currentReview.result);
     const topic = await this.topicService.getById(id);
     const thesis = await this.thesisService.getById(topic.thesisId);
     if (data.time) {
@@ -148,6 +150,7 @@ export class ReviewService {
     { result, reviewerComment }: ReviewChangeResultRequestBody
   ): Promise<void> {
     const review = await this.getById(id);
+    this.checkResultIsNotDecided(review.result);
 
     review.result = result;
     review.reviewerComment = reviewerComment;
@@ -173,6 +176,12 @@ export class ReviewService {
 
     if (user.userType !== UserType.LECTURER || user.id !== review.reviewerId) {
       throw new BadRequestException(ReviewError.ERR_7);
+    }
+  }
+
+  private checkResultIsNotDecided(result: StateResult): void {
+    if (result !== StateResult.NOT_DECIDED) {
+      throw new BadRequestException(ReviewError.ERR_9);
     }
   }
 }

@@ -53,6 +53,8 @@ export class ProgressReportService {
 
   public async updateById(id: number, data: ProgressReportRequestBody): Promise<void> {
     const currentProgressReport = await this.getById(id);
+    this.checkResultIsNotDecided(currentProgressReport.result);
+
     const { thesis } = await this.topicService.getById(id);
     if (data.time) {
       await this.checkValidTime(thesis, data.time);
@@ -122,6 +124,9 @@ export class ProgressReportService {
   }
 
   public async changeResult(id: number, result: StateResult): Promise<void> {
+    const progressReview = await this.getById(id);
+    this.checkResultIsNotDecided(progressReview.result);
+
     await this.progressReportRepository.update({ ...notDeleteCondition, id }, { result });
   }
 
@@ -130,5 +135,11 @@ export class ProgressReportService {
       where: { ...notDeleteCondition },
       cache: true
     });
+  }
+
+  private checkResultIsNotDecided(result: StateResult): void {
+    if (result !== StateResult.NOT_DECIDED) {
+      throw new BadRequestException(ProgressReportError.ERR_8);
+    }
   }
 }

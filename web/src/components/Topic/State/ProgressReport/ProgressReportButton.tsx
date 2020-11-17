@@ -46,59 +46,29 @@ const ProgressReportButton: React.FC<ComponentProps> = ({ progressReport, thesis
     });
   };
 
-  const buttonRender = () => {
-    switch (progressReport.result) {
-      case StateResult.NOT_DECIDED:
-        return (
-          <>
-            <Button
-              loading={loading}
-              type="primary"
-              icon={<Icon component={CheckCircleIcon} />}
-              onClick={() => onClickChangeResult(StateResult.TRUE)}>
-              {ProgressReportResultText[StateResult.TRUE]}
-            </Button>
-            <Button
-              loading={loading}
-              type="primary"
-              icon={<Icon component={MinusCircleIcon} />}
-              onClick={() => onClickChangeResult(StateResult.FALSE)}
-              danger>
-              {ProgressReportResultText[StateResult.FALSE]}
-            </Button>
-          </>
-        );
-      case StateResult.TRUE:
-        return (
-          <Button
-            loading={loading}
-            type="primary"
-            icon={<Icon component={MinusCircleIcon} />}
-            onClick={() => onClickChangeResult(StateResult.FALSE)}
-            danger>
-            {ProgressReportResultText[StateResult.FALSE]}
-          </Button>
-        );
-      case StateResult.FALSE:
-        return (
-          <Button
-            loading={loading}
-            type="primary"
-            icon={<Icon component={CheckCircleIcon} />}
-            onClick={() => onClickChangeResult(StateResult.TRUE)}>
-            {ProgressReportResultText[StateResult.TRUE]}
-          </Button>
-        );
-      default:
-        return <></>;
-    }
-  };
-
-  if (thesisCreatorId !== loginUser.getId()) {
+  if (thesisCreatorId !== loginUser.getId() || progressReport.result !== StateResult.NOT_DECIDED) {
     return <></>;
   }
 
-  return <Space>{buttonRender()}</Space>;
+  return (
+    <Space>
+      <Button
+        loading={loading}
+        type="primary"
+        icon={<Icon component={CheckCircleIcon} />}
+        onClick={() => onClickChangeResult(StateResult.TRUE)}>
+        {ProgressReportResultText[StateResult.TRUE]}
+      </Button>
+      <Button
+        loading={loading}
+        type="primary"
+        icon={<Icon component={MinusCircleIcon} />}
+        onClick={() => onClickChangeResult(StateResult.FALSE)}
+        danger>
+        {ProgressReportResultText[StateResult.FALSE]}
+      </Button>
+    </Space>
+  );
 };
 
 export default ProgressReportButton;
