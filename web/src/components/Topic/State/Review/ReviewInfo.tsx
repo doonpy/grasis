@@ -44,8 +44,8 @@ const ReviewInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) => 
       extendInfo={[
         {
           label: ReviewTerminology.REVIEW_5,
-          element: reviewData.review.reviewerView ? (
-            <LecturerFastView lecturer={reviewData.review.reviewerView} />
+          element: reviewData.review.reviewer ? (
+            <LecturerFastView lecturer={reviewData.review.reviewer} />
           ) : (
             <TextData />
           )

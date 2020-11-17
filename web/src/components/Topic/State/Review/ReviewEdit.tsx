@@ -81,7 +81,7 @@ const ReviewEdit: React.FC<ComponentProps> = ({
           <ThesisSelectLecturerInThesis
             thesisId={thesisId}
             fieldName={REVIEWER_ID_FIELD}
-            defaultValue={review.reviewerView}
+            defaultValue={review.reviewer}
             label={ReviewTerminology.REVIEW_5}
           />
           <Space>

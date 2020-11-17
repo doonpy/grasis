@@ -66,6 +66,10 @@ export const CommentList: React.FC<ComponentProps> = ({ topicId, module }) => {
     }
   }, [data]);
 
+  if (!data || data.comments.length === 0) {
+    return <></>;
+  }
+
   return (
     <List
       size="small"

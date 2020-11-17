@@ -25,7 +25,7 @@ export interface ReviewGetByIdResponse extends CommonResponse {
 export type ProgressReport = Omit<TopicStateBaseForView, 'deletedAt'> &
   Pick<Review, 'reviewerId'> & {
     result: StateResult;
-    reviewerView: LecturerForFastView | null;
+    reviewer: LecturerForFastView | null;
   };
 
 export interface UseReview {

@@ -93,7 +93,7 @@ const ReviewerButton: React.FC<ComponentProps> = ({ review }) => {
     }
   };
 
-  if (!review.reviewerView || review.reviewerView.id !== loginUser.getId()) {
+  if (!review.reviewer || review.reviewer.id !== loginUser.getId()) {
     return <></>;
   }
 
