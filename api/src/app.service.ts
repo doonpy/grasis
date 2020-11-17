@@ -28,8 +28,10 @@ export class AppService implements OnApplicationBootstrap {
       Logger.log(chalk.yellow('Run migrations... Done!'));
     }
 
-    if (!isReviewData()) {
+    if (isReviewData()) {
+      Logger.log(chalk.yellow('Initialize review data...'));
       await initReviewData(this.connection);
+      Logger.log(chalk.yellow('Initialize review data... Done!'));
     }
 
     if (

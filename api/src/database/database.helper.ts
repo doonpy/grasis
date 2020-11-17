@@ -31,8 +31,9 @@ export function getDatabaseConfig(): TypeOrmModuleOptions & MysqlConnectionOptio
 }
 
 export async function initReviewData(connection: Connection): Promise<void> {
-  const script = fs.readFileSync(path.join(__dirname, '../..', '/data/review-data.sql'), {
-    encoding: 'utf-8'
-  });
+  const script = fs
+    .readFileSync(path.join(__dirname, '../..', '/data/review-data.sql'))
+    .toString()
+    .replace(/\r?\n|\r/g, '');
   await connection.query(script);
 }
