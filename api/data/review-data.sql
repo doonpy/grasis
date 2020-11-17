@@ -66,7 +66,7 @@ LOCK TABLES `thesis` WRITE;
 
 REPLACE INTO `thesis` (`deleted_at`, `created_at`, `updated_at`, `id`, `subject`, `creator_id`, `start_time`, `end_time`, `state`, `lecturer_topic_register`, `student_topic_register`, `progress_report`, `review`, `defense`, `status`)
 VALUES
-	(NULL,'2020-11-16 16:45:09.897852','2020-11-16 16:45:16.000000',1,'Khóa luận 1',1,'2020-11-15 17:00:00','2020-12-31 16:59:00',2,'2020-11-19 16:59:00','2020-11-22 16:59:00','2020-11-25 16:59:00','2020-11-28 16:59:00','2020-11-30 16:59:00',2);
+	(NULL,'2020-11-16 16:45:09.897852','2020-11-16 16:45:16.000000',1,'Khóa luận 1',1,'2020-10-15 17:00:00','2020-12-31 16:59:00',2,'2020-11-19 16:59:00','2020-11-22 16:59:00','2020-11-25 16:59:00','2020-11-28 16:59:00','2020-11-30 16:59:00',2);
 
 /*!40000 ALTER TABLE `thesis` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -116,7 +116,7 @@ LOCK TABLES `topic` WRITE;
 
 REPLACE INTO `topic` (`deleted_at`, `created_at`, `updated_at`, `id`, `creator_id`, `subject`, `description`, `status`, `approver_id`, `thesis_id`, `max_student`, `current_student`, `register_status`)
 VALUES
-	(NULL,'2020-11-16 16:46:01.883120','2020-11-16 16:46:01.883120',1,1,'Đề tài 1','Mô tả đề tài 1',1,1,1,2,0,1);
+	(NULL,'2020-11-16 16:46:01.883120','2020-11-16 16:46:01.883120',1,7,'Đề tài 1','Mô tả đề tài 1',1,1,1,2,0,1);
 
 /*!40000 ALTER TABLE `topic` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -150,11 +150,11 @@ VALUES
 	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',4,'s3','382b6d7a39900306d8a909d0c98929edaa284b2e','C','Nguyễn Văn',1,'nguyenvanc@gmail.com','Phú Yên','0123456789',2,1,1),
 	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',5,'s4','bcae76843290f07c07554a9bf83b5ded08c20998','D','Nguyễn Thị',2,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,1),
 	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',6,'s5','cdb9d5e27bf125deb473b4bacf79d4efbf53a12a','E','Nguyễn Văn',1,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,1),
-	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',7,'l1','35e94edbf5023a58993bfd7cc693a28e9bb8478b','F','Nguyễn Văn',1,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,1),
-	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',8,'l2','dbb6e9bb1b0abe03435c6c5096e34a4e891ad7c6','G','Nguyễn Thị',2,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,1),
-	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',9,'l3','26af1643fc7e5b0fc1d918068e125e07b5cfe647','H','Nguyễn Văn',1,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,1),
-	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',10,'l4','778a477847dbab9fd5084422eb53f43ddbc0ab53','I','Nguyễn Thị',2,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,1),
-	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',11,'l5','20ffa5764892d6085580620442e40b3422368133','J','Nguyễn Văn',1,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,1);
+	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',7,'l1','35e94edbf5023a58993bfd7cc693a28e9bb8478b','F','Nguyễn Văn',1,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,2),
+	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',8,'l2','dbb6e9bb1b0abe03435c6c5096e34a4e891ad7c6','G','Nguyễn Thị',2,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,2),
+	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',9,'l3','26af1643fc7e5b0fc1d918068e125e07b5cfe647','H','Nguyễn Văn',1,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,2),
+	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',10,'l4','778a477847dbab9fd5084422eb53f43ddbc0ab53','I','Nguyễn Thị',2,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,2),
+	(NULL,'2020-11-16 16:17:23.659533','2020-11-16 16:17:23.659533',11,'l5','20ffa5764892d6085580620442e40b3422368133','J','Nguyễn Văn',1,'nguyenvand@gmail.com','Phú Yên','0123456789',2,1,2);
 
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
