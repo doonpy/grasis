@@ -1,16 +1,12 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
 import { CommonColumn } from '../../common/common.resource';
-import { UserService } from '../../user/user.service';
 import { ThesisError } from '../thesis.resource';
 import { ThesisService } from '../thesis.service';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
-  constructor(
-    private readonly userService: UserService,
-    private readonly thesisService: ThesisService
-  ) {}
+  constructor(private readonly thesisService: ThesisService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Express.CustomRequest>();
@@ -20,8 +16,7 @@ export class PermissionGuard implements CanActivate {
     }
 
     const { userId } = request.user!;
-    const loginUser = await this.userService.findById(userId);
-    await this.thesisService.checkThesisPermission(parseInt(thesisId), loginUser);
+    await this.thesisService.checkPermission(parseInt(thesisId), userId);
 
     return true;
   }

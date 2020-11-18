@@ -65,5 +65,7 @@ export const TopicTerminology = {
   TOPIC_63: 'Không có dữ liệu đề tài',
   TOPIC_64: 'Xóa đề tài',
   TOPIC_65: 'Bạn không có quyền để truy cập vào nội dung này',
-  TOPIC_66: 'Không có dữ liệu phê duyệt'
+  TOPIC_66: 'Không có dữ liệu phê duyệt',
+  TOPIC_67: 'Tạo đề tài thành công.',
+  TOPIC_68: 'Sửa đề tài thành công.'
 };

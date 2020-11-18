@@ -192,20 +192,19 @@ export class ThesisService {
     return thesis;
   }
 
-  public async hasPermission(id: number, user: User): Promise<boolean> {
+  private async hasPermission(thesis: Thesis, user: User): Promise<boolean> {
     if (user.isAdmin === IsAdmin.TRUE) {
-      const thesis = await this.getById(id);
       if (thesis.creatorId === user.id) {
         return true;
       }
     }
 
     if (user.userType === UserType.LECTURER) {
-      return this.thesisLecturerService.hasPermission(id, user);
+      return this.thesisLecturerService.hasPermission(thesis.id, user);
     }
 
     if (user.userType === UserType.STUDENT) {
-      return this.thesisStudentService.hasPermission(id, user);
+      return this.thesisStudentService.hasPermission(thesis.id, user);
     }
 
     return false;
@@ -221,8 +220,22 @@ export class ThesisService {
     }
   }
 
-  public async checkThesisPermission(thesisId: number, loginUser: User): Promise<void> {
-    if (!(await this.hasPermission(thesisId, loginUser))) {
+  public async checkPermission(thesisId: number | Thesis, userId: number | User): Promise<void> {
+    let user: User;
+    if (typeof userId === 'number') {
+      user = await this.userService.findById(userId);
+    } else {
+      user = userId;
+    }
+
+    let thesis: Thesis;
+    if (typeof thesisId === 'number') {
+      thesis = await this.getById(thesisId);
+    } else {
+      thesis = thesisId;
+    }
+
+    if (!(await this.hasPermission(thesis, user))) {
       throw new BadRequestException(ThesisError.ERR_8);
     }
   }
@@ -595,5 +608,11 @@ export class ThesisService {
         creatorId: userId
       })) > 0
     );
+  }
+
+  public checkThesisIsActive({ status }: Thesis): void {
+    if (status === ThesisStatus.INACTIVE) {
+      throw new BadRequestException(ThesisError.ERR_9);
+    }
   }
 }

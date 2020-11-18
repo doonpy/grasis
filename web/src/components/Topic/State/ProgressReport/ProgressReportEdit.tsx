@@ -84,12 +84,12 @@ const ProgressReportEdit: React.FC<ComponentProps> = ({
         visible={visible}>
         <Form form={form} requiredMark={true} layout="vertical" onFinish={onFormSubmit}>
           <StateEditBaseItem validDateRange={validDateRange} />
-          <Space>
-            <Button loading={loading} onClick={handleCancel}>
-              {CommonTerminology.COMMON_10}
-            </Button>
+          <Space size="middle">
             <Button loading={loading} onClick={handleOk} type="primary">
               {CommonTerminology.COMMON_9}
+            </Button>
+            <Button loading={loading} onClick={handleCancel} type="primary" danger>
+              {CommonTerminology.COMMON_10}
             </Button>
           </Space>
         </Form>

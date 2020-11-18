@@ -2,15 +2,11 @@ import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '
 
 import { ThesisError } from '../../thesis/thesis.resource';
 import { ThesisService } from '../../thesis/thesis.service';
-import { UserService } from '../../user/user.service';
 import { TopicQuery } from '../topic.resource';
 
 @Injectable()
 export class ThesisPermissionGuard implements CanActivate {
-  constructor(
-    private readonly userService: UserService,
-    private readonly thesisService: ThesisService
-  ) {}
+  constructor(private readonly thesisService: ThesisService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Express.CustomRequest>();
@@ -20,8 +16,7 @@ export class ThesisPermissionGuard implements CanActivate {
     }
 
     const { userId } = request.user!;
-    const loginUser = await this.userService.findById(userId);
-    await this.thesisService.checkThesisPermission(parseInt(thesisId), loginUser);
+    await this.thesisService.checkPermission(parseInt(thesisId), userId);
 
     return true;
   }

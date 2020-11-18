@@ -91,12 +91,12 @@ const ReviewEdit: React.FC<ComponentProps> = ({
             defaultValue={review.reviewer}
             label={ReviewTerminology.REVIEW_5}
           />
-          <Space>
-            <Button loading={loading} onClick={handleCancel}>
-              {CommonTerminology.COMMON_10}
-            </Button>
+          <Space size="middle">
             <Button loading={loading} onClick={handleOk} type="primary">
               {CommonTerminology.COMMON_9}
+            </Button>
+            <Button loading={loading} onClick={handleCancel} type="primary" danger>
+              {CommonTerminology.COMMON_10}
             </Button>
           </Space>
         </Form>

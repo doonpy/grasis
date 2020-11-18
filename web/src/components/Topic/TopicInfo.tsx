@@ -1,17 +1,17 @@
-import Icon, { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import Icon, { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Descriptions, Empty, message, Modal, Space } from 'antd';
-import Link from 'next/link';
 import React from 'react';
 
 import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
 import MinusCircleIcon from '../../assets/svg/regular/minus-circle.svg';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
-import { TOPIC_PATH_ROOT, TopicPath, TopicRegisterStatus } from '../../libs/topic/topic.resource';
+import { TOPIC_PATH_ROOT, TopicRegisterStatus } from '../../libs/topic/topic.resource';
 import TopicService from '../../libs/topic/topic.service';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import TextData from '../Common/TextData';
 import LecturerFastView from '../Lecturer/LecturerFastView';
+import TopicCreateAndUpdate from './TopicCreateAndUpdate';
 import TopicRegisterStatusRender from './TopicRegisterStatusRender';
 
 const { confirm } = Modal;
@@ -114,21 +114,17 @@ const TopicInfo: React.FC<ComponentProps> = ({ topicId, thesisId, canFetch }) =>
     <Descriptions
       bordered
       title={
-        <Space>
+        <>
           {topicService.canEdit(data.topic) && (
-            <>
-              <Link href={topicService.replaceParams(TopicPath.EDIT, [thesisId, topicId])}>
-                <Button type="primary" icon={<EditOutlined />}>
-                  {TopicTerminology.TOPIC_16}
-                </Button>
-              </Link>
+            <Space size="middle">
+              <TopicCreateAndUpdate thesisId={thesisId} topic={data.topic} />
               <Button type="primary" danger icon={<DeleteOutlined />} onClick={showDeleteConfirm}>
                 {TopicTerminology.TOPIC_64}
               </Button>
-            </>
+            </Space>
           )}
           {changeRegisterStatusButton()}
-        </Space>
+        </>
       }>
       <Descriptions.Item label={<b>{TopicTerminology.TOPIC_2}</b>} span={3}>
         <TextData text={data.topic.subject} />

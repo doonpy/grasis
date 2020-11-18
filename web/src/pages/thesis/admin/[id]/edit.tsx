@@ -92,7 +92,7 @@ const Edit: NextPageWithLayout<PageProps> = ({ params }) => {
               initAttendees={initStudentAttendees}
               initSelectedKey={initStudentSelectedKeys}
             />
-            <Space size="large">
+            <Space size="middle">
               <Button htmlType="submit" type="primary" size="large" loading={loading}>
                 Xác nhận
               </Button>

@@ -45,7 +45,9 @@ export class TopicService {
   ) {}
 
   public async create(thesisId: number, topicBody: TopicRequestBody): Promise<Topic> {
+    await this.thesisService.checkPermission(thesisId, topicBody.creatorId);
     const thesis = await this.thesisService.getById(thesisId);
+    this.thesisService.checkThesisIsActive(thesis);
     const topicEntity = await this.topicRepository.create({ ...topicBody, thesisId });
     topicEntity.approverId = thesis.creatorId;
     const newState = this.topicStateService.createEntity({
@@ -411,21 +413,21 @@ export class TopicService {
   }
 
   public async checkPermission(topicId: number | Topic, userId: number | User): Promise<void> {
-    let topic: Topic | undefined;
+    let topic: Topic;
     if (typeof topicId === 'number') {
       topic = await this.getById(topicId);
     } else {
       topic = topicId;
     }
 
-    let user: User | undefined;
+    let user: User;
     if (typeof userId === 'number') {
       user = await this.userService.findById(userId);
     } else {
       user = userId;
     }
 
-    await this.thesisService.checkThesisPermission(topic.thesisId, user);
+    await this.thesisService.checkPermission(topic.thesisId, user);
     if (!(await this.hasPermission(topic, user))) {
       throw new BadRequestException(TopicError.ERR_6);
     }
@@ -433,6 +435,9 @@ export class TopicService {
 
   public async updateById(topicId: number, user: User, data: TopicRequestBody): Promise<Topic> {
     const currentTopic = await this.getById(topicId);
+    await this.checkPermission(currentTopic, user);
+    const thesis = await this.thesisService.getById(currentTopic.thesisId);
+    this.thesisService.checkThesisIsActive(thesis);
     if (!this.canEdit(user, currentTopic)) {
       throw new BadRequestException(TopicError.ERR_6);
     }

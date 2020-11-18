@@ -39,7 +39,7 @@ const Create: NextPageWithLayout = () => {
           <Space direction="vertical">
             <ThesisAttendeesSelectFormItem attendeeTarget={ThesisAttendeeTarget.LECTURER} />
             <ThesisAttendeesSelectFormItem attendeeTarget={ThesisAttendeeTarget.STUDENT} />
-            <Space size="large">
+            <Space size="middle">
               <Button htmlType="submit" type="primary" size="large" loading={loading}>
                 Xác nhận
               </Button>

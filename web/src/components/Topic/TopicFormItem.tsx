@@ -3,25 +3,20 @@ import React from 'react';
 
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 
-interface ComponentProps {
-  isEdit?: boolean;
-}
-
-function getSubjectRules(isEdit?: boolean) {
-  return isEdit ? [] : [{ required: true, message: TopicTerminology.TOPIC_4 }];
-}
-
-const TopicFormItem: React.FC<ComponentProps> = ({ isEdit }) => {
+const TopicFormItem: React.FC = () => {
   return (
     <>
-      <Form.Item label={TopicTerminology.TOPIC_2} name="subject" rules={getSubjectRules(isEdit)}>
+      <Form.Item
+        label={<b>{TopicTerminology.TOPIC_2}</b>}
+        name="subject"
+        rules={[{ required: true, message: TopicTerminology.TOPIC_4 }]}>
         <Input />
       </Form.Item>
-      <Form.Item label={TopicTerminology.TOPIC_3} name="description">
+      <Form.Item label={<b>{TopicTerminology.TOPIC_3}</b>} name="description">
         <Input.TextArea rows={5} />
       </Form.Item>
-      <Form.Item label={TopicTerminology.TOPIC_5} name="maxStudent">
-        <InputNumber min={1} max={2} />
+      <Form.Item label={<b>{TopicTerminology.TOPIC_5}</b>} name="maxStudent">
+        <InputNumber min={1} max={2} defaultValue={2} />
       </Form.Item>
     </>
   );
