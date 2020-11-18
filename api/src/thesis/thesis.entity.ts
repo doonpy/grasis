@@ -8,7 +8,7 @@ import {
 } from '../common/common.resource';
 import { LecturerEntity } from '../lecturer/lecturer.entity';
 import { Lecturer } from '../lecturer/lecturer.type';
-import { TopicEntity } from '../topic/topic.entity';
+import { TopicEntity } from '../topic/entities/topic.entity';
 import { TopicColumn } from '../topic/topic.resource';
 import { Topic } from '../topic/topic.type';
 import { ThesisLecturerEntity } from './thesis-lecturer/thesis-lecturer.entity';

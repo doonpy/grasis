@@ -3,19 +3,22 @@ import useSWR from 'swr';
 
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import CommonService from '../common/common.service';
+import { ThesisForView } from '../thesis/thesis.type';
 import LoginUser from '../user/instance/LoginUser';
 import { TopicStateAction } from './topic-state/topic-state.resource';
 import { TopicStudentStatus } from './topic-student/topic-student.resource';
 import { TopicStudent } from './topic-student/topic-student.type';
+import { TOPIC_API_ROOT, TopicApi } from './topic.resource';
 import {
   Topic,
   TopicCreateOrUpdateResponse,
   TopicFindManyResponse,
+  TopicForView,
   TopicGetByIdResponse,
   TopicRequestBody,
+  UseTopic,
   UseTopics
 } from './topic.type';
-import { TOPIC_API_ROOT, TopicApi } from './topic.resource';
 
 export default class TopicService extends CommonService {
   private static instance: TopicService;
@@ -49,11 +52,12 @@ export default class TopicService extends CommonService {
     thesisId: number,
     pageNumber = 0,
     pageSize: number = DEFAULT_PAGE_SIZE,
-    keyword?: string
+    keyword?: string,
+    canFetch = true
   ): UseTopics {
     const offset = (pageNumber - 1) * pageSize;
     const { data } = useSWR<TopicFindManyResponse>(
-      this.replaceParams(TopicApi.GET_MANY, [thesisId, offset, keyword || ''])
+      canFetch ? this.replaceParams(TopicApi.GET_MANY, [thesisId, offset, keyword || '']) : null
     );
     if (data) {
       data.topics = data.topics.map((topic, index) => ({ ...topic, key: index.toString() }));
@@ -62,28 +66,20 @@ export default class TopicService extends CommonService {
     return { data, isLoading: !data };
   }
 
-  public useTopic(thesisId = 0, topicId = 0) {
+  public useTopic(topicId: number, canFetch = true): UseTopic {
     const { data } = useSWR<TopicGetByIdResponse>(
-      this.replaceParams(TopicApi.SPECIFY, [topicId, thesisId])
+      canFetch ? this.replaceParams(TopicApi.SPECIFY, [topicId]) : null
     );
 
     return { data, isLoading: !data };
   }
 
-  public async updateById(
-    thesisId: number,
-    topicId: number,
-    topic: TopicRequestBody
-  ): Promise<AxiosResponse<TopicCreateOrUpdateResponse>> {
+  public async updateById(topicId: number, topic: TopicRequestBody): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-
-    return this.apiService.patch<TopicCreateOrUpdateResponse>(TopicApi.SPECIFY, topic, [
-      topicId,
-      thesisId
-    ]);
+    await this.apiService.patch<TopicCreateOrUpdateResponse>(TopicApi.SPECIFY, topic, [topicId]);
   }
 
-  public async getInitialForEdit(thesisId: number, topicId: number): Promise<Topic> {
+  public async getInitialForEdit(thesisId: number, topicId: number): Promise<TopicForView> {
     await this.apiService.bindAuthorizationForClient();
 
     const {
@@ -93,9 +89,9 @@ export default class TopicService extends CommonService {
     return topic;
   }
 
-  public async deleteById(thesisId: number, topicId: number): Promise<void> {
+  public async deleteById(topicId: number): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.delete(TopicApi.SPECIFY, [topicId, thesisId]);
+    await this.apiService.delete(TopicApi.SPECIFY, [topicId]);
   }
 
   public async changeStatus(
@@ -108,23 +104,23 @@ export default class TopicService extends CommonService {
     await this.apiService.post(TopicApi.CHANGE_STATUS, { action, note }, [topicId, thesisId]);
   }
 
-  public canEdit({ creatorId, status }: Topic): boolean {
+  public canEdit({ creator: { id }, status }: Topic | TopicForView): boolean {
     const loginUser = LoginUser.getInstance();
 
     return (
-      loginUser.getId() === creatorId &&
+      loginUser.getId() === id &&
       (status === TopicStateAction.NEW || status === TopicStateAction.WITHDRAW)
     );
   }
 
-  public async changeRegisterStatus(thesisId: number, topicId: number): Promise<void> {
+  public async changeRegisterStatus(topicId: number): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(TopicApi.CHANGE_REGISTER_STATUS, {}, [topicId, thesisId]);
+    await this.apiService.post(TopicApi.CHANGE_REGISTER_STATUS, {}, [topicId]);
   }
 
-  public async registerTopic(thesisId: number, topicId: number, studentId: number): Promise<void> {
+  public async registerTopic(topicId: number, studentId: number): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(TopicApi.REGISTER_TOPIC, {}, [topicId, thesisId, studentId]);
+    await this.apiService.post(TopicApi.REGISTER_TOPIC, {}, [topicId, studentId]);
   }
 
   public hasStudentParticipated(students: TopicStudent[]): boolean {
@@ -140,7 +136,6 @@ export default class TopicService extends CommonService {
   }
 
   public async changeStudentRegisterStatus(
-    thesisId: number,
     topicId: number,
     studentId: number,
     status: TopicStudentStatus
@@ -148,7 +143,6 @@ export default class TopicService extends CommonService {
     await this.apiService.bindAuthorizationForClient();
     await this.apiService.post(TopicApi.CHANGE_STUDENT_REGISTER_STATUS, { status }, [
       topicId,
-      thesisId,
       studentId
     ]);
   }
@@ -173,12 +167,12 @@ export default class TopicService extends CommonService {
     return false;
   }
 
-  public hasPrivateContentPermission(topic: Topic): boolean {
+  public hasPrivateContentPermission(thesis: ThesisForView, topic: TopicForView): boolean {
     const loginUser = LoginUser.getInstance();
-    if (loginUser.getId() === topic.thesis.creatorId) {
+    if (loginUser.getId() === thesis.creatorId) {
       return true;
     }
 
-    return loginUser.getId() === topic.creatorId;
+    return loginUser.getId() === topic.creator.id;
   }
 }

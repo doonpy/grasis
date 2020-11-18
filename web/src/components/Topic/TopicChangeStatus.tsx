@@ -4,8 +4,8 @@ import React, { ChangeEvent, useState } from 'react';
 
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
-import { Topic } from '../../libs/topic/topic.type';
 import TopicService from '../../libs/topic/topic.service';
+import { TopicForView } from '../../libs/topic/topic.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import AvatarForComment from '../Avatar/AvatarForComment';
 import TopicChangeStatusButtonForApprover from './TopicChangeStatusButtonForApprover';
@@ -13,11 +13,18 @@ import TopicChangeStatusButtonForCreator from './TopicChangeStatusButtonForCreat
 const { confirm } = Modal;
 
 interface ComponentProps {
-  topic: Topic;
+  thesisId: number;
+  topic: TopicForView;
 }
 
 const TopicChangeStatus: React.FC<ComponentProps> = ({
-  topic: { thesisId, id, approverId, creatorId, status }
+  thesisId,
+  topic: {
+    id,
+    approver: { id: approverId },
+    creator: { id: creatorId },
+    status
+  }
 }) => {
   const [note, setNote] = useState<string>('');
   const topicService = TopicService.getInstance();

@@ -24,14 +24,13 @@ export default class ProgressReportAdminService extends CommonService {
 
   public async updateById(
     topicId: number,
-    progressReportId: number,
     body: ProgressReportRequestBody
   ): Promise<AxiosResponse<ProgressReportCreateOrUpdateResponse>> {
     await this.apiService.bindAuthorizationForClient();
     return this.apiService.patch<ProgressReportCreateOrUpdateResponse>(
       ProgressReportApi.ADMIN_SPECIFY,
       body,
-      [progressReportId, topicId]
+      [topicId]
     );
   }
 }

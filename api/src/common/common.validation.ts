@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi';
 
-import { ReportModule } from './common.resource';
+import { ReportModule, ResultModule } from './common.resource';
 
 export const commonOffsetValidateSchema = Joi.number()
   .integer()
@@ -49,4 +49,15 @@ export const filenameSchemaValidation = Joi.string()
     'string.base': 'Tên tệp tin phải là chuỗi.',
     'string.pattern.base': 'Tên tệp tin có kí tự không hợp lệ',
     'string.max': 'Tên tệp tin không quá 50 kí tự.'
+  });
+
+export const resultModuleSchemaValidation = Joi.number()
+  .integer()
+  .allow(ReportModule.DEFENSE, ResultModule.REVIEW)
+  .required()
+  .messages({
+    'number.base': 'Module kết quả không hợp lệ (NUMBER).',
+    'number.integer': 'Module kết quả không hợp lệ (INTEGER).',
+    'any.only': 'Module kết quả không hợp lệ (ONLY).',
+    'any.required': 'Module kết quả không hợp lệ (REQUIRED).'
   });

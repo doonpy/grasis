@@ -2,6 +2,7 @@ import useSWR from 'swr';
 
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import CommonService from '../common/common.service';
+import { LecturerForFastView } from '../lecturer/lecturer.type';
 import {
   ThesisGetLecturersResponse,
   UseThesisLecturers
@@ -12,6 +13,7 @@ import {
   Thesis,
   ThesisFindManyResponse,
   ThesisGetByIdResponse,
+  ThesisSearchLecturerInThesis,
   UseTheses,
   UseThesis
 } from './thesis.type';
@@ -47,8 +49,10 @@ export default class ThesisService extends CommonService {
     return { data, isLoading: !data };
   }
 
-  public useThesis(id: number): UseThesis {
-    const { data } = useSWR<ThesisGetByIdResponse>(this.replaceParams(ThesisApi.SPECIFY, [id]));
+  public useThesis(id: number, canFetch = true): UseThesis {
+    const { data } = useSWR<ThesisGetByIdResponse>(
+      canFetch ? this.replaceParams(ThesisApi.SPECIFY, [id]) : null
+    );
 
     return { data, isLoading: !data };
   }
@@ -57,11 +61,14 @@ export default class ThesisService extends CommonService {
     thesisId: number,
     pageNumber = 0,
     pageSize: number = DEFAULT_PAGE_SIZE,
-    keyword?: string
+    keyword?: string,
+    canFetch = true
   ): UseThesisStudents {
     const offset = (pageNumber - 1) * pageSize;
     const { data } = useSWR<ThesisGetStudentsResponse>(
-      this.replaceParams(ThesisApi.GET_THESIS_STUDENTS, [thesisId, offset, keyword || ''])
+      canFetch
+        ? this.replaceParams(ThesisApi.GET_THESIS_STUDENTS, [thesisId, offset, keyword || ''])
+        : null
     );
     if (data) {
       data.students = data.students.map((student, index) => ({
@@ -77,11 +84,14 @@ export default class ThesisService extends CommonService {
     thesisId: number,
     pageNumber = 0,
     pageSize: number = DEFAULT_PAGE_SIZE,
-    keyword?: string
+    keyword?: string,
+    canFetch = true
   ): UseThesisLecturers {
     const offset = (pageNumber - 1) * pageSize;
     const { data } = useSWR<ThesisGetLecturersResponse>(
-      this.replaceParams(ThesisApi.GET_THESIS_LECTURERS, [thesisId, offset, keyword || ''])
+      canFetch
+        ? this.replaceParams(ThesisApi.GET_THESIS_LECTURERS, [thesisId, offset, keyword || ''])
+        : null
     );
     if (data) {
       data.lecturers = data.lecturers.map((student, index) => ({
@@ -95,5 +105,20 @@ export default class ThesisService extends CommonService {
 
   public isProgressReportState({ state }: Thesis): boolean {
     return state === ThesisState.PROGRESS_REPORT;
+  }
+
+  public async searchLecturerInThesis(
+    keyword: string,
+    thesisId: number
+  ): Promise<LecturerForFastView[]> {
+    await this.apiService.bindAuthorizationForClient();
+    const { result } = (
+      await this.apiService.get<ThesisSearchLecturerInThesis>(ThesisApi.SEARCH_THESIS_LECTURERS, [
+        thesisId,
+        keyword
+      ])
+    ).data;
+
+    return result;
   }
 }

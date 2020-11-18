@@ -1,8 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import fs from 'fs';
 
-import { FileDestinationCallback, FileFilterCallback, FileNameCallback } from './upload.type';
 import { UploadDestination, UploadError } from './upload.resource';
+import { FileDestinationCallback, FileFilterCallback, FileNameCallback } from './upload.type';
 
 function fileFilter(
   validExtensions: string[],

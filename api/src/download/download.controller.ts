@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Query,
+  Req,
   Res,
   UseGuards
 } from '@nestjs/common';
@@ -20,7 +21,6 @@ import {
   commonIdValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import {
   DOWNLOAD_ROOT_FOLDER,
   DownloadPath,
@@ -49,9 +49,9 @@ export class DownloadController {
   }
 
   @Post(DownloadPath.REPORT)
-  @UseGuards(JwtAuthGuard, TopicPermissionGuard)
+  @UseGuards(JwtAuthGuard)
   public async getDownloadReportLink(
-    @Query(
+    @Body(
       DownloadReportQuery.TOPIC_ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
@@ -66,8 +66,11 @@ export class DownloadController {
     )
     module: ReportModule,
     @Body(DownloadReportQuery.FILE_NAME, new JoiValidationPipe(commonFilenameValidationSchema))
-    filename: string
+    filename: string,
+    @Req() request: Express.CustomRequest
   ): Promise<DownloadReportLinkResponse> {
+    const loginUserId = request.user!.userId;
+    await this.downloadService.checkReportPermission(loginUserId, topicId, module);
     const sourcePath = this.downloadService.getSourcePath(topicId, module);
     const path = this.downloadService.getDownloadPath(filename, sourcePath);
 

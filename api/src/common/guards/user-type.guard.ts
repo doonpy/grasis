@@ -12,7 +12,7 @@ export class UserTypeGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const userTypes = this.reflector.get<number[]>('userTypes', context.getHandler());
     if (!userTypes) {
-      return true;
+      return false;
     }
 
     const request = context.switchToHttp().getRequest();

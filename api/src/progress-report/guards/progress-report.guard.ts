@@ -1,9 +1,10 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
+import { CommonParam } from '../../common/common.resource';
 import { ThesisState, ThesisStatus } from '../../thesis/thesis.resource';
 import { TopicError } from '../../topic/topic.resource';
 import { TopicService } from '../../topic/topic.service';
-import { ProgressReportError, ProgressReportQuery } from '../progress-report.resource';
+import { ProgressReportError } from '../progress-report.resource';
 
 @Injectable()
 export class ProgressReportGuard implements CanActivate {
@@ -11,7 +12,7 @@ export class ProgressReportGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Express.CustomRequest>();
-    const topicId: string = request.query![ProgressReportQuery.TOPIC_ID];
+    const topicId: string = request.params![CommonParam.ID];
     if (!topicId) {
       throw new BadRequestException(TopicError.ERR_5);
     }

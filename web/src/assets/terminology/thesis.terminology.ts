@@ -50,5 +50,8 @@ export const ThesisTerminology = {
   THESIS_43: 'Kích hoạt thành công.',
   THESIS_44: 'Ngưng kích hoạt thành công.',
   THESIS_45: 'Thêm',
-  THESIS_46: 'Đang diễn ra'
+  THESIS_46: 'Đang diễn ra',
+  THESIS_47: 'Chưa chọn',
+  THESIS_48: 'Không có dữ liệu khóa luận',
+  THESIS_49: 'Xóa khóa luận'
 };

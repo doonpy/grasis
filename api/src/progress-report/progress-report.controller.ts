@@ -3,17 +3,17 @@ import {
   DefaultValuePipe,
   Get,
   HttpStatus,
+  Param,
   ParseIntPipe,
-  Query,
   UseGuards
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonQueryValue } from '../common/common.resource';
+import { CommonParam, CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
-import { ProgressReportPath, ProgressReportQuery } from './progress-report.resource';
+import { ProgressReportPath } from './progress-report.resource';
 import { ProgressReportService } from './progress-report.service';
 import { ProgressReportGetByIdResponse } from './progress-report.type';
 
@@ -22,17 +22,17 @@ import { ProgressReportGetByIdResponse } from './progress-report.type';
 export class ProgressReportController {
   constructor(private readonly progressReportService: ProgressReportService) {}
 
-  @Get(ProgressReportPath.GET_BY_TOPIC_ID)
-  public async getByTopicId(
-    @Query(
-      ProgressReportQuery.TOPIC_ID,
+  @Get(ProgressReportPath.SPECIFY)
+  public async getById(
+    @Param(
+      CommonParam.ID,
       new JoiValidationPipe(commonIdValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
     )
-    topicId: number
+    id: number
   ): Promise<ProgressReportGetByIdResponse> {
-    const progressReport = await this.progressReportService.getByTopicIdForView(topicId);
+    const progressReport = await this.progressReportService.getByIdForView(id);
 
     return {
       statusCode: HttpStatus.OK,

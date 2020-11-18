@@ -8,8 +8,7 @@ import TrashAltIcon from '../../assets/svg/regular/trash-alt.svg';
 import { CommentTerminology } from '../../assets/terminology/comment.terminology';
 import { CommentMode } from '../../libs/comment/comment.resource';
 import CommentService from '../../libs/comment/comment.service';
-import { DEFAULT_PAGE_SIZE } from '../../libs/common/common.resource';
-import { ThesisState } from '../../libs/thesis/thesis.resource';
+import { DEFAULT_PAGE_SIZE, ReportModule } from '../../libs/common/common.resource';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import AvatarForComment from '../Avatar/AvatarForComment';
 import DateData from '../Common/DateData';
@@ -18,10 +17,10 @@ const { confirm } = Modal;
 
 interface ComponentProps {
   topicId: number;
-  state: ThesisState;
+  module: ReportModule;
 }
 
-export const CommentList: React.FC<ComponentProps> = ({ topicId, state }) => {
+export const CommentList: React.FC<ComponentProps> = ({ topicId, module }) => {
   const commentService = CommentService.getInstance();
   const loginUser = LoginUser.getInstance();
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -37,7 +36,7 @@ export const CommentList: React.FC<ComponentProps> = ({ topicId, state }) => {
 
   const { data, isLoading } = commentService.useComments(
     topicId,
-    state,
+    module,
     pagination.current,
     pagination.pageSize
   );
@@ -67,8 +66,13 @@ export const CommentList: React.FC<ComponentProps> = ({ topicId, state }) => {
     }
   }, [data]);
 
+  if (!data || data.comments.length === 0) {
+    return <></>;
+  }
+
   return (
     <List
+      size="small"
       loading={isLoading}
       itemLayout="horizontal"
       pagination={pagination}

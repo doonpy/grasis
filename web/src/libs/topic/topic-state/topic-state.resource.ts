@@ -5,6 +5,7 @@ import MinusCircleIcon from '../../../assets/svg/regular/minus-circle.svg';
 import PlusCircleIcon from '../../../assets/svg/regular/plus-circle.svg';
 import SendBackIcon from '../../../assets/svg/regular/send-back.svg';
 import StampIcon from '../../../assets/svg/regular/stamp.svg';
+import { CommonTerminology } from '../../../assets/terminology/common.terminology';
 import { TopicTerminology } from '../../../assets/terminology/topic.terminology';
 
 export enum TopicStateAction {
@@ -40,3 +41,18 @@ export const TopicStateActionIcon = [
   StampIcon,
   BanIcon
 ];
+
+export enum StateResult {
+  NOT_DECIDED = 1,
+  TRUE,
+  FALSE
+}
+
+export const StateResultText = [
+  '',
+  CommonTerminology.COMMON_8,
+  CommonTerminology.COMMON_6,
+  CommonTerminology.COMMON_7
+];
+
+export const StateResultColor = ['', 'gray', 'green', 'red'];

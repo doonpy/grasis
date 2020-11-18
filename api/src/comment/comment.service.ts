@@ -2,8 +2,7 @@ import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/com
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 
-import { notDeleteCondition } from '../common/common.resource';
-import { ThesisState } from '../thesis/thesis.resource';
+import { notDeleteCondition, ReportModule } from '../common/common.resource';
 import { TopicService } from '../topic/topic.service';
 import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -38,7 +37,7 @@ export class CommentService {
   public async getManyForView(
     topicId: number,
     userId: number,
-    state: ThesisState,
+    module: ReportModule,
     offset: number,
     limit: number
   ): Promise<CommentForView[]> {
@@ -47,7 +46,7 @@ export class CommentService {
     const conditions: FindOptionsWhere<Comment> = {
       ...notDeleteCondition,
       topicId,
-      state
+      module
     };
     if (user.userType === UserType.STUDENT) {
       conditions.mode = CommentMode.PUBLIC;
@@ -71,13 +70,13 @@ export class CommentService {
     }));
   }
 
-  public async getAmount(topicId: number, userId: number, state: ThesisState): Promise<number> {
+  public async getAmount(topicId: number, userId: number, module: ReportModule): Promise<number> {
     const user = await this.userService.findById(userId);
     await this.topicService.checkPermission(topicId, user);
     const conditions: FindOptionsWhere<Comment> = {
       ...notDeleteCondition,
       topicId,
-      state
+      module
     };
     if (user.userType === UserType.STUDENT) {
       conditions.mode = CommentMode.PUBLIC;
@@ -88,8 +87,7 @@ export class CommentService {
 
   public async deleteById(id: number, userId: number): Promise<void> {
     const comment = await this.getById(id);
-    const user = await this.userService.findById(userId);
-    await this.topicService.checkPermission(comment.topicId, user);
+    await this.topicService.checkPermission(comment.topicId, userId);
     if (comment.creatorId !== userId) {
       throw new BadRequestException(CommentError.ERR_3);
     }

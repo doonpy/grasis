@@ -4,9 +4,11 @@ import mime from 'mime-types';
 
 import { AwsService } from '../aws/aws.service';
 import { isProductionMode } from '../common/common.helper';
-import { ReportModule } from '../common/common.resource';
+import { ReportModule, ResultModule } from '../common/common.resource';
 import { FileInfo } from '../common/common.type';
 import { ProgressReportService } from '../progress-report/progress-report.service';
+import { ReviewService } from '../review/review.service';
+import { TopicService } from '../topic/topic.service';
 import { UserService } from '../user/user.service';
 import { UPLOAD_ROOT_FOLDER, UploadDestination, UploadError } from './upload.resource';
 
@@ -16,20 +18,22 @@ export class UploadService {
     private readonly userService: UserService,
     @Inject(forwardRef(() => ProgressReportService))
     private readonly progressReportService: ProgressReportService,
-    private readonly awsService: AwsService
+    private readonly awsService: AwsService,
+    private readonly reviewService: ReviewService,
+    private readonly topicService: TopicService
   ) {}
 
-  public async checkPermission(
+  public async checkReportPermission(
     userId: number,
     topicId: number,
     reportModule: ReportModule
   ): Promise<void> {
-    const user = await this.userService.findById(userId);
     switch (reportModule) {
       case ReportModule.PROGRESS_REPORT:
-        await this.progressReportService.checkUploadPermission(topicId, user);
+        await this.progressReportService.checkUploadReportPermission(topicId, userId);
         break;
       case ReportModule.REVIEW:
+        await this.reviewService.checkUploadReportPermission(topicId, userId);
         break;
       case ReportModule.DEFENSE:
         break;
@@ -45,6 +49,8 @@ export class UploadService {
         result += `/${topicId}/${UploadDestination.PROGRESS_REPORT}`;
         break;
       case ReportModule.REVIEW:
+        result += `/${topicId}/${UploadDestination.REVIEW}`;
+        break;
       case ReportModule.DEFENSE:
     }
 
@@ -65,25 +71,15 @@ export class UploadService {
     }
   }
 
-  public async getReportFiles(topicId: number, module: ReportModule): Promise<FileInfo[]> {
+  public async getReportFiles(
+    topicId: number,
+    module: ReportModule,
+    userId: number
+  ): Promise<FileInfo[]> {
+    await this.topicService.checkPermission(topicId, userId);
     const folderPath = this.getReportFolderPath(module, topicId);
-    const result: FileInfo[] = [];
-    if (!fs.existsSync(folderPath)) {
-      this.createFolder(folderPath);
 
-      if (isProductionMode()) {
-        await this.awsService.downloadReportFilesFromS3(folderPath);
-      }
-    }
-
-    const files = fs.readdirSync(folderPath);
-    for (const file of files) {
-      const filePath = `${folderPath}/${file}`;
-      const { size, ctime, mtime } = fs.statSync(filePath);
-      result.push({ name: file, size, type: mime.lookup(file) || '', ctime, mtime });
-    }
-
-    return result;
+    return this.getFilesFromPath(folderPath);
   }
 
   public createFolder(folderPath: string): void {
@@ -97,5 +93,70 @@ export class UploadService {
       const fileStream = fs.createReadStream(path);
       await this.awsService.uploadFileToS3(path, fileStream);
     }
+  }
+
+  public async checkResultPermission(
+    userId: number,
+    topicId: number,
+    resultModule: ResultModule
+  ): Promise<void> {
+    const user = await this.userService.findById(userId);
+    await this.topicService.checkPermission(topicId, user);
+    switch (resultModule) {
+      case ResultModule.REVIEW:
+        await this.reviewService.checkUploadResultPermission(topicId, user);
+        break;
+      case ResultModule.DEFENSE:
+        break;
+      default:
+        throw new BadRequestException(UploadError.ERR_4);
+    }
+  }
+
+  public getResultFolderPath(module: ResultModule, topicId: number): string {
+    let result = UploadDestination.RESULT_ROOT;
+    switch (module) {
+      case ResultModule.REVIEW:
+        result += `/${topicId}/${UploadDestination.REVIEW}`;
+        break;
+      case ResultModule.DEFENSE:
+    }
+
+    return `${UPLOAD_ROOT_FOLDER}/${result}`;
+  }
+
+  public async getResultFiles(
+    topicId: number,
+    module: ResultModule,
+    userId: number
+  ): Promise<FileInfo[]> {
+    await this.topicService.checkPermission(topicId, userId);
+    const folderPath = this.getResultFolderPath(module, topicId);
+
+    return this.getFilesFromPath(folderPath);
+  }
+
+  private async getFilesFromPath(folderPath: string): Promise<FileInfo[]> {
+    const result: FileInfo[] = [];
+    if (folderPath === `${UPLOAD_ROOT_FOLDER}/${UploadDestination.REPORT_ROOT}`) {
+      return result;
+    }
+
+    if (!fs.existsSync(folderPath)) {
+      this.createFolder(folderPath);
+
+      if (isProductionMode()) {
+        await this.awsService.downloadFilesFromS3(folderPath);
+      }
+    }
+
+    const files = fs.readdirSync(folderPath);
+    for (const file of files) {
+      const filePath = `${folderPath}/${file}`;
+      const { size, ctime, mtime } = fs.statSync(filePath);
+      result.push({ name: file, size, type: mime.lookup(file) || '', ctime, mtime });
+    }
+
+    return result;
   }
 }

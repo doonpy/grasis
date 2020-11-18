@@ -1,5 +1,5 @@
-import { User } from '../user.type';
 import { IsAdmin, UserType } from '../user.resource';
+import { User } from '../user.type';
 
 export default class LoginUser {
   private static instance: LoginUser;

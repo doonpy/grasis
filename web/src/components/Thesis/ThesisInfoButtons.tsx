@@ -1,14 +1,13 @@
-import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
+import Icon, { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Space } from 'antd';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
-import ListAltIcon from '../../assets/svg/regular/list-alt.svg';
 import MinusCircleIcon from '../../assets/svg/regular/minus-circle.svg';
 import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import ThesisAdminService from '../../libs/thesis/admin.service';
-import { ThesisStatus } from '../../libs/thesis/thesis.resource';
-import { TOPIC_PATH_ROOT } from '../../libs/topic/topic.resource';
+import { THESIS_PATH_ROOT, ThesisPath, ThesisStatus } from '../../libs/thesis/thesis.resource';
 import LoginUser from '../../libs/user/instance/LoginUser';
 const { confirm } = Modal;
 
@@ -22,22 +21,25 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
   const [thesisStatus, setThesisStatus] = useState<ThesisStatus>(status);
   const loginUser = LoginUser.getInstance();
   const adminService = ThesisAdminService.getInstance();
-  const buttonList: React.FC[] = [
-    () => (
-      <Button
-        type="primary"
-        icon={<Icon component={ListAltIcon} />}
-        loading={switchButtonLoading}
-        onClick={onClickTopicsButton}>
-        {ThesisTerminology.THESIS_42}
-      </Button>
-    )
-  ];
+  const buttonList: React.FC[] = [];
 
-  const onClickTopicsButton = async () => {
-    await adminService.redirectService.redirectTo(
-      adminService.replaceParams(TOPIC_PATH_ROOT, [thesisId])
-    );
+  const showDeleteConfirm = () => {
+    confirm({
+      title: ThesisTerminology.THESIS_21,
+      icon: <ExclamationCircleOutlined />,
+      content: ThesisTerminology.THESIS_22,
+      okText: ThesisTerminology.THESIS_23,
+      cancelText: ThesisTerminology.THESIS_24,
+      cancelButtonProps: { type: 'primary', danger: true },
+      async onOk() {
+        try {
+          await adminService.deleteById(thesisId);
+          await adminService.redirectService.redirectTo(THESIS_PATH_ROOT);
+        } catch (error) {
+          await adminService.requestErrorHandler(error);
+        }
+      }
+    });
   };
 
   const showStatusConfirm = () => {
@@ -77,12 +79,26 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
   };
 
   if (loginUser.isAdmin()) {
+    buttonList.push(
+      () => (
+        <Link href={adminService.replaceParams(ThesisPath.EDIT, [thesisId])}>
+          <Button type="primary" icon={<EditOutlined />}>
+            {ThesisTerminology.THESIS_26}
+          </Button>
+        </Link>
+      ),
+      () => (
+        <Button type="primary" danger icon={<DeleteOutlined />} onClick={showDeleteConfirm}>
+          {ThesisTerminology.THESIS_49}
+        </Button>
+      )
+    );
+
     if (thesisStatus === ThesisStatus.ACTIVE) {
       buttonList.push(() => (
         <Button
           type="primary"
           icon={<Icon component={MinusCircleIcon} />}
-          danger
           loading={switchButtonLoading}
           onClick={showStatusConfirm}>
           {ThesisTerminology.THESIS_28}

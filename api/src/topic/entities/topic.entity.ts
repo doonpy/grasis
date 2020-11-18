@@ -1,25 +1,24 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { CommonEntity } from '../common/common.entity';
+import { CommonEntity } from '../../common/common.entity';
 import {
   COMMON_ENTITY_OPTIONS,
   CommonColumn,
   commonStringColumnOptions
-} from '../common/common.resource';
-import { LecturerEntity } from '../lecturer/lecturer.entity';
-import { Lecturer } from '../lecturer/lecturer.type';
-import { ProgressReportEntity } from '../progress-report/progress-report.entity';
-import { ProgressReportColumn } from '../progress-report/progress-report.resource';
-import { ProgressReport } from '../progress-report/progress-report.type';
-import { ThesisEntity } from '../thesis/thesis.entity';
-import { Thesis } from '../thesis/thesis.type';
-import { TopicStateEntity } from './topic-state/topic-state.entity';
-import { TopicStateAction, TopicStateColumn } from './topic-state/topic-state.resource';
-import { TopicState } from './topic-state/topic-state.type';
-import { TopicStudentEntity } from './topic-student/topic_student.entity';
-import { TopicStudentColumn } from './topic-student/topic-student.resouce';
-import { TopicStudent } from './topic-student/topic-student.type';
-import { TOPIC_TABLE, TopicColumn, TopicRegisterStatus } from './topic.resource';
+} from '../../common/common.resource';
+import { LecturerEntity } from '../../lecturer/lecturer.entity';
+import { Lecturer } from '../../lecturer/lecturer.type';
+import { ProgressReport } from '../../progress-report/progress-report.type';
+import { Review } from '../../review/review.type';
+import { ThesisEntity } from '../../thesis/thesis.entity';
+import { Thesis } from '../../thesis/thesis.type';
+import { TopicStateEntity } from '../topic-state/topic-state.entity';
+import { TopicStateAction, TopicStateColumn } from '../topic-state/topic-state.resource';
+import { TopicState } from '../topic-state/topic-state.type';
+import { TopicStudentEntity } from '../topic-student/topic_student.entity';
+import { TopicStudentColumn } from '../topic-student/topic-student.resouce';
+import { TopicStudent } from '../topic-student/topic-student.type';
+import { TOPIC_TABLE, TopicColumn, TopicRegisterStatus } from '../topic.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: TOPIC_TABLE })
 export class TopicEntity extends CommonEntity {
@@ -82,7 +81,9 @@ export class TopicEntity extends CommonEntity {
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: TopicStudentColumn.TOPIC_ID })
   public students!: TopicStudent[];
 
-  @OneToMany(() => ProgressReportEntity, ({ topic }) => topic)
-  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ProgressReportColumn.TOPIC_ID })
-  public progressReports!: ProgressReport[];
+  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: CommonColumn.ID })
+  public progressReport?: ProgressReport;
+
+  @JoinColumn({ name: CommonColumn.ID, referencedColumnName: CommonColumn.ID })
+  public review?: Review;
 }

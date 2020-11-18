@@ -11,10 +11,10 @@
     "build": "next build .",
     "start:prod": "next start -p $PORT",
     "install:dependencies": "yarn install",
-    "check-type": "tsc",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && rm -rf .next/ && npm install && yarn dev",
     "prune:dependencies": "npm prune --production",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "type-check:dev": "tsc -w"
   },
   "dependencies": {
     "@ant-design/icons": "^4.2.2",

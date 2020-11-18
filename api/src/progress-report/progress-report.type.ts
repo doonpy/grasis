@@ -5,7 +5,7 @@ import { ProgressReportEntity } from './progress-report.entity';
 export type ProgressReport = ProgressReportEntity;
 
 export type ProgressReportRequestBody = WithOptional<
-  Omit<ProgressReport, keyof CommonColumns | 'id' | 'topic' | 'topicId' | 'isPassed' | 'comments'>,
+  Omit<ProgressReport, keyof CommonColumns | 'id' | 'topic' | 'topicId' | 'isPassed' | 'result'>,
   'note' | 'place'
 >;
 

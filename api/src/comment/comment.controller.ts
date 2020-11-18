@@ -15,20 +15,24 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonParam, CommonQuery, CommonQueryValue } from '../common/common.resource';
+import {
+  CommonParam,
+  CommonQuery,
+  CommonQueryValue,
+  ReportModule
+} from '../common/common.resource';
 import {
   commonIdValidateSchema,
   commonLimitValidateSchema,
   commonOffsetValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { ThesisState } from '../thesis/thesis.resource';
 import { CommentPath, CommentQuery } from './comment.resource';
 import { CommentService } from './comment.service';
 import { CommentCreateResponse, CommentGetManyResponse, CommentRequestBody } from './comment.type';
 import {
+  commentModuleValidateSchema,
   commentValidateSchema,
-  stateValidateSchema,
   topicValidateSchema
 } from './comment.validation';
 
@@ -77,23 +81,23 @@ export class CommentController {
     )
     topicId: number,
     @Query(
-      CommentQuery.STATE,
-      new JoiValidationPipe(stateValidateSchema),
+      CommentQuery.MODULE,
+      new JoiValidationPipe(commentModuleValidateSchema),
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
     )
-    state: ThesisState,
+    module: ReportModule,
     @Req() req: Express.CustomRequest
   ): Promise<CommentGetManyResponse> {
     const loginUserId = req.user!.userId;
     const comments = await this.commentService.getManyForView(
       topicId,
       loginUserId,
-      state,
+      module,
       offset,
       limit
     );
-    const total = await this.commentService.getAmount(topicId, loginUserId, state);
+    const total = await this.commentService.getAmount(topicId, loginUserId, module);
 
     return {
       statusCode: HttpStatus.CREATED,

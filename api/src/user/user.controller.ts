@@ -3,9 +3,9 @@ import { Controller, Get, HttpStatus, Param, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommonParam } from '../common/common.resource';
 import { CommonResponse } from '../common/common.type';
-import { User } from './user.type';
 import { UserPath } from './user.resource';
 import { UserService } from './user.service';
+import { User } from './user.type';
 
 interface FindUserByIdResponse extends CommonResponse {
   user: User;

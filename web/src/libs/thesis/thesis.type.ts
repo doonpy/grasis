@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 
 import { CommonColumns, CommonResponse } from '../common/common.type';
-import { Lecturer, LecturerSearchAttendee } from '../lecturer/lecturer.type';
+import { Lecturer, LecturerForFastView, LecturerSearchAttendee } from '../lecturer/lecturer.type';
 import { StudentSearchAttendee } from '../student/student.type';
 import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
 import { ThesisStudent } from './thesis-student/thesis-student.type';
@@ -86,13 +86,13 @@ export interface ThesisForListView {
   endTime: Date;
   state: ThesisState;
   status: ThesisStatus;
-  creatorInfo: CreatorInfo;
+  creator: LecturerForFastView;
 }
 
-export interface CreatorInfo {
-  firstname: string | null;
-  lastname: string | null;
-  lecturerId: string | null;
-}
+export type ThesisForView = Omit<Thesis, 'deletedAt' | 'creator'> & {
+  creator: LecturerForFastView;
+};
 
-export type ThesisForView = Omit<Thesis, 'deletedAt' | 'creator'> & { creatorInfo: CreatorInfo };
+export interface ThesisSearchLecturerInThesis extends CommonResponse {
+  result: LecturerForFastView[];
+}

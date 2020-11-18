@@ -1,10 +1,20 @@
 import { CommonResponse, FileInfo } from '../common/common.type';
 
-export interface GetReportsResponse extends CommonResponse {
-  reports: FileInfo[];
+export interface GetFilesReponse extends CommonResponse {
+  files: FileInfo[];
 }
 
 export interface UseReports {
-  data?: GetReportsResponse;
+  data?: GetFilesReponse;
+  isLoading: boolean;
+}
+
+export interface ExtraRequestBody {
+  name: string;
+  value: string | Blob;
+}
+
+export interface UseResults {
+  data?: GetFilesReponse;
   isLoading: boolean;
 }

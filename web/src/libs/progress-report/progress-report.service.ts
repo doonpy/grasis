@@ -1,7 +1,8 @@
 import useSWR from 'swr';
 
 import CommonService from '../common/common.service';
-import { IsPassed, ProgressReportApi } from './progress-report.resource';
+import { StateResult } from '../topic/topic-state/topic-state.resource';
+import { ProgressReportApi } from './progress-report.resource';
 import { ProgressReportGetByIdResponse, UseProgressReport } from './progress-report.type';
 
 export default class ProgressReportService extends CommonService {
@@ -19,19 +20,18 @@ export default class ProgressReportService extends CommonService {
     return this.instance;
   }
 
-  public useProgressReport(topicId: number): UseProgressReport {
+  public useProgressReport(topicId: number, canFetch = true): UseProgressReport {
     const { data } = useSWR<ProgressReportGetByIdResponse>(
-      this.replaceParams(ProgressReportApi.GET_BY_TOPIC_ID, [topicId])
+      canFetch ? this.replaceParams(ProgressReportApi.SPECIFY, [topicId]) : null
     );
 
     return { data, isLoading: !data };
   }
 
-  public async changeResult(id: number, topicId: number, result: IsPassed): Promise<void> {
+  public async changeResult(id: number, result: StateResult): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(
-      this.replaceParams(ProgressReportApi.ADMIN_CHANGE_RESULT, [id, topicId]),
-      { isPassed: result }
-    );
+    await this.apiService.post(this.replaceParams(ProgressReportApi.ADMIN_CHANGE_RESULT, [id]), {
+      result
+    });
   }
 }

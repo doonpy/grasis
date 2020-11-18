@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons';
-import { Space, Tag, Timeline } from 'antd';
+import { Empty, Space, Tag, Timeline } from 'antd';
 import React from 'react';
 
 import {
@@ -7,14 +7,18 @@ import {
   TopicStateActionIcon,
   TopicStateActionText
 } from '../../libs/topic/topic-state/topic-state.resource';
-import { TopicState } from '../../libs/topic/topic-state/topic-state.type';
+import { TopicStateForView } from '../../libs/topic/topic-state/topic-state.type';
 import LecturerComment from '../Lecturer/LecturerComment';
 
 interface ComponentProps {
-  states: TopicState[];
+  states: TopicStateForView[];
 }
 
 const TopicStatesRender: React.FC<ComponentProps> = ({ states }) => {
+  if (states.length === 0) {
+    return <Empty />;
+  }
+
   return (
     <Timeline>
       {states.map(({ createdAt, note, action, processor }, index) => {

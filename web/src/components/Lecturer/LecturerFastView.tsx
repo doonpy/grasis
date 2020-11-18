@@ -3,23 +3,21 @@ import { Avatar, Space } from 'antd';
 import React from 'react';
 
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
-import { CreatorInfo } from '../../libs/thesis/thesis.type';
+import { LecturerForFastView } from '../../libs/lecturer/lecturer.type';
 
 interface ComponentProps {
-  creatorInfo: CreatorInfo;
-  creatorId: number;
+  lecturer: LecturerForFastView;
 }
 
-const ThesisCreatorRender: React.FC<ComponentProps> = ({
-  creatorInfo: { lastname, firstname, lecturerId },
-  creatorId
-}): JSX.Element => {
+const LecturerFastView: React.FC<ComponentProps> = ({
+  lecturer: { id, lecturerId, firstname, lastname }
+}) => {
   const fullName = `${lastname || ''} ${firstname || ''}`;
   const lecturerIdStr = lecturerId ? `(${lecturerId})` : '';
 
   return (
     <Space>
-      <Avatar src={getAvatarUrl(creatorId)} icon={<UserOutlined />}>
+      <Avatar src={getAvatarUrl(id)} icon={<UserOutlined />}>
         {fullName[0]}
       </Avatar>
       {`${fullName} ${lecturerIdStr}`}
@@ -27,4 +25,4 @@ const ThesisCreatorRender: React.FC<ComponentProps> = ({
   );
 };
 
-export default ThesisCreatorRender;
+export default LecturerFastView;

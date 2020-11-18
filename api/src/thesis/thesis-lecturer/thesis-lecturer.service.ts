@@ -5,7 +5,8 @@ import { EntityManager, FindOptionsWhere, In, Like, Repository } from 'typeorm';
 import { notDeleteCondition } from '../../common/common.resource';
 import { LecturerError } from '../../lecturer/lecturer.resource';
 import { LecturerService } from '../../lecturer/lecturer.service';
-import { LecturerSearchAttendee } from '../../lecturer/lecturer.type';
+import { LecturerForFastView, LecturerSearchAttendee } from '../../lecturer/lecturer.type';
+import { UserStatus } from '../../user/user.resource';
 import { User } from '../../user/user.type';
 import { ThesisStatus } from '../thesis.resource';
 import { Thesis } from '../thesis.type';
@@ -190,5 +191,29 @@ export class ThesisLecturerService {
         }
       }
     ];
+  }
+
+  public async searchByFullNameInThesis(
+    keyword: string,
+    thesisId: number
+  ): Promise<LecturerForFastView[]> {
+    const thesisLecturers = await this.thesisLecturerRepository.find({
+      relations: { lecturer: { user: true } },
+      where: [
+        {
+          ...notDeleteCondition,
+          thesisId,
+          lecturer: { user: { firstname: Like(`%${keyword}%`), status: UserStatus.ACTIVE } }
+        },
+        {
+          ...notDeleteCondition,
+          thesisId,
+          lecturer: { user: { lastname: Like(`%${keyword}%`), status: UserStatus.ACTIVE } }
+        }
+      ],
+      cache: true
+    });
+
+    return thesisLecturers.map(({ lecturer }) => lecturer.convertToFastView());
   }
 }

@@ -2,17 +2,14 @@ import { Moment } from 'moment';
 
 import { CommonColumns, CommonResponse } from '../common/common.type';
 import { StudentForFastView } from '../student/student.type';
-import { Topic } from '../topic/topic.type';
-import { IsPassed } from './progress-report.resource';
+import { StateResult } from '../topic/topic-state/topic-state.resource';
 
 export interface ProgressReport extends CommonColumns {
   id: number;
-  topicId: number;
   time: string | Moment;
   place: string | null;
   note: string | null;
-  isPassed: IsPassed;
-  topic: Topic;
+  result: StateResult;
 }
 
 export interface ProgressReportCreateOrUpdateResponse extends CommonResponse {
@@ -20,7 +17,7 @@ export interface ProgressReportCreateOrUpdateResponse extends CommonResponse {
 }
 
 export type ProgressReportRequestBody = WithOptional<
-  Omit<ProgressReport, keyof CommonColumns | 'id' | 'topic' | 'topicId'>,
+  Omit<ProgressReport, keyof CommonColumns | 'id'>,
   'note' | 'place'
 >;
 
@@ -32,7 +29,7 @@ export interface ProgressReportGetByIdResponse extends CommonResponse {
   progressReport: ProgressReportForView;
 }
 
-export type ProgressReportForView = Omit<ProgressReport, 'deletedAt' | 'topic'> & {
+export type ProgressReportForView = Omit<ProgressReport, 'deletedAt'> & {
   reporters: StudentForFastView[];
 };
 

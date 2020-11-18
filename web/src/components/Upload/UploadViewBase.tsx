@@ -1,41 +1,43 @@
 import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Descriptions, List, message, Modal, Space } from 'antd';
-import React, { useState } from 'react';
+import { Button, List, message, Modal, Space } from 'antd';
+import React, { ReactElement, useState } from 'react';
 
 import FileAltIcon from '../../assets/svg/regular/file-alt.svg';
 import FilePdfIcon from '../../assets/svg/regular/file-pdf.svg';
 import FilePowerPointIcon from '../../assets/svg/regular/file-powerpoint.svg';
 import FileWordIcon from '../../assets/svg/regular/file-word.svg';
-import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { DownloadTerminology } from '../../assets/terminology/download.terminology';
 import { UploadTerminology } from '../../assets/terminology/upload.terminology';
 import { removeFilenamePrefix } from '../../libs/common/common.helper';
-import { ReportModule } from '../../libs/common/common.resource';
 import { FileInfo } from '../../libs/common/common.type';
 import DownloadService from '../../libs/download/download.service';
-import { UPLOAD_REPORT_LIMIT_FILES, UploadReportMimeType } from '../../libs/upload/upload.resource';
-import UploadService from '../../libs/upload/upload.service';
+import { UploadMimeType } from '../../libs/upload/upload.resource';
 import DateData from '../Common/DateData';
-import ReportFileUpload from './ReportFileUpload';
 
 const { confirm } = Modal;
 
 interface ComponentProps {
-  topicId: number;
-  module: ReportModule;
-  canAction: boolean;
+  files: FileInfo[];
+  canUpload: boolean;
+  downloadAction: (...args: any[]) => Promise<void>;
+  deleteAction: (...args: any[]) => Promise<void>;
+  uploadElement: ReactElement;
 }
 
-const ReportFileView: React.FC<ComponentProps> = ({ topicId, module, canAction }) => {
+const UploadViewBase: React.FC<ComponentProps> = ({
+  files,
+  canUpload,
+  downloadAction,
+  deleteAction,
+  uploadElement
+}) => {
   const downloadService = DownloadService.getInstance();
-  const uploadService = UploadService.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
-  const { data, isLoading } = uploadService.useReports(topicId, module);
 
   const downloadReport = async (filename: string) => {
     try {
       setLoading(true);
-      await downloadService.downloadReport(topicId, ReportModule.PROGRESS_REPORT, filename);
+      await downloadAction(filename);
       setLoading(false);
       message.success(DownloadTerminology.DOWNLOAD_1);
     } catch (error) {
@@ -54,10 +56,10 @@ const ReportFileView: React.FC<ComponentProps> = ({ topicId, module, canAction }
       cancelButtonProps: { type: 'primary', danger: true },
       async onOk() {
         try {
-          await uploadService.deleteReport(module, topicId, filename);
+          await deleteAction(filename);
           message.success(UploadTerminology.UPLOAD_10);
         } catch (error) {
-          await uploadService.requestErrorHandler(error);
+          await downloadService.requestErrorHandler(error);
         }
       }
     });
@@ -65,13 +67,13 @@ const ReportFileView: React.FC<ComponentProps> = ({ topicId, module, canAction }
 
   const getFileIcon = (type: string) => {
     switch (type) {
-      case UploadReportMimeType.MS_WORD:
-      case UploadReportMimeType.WORD:
+      case UploadMimeType.MS_WORD:
+      case UploadMimeType.WORD:
         return FileWordIcon;
-      case UploadReportMimeType.PDF:
+      case UploadMimeType.PDF:
         return FilePdfIcon;
-      case UploadReportMimeType.MS_POWERPOINT:
-      case UploadReportMimeType.POWERPOINT:
+      case UploadMimeType.MS_POWERPOINT:
+      case UploadMimeType.POWERPOINT:
         return FilePowerPointIcon;
       default:
         return FileAltIcon;
@@ -81,20 +83,10 @@ const ReportFileView: React.FC<ComponentProps> = ({ topicId, module, canAction }
   return (
     <>
       <List
-        loading={isLoading}
         itemLayout="horizontal"
         size="small"
-        dataSource={data?.reports || []}
-        footer={
-          (data?.reports || []).length < UPLOAD_REPORT_LIMIT_FILES &&
-          canAction && (
-            <ReportFileUpload
-              topicId={topicId}
-              module={ReportModule.PROGRESS_REPORT}
-              currentAmount={(data?.reports || []).length}
-            />
-          )
-        }
+        dataSource={files}
+        footer={canUpload && uploadElement}
         renderItem={({ name, type, ctime }: FileInfo) => (
           <List.Item>
             <List.Item.Meta
@@ -110,7 +102,7 @@ const ReportFileView: React.FC<ComponentProps> = ({ topicId, module, canAction }
                     {DownloadTerminology.DOWNLOAD_2}
                   </Button>
 
-                  {canAction && (
+                  {canUpload && (
                     <Button type="link" size="small" danger onClick={() => deleteFile(name)}>
                       {UploadTerminology.UPLOAD_11}
                     </Button>
@@ -118,13 +110,9 @@ const ReportFileView: React.FC<ComponentProps> = ({ topicId, module, canAction }
                 </Space>
               }
               description={
-                <Descriptions size="small">
-                  <Descriptions.Item label={<i>{CommonTerminology.COMMON_1}</i>} span={3}>
-                    <i>
-                      <DateData date={ctime} />
-                    </i>
-                  </Descriptions.Item>
-                </Descriptions>
+                <i>
+                  <DateData date={ctime} />
+                </i>
               }
             />
           </List.Item>
@@ -134,4 +122,4 @@ const ReportFileView: React.FC<ComponentProps> = ({ topicId, module, canAction }
   );
 };
 
-export default ReportFileView;
+export default UploadViewBase;

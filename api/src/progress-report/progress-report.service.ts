@@ -7,12 +7,12 @@ import { notDeleteCondition } from '../common/common.resource';
 import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
 import { Thesis } from '../thesis/thesis.type';
 import { TopicStudentService } from '../topic/topic-student/topic-student.service';
+import { StateResult } from '../topic/topic.resource';
 import { TopicService } from '../topic/topic.service';
-import { Topic } from '../topic/topic.type';
-import { User } from '../user/user.type';
 import { UserType } from '../user/user.resource';
+import { UserService } from '../user/user.service';
 import { ProgressReportEntity } from './progress-report.entity';
-import { IsPassed, ProgressReportError } from './progress-report.resource';
+import { ProgressReportError } from './progress-report.resource';
 import {
   ProgressReport,
   ProgressReportForView,
@@ -26,16 +26,16 @@ export class ProgressReportService {
     private readonly progressReportRepository: Repository<ProgressReport>,
     @Inject(forwardRef(() => TopicService))
     private readonly topicService: TopicService,
-    private readonly topicStudentService: TopicStudentService
+    private readonly topicStudentService: TopicStudentService,
+    private readonly userService: UserService
   ) {}
 
   public async createWithTransaction(
     manager: EntityManager,
-    topic: Topic,
+    topicId: number,
     data: ProgressReportRequestBody
   ): Promise<ProgressReport> {
-    await this.checkValidTime(topic.thesis, data.time);
-    const entity = this.progressReportRepository.create({ ...data, topic });
+    const entity = this.progressReportRepository.create({ ...data, id: topicId });
 
     return this.progressReportRepository.save(entity);
   }
@@ -52,21 +52,11 @@ export class ProgressReportService {
     return progressReport;
   }
 
-  public async getByTopicId(topicId: number): Promise<ProgressReport> {
-    const progressReport = await this.progressReportRepository.findOne(
-      { ...notDeleteCondition, topicId },
-      { cache: true }
-    );
-    if (!progressReport) {
-      throw new BadRequestException(ProgressReportError.ERR_2);
-    }
-
-    return progressReport;
-  }
-
   public async updateById(id: number, data: ProgressReportRequestBody): Promise<void> {
     const currentProgressReport = await this.getById(id);
-    const { thesis } = await this.topicService.getById(currentProgressReport.topicId);
+    this.checkResultIsNotDecided(currentProgressReport.result);
+
+    const { thesis } = await this.topicService.getById(id);
     if (data.time) {
       await this.checkValidTime(thesis, data.time);
     }
@@ -76,30 +66,27 @@ export class ProgressReportService {
 
   public async deleteByTopicIdWithTransaction(
     manager: EntityManager,
-    topicId: number,
+    id: number,
     deletedAt = new Date()
   ): Promise<void> {
-    await manager.update(ProgressReportEntity, { ...notDeleteCondition, topicId }, { deletedAt });
+    await manager.update(ProgressReportEntity, { ...notDeleteCondition, id }, { deletedAt });
   }
 
-  public async getByTopicIdForView(topicId: number): Promise<ProgressReportForView> {
-    const { createdAt, updatedAt, id, time, place, note, isPassed } = await this.getByTopicId(
-      topicId
-    );
+  public async getByIdForView(id: number): Promise<ProgressReportForView> {
+    const { createdAt, updatedAt, time, place, note, result } = await this.getById(id);
     const reporters = (
-      await this.topicStudentService.getStudentsParticipated(topicId)
+      await this.topicStudentService.getStudentsParticipated(id)
     ).map(({ student }) => student.convertToFastView());
 
     return {
       createdAt,
       updatedAt,
       id,
-      topicId,
       time,
       place,
       note,
       reporters,
-      isPassed
+      result
     };
   }
 
@@ -112,8 +99,18 @@ export class ProgressReportService {
     }
   }
 
-  public async checkUploadPermission(topicId: number, user: User): Promise<void> {
+  public async checkDownloadReportPermission(topicId: number, userId: number): Promise<void> {
     const topic = await this.topicService.getById(topicId);
+    await this.topicService.checkPermission(topic, userId);
+    if (topic.thesis.status === ThesisStatus.INACTIVE) {
+      throw new BadRequestException(ProgressReportError.ERR_5);
+    }
+  }
+
+  public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
+    const user = await this.userService.findById(userId);
+    const topic = await this.topicService.getById(topicId);
+    await this.topicService.checkPermission(topic, user);
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(ProgressReportError.ERR_5);
     }
@@ -122,17 +119,31 @@ export class ProgressReportService {
       throw new BadRequestException(ProgressReportError.ERR_6);
     }
 
-    if (
-      user.userType !== UserType.STUDENT ||
-      !(await this.topicStudentService.hasRegisteredTopic(topicId, user.id))
-    ) {
+    if (user.userType !== UserType.STUDENT) {
       throw new BadRequestException(ProgressReportError.ERR_4);
     }
 
-    await this.topicService.checkPermission(topicId, user);
+    const progressReport = await this.getById(topicId);
+    this.checkResultIsNotDecided(progressReport.result);
   }
 
-  public async changeResult(id: number, result: IsPassed): Promise<void> {
-    await this.progressReportRepository.update({ ...notDeleteCondition, id }, { isPassed: result });
+  public async changeResult(id: number, result: StateResult): Promise<void> {
+    const progressReview = await this.getById(id);
+    this.checkResultIsNotDecided(progressReview.result);
+
+    await this.progressReportRepository.update({ ...notDeleteCondition, id }, { result });
+  }
+
+  public async getByIds(ids: number[]): Promise<ProgressReport[]> {
+    return this.progressReportRepository.findByIds(ids, {
+      where: { ...notDeleteCondition },
+      cache: true
+    });
+  }
+
+  private checkResultIsNotDecided(result: StateResult): void {
+    if (result !== StateResult.NOT_DECIDED) {
+      throw new BadRequestException(ProgressReportError.ERR_7);
+    }
   }
 }

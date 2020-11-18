@@ -36,3 +36,8 @@ export enum ReportModule {
 }
 
 export const FILENAME_PATTERN = new RegExp(/^[^/\\]+$/);
+
+export enum ResultModule {
+  REVIEW = 1,
+  DEFENSE
+}

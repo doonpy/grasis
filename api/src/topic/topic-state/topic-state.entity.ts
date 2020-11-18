@@ -8,7 +8,7 @@ import {
 } from '../../common/common.resource';
 import { LecturerEntity } from '../../lecturer/lecturer.entity';
 import { Lecturer } from '../../lecturer/lecturer.type';
-import { TopicEntity } from '../topic.entity';
+import { TopicEntity } from '../entities/topic.entity';
 import { Topic } from '../topic.type';
 import { TOPIC_STATE_TABLE, TopicStateAction, TopicStateColumn } from './topic-state.resource';
 

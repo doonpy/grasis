@@ -5,7 +5,7 @@ export const CommentColumn = {
   CREATOR_ID: 'creator_id',
   CONTENT: 'content',
   MODE: 'mode',
-  STATE: 'state'
+  MODULE: 'module'
 };
 
 export enum CommentMode {
@@ -21,7 +21,7 @@ export const CommentError = {
 
 export const CommentQuery = {
   TOPIC_ID: 'topicId',
-  STATE: 'state'
+  MODULE: 'module'
 };
 
 export const CommentPath = {

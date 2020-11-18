@@ -6,6 +6,6 @@ export type FileNameCallback = (error: Error | null, destination: string) => voi
 
 export type FileFilterCallback = (error: null | Error, acceptFile: boolean) => void;
 
-export interface GetReportsResponse extends CommonResponse {
-  reports: FileInfo[];
+export interface GetFilesResponse extends CommonResponse {
+  files: FileInfo[];
 }

@@ -26,7 +26,12 @@ import { ThesisStudentService } from './thesis-student/thesis-student.service';
 import { ThesisGetThesisStudentsResponse } from './thesis-student/thesis-student.type';
 import { THESIS_ROOT_PATH, ThesisPath } from './thesis.resource';
 import { ThesisService } from './thesis.service';
-import { ThesisForListView, ThesisGetByIdResponse, ThesisGetManyResponse } from './thesis.type';
+import {
+  ThesisForListView,
+  ThesisGetByIdResponse,
+  ThesisGetManyResponse,
+  ThesisSearchLecturerInThesis
+} from './thesis.type';
 
 @UseGuards(JwtAuthGuard)
 @Controller(THESIS_ROOT_PATH)
@@ -171,6 +176,26 @@ export class ThesisController {
       statusCode: HttpStatus.OK,
       lecturers,
       total
+    };
+  }
+
+  @Get(ThesisPath.SEARCH_THESIS_LECTURERS)
+  @UseGuards(PermissionGuard)
+  public async searchThesisLecturers(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number,
+    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
+  ): Promise<ThesisSearchLecturerInThesis> {
+    const result = await this.thesisLecturerService.searchByFullNameInThesis(keyword, id);
+
+    return {
+      statusCode: HttpStatus.OK,
+      result
     };
   }
 }

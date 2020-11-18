@@ -19,9 +19,9 @@ import { LecturerService } from '../lecturer/lecturer.service';
 import { StudentError } from '../student/student.resource';
 import { StudentService } from '../student/student.service';
 import { TopicService } from '../topic/topic.service';
-import { User } from '../user/user.type';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
+import { User } from '../user/user.type';
 import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
 import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
@@ -59,20 +59,44 @@ export class ThesisService {
     const loginUser = await this.userService.findById(loginUserId);
 
     if (loginUser.isAdmin === IsAdmin.TRUE) {
-      return (await this.getManyForAdmin(offset, limit, keyword)).map((thesis) =>
-        this.convertToListView(thesis)
+      return (await this.getManyForAdmin(offset, limit, keyword)).map(
+        ({ id, subject, startTime, endTime, state, status, creator }) => ({
+          id,
+          subject,
+          startTime,
+          endTime,
+          state,
+          status,
+          creator: creator.convertToFastView()
+        })
       );
     }
 
     if (loginUser.userType === UserType.LECTURER) {
-      return (await this.getManyForLecturer(loginUserId, offset, limit, keyword)).map((thesis) =>
-        this.convertToListView(thesis)
+      return (await this.getManyForLecturer(loginUserId, offset, limit, keyword)).map(
+        ({ id, subject, startTime, endTime, state, status, creator }) => ({
+          id,
+          subject,
+          startTime,
+          endTime,
+          state,
+          status,
+          creator: creator.convertToFastView()
+        })
       );
     }
 
     if (loginUser.userType === UserType.STUDENT) {
-      return (await this.getManyForStudent(loginUserId, offset, limit, keyword)).map((thesis) =>
-        this.convertToListView(thesis)
+      return (await this.getManyForStudent(loginUserId, offset, limit, keyword)).map(
+        ({ id, subject, startTime, endTime, state, status, creator }) => ({
+          id,
+          subject,
+          startTime,
+          endTime,
+          state,
+          status,
+          creator: creator.convertToFastView()
+        })
       );
     }
 
@@ -168,20 +192,19 @@ export class ThesisService {
     return thesis;
   }
 
-  public async hasPermission(id: number, user: User): Promise<boolean> {
+  private async hasPermission(thesis: Thesis, user: User): Promise<boolean> {
     if (user.isAdmin === IsAdmin.TRUE) {
-      const thesis = await this.getById(id);
       if (thesis.creatorId === user.id) {
         return true;
       }
     }
 
     if (user.userType === UserType.LECTURER) {
-      return this.thesisLecturerService.hasPermission(id, user);
+      return this.thesisLecturerService.hasPermission(thesis.id, user);
     }
 
     if (user.userType === UserType.STUDENT) {
-      return this.thesisStudentService.hasPermission(id, user);
+      return this.thesisStudentService.hasPermission(thesis.id, user);
     }
 
     return false;
@@ -197,8 +220,22 @@ export class ThesisService {
     }
   }
 
-  public async checkThesisPermission(thesisId: number, loginUser: User): Promise<void> {
-    if (!(await this.hasPermission(thesisId, loginUser))) {
+  public async checkPermission(thesisId: number | Thesis, userId: number | User): Promise<void> {
+    let user: User;
+    if (typeof userId === 'number') {
+      user = await this.userService.findById(userId);
+    } else {
+      user = userId;
+    }
+
+    let thesis: Thesis;
+    if (typeof thesisId === 'number') {
+      thesis = await this.getById(thesisId);
+    } else {
+      thesis = thesisId;
+    }
+
+    if (!(await this.hasPermission(thesis, user))) {
       throw new BadRequestException(ThesisError.ERR_8);
     }
   }
@@ -547,52 +584,20 @@ export class ThesisService {
       await this.topicService.rejectTopicRegisterByThesisIdWithTransaction(manager, thesis.id);
       await this.topicService.disableRegisterStatusByThesisIdWithTransaction(manager, thesis.id);
     }
-  }
 
-  private convertToListView({
-    id,
-    creatorId,
-    subject,
-    startTime,
-    endTime,
-    state,
-    status,
-    creator: {
-      lecturerId,
-      user: { firstname, lastname }
+    if (state === ThesisState.REVIEW) {
+      await this.topicService.createReviewWithTransaction(manager, thesis);
     }
-  }: Thesis): ThesisForListView {
-    return {
-      id,
-      creatorId,
-      subject,
-      startTime,
-      endTime,
-      state,
-      status,
-      creatorInfo: { lecturerId, firstname, lastname }
-    };
-  }
-
-  private convertToView(thesis: Thesis): ThesisForView {
-    const {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      deletedAt,
-      creator: {
-        lecturerId,
-        user: { firstname, lastname }
-      },
-      ...remain
-    } = thesis;
-
-    return {
-      ...remain,
-      creatorInfo: { lecturerId, firstname, lastname }
-    };
   }
 
   public async getByIdForView(id: number): Promise<ThesisForView> {
-    return this.convertToView(await this.getById(id));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { deletedAt, creator, ...remain } = await this.getById(id);
+
+    return {
+      ...remain,
+      creator: creator.convertToFastView()
+    };
   }
 
   public async isCreatorActiveThesis(userId: number): Promise<boolean> {
@@ -603,5 +608,11 @@ export class ThesisService {
         creatorId: userId
       })) > 0
     );
+  }
+
+  public checkThesisIsActive({ status }: Thesis): void {
+    if (status === ThesisStatus.INACTIVE) {
+      throw new BadRequestException(ThesisError.ERR_9);
+    }
   }
 }

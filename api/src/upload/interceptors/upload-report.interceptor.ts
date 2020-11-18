@@ -15,7 +15,6 @@ import {
   reportModuleSchemaValidation
 } from '../../common/common.validation';
 import { transformException } from '../multer/multer.util';
-import { FileDestinationCallback, FileNameCallback } from '../upload.type';
 import {
   UPLOAD_REPORT_BODY_PROPERTY,
   UPLOAD_REPORT_LIMIT_FILES,
@@ -24,6 +23,7 @@ import {
   UploadReportMimeTypes
 } from '../upload.resource';
 import { UploadService } from '../upload.service';
+import { FileDestinationCallback, FileNameCallback } from '../upload.type';
 
 @Injectable()
 export class UploadReportInterceptor implements NestInterceptor {
@@ -64,6 +64,9 @@ export class UploadReportInterceptor implements NestInterceptor {
   ): Promise<void> {
     try {
       await this.checkPermission(req);
+      const folderPath = this.getFolderPathFromRequest(req);
+      this.uploadService.createFolder(folderPath);
+      this.checkDestination(folderPath);
     } catch (error) {
       return callback(error);
     }
@@ -94,12 +97,6 @@ export class UploadReportInterceptor implements NestInterceptor {
     callback: FileDestinationCallback
   ): void {
     const folderPath = this.getFolderPathFromRequest(req);
-    try {
-      this.checkDestination(folderPath);
-    } catch (error) {
-      callback(error, '');
-    }
-
     callback(null, folderPath);
   }
 
@@ -112,7 +109,7 @@ export class UploadReportInterceptor implements NestInterceptor {
 
     const topicId = parseInt(req.body!.topicId);
     const userId = req.user!.userId;
-    await this.uploadService.checkPermission(userId, topicId, reportModule);
+    await this.uploadService.checkReportPermission(userId, topicId, reportModule);
   }
 
   private checkDestination(folderPath: string): void {

@@ -23,7 +23,8 @@ export const ThesisPath = {
   ADMIN_EDIT: '/:id/edit',
   ADMIN_SWITCH_STATUS: '/:id/switch-status',
   GET_THESIS_STUDENTS: '/:id/thesis-students',
-  GET_THESIS_LECTURERS: '/:id/thesis-lecturers'
+  GET_THESIS_LECTURERS: '/:id/thesis-lecturers',
+  SEARCH_THESIS_LECTURERS: '/:id/thesis-lecturers/search'
 };
 
 export const ThesisError = {
@@ -34,7 +35,8 @@ export const ThesisError = {
   ERR_5: 'Thời gian bảo vệ không hợp lệ.',
   ERR_6: 'Thời gian bắt đầu và kết thúc khóa luận không hợp lệ.',
   ERR_7: 'Khóa luận không tồn tại.',
-  ERR_8: 'Bạn không có quyền tương tác với khóa luận này.'
+  ERR_8: 'Bạn không có quyền tương tác với khóa luận này.',
+  ERR_9: 'Khóa luận đang ngưng hoạt động.'
 };
 
 export enum ThesisState {

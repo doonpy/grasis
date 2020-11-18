@@ -53,5 +53,19 @@ export const TopicTerminology = {
   TOPIC_51: 'Số lượt đăng ký',
   TOPIC_52: 'Số lượng sinh viên được chấp nhận',
   TOPIC_53: 'Còn trống',
-  TOPIC_54: 'Đề tài'
+  TOPIC_54: 'Đề tài',
+  TOPIC_55: 'Thời gian',
+  TOPIC_56: 'Địa điểm',
+  TOPIC_57: 'Ghi chú',
+  TOPIC_58: 'Sinh viên báo cáo',
+  TOPIC_59: 'Chỉnh sửa',
+  TOPIC_60: 'Tài liệu báo cáo',
+  TOPIC_61: 'Thay đổi kết quả thành công.',
+  TOPIC_62: 'Điểm số',
+  TOPIC_63: 'Không có dữ liệu đề tài',
+  TOPIC_64: 'Xóa đề tài',
+  TOPIC_65: 'Bạn không có quyền để truy cập vào nội dung này',
+  TOPIC_66: 'Không có dữ liệu phê duyệt',
+  TOPIC_67: 'Tạo đề tài thành công.',
+  TOPIC_68: 'Sửa đề tài thành công.'
 };
