@@ -41,3 +41,5 @@ export enum ResultModule {
   REVIEW = 1,
   DEFENSE
 }
+
+export const FAILED_ID = 0;

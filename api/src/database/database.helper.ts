@@ -20,13 +20,15 @@ export function getDatabaseConfig(): TypeOrmModuleOptions & MysqlConnectionOptio
     keepConnectionAlive: true,
     timezone: '+00:00',
     charset: 'utf8mb4_unicode_ci',
-    cache: {
-      type: 'redis',
-      options: {
-        url: process.env.REDISCLOUD_URL
-      },
-      duration: 1000
-    }
+    cache: isProductionMode()
+      ? {
+          type: 'redis',
+          options: {
+            url: process.env.REDISCLOUD_URL
+          },
+          duration: 1000
+        }
+      : false
   };
 }
 

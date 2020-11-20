@@ -9,5 +9,6 @@ export const CommonTerminology = {
   COMMON_7: 'Dừng phát triển',
   COMMON_8: 'Chưa có',
   COMMON_9: 'Xác nhận',
-  COMMON_10: 'Hủy'
+  COMMON_10: 'Hủy',
+  COMMON_11: 'Bạn không có quyền để truy cập vào nội dung này'
 };

@@ -157,11 +157,11 @@ export class ThesisLecturerService {
     );
   }
 
-  public async hasPermission(id: number, loginUser: User): Promise<boolean> {
+  public async hasPermission(id: number, user: User): Promise<boolean> {
     return (
       (await this.thesisLecturerRepository.count({
         thesisId: id,
-        lecturer: { user: { ...notDeleteCondition, id: loginUser.id } },
+        lecturer: { user: { ...notDeleteCondition, id: user.id } },
         ...notDeleteCondition
       })) > 0
     );
@@ -215,5 +215,12 @@ export class ThesisLecturerService {
     });
 
     return thesisLecturers.map(({ lecturer }) => lecturer.convertToFastView());
+  }
+
+  public async getByThesisId(thesisId: number): Promise<ThesisLecturer[]> {
+    return this.thesisLecturerRepository.find({
+      where: { thesisId },
+      cache: true
+    });
   }
 }

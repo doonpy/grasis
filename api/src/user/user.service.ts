@@ -17,7 +17,8 @@ export class UserService {
 
   public async findById(id: number): Promise<User> {
     const user: User | undefined = await this.usersRepository.findOne(id, {
-      where: { ...notDeleteCondition }
+      where: { ...notDeleteCondition },
+      cache: true
     });
     if (!user) {
       throw new BadRequestException(UserError.ERR_1);

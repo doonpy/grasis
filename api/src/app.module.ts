@@ -11,6 +11,7 @@ import { AvatarModule } from './avatar/avatar.module';
 import { AwsModule } from './aws/aws.module';
 import { CommentModule } from './comment/comment.module';
 import { CommonPath, DatabaseType, EnvFileName } from './common/common.resource';
+import { CouncilModule } from './council/council.module';
 import { getDatabaseConfig } from './database/database.helper';
 import { DownloadModule } from './download/download.module';
 import { LecturerModule } from './lecturer/lecturer.module';
@@ -61,7 +62,8 @@ function getEnvFilePath(): string {
     CommentModule,
     AwsModule,
     DownloadModule,
-    ReviewModule
+    ReviewModule,
+    CouncilModule
   ],
   controllers: [AppController],
   providers: [AppService]

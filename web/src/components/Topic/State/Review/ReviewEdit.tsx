@@ -90,6 +90,7 @@ const ReviewEdit: React.FC<ComponentProps> = ({
             fieldName={REVIEWER_ID_FIELD}
             defaultValue={review.reviewer}
             label={ReviewTerminology.REVIEW_5}
+            emptyValue={true}
           />
           <Space size="middle">
             <Button loading={loading} onClick={handleOk} type="primary">

@@ -297,4 +297,14 @@ export class LecturerService {
       }
     ];
   }
+
+  public async isExistById(id: number): Promise<boolean> {
+    return (await this.lecturerRepository.count({ id, ...notDeleteCondition })) > 0;
+  }
+
+  public async checkExistedById(id: number): Promise<void> {
+    if (!(await this.isExistById(id))) {
+      throw new BadRequestException(LecturerError.ERR_3);
+    }
+  }
 }

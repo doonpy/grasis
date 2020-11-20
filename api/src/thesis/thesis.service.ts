@@ -14,6 +14,7 @@ import {
 } from 'typeorm';
 
 import { notDeleteCondition } from '../common/common.resource';
+import { CouncilService } from '../council/council.service';
 import { LecturerError } from '../lecturer/lecturer.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { StudentError } from '../student/student.resource';
@@ -47,7 +48,8 @@ export class ThesisService {
     private readonly thesisStudentService: ThesisStudentService,
     private readonly thesisLecturerService: ThesisLecturerService,
     private readonly userService: UserService,
-    private readonly topicService: TopicService
+    private readonly topicService: TopicService,
+    private readonly councilService: CouncilService
   ) {}
 
   public async getManyForView(
@@ -210,12 +212,12 @@ export class ThesisService {
     return false;
   }
 
-  public async isThesisExistById(id: number): Promise<boolean> {
+  public async isExistById(id: number): Promise<boolean> {
     return (await this.thesisRepository.count({ id })) > 0;
   }
 
-  public async checkThesisExistById(id: number): Promise<void> {
-    if (!(await this.isThesisExistById(id))) {
+  public async checkExistById(id: number): Promise<void> {
+    if (!(await this.isExistById(id))) {
       throw new BadRequestException(ThesisError.ERR_7);
     }
   }
@@ -355,12 +357,13 @@ export class ThesisService {
   }
 
   public async deleteById(id: number): Promise<void> {
-    await this.checkThesisExistById(id);
+    await this.checkExistById(id);
     await this.connection.transaction(async (manager) => {
       const deletedAt = new Date();
       await this.thesisLecturerService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
       await this.thesisStudentService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
       await this.topicService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
+      await this.councilService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
       await manager.update(ThesisEntity, { id }, { deletedAt });
     });
   }

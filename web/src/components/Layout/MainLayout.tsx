@@ -1,5 +1,5 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { BackTop, Layout, Result } from 'antd';
+import { Layout, Result } from 'antd';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -55,12 +55,7 @@ const MainLayout: React.FC<CommonPageProps> = (props) => {
         <Header username={data && data.user.username} userId={data && data.user.id} />
         <Layout.Content className={styles.content}>
           <Breadcrumb breadcrumbs={props.breadcrumbs || []} />
-          <div>
-            {props.children}
-            <BackTop>
-              <div className={styles.upButton}>UP</div>
-            </BackTop>
-          </div>
+          <div>{props.children}</div>
         </Layout.Content>
         <Layout.Footer className={styles.footer}>
           <Copyright />

@@ -63,5 +63,6 @@ export const ThesisTabKey = {
   INFO: '1',
   LECTURERS: '2',
   STUDENTS: '3',
-  TOPICS: '4'
+  TOPICS: '4',
+  COUNCILS: '5'
 };
