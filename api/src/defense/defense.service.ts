@@ -90,14 +90,6 @@ export class DefenseService {
     }
   }
 
-  public async checkDownloadPermission(topicId: number, userId: number): Promise<void> {
-    const topic = await this.topicService.getById(topicId);
-    await this.topicService.checkPermission(topic, userId);
-    if (topic.thesis.status === ThesisStatus.INACTIVE) {
-      throw new BadRequestException(DefenseError.ERR_5);
-    }
-  }
-
   public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
     const topic = await this.topicService.getById(topicId);
     await this.topicService.checkPermission(topic, userId);
@@ -120,9 +112,7 @@ export class DefenseService {
 
   public async checkUploadResultPermission(topicId: number, userId: number): Promise<void> {
     const { thesis } = await this.topicService.getById(topicId);
-    if (thesis.status === ThesisStatus.INACTIVE) {
-      throw new BadRequestException(DefenseError.ERR_5);
-    }
+    await this.thesisService.checkThesisIsActive(thesis);
 
     if (thesis.state !== ThesisState.DEFENSE) {
       throw new BadRequestException(DefenseError.ERR_6);

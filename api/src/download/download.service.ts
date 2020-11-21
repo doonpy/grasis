@@ -7,7 +7,6 @@ import { ProgressReportService } from '../progress-report/progress-report.servic
 import { ReviewService } from '../review/review.service';
 import { ThesisService } from '../thesis/thesis.service';
 import { TopicService } from '../topic/topic.service';
-import { UploadError } from '../upload/upload.resource';
 import { UploadService } from '../upload/upload.service';
 import { UserService } from '../user/user.service';
 import { DOWNLOAD_ROOT_FOLDER, DownloadError } from './download.resource';
@@ -97,41 +96,6 @@ export class DownloadService {
   public checkFileExist(filePath: string): void {
     if (!fs.existsSync(`${DOWNLOAD_ROOT_FOLDER}/${filePath}`)) {
       throw new BadRequestException(DownloadError.ERR_1);
-    }
-  }
-
-  public async checkReportPermission(
-    userId: number,
-    topicId: number,
-    module: ReportModule
-  ): Promise<void> {
-    switch (module) {
-      case ReportModule.PROGRESS_REPORT:
-        await this.progressReportService.checkDownloadPermission(topicId, userId);
-        break;
-      case ReportModule.REVIEW:
-        await this.reviewService.checkDownloadPermission(topicId, userId);
-        break;
-      case ReportModule.DEFENSE:
-        break;
-      default:
-        throw new BadRequestException(UploadError.ERR_4);
-    }
-  }
-
-  public async checkResultPermission(
-    userId: number,
-    topicId: number,
-    module: ResultModule
-  ): Promise<void> {
-    switch (module) {
-      case ResultModule.REVIEW:
-        await this.reviewService.checkDownloadPermission(topicId, userId);
-        break;
-      case ResultModule.DEFENSE:
-        break;
-      default:
-        throw new BadRequestException(UploadError.ERR_4);
     }
   }
 
