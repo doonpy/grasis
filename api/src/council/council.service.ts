@@ -82,15 +82,15 @@ export class CouncilService {
     const council = await this.getById(id);
     await this.thesisService.checkPermission(council.thesisId, userId);
     const { chairmanId, instructorId, commissionerId, ...remain } = council;
-    const chairman = await this.lecturerService.getById(chairmanId);
-    const instructor = await this.lecturerService.getById(instructorId);
-    const commissioner = await this.lecturerService.getById(commissionerId);
+    const chairman = (await this.lecturerService.getById(chairmanId)).convertToFastView();
+    const instructor = (await this.lecturerService.getById(instructorId)).convertToFastView();
+    const commissioner = (await this.lecturerService.getById(commissionerId)).convertToFastView();
 
     return {
       ...remain,
-      chairman: chairman.convertToFastView(),
-      instructor: instructor.convertToFastView(),
-      commissioner: commissioner.convertToFastView()
+      chairman,
+      instructor,
+      commissioner
     };
   }
 

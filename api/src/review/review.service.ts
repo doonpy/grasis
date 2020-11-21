@@ -12,9 +12,7 @@ import { Thesis } from '../thesis/thesis.type';
 import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { StateResult } from '../topic/topic.resource';
 import { TopicService } from '../topic/topic.service';
-import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
-import { User } from '../user/user.type';
 import { ReviewEntity } from './review.entity';
 import { ReviewError } from './review.resource';
 import {
@@ -119,7 +117,7 @@ export class ReviewService {
     }
   }
 
-  public async checkDownloadReportPermission(topicId: number, userId: number): Promise<void> {
+  public async checkDownloadPermission(topicId: number, userId: number): Promise<void> {
     const topic = await this.topicService.getById(topicId);
     await this.topicService.checkPermission(topic, userId);
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
@@ -128,9 +126,8 @@ export class ReviewService {
   }
 
   public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
-    const user = await this.userService.findById(userId);
     const topic = await this.topicService.getById(topicId);
-    await this.topicService.checkPermission(topic, user);
+    await this.topicService.checkPermission(topic, userId);
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(ReviewError.ERR_5);
     }
@@ -139,7 +136,7 @@ export class ReviewService {
       throw new BadRequestException(ReviewError.ERR_6);
     }
 
-    if (user.userType !== UserType.STUDENT) {
+    if (!(await this.topicStudentService.hasParticipatedTopic(topicId, userId))) {
       throw new BadRequestException(ReviewError.ERR_4);
     }
 
@@ -163,7 +160,7 @@ export class ReviewService {
     return this.reviewRepository.findByIds(ids, { where: { ...notDeleteCondition }, cache: true });
   }
 
-  public async checkUploadResultPermission(topicId: number, user: User): Promise<void> {
+  public async checkUploadResultPermission(topicId: number, userId: number): Promise<void> {
     const { thesis } = await this.topicService.getById(topicId);
     if (thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(ReviewError.ERR_5);
@@ -174,7 +171,7 @@ export class ReviewService {
     }
 
     const review = await this.getById(topicId);
-    if (!(await this.hasReviewerPermission(review, user))) {
+    if (!(await this.hasReviewerPermission(review, userId))) {
       throw new BadRequestException(ReviewError.ERR_7);
     }
 
@@ -187,10 +184,7 @@ export class ReviewService {
     }
   }
 
-  public async hasReviewerPermission(
-    review: number | Review,
-    user: number | User
-  ): Promise<boolean> {
+  public async hasReviewerPermission(review: number | Review, userId: number): Promise<boolean> {
     let reviewData: Review | undefined;
     if (typeof review === 'number') {
       reviewData = await this.getById(review);
@@ -198,13 +192,6 @@ export class ReviewService {
       reviewData = review;
     }
 
-    let userData: User | undefined;
-    if (typeof user === 'number') {
-      userData = await this.userService.findById(user);
-    } else {
-      userData = user;
-    }
-
-    return userData.userType === UserType.LECTURER && userData.id === reviewData.reviewerId;
+    return userId === reviewData.reviewerId;
   }
 }

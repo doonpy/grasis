@@ -4,10 +4,10 @@ import { CommonParam } from '../../common/common.resource';
 import { ThesisState, ThesisStatus } from '../../thesis/thesis.resource';
 import { TopicError } from '../../topic/topic.resource';
 import { TopicService } from '../../topic/topic.service';
-import { ReviewError } from '../review.resource';
+import { DefenseError } from '../defense.resource';
 
 @Injectable()
-export class ReviewGuard implements CanActivate {
+export class DefenseGuard implements CanActivate {
   constructor(private readonly topicService: TopicService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -19,11 +19,11 @@ export class ReviewGuard implements CanActivate {
 
     const topic = await this.topicService.getById(parseInt(topicId));
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
-      throw new BadRequestException(ReviewError.ERR_5);
+      throw new BadRequestException(DefenseError.ERR_5);
     }
 
-    if (topic.thesis.state !== ThesisState.REVIEW) {
-      throw new BadRequestException(ReviewError.ERR_6);
+    if (topic.thesis.state !== ThesisState.DEFENSE) {
+      throw new BadRequestException(DefenseError.ERR_6);
     }
 
     return true;

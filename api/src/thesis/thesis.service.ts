@@ -591,6 +591,10 @@ export class ThesisService {
     if (state === ThesisState.REVIEW) {
       await this.topicService.createReviewWithTransaction(manager, thesis);
     }
+
+    if (state === ThesisState.DEFENSE) {
+      await this.topicService.createDefenseWithTransaction(manager, thesis);
+    }
   }
 
   public async getByIdForView(id: number): Promise<ThesisForView> {

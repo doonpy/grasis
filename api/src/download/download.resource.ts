@@ -2,7 +2,8 @@ export const DOWNLOAD_ROOT_FOLDER = './download';
 
 export const DownloadPath = {
   ROOT: 'download',
-  REPORT: '/report'
+  REPORT: '/report',
+  RESULT: '/result'
 };
 
 export const DownloadQuery = {

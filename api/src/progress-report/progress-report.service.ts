@@ -9,8 +9,6 @@ import { Thesis } from '../thesis/thesis.type';
 import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { StateResult } from '../topic/topic.resource';
 import { TopicService } from '../topic/topic.service';
-import { UserType } from '../user/user.resource';
-import { UserService } from '../user/user.service';
 import { ProgressReportEntity } from './progress-report.entity';
 import { ProgressReportError } from './progress-report.resource';
 import {
@@ -26,8 +24,7 @@ export class ProgressReportService {
     private readonly progressReportRepository: Repository<ProgressReport>,
     @Inject(forwardRef(() => TopicService))
     private readonly topicService: TopicService,
-    private readonly topicStudentService: TopicStudentService,
-    private readonly userService: UserService
+    private readonly topicStudentService: TopicStudentService
   ) {}
 
   public async createWithTransaction(
@@ -99,7 +96,7 @@ export class ProgressReportService {
     }
   }
 
-  public async checkDownloadReportPermission(topicId: number, userId: number): Promise<void> {
+  public async checkDownloadPermission(topicId: number, userId: number): Promise<void> {
     const topic = await this.topicService.getById(topicId);
     await this.topicService.checkPermission(topic, userId);
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
@@ -108,9 +105,8 @@ export class ProgressReportService {
   }
 
   public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
-    const user = await this.userService.findById(userId);
     const topic = await this.topicService.getById(topicId);
-    await this.topicService.checkPermission(topic, user);
+    await this.topicService.checkPermission(topic, userId);
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(ProgressReportError.ERR_5);
     }
@@ -119,7 +115,7 @@ export class ProgressReportService {
       throw new BadRequestException(ProgressReportError.ERR_6);
     }
 
-    if (user.userType !== UserType.STUDENT) {
+    if (!(await this.topicStudentService.hasParticipatedTopic(topicId, userId))) {
       throw new BadRequestException(ProgressReportError.ERR_4);
     }
 

@@ -4,6 +4,7 @@ import { Connection, EntityManager, FindOptionsWhere, In, Like, Repository } fro
 
 import { CommentService } from '../comment/comment.service';
 import { notDeleteCondition } from '../common/common.resource';
+import { DefenseService } from '../defense/defense.service';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { ReviewService } from '../review/review.service';
@@ -41,7 +42,8 @@ export class TopicService {
     private readonly studentService: StudentService,
     private readonly progressReportService: ProgressReportService,
     private readonly commentService: CommentService,
-    private readonly reviewService: ReviewService
+    private readonly reviewService: ReviewService,
+    private readonly defenseService: DefenseService
   ) {}
 
   public async create(thesisId: number, topicBody: TopicRequestBody): Promise<Topic> {
@@ -86,7 +88,7 @@ export class TopicService {
           continue;
         }
 
-        if (await this.reviewService.hasReviewerPermission(review, login)) {
+        if (await this.reviewService.hasReviewerPermission(review, login.id)) {
           result.push(topic);
         }
       }
@@ -390,7 +392,9 @@ export class TopicService {
       case UserType.LECTURER:
         if (
           (topic.thesis.state >= ThesisState.REVIEW &&
-            (await this.reviewService.hasReviewerPermission(topic.id, user))) ||
+            (await this.reviewService.hasReviewerPermission(topic.id, user.id))) ||
+          (topic.thesis.state >= ThesisState.DEFENSE &&
+            (await this.defenseService.hasCouncilPermission(topic.id, user.id))) ||
           topic.creatorId === user.id
         ) {
           return true;
@@ -795,10 +799,7 @@ export class TopicService {
   }
 
   public async createReviewWithTransaction(manager: EntityManager, thesis: Thesis): Promise<void> {
-    const topics = await manager.find(TopicEntity, {
-      where: { ...notDeleteCondition, thesisId: thesis.id },
-      cache: true
-    });
+    const topics = await this.getByThesisIdWithTransaction(manager, thesis.id);
     const topicIds = topics.map(({ id }) => id);
     const [progressReports, reviews] = await Promise.all([
       this.progressReportService.getByIds(topicIds),
@@ -818,5 +819,38 @@ export class TopicService {
         });
       }
     }
+  }
+
+  public async createDefenseWithTransaction(manager: EntityManager, thesis: Thesis): Promise<void> {
+    const topics = await this.getByThesisIdWithTransaction(manager, thesis.id);
+    const topicIds = topics.map(({ id }) => id);
+    const [reviews, defenses] = await Promise.all([
+      this.reviewService.getByIds(topicIds),
+      this.defenseService.getByIds(topicIds)
+    ]);
+    for (const topic of topics) {
+      const review = reviews.find(({ id }) => id === topic.id);
+      const isDefenseExisted = defenses.findIndex(({ id }) => id === topic.id) >= 0;
+      if (!review || isDefenseExisted) {
+        continue;
+      }
+
+      if (review.result === StateResult.TRUE) {
+        await this.defenseService.createWithTransaction(manager, {
+          id: topic.id,
+          time: thesis.review
+        });
+      }
+    }
+  }
+
+  private async getByThesisIdWithTransaction(
+    manager: EntityManager,
+    thesisId: number
+  ): Promise<Topic[]> {
+    return manager.find(TopicEntity, {
+      where: { ...notDeleteCondition, thesisId },
+      cache: true
+    });
   }
 }

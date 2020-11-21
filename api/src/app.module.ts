@@ -13,6 +13,7 @@ import { CommentModule } from './comment/comment.module';
 import { CommonPath, DatabaseType, EnvFileName } from './common/common.resource';
 import { CouncilModule } from './council/council.module';
 import { getDatabaseConfig } from './database/database.helper';
+import { DefenseModule } from './defense/defense.module';
 import { DownloadModule } from './download/download.module';
 import { LecturerModule } from './lecturer/lecturer.module';
 import { ProgressReportModule } from './progress-report/progress-report.module';
@@ -63,7 +64,8 @@ function getEnvFilePath(): string {
     AwsModule,
     DownloadModule,
     ReviewModule,
-    CouncilModule
+    CouncilModule,
+    DefenseModule
   ],
   controllers: [AppController],
   providers: [AppService]

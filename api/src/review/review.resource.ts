@@ -2,14 +2,14 @@ export const REVIEW_TABLE = 'review';
 
 export const ReviewColumn = {
   RESULT: 'result',
-  REVIEWER_ID: ' reviewer_id',
+  REVIEWER_ID: 'reviewer_id',
   REVIEWER_COMMENT: 'reviewer_comment'
 };
 
 export const ReviewError = {
-  ERR_1: 'Đã tồn tại báo cáo tiến độ cho đề tài này.',
+  ERR_1: 'Đã tồn tại phản biện cho đề tài này.',
   ERR_2: 'Phản biện không tồn tại.',
-  ERR_3: 'Thời gian báo cáo tiến độ không hợp lệ.',
+  ERR_3: 'Thời gian phản biện không hợp lệ.',
   ERR_4: 'Bạn không phải sinh viên thực hiện đề tài này.',
   ERR_5: 'Khóa luận đang ngưng hoạt động.',
   ERR_6: 'Hiện tại không phải thời gian phản biện.',
