@@ -184,7 +184,7 @@ export class ThesisService {
 
   public async getById(id: number): Promise<Thesis> {
     const thesis = await this.thesisRepository.findOne(id, {
-      relations: { creator: { user: {} } },
+      relations: { creator: { user: true } },
       where: { ...notDeleteCondition }
     });
     if (!thesis) {
@@ -597,9 +597,10 @@ export class ThesisService {
     }
   }
 
-  public async getByIdForView(id: number): Promise<ThesisForView> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { deletedAt, creator, ...remain } = await this.getById(id);
+  public async getByIdForView(id: number, userId: number): Promise<ThesisForView> {
+    const thesis = await this.getById(id);
+    await this.checkPermission(thesis, userId);
+    const { creator, ...remain } = thesis;
 
     return {
       ...remain,

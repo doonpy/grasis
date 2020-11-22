@@ -14,7 +14,7 @@ export function getDatabaseConfig(): TypeOrmModuleOptions & MysqlConnectionOptio
     url: process.env.JAWSDB_URL,
     database: database,
     entities: ['dist/**/*.entity.js'],
-    logging: ['error', 'query'],
+    logging: ['error'],
     synchronize: !isProductionMode() || isReviewData(),
     autoLoadEntities: true,
     keepConnectionAlive: true,

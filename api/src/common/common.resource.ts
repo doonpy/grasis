@@ -4,7 +4,8 @@ import { ColumnOptions, EntityOptions, IsNull } from 'typeorm';
 export const CommonQueryValue = {
   OFFSET: 0,
   LIMIT: 20,
-  FAILED_ID: 0
+  FAILED_ID: 0,
+  KEYWORD: ''
 };
 
 export const CommonQuery = {

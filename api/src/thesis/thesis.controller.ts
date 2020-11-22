@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Query,
+  Req,
   Request,
   UseGuards
 } from '@nestjs/common';
@@ -19,7 +20,6 @@ import {
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { LecturerService } from '../lecturer/lecturer.service';
-import { PermissionGuard } from './guards/permission.guard';
 import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
 import { ThesisGetThesisLecturersResponse } from './thesis-lecturer/thesis-lecturer.type';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
@@ -79,7 +79,6 @@ export class ThesisController {
   }
 
   @Get(ThesisPath.SPECIFY)
-  @UseGuards(PermissionGuard)
   public async getById(
     @Param(
       CommonParam.ID,
@@ -87,9 +86,11 @@ export class ThesisController {
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
     )
-    id: number
+    id: number,
+    @Req()
+    request: Express.CustomRequest
   ): Promise<ThesisGetByIdResponse> {
-    const thesis = await this.thesisService.getByIdForView(id);
+    const thesis = await this.thesisService.getByIdForView(id, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,
@@ -98,7 +99,6 @@ export class ThesisController {
   }
 
   @Get(ThesisPath.GET_THESIS_STUDENTS)
-  @UseGuards(PermissionGuard)
   public async getThesisStudents(
     @Param(
       CommonParam.ID,
@@ -121,8 +121,10 @@ export class ThesisController {
       ParseIntPipe
     )
     limit: number,
-    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
+    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(CommonQueryValue.KEYWORD)) keyword: string,
+    @Req() request: Express.CustomRequest
   ): Promise<ThesisGetThesisStudentsResponse> {
+    await this.thesisService.checkPermission(id, request.user!.userId);
     const students = await this.thesisStudentService.getThesisStudentsForView(
       offset,
       limit,
@@ -139,7 +141,6 @@ export class ThesisController {
   }
 
   @Get(ThesisPath.GET_THESIS_LECTURERS)
-  @UseGuards(PermissionGuard)
   public async getThesisLecturers(
     @Param(
       CommonParam.ID,
@@ -162,8 +163,10 @@ export class ThesisController {
       ParseIntPipe
     )
     limit: number,
-    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
+    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(CommonQueryValue.KEYWORD)) keyword: string,
+    @Req() request: Express.CustomRequest
   ): Promise<ThesisGetThesisLecturersResponse> {
+    await this.thesisService.checkPermission(id, request.user!.userId);
     const lecturers = await this.thesisLecturerService.getThesisLecturersForView(
       offset,
       limit,
@@ -180,7 +183,6 @@ export class ThesisController {
   }
 
   @Get(ThesisPath.SEARCH_THESIS_LECTURERS)
-  @UseGuards(PermissionGuard)
   public async searchThesisLecturers(
     @Param(
       CommonParam.ID,
@@ -189,8 +191,10 @@ export class ThesisController {
       ParseIntPipe
     )
     id: number,
-    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
+    @Query(CommonQuery.KEYWORD, new DefaultValuePipe(CommonQueryValue.KEYWORD)) keyword: string,
+    @Req() request: Express.CustomRequest
   ): Promise<ThesisSearchLecturerInThesis> {
+    await this.thesisService.checkPermission(id, request.user!.userId);
     const result = await this.thesisLecturerService.searchByFullNameInThesis(keyword, id);
 
     return {

@@ -59,7 +59,7 @@ export type ThesisForListView = Pick<
   creator: LecturerForFastView;
 };
 
-export type ThesisForView = Omit<Thesis, 'deletedAt' | 'creator'> & {
+export type ThesisForView = Omit<Thesis, 'creator'> & {
   creator: LecturerForFastView;
 };
 
