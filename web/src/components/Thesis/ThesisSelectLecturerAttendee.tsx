@@ -3,7 +3,7 @@ import { Rule } from 'antd/lib/form';
 import React, { useState } from 'react';
 
 import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
-import { FAILED_ID } from '../../libs/common/common.resource';
+import { NOT_SELECT_ID } from '../../libs/common/common.resource';
 import { LecturerForFastView } from '../../libs/lecturer/lecturer.type';
 import ThesisService from '../../libs/thesis/thesis.service';
 import LecturerFastView from '../Lecturer/LecturerFastView';
@@ -17,7 +17,7 @@ interface ComponentProps {
   rules?: Rule[];
 }
 
-const ThesisSelectLecturerInThesis: React.FC<ComponentProps> = ({
+const ThesisSelectLecturerAttendee: React.FC<ComponentProps> = ({
   thesisId,
   defaultValue,
   fieldName,
@@ -53,7 +53,7 @@ const ThesisSelectLecturerInThesis: React.FC<ComponentProps> = ({
         filterOption={false}
         onSearch={onSearch}>
         {emptyValue && (
-          <Select.Option value={FAILED_ID}>
+          <Select.Option value={NOT_SELECT_ID}>
             <Typography.Text type="secondary">{ThesisTerminology.THESIS_47}</Typography.Text>
           </Select.Option>
         )}
@@ -67,4 +67,4 @@ const ThesisSelectLecturerInThesis: React.FC<ComponentProps> = ({
   );
 };
 
-export default ThesisSelectLecturerInThesis;
+export default ThesisSelectLecturerAttendee;

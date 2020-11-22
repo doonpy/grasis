@@ -125,6 +125,8 @@ export class UploadService {
         result += `/${topicId}/${UploadDestination.REVIEW}`;
         break;
       case ResultModule.DEFENSE:
+        result += `/${topicId}/${UploadDestination.DEFENSE}`;
+        break;
     }
 
     return `${UPLOAD_ROOT_FOLDER}/${result}`;

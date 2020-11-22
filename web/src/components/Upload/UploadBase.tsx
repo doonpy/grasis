@@ -83,6 +83,10 @@ const UploadBase: React.FC<ComponentProps> = ({
     }
   };
 
+  if (currentAmount === fileLimit) {
+    return <></>;
+  }
+
   return (
     <Space align="start">
       <Button

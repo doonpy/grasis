@@ -7,7 +7,7 @@ import { CouncilTerminology } from '../../assets/terminology/council.terminology
 import CouncilAdminService from '../../libs/council/admin.service';
 import { CouncilRequestBodyField } from '../../libs/council/council.resource';
 import { CouncilForView, CouncilRequestBody } from '../../libs/council/council.type';
-import ThesisSelectLecturerInThesis from '../Thesis/ThesisSelectLecturerInThesis';
+import ThesisSelectLecturerAttendee from '../Thesis/ThesisSelectLecturerAttendee';
 
 interface ComponentProps {
   thesisId: number;
@@ -73,21 +73,21 @@ const CouncilForm: React.FC<ComponentProps> = ({ thesisId, council, visible, set
           rules={council ? [] : [{ required: true, message: CouncilTerminology.COUNCIL_8 }]}>
           <Input />
         </Form.Item>
-        <ThesisSelectLecturerInThesis
+        <ThesisSelectLecturerAttendee
           thesisId={thesisId}
           fieldName={CouncilRequestBodyField.CHAIRMAN_ID}
           defaultValue={council ? council.chairman : null}
           label={CouncilTerminology.COUNCIL_3}
           rules={council ? [] : [{ required: true, message: CouncilTerminology.COUNCIL_9 }]}
         />
-        <ThesisSelectLecturerInThesis
+        <ThesisSelectLecturerAttendee
           thesisId={thesisId}
           fieldName={CouncilRequestBodyField.INSTRUCTOR_ID}
           defaultValue={council ? council.instructor : null}
           label={CouncilTerminology.COUNCIL_4}
           rules={council ? [] : [{ required: true, message: CouncilTerminology.COUNCIL_10 }]}
         />
-        <ThesisSelectLecturerInThesis
+        <ThesisSelectLecturerAttendee
           thesisId={thesisId}
           fieldName={CouncilRequestBodyField.COMMISSIONER_ID}
           defaultValue={council ? council.commissioner : null}

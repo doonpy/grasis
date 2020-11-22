@@ -19,9 +19,11 @@ export const CouncilError = {
 export const CouncilPath = {
   ROOT: 'councils',
   ADMIN_ROOT: 'admin/councils',
-  SPECIFY: ':id'
+  SPECIFY: ':id',
+  SEARCH_IN_THESIS_BY_NAME: 'search/:thesisId'
 };
 
 export const CouncilQuery = {
-  THESIS_ID: 'thesisId'
+  THESIS_ID: 'thesisId',
+  TOPIC_ID: 'topicId'
 };

@@ -77,6 +77,7 @@ export class TopicService {
     if (login.userType === UserType.LECTURER) {
       const topicIds = topics.map(({ id }) => id);
       const reviews = await this.reviewService.getByIds(topicIds);
+      const defenses = await this.defenseService.getByIds(topicIds);
       for (const topic of topics) {
         if (topic.creatorId === login.id) {
           result.push(topic);
@@ -89,6 +90,15 @@ export class TopicService {
         }
 
         if (await this.reviewService.hasReviewerPermission(review, login.id)) {
+          result.push(topic);
+        }
+
+        const defense = defenses.find((defense) => defense.id === topic.id);
+        if (!defense) {
+          continue;
+        }
+
+        if (await this.defenseService.hasCouncilPermission(defense, login.id)) {
           result.push(topic);
         }
       }
@@ -793,7 +803,8 @@ export class TopicService {
       this.topicStudentService.deleteByTopicIdsWithTransaction(manager, topicId, deletedAt),
       this.progressReportService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt),
       this.commentService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt),
-      this.reviewService.deleteByIdWithTransaction(manager, topicId, deletedAt)
+      this.reviewService.deleteByIdWithTransaction(manager, topicId, deletedAt),
+      this.defenseService.deleteByIdWithTransaction(manager, topicId, deletedAt)
     ]);
     await manager.update(TopicEntity, { id: topicId }, { deletedAt });
   }

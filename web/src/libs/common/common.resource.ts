@@ -42,4 +42,4 @@ export enum ResultModule {
   DEFENSE
 }
 
-export const FAILED_ID = 0;
+export const NOT_SELECT_ID = -1;

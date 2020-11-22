@@ -18,7 +18,7 @@ const councilValidationSchema = Joi.object<DefenseRequestBody>({
   councilId: commonIdValidateSchema.concat(Joi.number().allow(null))
 });
 
-export const reviewCreateValidationSchema = councilValidationSchema.concat(
+export const defenseCreateValidationSchema = councilValidationSchema.concat(
   Joi.object<DefenseRequestBody>({
     time: Joi.required().messages({
       'any.required': 'Thời gian là thông tin bắt buộc.'

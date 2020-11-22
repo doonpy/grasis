@@ -6,31 +6,32 @@ import React, { useEffect, useState } from 'react';
 
 import EditIcon from '../../../../assets/svg/regular/edit.svg';
 import { CommonTerminology } from '../../../../assets/terminology/common.terminology';
-import { ReviewTerminology } from '../../../../assets/terminology/review.terminology';
-import { TopicTerminology } from '../../../../assets/terminology/topic.terminology';
+import { DefenseTerminology } from '../../../../assets/terminology/defense.terminology';
 import { NOT_SELECT_ID } from '../../../../libs/common/common.resource';
-import ReviewAdminService from '../../../../libs/review/admin.service';
-import { REVIEWER_ID_FIELD } from '../../../../libs/review/review.resource';
-import { ReviewForView, ReviewRequestBody } from '../../../../libs/review/review.type';
-import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
+import { CouncilForView } from '../../../../libs/council/council.type';
+import DefenseAdminService from '../../../../libs/defense/admin.service';
+import { COUNCIL_ID_FIELD } from '../../../../libs/defense/defense.resource';
+import { DefenseForView, DefenseRequestBody } from '../../../../libs/defense/defense.type';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
-import ThesisSelectLecturerAttendee from '../../../Thesis/ThesisSelectLecturerAttendee';
+import CouncilSelectInThesis from '../../../Council/CouncilSelectInThesis';
 import StateEditBaseItem from '../StateEditBaseItem';
 
 interface ComponentProps {
   thesisId: number;
-  review: ReviewForView;
+  defense: DefenseForView;
   validDateRange: [string | Moment, string | Moment];
   thesisCreatorId: number;
+  defaultCouncil: CouncilForView | null;
 }
 
-const ReviewEdit: React.FC<ComponentProps> = ({
+const DefenseEdit: React.FC<ComponentProps> = ({
   thesisId,
-  review,
+  defense,
   validDateRange,
-  thesisCreatorId
+  thesisCreatorId,
+  defaultCouncil
 }) => {
-  const adminService = ReviewAdminService.getInstance();
+  const adminService = DefenseAdminService.getInstance();
   const loginUser = LoginUser.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
@@ -49,11 +50,11 @@ const ReviewEdit: React.FC<ComponentProps> = ({
     setVisible(false);
   };
 
-  const onFormSubmit = async (formValues: ReviewRequestBody) => {
+  const onFormSubmit = async (formValues: DefenseRequestBody) => {
     setLoading(true);
     try {
-      await adminService.updateById(review.id, formValues);
-      message.success(ReviewTerminology.REVIEW_11);
+      await adminService.updateById(defense.id, formValues);
+      message.success(DefenseTerminology.DEFENSE_6);
       setLoading(false);
       setVisible(false);
     } catch (error) {
@@ -64,37 +65,35 @@ const ReviewEdit: React.FC<ComponentProps> = ({
 
   useEffect(() => {
     if (!visible) {
-      review.time = moment(review.time);
-      if (review.reviewerId === null) {
-        review.reviewerId = NOT_SELECT_ID;
+      defense.time = moment(defense.time);
+      if (defense.councilId === null) {
+        defense.councilId = NOT_SELECT_ID;
       }
 
-      form.setFieldsValue(review);
+      form.setFieldsValue(defense);
     }
-  }, [review]);
+  }, [defense]);
 
-  if (
-    !loginUser.isAdmin() ||
-    loginUser.getId() !== thesisCreatorId ||
-    review.result !== StateResult.NOT_DECIDED
-  ) {
+  if (!loginUser.isAdmin() || loginUser.getId() !== thesisCreatorId) {
     return <></>;
   }
 
   return (
     <>
       <Drawer
-        title={ReviewTerminology.REVIEW_2}
+        title={DefenseTerminology.DEFENSE_5}
         width={720}
         onClose={handleCancel}
         visible={visible}>
         <Form form={form} requiredMark={true} layout="vertical" onFinish={onFormSubmit}>
           <StateEditBaseItem validDateRange={validDateRange} />
-          <ThesisSelectLecturerAttendee
+          <CouncilSelectInThesis
             thesisId={thesisId}
-            fieldName={REVIEWER_ID_FIELD}
-            defaultValue={review.reviewer}
-            label={ReviewTerminology.REVIEW_5}
+            fieldName={COUNCIL_ID_FIELD}
+            defaultValue={
+              defaultCouncil ? { name: defaultCouncil.name, id: defaultCouncil.id } : null
+            }
+            label={DefenseTerminology.DEFENSE_2}
             emptyValue={true}
           />
           <Space size="middle">
@@ -108,10 +107,10 @@ const ReviewEdit: React.FC<ComponentProps> = ({
         </Form>
       </Drawer>
       <Button type="primary" icon={<Icon component={EditIcon} />} onClick={onClickEditButton}>
-        {TopicTerminology.TOPIC_59}
+        {CommonTerminology.COMMON_12}
       </Button>
     </>
   );
 };
 
-export default ReviewEdit;
+export default DefenseEdit;

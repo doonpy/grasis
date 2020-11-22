@@ -31,3 +31,9 @@ export interface CouncilGetManyByThesisIdForViewResponse extends CommonResponse 
   councils: CouncilForView[];
   total: number;
 }
+
+export type CouncilSearchInThesisByName = Pick<Council, 'id' | 'name'>;
+
+export interface CouncilSearchInThesisByNameResponse extends CommonResponse {
+  result: CouncilSearchInThesisByName[];
+}

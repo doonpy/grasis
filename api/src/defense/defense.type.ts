@@ -14,7 +14,7 @@ export interface DefenseCreateOrUpdateResponse extends CommonResponse {
 }
 
 export interface DefenseGetByIdResponse extends CommonResponse {
-  council: DefenseForView | null;
+  defense: DefenseForView | null;
 }
 
 export type DefenseForView = Omit<TopicStateBaseForView, 'deletedAt' | 'topic'> &

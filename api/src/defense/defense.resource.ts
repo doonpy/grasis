@@ -5,7 +5,7 @@ export const DefenseColumn = {
 };
 
 export const DefenseError = {
-  ERR_1: 'Đã tồn tại bảo vệ cho đề tài này.',
+  ERR_1: 'Vị trí giảng viên hướng dẫn của hội đồng bảo vệ không phù hợp với đề tài này.',
   ERR_2: 'Bảo vệ không tồn tại.',
   ERR_3: 'Thời gian bảo vệ không hợp lệ.',
   ERR_4: 'Bạn không phải sinh viên thực hiện đề tài này.',

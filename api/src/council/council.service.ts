@@ -8,7 +8,12 @@ import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer
 import { ThesisService } from '../thesis/thesis.service';
 import { CouncilEntity } from './council.entity';
 import { CouncilError } from './council.resource';
-import { Council, CouncilForView, CouncilRequestBody } from './council.type';
+import {
+  Council,
+  CouncilForView,
+  CouncilRequestBody,
+  CouncilSearchInThesisByName
+} from './council.type';
 
 @Injectable()
 export class CouncilService {
@@ -79,18 +84,26 @@ export class CouncilService {
   }
 
   public async getByIdForView(id: number, userId: number): Promise<CouncilForView> {
-    const council = await this.getById(id);
+    const council = await this.councilRepository.findOne({
+      relations: {
+        chairman: { user: true },
+        instructor: { user: true },
+        commissioner: { user: true }
+      },
+      where: { ...notDeleteCondition, id },
+      cache: true
+    });
+    if (!council) {
+      throw new BadRequestException(CouncilError.ERR_4);
+    }
+
     await this.thesisService.checkPermission(council.thesisId, userId);
-    const { chairmanId, instructorId, commissionerId, ...remain } = council;
-    const chairman = (await this.lecturerService.getById(chairmanId)).convertToFastView();
-    const instructor = (await this.lecturerService.getById(instructorId)).convertToFastView();
-    const commissioner = (await this.lecturerService.getById(commissionerId)).convertToFastView();
 
     return {
-      ...remain,
-      chairman,
-      instructor,
-      commissioner
+      ...council,
+      chairman: council.chairman.convertToFastView(),
+      instructor: council.instructor.convertToFastView(),
+      commissioner: council.commissioner.convertToFastView()
     };
   }
 
@@ -189,5 +202,26 @@ export class CouncilService {
     deletedAt = new Date()
   ): Promise<void> {
     await manager.update(CouncilEntity, { ...notDeleteCondition, thesisId }, { deletedAt });
+  }
+
+  public async searchInThesisByName(
+    thesisId: number,
+    userId: number,
+    keyword: string
+  ): Promise<CouncilSearchInThesisByName[]> {
+    await this.thesisService.checkPermission(thesisId, userId);
+    const councils = await this.councilRepository.find({
+      where: {
+        ...notDeleteCondition,
+        thesisId,
+        name: Like(`%${keyword}%`)
+      },
+      cache: true
+    });
+
+    return councils.map(({ id, name }) => ({
+      id,
+      name
+    }));
   }
 }

@@ -56,7 +56,7 @@ export class CouncilAdminController {
   }
 
   @Get(CouncilPath.SPECIFY)
-  public async getById(
+  public async getByIdForView(
     @Param(
       CommonParam.ID,
       new JoiValidationPipe(commonIdValidateSchema),

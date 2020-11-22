@@ -64,7 +64,9 @@ export class RefreshService {
   }
 
   public async getByConditions(conditions: GetRefresh): Promise<Refresh | undefined> {
-    return this.refreshRepository.findOne(conditions);
+    return this.refreshRepository.findOne(conditions, {
+      cache: { milliseconds: 1000 * 60 * 15 }
+    });
   }
 
   public async deleteExpiredToken(userId: number): Promise<void> {

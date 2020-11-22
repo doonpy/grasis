@@ -56,6 +56,13 @@ export class DefenseService {
       await this.checkValidTime(thesis, data.time);
     }
 
+    if (data.councilId) {
+      const council = await this.councilService.getById(data.councilId);
+      if (topic.creatorId !== council.instructorId) {
+        throw new BadRequestException(DefenseError.ERR_1);
+      }
+    }
+
     await this.defenseRepository.update({ id }, { ...currentDefense, ...data });
   }
 

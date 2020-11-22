@@ -18,7 +18,7 @@ import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { DefensePath } from './defense.resource';
 import { DefenseService } from './defense.service';
 import { DefenseCreateOrUpdateResponse, DefenseRequestBody } from './defense.type';
-import { reviewCreateValidationSchema } from './defense.validation';
+import { defenseCreateValidationSchema } from './defense.validation';
 
 @UseGuards(JwtAuthGuard, AdminGuard, TopicPermissionGuard)
 @Controller(DefensePath.ADMIN_ROOT)
@@ -34,7 +34,7 @@ export class DefenseAdminController {
       ParseIntPipe
     )
     id: number,
-    @Body(new JoiValidationPipe(reviewCreateValidationSchema))
+    @Body(new JoiValidationPipe(defenseCreateValidationSchema))
     body: DefenseRequestBody
   ): Promise<DefenseCreateOrUpdateResponse> {
     await this.defenseService.updateById(id, body);

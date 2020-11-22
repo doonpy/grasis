@@ -7,10 +7,8 @@ import { CouncilApi } from './council.resource';
 import {
   CouncilCreateOrUpdateResponse,
   CouncilForView,
-  CouncilGetByIdForViewResponse,
   CouncilGetManyByThesisIdForViewResponse,
   CouncilRequestBody,
-  UseCouncil,
   UseCouncils
 } from './council.type';
 
@@ -49,14 +47,6 @@ export default class CouncilAdminService extends CommonService {
     if (data) {
       data.councils = data.councils.map((council) => ({ ...council, key: council.id.toString() }));
     }
-
-    return { data, isLoading: !data };
-  }
-
-  public useCouncil(id: number, canFetch = true): UseCouncil {
-    const { data } = useSWR<CouncilGetByIdForViewResponse>(
-      canFetch ? this.replaceParams(CouncilApi.ADMIN_GET_MANY_BY_THESIS_ID, [id]) : null
-    );
 
     return { data, isLoading: !data };
   }

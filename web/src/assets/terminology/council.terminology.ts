@@ -15,5 +15,6 @@ export const CouncilTerminology = {
   COUNCIL_14: 'Xóa hội đồng thành công.',
   COUNCIL_15: 'Bạn có chăc muốn xóa hội đồng này?',
   COUNCIL_16: 'Chú ý: Thao tác này không thể phục hồi.',
-  COUNCIL_17: 'Không có dữ liệu hội đồng.'
+  COUNCIL_17: 'Không có dữ liệu hội đồng.',
+  COUNCIL_18: 'Chưa chọn'
 };

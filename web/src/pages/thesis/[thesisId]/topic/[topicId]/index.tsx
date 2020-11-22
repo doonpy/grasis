@@ -6,11 +6,14 @@ import React, { useState } from 'react';
 
 import FileChartLineIcon from '../../../../../assets/svg/regular/file-chart-line.svg';
 import FileSearchIcon from '../../../../../assets/svg/regular/file-search.svg';
+import ShieldAltIcon from '../../../../../assets/svg/regular/shield-alt.svg';
+import { DefenseTerminology } from '../../../../../assets/terminology/defense.terminology';
 import { ProgressReportTerminology } from '../../../../../assets/terminology/progress-report.terminology';
 import { ReviewTerminology } from '../../../../../assets/terminology/review.terminology';
 import { ThesisTerminology } from '../../../../../assets/terminology/thesis.terminology';
 import { TopicTerminology } from '../../../../../assets/terminology/topic.terminology';
 import MainLayout from '../../../../../components/Layout/MainLayout';
+import DefenseInfo from '../../../../../components/Topic/State/Defense/DefenseInfo';
 import ProgressReportInfo from '../../../../../components/Topic/State/ProgressReport/ProgressReportInfo';
 import ReviewInfo from '../../../../../components/Topic/State/Review/ReviewInfo';
 import TopicInfo from '../../../../../components/Topic/TopicInfo';
@@ -122,6 +125,22 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               topicId={topicId}
               thesis={data.thesis}
               canFetch={currentTab === TopicTabKey.REVIEW}
+            />
+          </Tabs.TabPane>
+        )}
+        {data.thesis.state >= ThesisState.DEFENSE && (
+          <Tabs.TabPane
+            tab={
+              <span>
+                <Icon component={ShieldAltIcon} />
+                {DefenseTerminology.DEFENSE_4}
+              </span>
+            }
+            key={TopicTabKey.DEFENSE}>
+            <DefenseInfo
+              topicId={topicId}
+              thesis={data.thesis}
+              canFetch={currentTab === TopicTabKey.DEFENSE}
             />
           </Tabs.TabPane>
         )}
