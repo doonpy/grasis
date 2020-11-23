@@ -58,7 +58,7 @@ export class ThesisService {
     loginUserId: number,
     keyword?: string
   ): Promise<ThesisForListView[]> {
-    const loginUser = await this.userService.findById(loginUserId);
+    const loginUser = await this.userService.getById(loginUserId);
 
     if (loginUser.isAdmin === IsAdmin.TRUE) {
       return (await this.getManyForAdmin(offset, limit, keyword)).map(
@@ -106,7 +106,7 @@ export class ThesisService {
   }
 
   public async getAmount(loginUserId: number, keyword?: string): Promise<number> {
-    const loginUser = await this.userService.findById(loginUserId);
+    const loginUser = await this.userService.getById(loginUserId);
 
     if (loginUser.isAdmin === IsAdmin.TRUE) {
       return this.getAmountForAdmin(keyword);
@@ -225,7 +225,7 @@ export class ThesisService {
   public async checkPermission(thesisId: number | Thesis, userId: number | User): Promise<void> {
     let user: User;
     if (typeof userId === 'number') {
-      user = await this.userService.findById(userId);
+      user = await this.userService.getById(userId);
     } else {
       user = userId;
     }

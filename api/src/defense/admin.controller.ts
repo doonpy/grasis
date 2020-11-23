@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Req,
   UseGuards
 } from '@nestjs/common';
 
@@ -14,13 +15,12 @@ import { CommonParam, CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { DefensePath } from './defense.resource';
 import { DefenseService } from './defense.service';
 import { DefenseCreateOrUpdateResponse, DefenseRequestBody } from './defense.type';
 import { defenseCreateValidationSchema } from './defense.validation';
 
-@UseGuards(JwtAuthGuard, AdminGuard, TopicPermissionGuard)
+@UseGuards(JwtAuthGuard, AdminGuard)
 @Controller(DefensePath.ADMIN_ROOT)
 export class DefenseAdminController {
   constructor(private readonly defenseService: DefenseService) {}
@@ -35,9 +35,10 @@ export class DefenseAdminController {
     )
     id: number,
     @Body(new JoiValidationPipe(defenseCreateValidationSchema))
-    body: DefenseRequestBody
+    body: DefenseRequestBody,
+    @Req() request: Express.CustomRequest
   ): Promise<DefenseCreateOrUpdateResponse> {
-    await this.defenseService.updateById(id, body);
+    await this.defenseService.updateById(id, body, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,

@@ -48,9 +48,10 @@ export class DefenseService {
     return defense;
   }
 
-  public async updateById(id: number, data: DefenseRequestBody): Promise<void> {
+  public async updateById(id: number, data: DefenseRequestBody, userId: number): Promise<void> {
     const currentDefense = await this.getById(id);
     const topic = await this.topicService.getById(id);
+    await this.topicService.checkPermission(topic, userId);
     const thesis = await this.thesisService.getById(topic.thesisId);
     if (data.time) {
       await this.checkValidTime(thesis, data.time);

@@ -127,3 +127,37 @@ jobs:
 #                  web/next.config.js
 #                  web/.env.local
 
+    type-check:
+      runs-on: ubuntu-latest
+      env:
+        working-directory: ./web
+      if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+
+      steps:
+        - uses: actions/checkout@v2
+
+        - name: Use Node.js 14.x
+          uses: actions/setup-node@v1
+          env:
+            CI: true
+          with:
+            node-version: 14.x
+
+        - name: Install Yarn
+          run: npm install -g yarn
+
+        - name: Cache node modules
+          uses: actions/cache@v2
+          env:
+            cache-name: cache-node-modules
+          with:
+            path: '**/node_modules'
+            key: ${{ runner.os }}_type-checking_${{ env.cache-name }}_${{ hashFiles('**/yarn.lock') }}
+            restore-keys: |
+              ${{ runner.os }}_type-checking_${{ env.cache-name }}_
+
+        - name: Install dependencies
+          run: yarn install
+
+        - name: Lint
+          run: yarn run type-check

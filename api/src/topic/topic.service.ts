@@ -68,7 +68,7 @@ export class TopicService {
   ): Promise<Topic[]> {
     let login: User | undefined;
     if (typeof loginUser === 'number') {
-      login = await this.userService.findById(loginUser);
+      login = await this.userService.getById(loginUser);
     } else {
       login = loginUser;
     }
@@ -129,7 +129,7 @@ export class TopicService {
     loginUserId: number,
     keyword?: string
   ): Promise<Topic[]> {
-    const loginUser = await this.userService.findById(loginUserId);
+    const loginUser = await this.userService.getById(loginUserId);
 
     if (loginUser.isAdmin === IsAdmin.TRUE) {
       return this.getManyForAdmin(thesisId, loginUserId, offset, limit, keyword);
@@ -252,7 +252,7 @@ export class TopicService {
   }
 
   public async getAmount(thesisId: number, loginUserId: number, keyword?: string): Promise<number> {
-    const loginUser = await this.userService.findById(loginUserId);
+    const loginUser = await this.userService.getById(loginUserId);
 
     if (loginUser.isAdmin === IsAdmin.TRUE) {
       return this.getAmountForAdmin(thesisId, keyword);
@@ -351,10 +351,6 @@ export class TopicService {
     const topic = await this.topicRepository.findOne(
       { ...notDeleteCondition, id },
       {
-        // relations: {
-        //   creator: { user: {} },
-        //   thesis: true
-        // },
         relations: ['creator', 'creator.user', 'thesis'],
         cache: true
       }
@@ -366,7 +362,9 @@ export class TopicService {
     return topic;
   }
 
-  public async getByIdForView(id: number): Promise<TopicForView> {
+  public async getByIdForView(topicId: number, userId: number): Promise<TopicForView> {
+    const topic = await this.getById(topicId);
+    await this.checkPermission(topic, userId);
     const {
       subject,
       status,
@@ -378,7 +376,7 @@ export class TopicService {
       currentStudent,
       maxStudent,
       approverId
-    } = await this.getById(id);
+    } = topic;
     const approver = (await this.lecturerService.getById(approverId)).convertToFastView();
 
     return {
@@ -439,7 +437,7 @@ export class TopicService {
 
     let user: User;
     if (typeof userId === 'number') {
-      user = await this.userService.findById(userId);
+      user = await this.userService.getById(userId);
     } else {
       user = userId;
     }
@@ -450,8 +448,9 @@ export class TopicService {
     }
   }
 
-  public async updateById(topicId: number, user: User, data: TopicRequestBody): Promise<Topic> {
+  public async updateById(topicId: number, userId: number, data: TopicRequestBody): Promise<Topic> {
     const currentTopic = await this.getById(topicId);
+    const user = await this.userService.getById(userId);
     await this.checkPermission(currentTopic, user);
     const thesis = await this.thesisService.getById(currentTopic.thesisId);
     this.thesisService.checkThesisIsActive(thesis);
@@ -469,8 +468,9 @@ export class TopicService {
     );
   }
 
-  public async deleteById(topicId: number, user: User): Promise<void> {
+  public async deleteById(topicId: number, userId: number): Promise<void> {
     const currentTopic = await this.getById(topicId);
+    const user = await this.userService.getById(userId);
     if (!this.canEdit(user, currentTopic)) {
       throw new BadRequestException(TopicError.ERR_6);
     }
@@ -482,18 +482,13 @@ export class TopicService {
 
   public async changeStatus(
     topicId: number,
-    user: User,
+    userId: number,
     data: TopicChangeStatusRequestBody
   ): Promise<void> {
     const { action, note } = data;
-    const topic = await this.topicRepository.findOne(
-      { ...notDeleteCondition, id: topicId },
-      { relations: ['states', 'thesis'], cache: true }
-    );
-    if (!topic) {
-      throw new BadRequestException(TopicError.ERR_5);
-    }
-
+    const user = await this.userService.getById(userId);
+    const topic = await this.getById(topicId);
+    await this.checkPermission(topic, user);
     const creatorActions = [
       TopicStateAction.SEND_REQUEST,
       TopicStateAction.WITHDRAW,
@@ -590,16 +585,10 @@ export class TopicService {
     }
   }
 
-  public async changeRegisterStatus(id: number, user: User): Promise<void> {
-    const topic = await this.topicRepository.findOne(
-      { ...notDeleteCondition, id },
-      { cache: true }
-    );
-    if (!topic) {
-      throw new BadRequestException(TopicError.ERR_5);
-    }
-
-    if (topic.creatorId !== user.id) {
+  public async changeRegisterStatus(id: number, userId: number): Promise<void> {
+    const topic = await this.getById(id);
+    await this.checkPermission(topic, userId);
+    if (topic.creatorId !== userId) {
       throw new BadRequestException(TopicError.ERR_6);
     }
 
@@ -621,7 +610,7 @@ export class TopicService {
   }
 
   public async registerTopic(topicId: number, studentId: number): Promise<void> {
-    const user = await this.userService.findById(studentId);
+    const user = await this.userService.getById(studentId);
     if (user.userType === UserType.STUDENT) {
       if (await this.topicStudentService.hasRegisteredTopic(topicId, studentId)) {
         throw new BadRequestException(TopicError.ERR_10);
@@ -633,6 +622,7 @@ export class TopicService {
     }
 
     const topic = await this.getById(topicId);
+    await this.checkPermission(topic, studentId);
     if (topic.status !== TopicStateAction.APPROVED) {
       throw new BadRequestException(TopicError.ERR_8);
     }
@@ -649,12 +639,14 @@ export class TopicService {
   }
 
   public async changeStudentRegisterStatus(
-    user: User,
+    userId: number,
     topicId: number,
     studentId: number,
     status: TopicStudentStatus
   ): Promise<void> {
+    const user = await this.userService.getById(userId);
     const topic = await this.getById(topicId);
+    await this.checkPermission(topic, user);
     if (user.userType !== UserType.LECTURER && topic.creatorId !== user.id) {
       throw new BadRequestException(TopicError.ERR_14);
     }

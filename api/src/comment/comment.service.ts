@@ -20,7 +20,7 @@ export class CommentService {
   ) {}
 
   public async create(creatorId: number, data: CommentRequestBody): Promise<Comment> {
-    const user = await this.userService.findById(creatorId);
+    const user = await this.userService.getById(creatorId);
     await this.topicService.checkPermission(data.topicId, user);
     if (data.mode === CommentMode.PRIVATE && user.userType === UserType.STUDENT) {
       throw new BadRequestException(CommentError.ERR_1);
@@ -41,7 +41,7 @@ export class CommentService {
     offset: number,
     limit: number
   ): Promise<CommentForView[]> {
-    const user = await this.userService.findById(userId);
+    const user = await this.userService.getById(userId);
     await this.topicService.checkPermission(topicId, user);
     const conditions: FindConditions<Comment> = {
       ...notDeleteCondition,
@@ -71,7 +71,7 @@ export class CommentService {
   }
 
   public async getAmount(topicId: number, userId: number, module: ReportModule): Promise<number> {
-    const user = await this.userService.findById(userId);
+    const user = await this.userService.getById(userId);
     await this.topicService.checkPermission(topicId, user);
     const conditions: FindConditions<Comment> = {
       ...notDeleteCondition,

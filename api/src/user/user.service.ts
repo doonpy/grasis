@@ -15,7 +15,7 @@ export class UserService {
     private readonly usersRepository: Repository<User>
   ) {}
 
-  public async findById(id: number): Promise<User> {
+  public async getById(id: number): Promise<User> {
     const user: User | undefined = await this.usersRepository.findOne(id, {
       where: { ...notDeleteCondition },
       cache: true
@@ -120,7 +120,7 @@ export class UserService {
   }
 
   public async checkUserHasPermission(id: number, targetId: number): Promise<boolean> {
-    const user = await this.findById(id);
+    const user = await this.getById(id);
     if (!user) {
       return false;
     }
@@ -133,7 +133,7 @@ export class UserService {
   }
 
   public async checkUserTypeById(id: number, userTypes: UserType[]): Promise<boolean> {
-    const user = await this.findById(id);
+    const user = await this.getById(id);
     if (!user || !userTypes.includes(user.userType)) {
       throw new UnauthorizedException(UserError.ERR_5);
     }

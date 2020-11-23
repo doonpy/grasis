@@ -25,7 +25,6 @@ import {
   commonOffsetValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { UserService } from '../user/user.service';
 import { ThesisPermissionGuard } from './guards/thesis-permission.guard';
 import { TopicLecturerRegisterGuard } from './guards/topic-lecturer-register.guard';
 import { TopicPermissionGuard } from './guards/topic-permission.guard';
@@ -60,7 +59,6 @@ import {
 export class TopicController {
   constructor(
     private readonly topicService: TopicService,
-    private readonly userService: UserService,
     private readonly topicStudentService: TopicStudentService,
     private readonly topicStateService: TopicStateService
   ) {}
@@ -127,7 +125,6 @@ export class TopicController {
   }
 
   @Get(TopicPath.SPECIFY)
-  @UseGuards(TopicPermissionGuard)
   public async getByIdForView(
     @Param(
       CommonParam.ID,
@@ -135,9 +132,10 @@ export class TopicController {
       new DefaultValuePipe(CommonQueryValue.FAILED_ID),
       ParseIntPipe
     )
-    id: number
+    topicId: number,
+    @Req() request: Express.CustomRequest
   ): Promise<TopicGetByIdResponse> {
-    const topic = await this.topicService.getByIdForView(id);
+    const topic = await this.topicService.getByIdForView(topicId, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,
@@ -146,7 +144,7 @@ export class TopicController {
   }
 
   @Patch(TopicPath.SPECIFY)
-  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(TopicLecturerRegisterGuard)
   public async updateById(
     @Param(
       CommonParam.ID,
@@ -159,9 +157,7 @@ export class TopicController {
     body: TopicRequestBody,
     @Request() req: Express.Request
   ): Promise<TopicCreateOrUpdateResponse> {
-    const loginUserId = req.user?.userId as number;
-    const loginUser = await this.userService.findById(loginUserId);
-    await this.topicService.updateById(id, loginUser, body);
+    await this.topicService.updateById(id, req.user!.userId, body);
 
     return {
       statusCode: HttpStatus.OK,
@@ -182,14 +178,12 @@ export class TopicController {
     id: number,
     @Request() req: Express.Request
   ): Promise<void> {
-    const loginUserId = req.user?.userId as number;
-    const loginUser = await this.userService.findById(loginUserId);
-    await this.topicService.deleteById(id, loginUser);
+    await this.topicService.deleteById(id, req.user!.userId);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_STATUS)
-  @UseGuards(TopicPermissionGuard, TopicLecturerRegisterGuard)
+  @UseGuards(TopicLecturerRegisterGuard)
   public async changeStatus(
     @Param(
       CommonParam.ID,
@@ -202,14 +196,12 @@ export class TopicController {
     body: TopicChangeStatusRequestBody,
     @Request() req: Express.Request
   ): Promise<void> {
-    const loginUserId = req.user?.userId as number;
-    const loginUser = await this.userService.findById(loginUserId);
-    await this.topicService.changeStatus(id, loginUser, body);
+    await this.topicService.changeStatus(id, req.user!.userId, body);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_REGISTER_STATUS)
-  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(TopicStudentRegisterGuard)
   public async changeRegisterStatus(
     @Param(
       CommonParam.ID,
@@ -220,14 +212,12 @@ export class TopicController {
     id: number,
     @Request() req: Express.Request
   ): Promise<void> {
-    const loginUserId = req.user?.userId as number;
-    const loginUser = await this.userService.findById(loginUserId);
-    await this.topicService.changeRegisterStatus(id, loginUser);
+    await this.topicService.changeRegisterStatus(id, req.user!.userId);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.REGISTER_TOPIC)
-  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(TopicStudentRegisterGuard)
   public async registerTopic(
     @Param(
       CommonParam.ID,
@@ -249,7 +239,7 @@ export class TopicController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(TopicPath.CHANGE_STUDENT_REGISTER_STATUS)
-  @UseGuards(TopicPermissionGuard, TopicStudentRegisterGuard)
+  @UseGuards(TopicStudentRegisterGuard)
   public async changStudentRegisterStatus(
     @Param(
       CommonParam.ID,
@@ -272,9 +262,12 @@ export class TopicController {
     body: TopicChangeStudentRegisterStatusRequestBody,
     @Request() req: Express.Request
   ): Promise<void> {
-    const loginUserId = req.user?.userId as number;
-    const loginUser = await this.userService.findById(loginUserId);
-    await this.topicService.changeStudentRegisterStatus(loginUser, id, studentId, body.status);
+    await this.topicService.changeStudentRegisterStatus(
+      req.user!.userId,
+      id,
+      studentId,
+      body.status
+    );
   }
 
   @Get(TopicPath.GET_STUDENTS)

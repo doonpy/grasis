@@ -58,10 +58,11 @@ export class ReviewService {
     return review;
   }
 
-  public async updateById(id: number, data: ReviewRequestBody): Promise<void> {
+  public async updateById(id: number, data: ReviewRequestBody, userId: number): Promise<void> {
     const currentReview = await this.getById(id);
     this.checkResultIsNotDecided(currentReview.result);
     const topic = await this.topicService.getById(id);
+    await this.topicService.checkPermission(topic, userId);
     const thesis = await this.thesisService.getById(topic.thesisId);
     if (data.time) {
       await this.checkValidTime(thesis, data.time);
