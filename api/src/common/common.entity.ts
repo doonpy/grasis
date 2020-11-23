@@ -1,9 +1,9 @@
-import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
 
 import { CommonColumn } from './common.resource';
 
 export abstract class CommonEntity {
-  @Column({ name: CommonColumn.DELETED_AT, type: 'datetime', nullable: true })
+  @DeleteDateColumn({ name: CommonColumn.DELETED_AT, nullable: true })
   public deletedAt!: Date | null;
 
   @CreateDateColumn({ name: CommonColumn.CREATED_AT, nullable: true })

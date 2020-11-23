@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment';
 import { EntityManager, Repository } from 'typeorm';
 
-import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { LecturerForFastView } from '../lecturer/lecturer.type';
 import { ThesisState } from '../thesis/thesis.resource';
@@ -48,7 +47,7 @@ export class ReviewService {
 
   public async getById(id: number): Promise<Review> {
     const review = await this.reviewRepository.findOne({
-      where: { ...notDeleteCondition, id },
+      where: { id },
       cache: true
     });
     if (!review) {
@@ -76,7 +75,7 @@ export class ReviewService {
     id: number,
     deletedAt = new Date()
   ): Promise<void> {
-    await manager.update(ReviewEntity, { ...notDeleteCondition, id }, { deletedAt });
+    await manager.update(ReviewEntity, { id }, { deletedAt });
   }
 
   public async getByIdForView(id: number): Promise<ReviewForView> {
@@ -148,7 +147,7 @@ export class ReviewService {
   }
 
   public async getByIds(ids: number[]): Promise<Review[]> {
-    return this.reviewRepository.findByIds(ids, { where: { ...notDeleteCondition }, cache: true });
+    return this.reviewRepository.findByIds(ids, { where: {}, cache: true });
   }
 
   public async checkUploadResultPermission(topicId: number, userId: number): Promise<void> {

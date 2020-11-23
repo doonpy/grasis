@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Not, Repository } from 'typeorm';
 
-import { notDeleteCondition } from '../../common/common.resource';
 import { ThesisStatus } from '../../thesis/thesis.resource';
 import { TopicError } from '../topic.resource';
 import { TopicStudentEntity } from './topic_student.entity';
@@ -23,7 +22,6 @@ export class TopicStudentService {
   public async hasRegisteredTopic(topicId: number, studentId: number): Promise<boolean> {
     return (
       (await this.topicStudentRepository.count({
-        ...notDeleteCondition,
         topicId,
         studentId,
         status: In([TopicStudentStatus.APPROVED, TopicStudentStatus.PENDING])
@@ -34,7 +32,6 @@ export class TopicStudentService {
   public async registerTopic(topicId: number, studentId: number): Promise<void> {
     const topicStudent = await this.topicStudentRepository.findOne({
       where: {
-        ...notDeleteCondition,
         topicId,
         studentId
       },
@@ -65,7 +62,7 @@ export class TopicStudentService {
   public async getMany(topicId: number, limit: number, offset: number): Promise<TopicStudent[]> {
     return this.topicStudentRepository.find({
       relations: ['student', 'student.user'],
-      where: { ...notDeleteCondition, topicId },
+      where: { topicId },
       cache: true,
       take: limit,
       skip: offset
@@ -75,7 +72,6 @@ export class TopicStudentService {
   public async getOne(topicId: number, studentId: number): Promise<TopicStudent> {
     const topicStudent = await this.topicStudentRepository.findOne({
       where: {
-        ...notDeleteCondition,
         topicId,
         studentId
       },
@@ -91,7 +87,6 @@ export class TopicStudentService {
   public async hasParticipatedAnotherTopic(topicId: number, studentId: number): Promise<boolean> {
     return (
       (await this.topicStudentRepository.count({
-        ...notDeleteCondition,
         topicId: Not(topicId),
         studentId,
         status: TopicStudentStatus.APPROVED
@@ -105,11 +100,7 @@ export class TopicStudentService {
     studentId: number,
     status: TopicStudentStatus
   ): Promise<void> {
-    await manager.update(
-      TopicStudentEntity,
-      { ...notDeleteCondition, topicId, studentId },
-      { status }
-    );
+    await manager.update(TopicStudentEntity, { topicId, studentId }, { status });
   }
 
   public async rejectRegisterOfStudentByTopicIdsWithTransaction(
@@ -123,7 +114,7 @@ export class TopicStudentService {
 
     await manager.update(
       TopicStudentEntity,
-      { ...notDeleteCondition, studentId, topicId: In(topicIds) },
+      { studentId, topicId: In(topicIds) },
       { status: TopicStudentStatus.REJECTED }
     );
   }
@@ -146,16 +137,15 @@ export class TopicStudentService {
 
     await manager.update(
       TopicStudentEntity,
-      { ...notDeleteCondition, topicId: In(topicIds), status: TopicStudentStatus.PENDING },
+      { topicId: In(topicIds), status: TopicStudentStatus.PENDING },
       { status: TopicStudentStatus.REJECTED }
     );
   }
 
   public async getStudentsParticipated(topicId: number): Promise<TopicStudent[]> {
     return this.topicStudentRepository.find({
-      // relations: { student: { user: true } },
       relations: ['student', 'student.user'],
-      where: { ...notDeleteCondition, topicId, status: TopicStudentStatus.APPROVED },
+      where: { topicId, status: TopicStudentStatus.APPROVED },
       cache: true
     });
   }
@@ -163,7 +153,6 @@ export class TopicStudentService {
   public async hasParticipatedTopic(topicId: number, studentId: number): Promise<boolean> {
     return (
       (await this.topicStudentRepository.count({
-        ...notDeleteCondition,
         topicId,
         studentId,
         status: TopicStudentStatus.APPROVED
@@ -174,7 +163,6 @@ export class TopicStudentService {
   public async getParticipatingTopics(studentId: number): Promise<TopicStudent[]> {
     return this.topicStudentRepository.find({
       where: {
-        ...notDeleteCondition,
         studentId,
         status: TopicStudentStatus.APPROVED,
         topic: { thesis: { status: ThesisStatus.ACTIVE } }

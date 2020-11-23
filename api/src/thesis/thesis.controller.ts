@@ -59,14 +59,14 @@ export class ThesisController {
       ParseIntPipe
     )
     limit: number,
-    @Request() req: Record<string, any>,
+    @Request() req: Express.CustomRequest,
     @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
   ): Promise<ThesisGetManyResponse> {
-    const loginUserId = req.user.userId;
+    const loginUserId = req.user!.userId;
     const theses: ThesisForListView[] = await this.thesisService.getManyForView(
       offset,
       limit,
-      loginUserId,
+      req.user!.userId,
       keyword
     );
     const total: number = await this.thesisService.getAmount(loginUserId, keyword);

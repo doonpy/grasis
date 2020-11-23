@@ -2,7 +2,7 @@ import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/com
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, FindConditions, Repository } from 'typeorm';
 
-import { notDeleteCondition, ReportModule } from '../common/common.resource';
+import { ReportModule } from '../common/common.resource';
 import { TopicService } from '../topic/topic.service';
 import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -44,7 +44,6 @@ export class CommentService {
     const user = await this.userService.getById(userId);
     await this.topicService.checkPermission(topicId, user);
     const conditions: FindConditions<Comment> = {
-      ...notDeleteCondition,
       topicId,
       module
     };
@@ -74,7 +73,6 @@ export class CommentService {
     const user = await this.userService.getById(userId);
     await this.topicService.checkPermission(topicId, user);
     const conditions: FindConditions<Comment> = {
-      ...notDeleteCondition,
       topicId,
       module
     };
@@ -96,10 +94,7 @@ export class CommentService {
   }
 
   public async getById(id: number): Promise<Comment> {
-    const comment = await this.commentRepository.findOne(
-      { ...notDeleteCondition, id },
-      { cache: true }
-    );
+    const comment = await this.commentRepository.findOne({ id }, { cache: true });
     if (!comment) {
       throw new BadRequestException(CommentError.ERR_2);
     }
@@ -112,6 +107,6 @@ export class CommentService {
     topicId: number,
     deletedAt = new Date()
   ): Promise<void> {
-    await manager.update(CommentEntity, { ...notDeleteCondition, topicId }, { deletedAt });
+    await manager.update(CommentEntity, { topicId }, { deletedAt });
   }
 }

@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, FindConditions, In, Like, Repository } from 'typeorm';
 
 import { CommentService } from '../comment/comment.service';
-import { notDeleteCondition } from '../common/common.resource';
 import { DefenseService } from '../defense/defense.service';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { ProgressReportService } from '../progress-report/progress-report.service';
@@ -154,12 +153,10 @@ export class TopicService {
     keyword?: string
   ): Promise<Topic[]> {
     const ownerConditions: FindConditions<Topic> = {
-      ...notDeleteCondition,
       thesisId,
       creatorId: loginUserId
     };
     const adminConditions: FindConditions<Topic> = {
-      ...notDeleteCondition,
       thesisId,
       status: In([
         TopicStateAction.APPROVED,
@@ -193,18 +190,15 @@ export class TopicService {
     keyword?: string
   ): Promise<Topic[]> {
     const ownerConditions: FindConditions<Topic> = {
-      ...notDeleteCondition,
       thesisId,
       creatorId: loginUserId
     };
     const thesisConditions: FindConditions<Topic> = {
-      ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
 
     const topics = await this.topicRepository.find({
-      // relations: { creator: { user: true }, thesis: true },
       relations: ['creator', 'creator.user', 'thesis'],
       where: keyword
         ? [
@@ -230,7 +224,6 @@ export class TopicService {
     keyword?: string
   ): Promise<Topic[]> {
     const conditions: FindConditions<Topic> = {
-      ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
@@ -271,7 +264,6 @@ export class TopicService {
 
   private async getAmountForAdmin(thesisId: number, keyword?: string): Promise<number> {
     const conditions: FindConditions<Topic> = {
-      ...notDeleteCondition,
       thesisId,
       status: In([
         TopicStateAction.APPROVED,
@@ -297,12 +289,10 @@ export class TopicService {
     keyword?: string
   ): Promise<number> {
     const ownerConditions: FindConditions<Topic> = {
-      ...notDeleteCondition,
       thesisId,
       creatorId: loginUser.id
     };
     const thesisConditions: FindConditions<Topic> = {
-      ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
@@ -328,7 +318,6 @@ export class TopicService {
     keyword?: string
   ): Promise<number> {
     const conditions: FindConditions<Topic> = {
-      ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
@@ -349,7 +338,7 @@ export class TopicService {
 
   public async getById(id: number): Promise<Topic> {
     const topic = await this.topicRepository.findOne(
-      { ...notDeleteCondition, id },
+      { id },
       {
         relations: ['creator', 'creator.user', 'thesis'],
         cache: true
@@ -366,6 +355,7 @@ export class TopicService {
     const topic = await this.getById(topicId);
     await this.checkPermission(topic, userId);
     const {
+      id,
       subject,
       status,
       description,
@@ -697,7 +687,6 @@ export class TopicService {
   private async getManyByThesisId(thesisId: number): Promise<Topic[]> {
     return this.topicRepository.find({
       where: {
-        ...notDeleteCondition,
         thesisId
       },
       cache: true
@@ -732,7 +721,6 @@ export class TopicService {
     return manager.find(TopicEntity, {
       relations: ['states'],
       where: {
-        ...notDeleteCondition,
         thesisId,
         status: In([
           TopicStateAction.NEW,
@@ -750,7 +738,7 @@ export class TopicService {
     thesisId: number
   ): Promise<void> {
     const topics = await manager.find(TopicEntity, {
-      where: { ...notDeleteCondition, thesisId, status: TopicStateAction.APPROVED },
+      where: { thesisId, status: TopicStateAction.APPROVED },
       cache: true
     });
     const topicIds = topics.map(({ id }) => id);
@@ -763,13 +751,13 @@ export class TopicService {
   ): Promise<void> {
     await manager.update(
       TopicEntity,
-      { ...notDeleteCondition, thesisId, registerStatus: TopicRegisterStatus.ENABLE },
+      { thesisId, registerStatus: TopicRegisterStatus.ENABLE },
       { registerStatus: TopicRegisterStatus.DISABLE }
     );
   }
 
   public async checkTopicIsExisted(topicId: number): Promise<void> {
-    if ((await this.topicRepository.count({ ...notDeleteCondition, id: topicId })) === 0) {
+    if ((await this.topicRepository.count({ id: topicId })) === 0) {
       throw new BadRequestException(TopicError.ERR_5);
     }
   }
@@ -780,7 +768,7 @@ export class TopicService {
     deletedAt = new Date()
   ): Promise<void> {
     const topics = await manager.find(TopicEntity, {
-      where: { ...notDeleteCondition, thesisId },
+      where: { thesisId },
       cache: true
     });
     for (const topic of topics) {
@@ -855,7 +843,7 @@ export class TopicService {
     thesisId: number
   ): Promise<Topic[]> {
     return manager.find(TopicEntity, {
-      where: { ...notDeleteCondition, thesisId },
+      where: { thesisId },
       cache: true
     });
   }

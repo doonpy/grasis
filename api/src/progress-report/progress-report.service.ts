@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment';
 import { EntityManager, Repository } from 'typeorm';
 
-import { notDeleteCondition } from '../common/common.resource';
 import { ThesisState } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
 import { Thesis } from '../thesis/thesis.type';
@@ -42,7 +41,7 @@ export class ProgressReportService {
 
   public async getById(id: number): Promise<ProgressReport> {
     const progressReport = await this.progressReportRepository.findOne({
-      where: { ...notDeleteCondition, id },
+      where: { id },
       cache: true
     });
     if (!progressReport) {
@@ -69,7 +68,7 @@ export class ProgressReportService {
     id: number,
     deletedAt = new Date()
   ): Promise<void> {
-    await manager.update(ProgressReportEntity, { ...notDeleteCondition, id }, { deletedAt });
+    await manager.update(ProgressReportEntity, { id }, { deletedAt });
   }
 
   public async getByIdForView(id: number): Promise<ProgressReportForView> {
@@ -120,12 +119,12 @@ export class ProgressReportService {
     const progressReview = await this.getById(id);
     this.checkResultIsNotDecided(progressReview.result);
 
-    await this.progressReportRepository.update({ ...notDeleteCondition, id }, { result });
+    await this.progressReportRepository.update({ id }, { result });
   }
 
   public async getByIds(ids: number[]): Promise<ProgressReport[]> {
     return this.progressReportRepository.findByIds(ids, {
-      where: { ...notDeleteCondition },
+      where: {},
       cache: true
     });
   }

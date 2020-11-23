@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, EntityManager, FindConditions, Like, Not, Repository } from 'typeorm';
+import { Connection, EntityManager, Not, Repository, SelectQueryBuilder } from 'typeorm';
 
-import { notDeleteCondition } from '../common/common.resource';
+import { Lecturer } from '../lecturer/lecturer.type';
 import { ThesisStudentService } from '../thesis/thesis-student/thesis-student.service';
-import { UserError, UserStatus, UserType } from '../user/user.resource';
+import { UserColumn, UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { UserRequestBody } from '../user/user.type';
 import { StudentEntity } from './student.entity';
-import { IsGraduate, StudentError, StudentSearchType } from './student.resource';
+import { IsGraduate, StudentColumn, StudentError, StudentSearchType } from './student.resource';
 import {
   Student,
   StudentForListView,
@@ -30,15 +30,10 @@ export class StudentService {
     limit: number,
     keyword?: string
   ): Promise<StudentForListView[]> {
-    let conditions: FindConditions<Student>[] | undefined = undefined;
-    if (keyword) {
-      conditions = this.getSearchConditions(keyword);
-    }
-
     return (
       await this.studentRepository.find({
-        relations: ['user'],
-        where: conditions ? conditions : { ...notDeleteCondition },
+        join: { alias: 's', innerJoinAndSelect: { user: 's.user' } },
+        where: keyword ? this.getSearchConditions(keyword) : {},
         skip: offset,
         take: limit,
         cache: true
@@ -54,10 +49,10 @@ export class StudentService {
     }));
   }
 
-  public async findById(id: number): Promise<Student> {
+  public async getById(id: number): Promise<Student> {
     const student: Student | undefined = await this.studentRepository.findOne(id, {
       relations: ['user'],
-      where: { ...notDeleteCondition }
+      cache: true
     });
 
     if (!student) {
@@ -68,7 +63,7 @@ export class StudentService {
   }
 
   public async isStudentExistById(id: number): Promise<boolean> {
-    return (await this.studentRepository.count({ ...notDeleteCondition, id })) > 0;
+    return (await this.studentRepository.count({ id })) > 0;
   }
 
   public async checkStudentExistById(id: number): Promise<void> {
@@ -86,7 +81,6 @@ export class StudentService {
   public async isStudentExistByStudentId(studentId: string, userId?: number): Promise<boolean> {
     return (
       (await this.studentRepository.count({
-        ...notDeleteCondition,
         id: Not(userId || 0),
         studentId
       })) > 0
@@ -124,7 +118,7 @@ export class StudentService {
       return;
     }
 
-    const currentStudent = await this.findById(id);
+    const currentStudent = await this.getById(id);
     if (userBody) {
       if (
         userBody.status === UserStatus.INACTIVE &&
@@ -160,7 +154,7 @@ export class StudentService {
   }
 
   public async deleteById(id: number): Promise<void> {
-    const student = await this.findById(id);
+    const student = await this.getById(id);
     const deletedAt = new Date();
     if (await this.thesisStudentService.isParticipatedByUserId(id)) {
       throw new BadRequestException(StudentError.ERR_6);
@@ -179,13 +173,9 @@ export class StudentService {
   }
 
   public async getStudentAmount(keyword?: string): Promise<number> {
-    let conditions: FindConditions<Student>[] | undefined = undefined;
-    if (keyword) {
-      conditions = this.getSearchConditions(keyword);
-    }
-
     return this.studentRepository.count({
-      where: conditions ? conditions : { ...notDeleteCondition },
+      join: { alias: 's', innerJoin: { user: 's.user' } },
+      where: keyword ? this.getSearchConditions(keyword) : {},
       cache: true
     });
   }
@@ -198,53 +188,39 @@ export class StudentService {
       return [];
     }
 
-    const requiredConditions = { ...notDeleteCondition, isGraduate: IsGraduate.FALSE };
-    const conditions: FindConditions<Student>[] = [];
-    if (searchTypes && searchTypes.includes(StudentSearchType.STUDENT_ID)) {
-      conditions.push({
-        ...requiredConditions,
-        studentId: Like(`%${keyword}%`),
-        user: { ...notDeleteCondition, status: UserStatus.ACTIVE }
-      });
-    }
-
-    if (searchTypes && searchTypes.includes(StudentSearchType.FULL_NAME)) {
-      conditions.push({
-        ...requiredConditions,
-        user: {
-          ...notDeleteCondition,
-          firstname: Like(`%${keyword}%`),
-          status: UserStatus.ACTIVE
-        }
-      });
-      conditions.push({
-        ...requiredConditions,
-        user: {
-          ...notDeleteCondition,
-          lastname: Like(`%${keyword}%`),
-          status: UserStatus.ACTIVE
-        }
-      });
-    }
-
-    if (searchTypes && searchTypes.includes(StudentSearchType.STUDENT_CLASS)) {
-      conditions.push({
-        ...requiredConditions,
-        studentClass: Like(`%${keyword}%`),
-        user: { status: UserStatus.ACTIVE }
-      });
-    }
-
-    if (searchTypes && searchTypes.includes(StudentSearchType.SCHOOL_YEAR)) {
-      conditions.push({
-        ...requiredConditions,
-        schoolYear: Like(`%${keyword}%`)
-      });
-    }
-
     let students = await this.studentRepository.find({
-      relations: ['user'],
-      where: conditions,
+      join: { alias: 's', innerJoinAndSelect: { user: 's.user' } },
+      where: (qb: SelectQueryBuilder<Student>) => {
+        const conditions: string[] = [];
+        const parameters: Record<string, any> = {};
+        if (searchTypes && searchTypes.includes(StudentSearchType.STUDENT_ID)) {
+          conditions.push(`s.${StudentColumn.STUDENT_ID} LIKE :studentId`);
+          parameters.studentId = `%${keyword}%`;
+        }
+
+        if (searchTypes && searchTypes.includes(StudentSearchType.STUDENT_CLASS)) {
+          conditions.push(`s.${StudentColumn.STUDENT_CLASS} LIKE :studentClass`);
+          parameters.studentClass = `%${keyword}%`;
+        }
+
+        if (searchTypes && searchTypes.includes(StudentSearchType.SCHOOL_YEAR)) {
+          conditions.push(`s.${StudentColumn.SCHOOL_YEAR} LIKE :schoolYear`);
+          parameters.schoolYear = `%${keyword}%`;
+        }
+
+        if (searchTypes.includes(StudentSearchType.FULL_NAME)) {
+          conditions.push(`user.${UserColumn.FIRSTNAME} LIKE :firstname`);
+          conditions.push(`user.${UserColumn.LASTNAME} LIKE :lastname`);
+          parameters.firstname = `%${keyword}%`;
+          parameters.lastname = `%${keyword}%`;
+        }
+
+        qb.where(`user.${UserColumn.STATUS} = :status`, { status: UserStatus.ACTIVE })
+          .andWhere(`s.${StudentColumn.IS_GRADUATE} = :isGraduate`, {
+            isGraduate: IsGraduate.FALSE
+          })
+          .andWhere(conditions.join(' OR '), parameters);
+      },
       cache: true
     });
     const studentIds = students.map(({ id }) => id);
@@ -266,9 +242,8 @@ export class StudentService {
 
   public async findByIdsForThesis(ids: number[]): Promise<Student[]> {
     return await this.studentRepository.findByIds(ids, {
-      // relations: { user: {} },
       relations: ['user'],
-      where: { ...notDeleteCondition },
+      where: {},
       cache: true
     });
   }
@@ -276,7 +251,7 @@ export class StudentService {
   public async findByIdsWithTransaction(manager: EntityManager, ids: number[]): Promise<Student[]> {
     return await manager.findByIds(StudentEntity, ids, {
       relations: ['user'],
-      where: { ...notDeleteCondition },
+      where: {},
       cache: true
     });
   }
@@ -314,29 +289,16 @@ export class StudentService {
     }
   }
 
-  private getSearchConditions(keyword: string): FindConditions<Student>[] {
-    return [
-      { ...notDeleteCondition, studentId: Like(`%${keyword}%`) },
-      { ...notDeleteCondition, schoolYear: Like(`%${keyword}%`) },
-      { ...notDeleteCondition, studentClass: Like(`%${keyword}%`) },
-      {
-        user: {
-          ...notDeleteCondition,
-          username: Like(`%${keyword}%`)
-        }
-      },
-      {
-        user: {
-          ...notDeleteCondition,
-          firstname: Like(`%${keyword}%`)
-        }
-      },
-      {
-        user: {
-          ...notDeleteCondition,
-          lastname: Like(`%${keyword}%`)
-        }
-      }
-    ];
+  private getSearchConditions(keyword: string) {
+    return (qb: SelectQueryBuilder<Lecturer>) => {
+      qb.where(`s.${StudentColumn.STUDENT_ID} LIKE :studentId`, { studentId: `%${keyword}%` })
+        .orWhere(`s.${StudentColumn.SCHOOL_YEAR} LIKE :schoolYear`, { schoolYear: `%${keyword}%` })
+        .orWhere(`s.${StudentColumn.STUDENT_CLASS} LIKE :studentClass`, {
+          studentClass: `%${keyword}%`
+        })
+        .orWhere(`user.${UserColumn.USERNAME} LIKE :username`, { username: `%${keyword}%` })
+        .orWhere(`user.${UserColumn.FIRSTNAME} LIKE :firstname`, { firstname: `%${keyword}%` })
+        .orWhere(`user.${UserColumn.LASTNAME} LIKE :lastname`, { lastname: `%${keyword}%` });
+    };
   }
 }

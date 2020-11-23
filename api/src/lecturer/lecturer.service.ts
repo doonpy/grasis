@@ -1,15 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, EntityManager, FindConditions, Like, Repository } from 'typeorm';
+import { Connection, EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
 
-import { notDeleteCondition } from '../common/common.resource';
 import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
 import { ThesisService } from '../thesis/thesis.service';
-import { UserError, UserStatus, UserType } from '../user/user.resource';
+import { UserColumn, UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { UserRequestBody } from '../user/user.type';
 import { LecturerEntity } from './lecturer.entity';
-import { LecturerError, LecturerSearchType } from './lecturer.resource';
+import { LecturerColumn, LecturerError, LecturerSearchType } from './lecturer.resource';
 import {
   Lecturer,
   LecturerForListView,
@@ -32,15 +31,10 @@ export class LecturerService {
     limit: number,
     keyword?: string
   ): Promise<LecturerForListView[]> {
-    let conditions: FindConditions<Lecturer>[] | undefined = undefined;
-    if (keyword) {
-      conditions = this.getSearchConditions(keyword);
-    }
-
     return (
       await this.lecturerRepository.find({
-        relations: ['user'],
-        where: conditions ? conditions : { ...notDeleteCondition },
+        join: { alias: 'l', innerJoinAndSelect: { user: 'l.user' } },
+        where: keyword ? this.getSearchConditions(keyword) : {},
         skip: offset,
         take: limit,
         cache: true
@@ -59,7 +53,7 @@ export class LecturerService {
   public async getById(id: number): Promise<Lecturer> {
     const lecturer: Lecturer | undefined = await this.lecturerRepository.findOne(id, {
       relations: ['user'],
-      where: { ...notDeleteCondition }
+      where: {}
     });
 
     if (!lecturer) {
@@ -70,7 +64,7 @@ export class LecturerService {
   }
 
   public async isLecturerExistByLecturerId(lecturerId: string): Promise<boolean> {
-    return (await this.lecturerRepository.count({ lecturerId, ...notDeleteCondition })) > 0;
+    return (await this.lecturerRepository.count({ lecturerId })) > 0;
   }
 
   public async checkLecturerNotExistByLecturerId(lecturerId: string): Promise<void> {
@@ -165,13 +159,9 @@ export class LecturerService {
   }
 
   public async getLecturerAmount(keyword?: string): Promise<number> {
-    let conditions: FindConditions<Lecturer>[] | undefined = undefined;
-    if (keyword) {
-      conditions = this.getSearchConditions(keyword);
-    }
-
     return this.lecturerRepository.count({
-      where: conditions ? conditions : { ...notDeleteCondition },
+      join: { alias: 'l', innerJoin: { user: 'l.user' } },
+      where: keyword ? this.getSearchConditions(keyword) : {},
       cache: true
     });
   }
@@ -197,35 +187,28 @@ export class LecturerService {
       return [];
     }
 
-    const conditions: FindConditions<Lecturer>[] = [];
-    if (searchTypes.includes(LecturerSearchType.LECTURER_ID)) {
-      conditions.push({
-        ...notDeleteCondition,
-        lecturerId: Like(`%${keyword}%`),
-        user: { status: UserStatus.ACTIVE }
-      });
-    }
-
-    if (searchTypes.includes(LecturerSearchType.FULL_NAME)) {
-      conditions.push({
-        user: {
-          ...notDeleteCondition,
-          firstname: Like(`%${keyword}%`),
-          status: UserStatus.ACTIVE
-        }
-      });
-      conditions.push({
-        user: {
-          ...notDeleteCondition,
-          lastname: Like(`%${keyword}%`),
-          status: UserStatus.ACTIVE
-        }
-      });
-    }
-
     const lecturers = await this.lecturerRepository.find({
-      relations: ['user'],
-      where: conditions,
+      join: { alias: 'l', innerJoinAndSelect: { user: 'l.user' } },
+      where: (qb: SelectQueryBuilder<Lecturer>) => {
+        const conditions: string[] = [];
+        const parameters: Record<string, any> = {};
+        if (searchTypes.includes(LecturerSearchType.LECTURER_ID)) {
+          conditions.push(`l.${LecturerColumn.LECTURER_ID} LIKE :lecturerId`);
+          parameters.lecturerId = `%${keyword}%`;
+        }
+
+        if (searchTypes.includes(LecturerSearchType.FULL_NAME)) {
+          conditions.push(`user.${UserColumn.FIRSTNAME} LIKE :firstname`);
+          conditions.push(`user.${UserColumn.LASTNAME} LIKE :lastname`);
+          parameters.firstname = `%${keyword}%`;
+          parameters.lastname = `%${keyword}%`;
+        }
+
+        qb.where(`user.${UserColumn.STATUS} = :status`, { status: UserStatus.ACTIVE }).andWhere(
+          conditions.join(' OR '),
+          parameters
+        );
+      },
       cache: true
     });
 
@@ -238,9 +221,8 @@ export class LecturerService {
 
   public async findByIds(ids: number[]): Promise<Lecturer[]> {
     return await this.lecturerRepository.findByIds(ids, {
-      // relations: { user: {} },
       relations: ['user'],
-      where: { ...notDeleteCondition },
+      where: {},
       cache: true
     });
   }
@@ -251,7 +233,7 @@ export class LecturerService {
   ): Promise<Lecturer[]> {
     return await manager.findByIds(LecturerEntity, ids, {
       relations: ['user'],
-      where: { ...notDeleteCondition },
+      where: {},
       cache: true
     });
   }
@@ -271,39 +253,18 @@ export class LecturerService {
     }
   }
 
-  private getSearchConditions(keyword: string): FindConditions<Lecturer>[] {
-    return [
-      {
-        ...notDeleteCondition,
-        lecturerId: Like(`%${keyword}%`)
-      },
-      {
-        ...notDeleteCondition,
-        position: Like(`%${keyword}%`)
-      },
-      {
-        user: {
-          ...notDeleteCondition,
-          username: Like(`%${keyword}%`)
-        }
-      },
-      {
-        user: {
-          ...notDeleteCondition,
-          firstname: Like(`%${keyword}%`)
-        }
-      },
-      {
-        user: {
-          ...notDeleteCondition,
-          lastname: Like(`%${keyword}%`)
-        }
-      }
-    ];
+  private getSearchConditions(keyword: string) {
+    return (qb: SelectQueryBuilder<Lecturer>) => {
+      qb.where(`l.${LecturerColumn.LECTURER_ID} LIKE :lecturerId`, { lecturerId: `%${keyword}%` })
+        .orWhere(`l.${LecturerColumn.POSITION} LIKE :position`, { position: `%${keyword}%` })
+        .orWhere(`user.${UserColumn.USERNAME} LIKE :username`, { username: `%${keyword}%` })
+        .orWhere(`user.${UserColumn.FIRSTNAME} LIKE :firstname`, { firstname: `%${keyword}%` })
+        .orWhere(`user.${UserColumn.LASTNAME} LIKE :lastname`, { lastname: `%${keyword}%` });
+    };
   }
 
   public async isExistById(id: number): Promise<boolean> {
-    return (await this.lecturerRepository.count({ id, ...notDeleteCondition })) > 0;
+    return (await this.lecturerRepository.count({ id })) > 0;
   }
 
   public async checkExistedById(id: number): Promise<void> {

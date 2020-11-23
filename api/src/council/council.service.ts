@@ -2,7 +2,6 @@ import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/com
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, FindConditions, Like, Repository } from 'typeorm';
 
-import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
 import { ThesisService } from '../thesis/thesis.service';
@@ -72,10 +71,7 @@ export class CouncilService {
   }
 
   public async getById(id: number): Promise<Council> {
-    const council = await this.councilRepository.findOne(
-      { ...notDeleteCondition, id },
-      { cache: true }
-    );
+    const council = await this.councilRepository.findOne({ id }, { cache: true });
     if (!council) {
       throw new BadRequestException(CouncilError.ERR_4);
     }
@@ -93,7 +89,7 @@ export class CouncilService {
         'commissioner',
         'commissioner.user'
       ],
-      where: { ...notDeleteCondition, id },
+      where: { id },
       cache: true
     });
     if (!council) {
@@ -117,7 +113,7 @@ export class CouncilService {
     keyword?: string
   ): Promise<Council[]> {
     await this.thesisService.checkExistById(thesisId);
-    const conditions: FindConditions<Council> = { ...notDeleteCondition, thesisId };
+    const conditions: FindConditions<Council> = { thesisId };
     if (keyword) {
       conditions.name = Like(`%${keyword}%`);
     }
@@ -175,7 +171,7 @@ export class CouncilService {
 
   public async getAmountByThesisId(thesisId: number, keyword?: string): Promise<number> {
     await this.thesisService.checkExistById(thesisId);
-    const conditions: FindConditions<Council> = { ...notDeleteCondition, thesisId };
+    const conditions: FindConditions<Council> = { thesisId };
     if (keyword) {
       conditions.name = Like(`%${keyword}%`);
     }
@@ -207,7 +203,7 @@ export class CouncilService {
     thesisId: number,
     deletedAt = new Date()
   ): Promise<void> {
-    await manager.update(CouncilEntity, { ...notDeleteCondition, thesisId }, { deletedAt });
+    await manager.update(CouncilEntity, { thesisId }, { deletedAt });
   }
 
   public async searchInThesisByName(
@@ -218,7 +214,6 @@ export class CouncilService {
     await this.thesisService.checkPermission(thesisId, userId);
     const councils = await this.councilRepository.find({
       where: {
-        ...notDeleteCondition,
         thesisId,
         name: Like(`%${keyword}%`)
       },
