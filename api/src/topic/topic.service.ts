@@ -1,6 +1,6 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, EntityManager, FindOptionsWhere, In, Like, Repository } from 'typeorm';
+import { Connection, EntityManager, FindConditions, In, Like, Repository } from 'typeorm';
 
 import { CommentService } from '../comment/comment.service';
 import { notDeleteCondition } from '../common/common.resource';
@@ -153,12 +153,12 @@ export class TopicService {
     limit: number,
     keyword?: string
   ): Promise<Topic[]> {
-    const ownerConditions: FindOptionsWhere<Topic> = {
+    const ownerConditions: FindConditions<Topic> = {
       ...notDeleteCondition,
       thesisId,
       creatorId: loginUserId
     };
-    const adminConditions: FindOptionsWhere<Topic> = {
+    const adminConditions: FindConditions<Topic> = {
       ...notDeleteCondition,
       thesisId,
       status: In([
@@ -170,7 +170,7 @@ export class TopicService {
     };
 
     return this.topicRepository.find({
-      relations: { creator: { user: {} }, thesis: {} },
+      relations: ['creator', 'creator.user', 'thesis'],
       where: keyword
         ? [
             { ...adminConditions, subject: Like(`%${keyword}%`) },
@@ -192,19 +192,20 @@ export class TopicService {
     limit: number,
     keyword?: string
   ): Promise<Topic[]> {
-    const ownerConditions: FindOptionsWhere<Topic> = {
+    const ownerConditions: FindConditions<Topic> = {
       ...notDeleteCondition,
       thesisId,
       creatorId: loginUserId
     };
-    const thesisConditions: FindOptionsWhere<Topic> = {
+    const thesisConditions: FindConditions<Topic> = {
       ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
 
     const topics = await this.topicRepository.find({
-      relations: { creator: { user: true }, thesis: true },
+      // relations: { creator: { user: true }, thesis: true },
+      relations: ['creator', 'creator.user', 'thesis'],
       where: keyword
         ? [
             { ...ownerConditions, subject: Like(`%${keyword}%`) },
@@ -228,14 +229,14 @@ export class TopicService {
     loginUser: number,
     keyword?: string
   ): Promise<Topic[]> {
-    const conditions: FindOptionsWhere<Topic> = {
+    const conditions: FindConditions<Topic> = {
       ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
 
     const topics = await this.topicRepository.find({
-      relations: { creator: { user: true }, thesis: true },
+      relations: ['creator', 'creator.user', 'thesis'],
       where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
@@ -269,7 +270,7 @@ export class TopicService {
   }
 
   private async getAmountForAdmin(thesisId: number, keyword?: string): Promise<number> {
-    const conditions: FindOptionsWhere<Topic> = {
+    const conditions: FindConditions<Topic> = {
       ...notDeleteCondition,
       thesisId,
       status: In([
@@ -279,14 +280,15 @@ export class TopicService {
       ])
     };
 
-    return this.topicRepository.count(
-      keyword
+    return this.topicRepository.count({
+      where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
             { ...conditions, description: Like(`%${keyword}%`) }
           ]
-        : conditions
-    );
+        : conditions,
+      cache: true
+    });
   }
 
   private async getAmountForLecturer(
@@ -294,12 +296,12 @@ export class TopicService {
     loginUser: User,
     keyword?: string
   ): Promise<number> {
-    const ownerConditions: FindOptionsWhere<Topic> = {
+    const ownerConditions: FindConditions<Topic> = {
       ...notDeleteCondition,
       thesisId,
       creatorId: loginUser.id
     };
-    const thesisConditions: FindOptionsWhere<Topic> = {
+    const thesisConditions: FindConditions<Topic> = {
       ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
@@ -325,14 +327,14 @@ export class TopicService {
     loginUser: User,
     keyword?: string
   ): Promise<number> {
-    const conditions: FindOptionsWhere<Topic> = {
+    const conditions: FindConditions<Topic> = {
       ...notDeleteCondition,
       thesisId,
       status: TopicStateAction.APPROVED
     };
 
     const topics = await this.topicRepository.find({
-      relations: { thesis: true },
+      relations: ['thesis'],
       where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
@@ -349,10 +351,11 @@ export class TopicService {
     const topic = await this.topicRepository.findOne(
       { ...notDeleteCondition, id },
       {
-        relations: {
-          creator: { user: {} },
-          thesis: true
-        },
+        // relations: {
+        //   creator: { user: {} },
+        //   thesis: true
+        // },
+        relations: ['creator', 'creator.user', 'thesis'],
         cache: true
       }
     );
@@ -485,7 +488,7 @@ export class TopicService {
     const { action, note } = data;
     const topic = await this.topicRepository.findOne(
       { ...notDeleteCondition, id: topicId },
-      { relations: { states: true, thesis: true }, cache: true }
+      { relations: ['states', 'thesis'], cache: true }
     );
     if (!topic) {
       throw new BadRequestException(TopicError.ERR_5);
@@ -735,7 +738,7 @@ export class TopicService {
     thesisId: number
   ): Promise<Topic[]> {
     return manager.find(TopicEntity, {
-      relations: { states: {} },
+      relations: ['states'],
       where: {
         ...notDeleteCondition,
         thesisId,

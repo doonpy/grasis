@@ -24,7 +24,7 @@ export class AppService implements OnApplicationBootstrap {
   async onApplicationBootstrap(): Promise<void> {
     if (isProductionMode() && !isReviewData()) {
       Logger.log(chalk.yellow('Run migrations...'));
-      await this.connection.runMigrations({ transaction: true });
+      await this.connection.runMigrations({ transaction: 'all' });
       Logger.log(chalk.yellow('Run migrations... Done!'));
     }
 

@@ -1,18 +1,12 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
+import { CommonEntity } from '../common/common.entity';
 import { COMMON_ENTITY_OPTIONS, commonStringColumnOptions } from '../common/common.resource';
 import { UserEntity } from '../user/user.entity';
 import { REFRESH_ENTITY_RESOURCE } from './refresh.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: REFRESH_ENTITY_RESOURCE.TABLE_NAME })
-export class RefreshEntity {
+export class RefreshEntity extends CommonEntity {
   @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
 
@@ -38,7 +32,4 @@ export class RefreshEntity {
 
   @Column({ type: 'varchar', length: 255, nullable: true, ...commonStringColumnOptions })
   source!: string;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
 }

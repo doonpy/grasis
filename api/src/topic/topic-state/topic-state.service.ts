@@ -19,7 +19,7 @@ export class TopicStateService {
 
   public async getMany(topicId: number): Promise<TopicState[]> {
     return this.topicStateRepository.find({
-      relations: { processor: { user: {} } },
+      relations: ['processor', 'processor.user'],
       where: { ...notDeleteCondition, topicId },
       cache: true
     });

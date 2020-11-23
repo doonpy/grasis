@@ -64,7 +64,7 @@ export class TopicStudentService {
 
   public async getMany(topicId: number, limit: number, offset: number): Promise<TopicStudent[]> {
     return this.topicStudentRepository.find({
-      relations: { student: { user: true } },
+      relations: ['student', 'student.user'],
       where: { ...notDeleteCondition, topicId },
       cache: true,
       take: limit,
@@ -153,7 +153,8 @@ export class TopicStudentService {
 
   public async getStudentsParticipated(topicId: number): Promise<TopicStudent[]> {
     return this.topicStudentRepository.find({
-      relations: { student: { user: true } },
+      // relations: { student: { user: true } },
+      relations: ['student', 'student.user'],
       where: { ...notDeleteCondition, topicId, status: TopicStudentStatus.APPROVED },
       cache: true
     });

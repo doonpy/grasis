@@ -1,6 +1,6 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, FindOptionsWhere, In, Like, Repository } from 'typeorm';
+import { EntityManager, FindConditions, In, Like, Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../../common/common.resource';
 import { LecturerError } from '../../lecturer/lecturer.resource';
@@ -32,18 +32,20 @@ export class ThesisLecturerService {
     thesisId: number,
     keyword?: string
   ): Promise<ThesisLecturerForView[]> {
-    let conditions: FindOptionsWhere<ThesisLecturer> | undefined = {
-      ...notDeleteCondition,
-      thesisId,
-      lecturer: { user: { ...notDeleteCondition } }
-    };
+    let conditions: FindConditions<ThesisLecturer>[] | undefined = [
+      {
+        ...notDeleteCondition,
+        thesisId,
+        lecturer: { user: { ...notDeleteCondition } }
+      }
+    ];
     if (keyword) {
       conditions = this.getSearchConditions(thesisId, keyword);
     }
 
     return (
       await this.thesisLecturerRepository.find({
-        relations: { lecturer: { user: {} } },
+        relations: ['lecturer', 'lecturer.user'],
         where: conditions,
         skip: offset,
         take: limit,
@@ -60,7 +62,8 @@ export class ThesisLecturerService {
 
   public async getThesisLecturersForEdit(thesisId: number): Promise<LecturerSearchAttendee[]> {
     const lecturers = await this.thesisLecturerRepository.find({
-      relations: { lecturer: { user: {} } },
+      // relations: { lecturer: { user: {} } },
+      relations: ['lecturer', 'lecturer.user'],
       where: { thesisId, lecturer: { user: { ...notDeleteCondition } }, ...notDeleteCondition },
       cache: true
     });
@@ -73,16 +76,18 @@ export class ThesisLecturerService {
   }
 
   public async getAmountLecturerAttendee(thesisId: number, keyword?: string): Promise<number> {
-    let conditions: FindOptionsWhere<ThesisLecturer> | undefined = {
-      ...notDeleteCondition,
-      thesisId,
-      lecturer: { user: { ...notDeleteCondition } }
-    };
+    let conditions: FindConditions<ThesisLecturer>[] | undefined = [
+      {
+        ...notDeleteCondition,
+        thesisId,
+        lecturer: { user: { ...notDeleteCondition } }
+      }
+    ];
     if (keyword) {
       conditions = this.getSearchConditions(thesisId, keyword);
     }
 
-    return this.thesisLecturerRepository.count(conditions);
+    return this.thesisLecturerRepository.count({ where: conditions, cache: true });
   }
 
   public async updateWithTransaction(
@@ -167,8 +172,8 @@ export class ThesisLecturerService {
     );
   }
 
-  private getSearchConditions(thesisId: number, keyword: string): FindOptionsWhere<ThesisLecturer> {
-    const commonConditions = { ...notDeleteCondition, thesisId };
+  private getSearchConditions(thesisId: number, keyword: string): FindConditions<ThesisLecturer>[] {
+    const commonConditions: FindConditions<ThesisLecturer> = { ...notDeleteCondition, thesisId };
 
     return [
       { ...commonConditions, lecturer: { lecturerId: Like(`%${keyword}%`) } },
@@ -198,7 +203,7 @@ export class ThesisLecturerService {
     thesisId: number
   ): Promise<LecturerForFastView[]> {
     const thesisLecturers = await this.thesisLecturerRepository.find({
-      relations: { lecturer: { user: true } },
+      relations: ['lecturer', 'lecturer.user'],
       where: [
         {
           ...notDeleteCondition,

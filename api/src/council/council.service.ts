@@ -1,6 +1,6 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, FindOptionsWhere, Like, Repository } from 'typeorm';
+import { EntityManager, FindConditions, Like, Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
@@ -85,11 +85,14 @@ export class CouncilService {
 
   public async getByIdForView(id: number, userId: number): Promise<CouncilForView> {
     const council = await this.councilRepository.findOne({
-      relations: {
-        chairman: { user: true },
-        instructor: { user: true },
-        commissioner: { user: true }
-      },
+      relations: [
+        'chairman',
+        'chairman.user',
+        'instructor',
+        'instructor.user',
+        'commissioner',
+        'commissioner.user'
+      ],
       where: { ...notDeleteCondition, id },
       cache: true
     });
@@ -114,17 +117,20 @@ export class CouncilService {
     keyword?: string
   ): Promise<Council[]> {
     await this.thesisService.checkExistById(thesisId);
-    const conditions: FindOptionsWhere<Council> = { ...notDeleteCondition, thesisId };
+    const conditions: FindConditions<Council> = { ...notDeleteCondition, thesisId };
     if (keyword) {
       conditions.name = Like(`%${keyword}%`);
     }
 
     return this.councilRepository.find({
-      relations: {
-        chairman: { user: true },
-        instructor: { user: true },
-        commissioner: { user: true }
-      },
+      relations: [
+        'chairman',
+        'chairman.user',
+        'instructor',
+        'instructor.user',
+        'commissioner',
+        'commissioner.user'
+      ],
       where: conditions,
       take: limit,
       skip: offset,
@@ -169,7 +175,7 @@ export class CouncilService {
 
   public async getAmountByThesisId(thesisId: number, keyword?: string): Promise<number> {
     await this.thesisService.checkExistById(thesisId);
-    const conditions: FindOptionsWhere<Council> = { ...notDeleteCondition, thesisId };
+    const conditions: FindConditions<Council> = { ...notDeleteCondition, thesisId };
     if (keyword) {
       conditions.name = Like(`%${keyword}%`);
     }

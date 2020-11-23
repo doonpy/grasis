@@ -1,6 +1,6 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
+import { EntityManager, FindConditions, Repository } from 'typeorm';
 
 import { notDeleteCondition, ReportModule } from '../common/common.resource';
 import { TopicService } from '../topic/topic.service';
@@ -43,7 +43,7 @@ export class CommentService {
   ): Promise<CommentForView[]> {
     const user = await this.userService.findById(userId);
     await this.topicService.checkPermission(topicId, user);
-    const conditions: FindOptionsWhere<Comment> = {
+    const conditions: FindConditions<Comment> = {
       ...notDeleteCondition,
       topicId,
       module
@@ -54,7 +54,7 @@ export class CommentService {
 
     return (
       await this.commentRepository.find({
-        relations: { creator: true },
+        relations: ['creator'],
         where: conditions,
         cache: true,
         skip: offset,
@@ -73,7 +73,7 @@ export class CommentService {
   public async getAmount(topicId: number, userId: number, module: ReportModule): Promise<number> {
     const user = await this.userService.findById(userId);
     await this.topicService.checkPermission(topicId, user);
-    const conditions: FindOptionsWhere<Comment> = {
+    const conditions: FindConditions<Comment> = {
       ...notDeleteCondition,
       topicId,
       module

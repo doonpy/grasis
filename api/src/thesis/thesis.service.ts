@@ -5,13 +5,13 @@ import moment, { Moment } from 'moment';
 import {
   Connection,
   EntityManager,
-  FindOptionsWhere,
   LessThanOrEqual,
   Like,
   MoreThanOrEqual,
   Not,
   Repository
 } from 'typeorm';
+import { FindConditions } from 'typeorm/find-options/FindConditions';
 
 import { notDeleteCondition } from '../common/common.resource';
 import { CouncilService } from '../council/council.service';
@@ -184,7 +184,7 @@ export class ThesisService {
 
   public async getById(id: number): Promise<Thesis> {
     const thesis = await this.thesisRepository.findOne(id, {
-      relations: { creator: { user: true } },
+      relations: ['creator', 'creator.user'],
       where: { ...notDeleteCondition }
     });
     if (!thesis) {
@@ -384,13 +384,14 @@ export class ThesisService {
     limit: number,
     keyword?: string
   ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> = { ...notDeleteCondition };
+    let conditions: FindConditions<Thesis> = { ...notDeleteCondition };
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
 
     return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
+      // relations: { creator: { user: {} } },
+      relations: ['creator', 'creator.user'],
       where: conditions,
       skip: offset,
       take: limit,
@@ -404,16 +405,16 @@ export class ThesisService {
     limit: number,
     keyword?: string
   ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> = {
+    let conditions: FindConditions<Thesis> = {
       ...notDeleteCondition,
-      lecturers: { lecturer: { id: userId } }
+      lecturers: [{ lecturer: { id: userId } }]
     };
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
 
     return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
+      relations: ['creator', 'creator.user'],
       where: conditions,
       skip: offset,
       take: limit,
@@ -427,16 +428,17 @@ export class ThesisService {
     limit: number,
     keyword?: string
   ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> = {
+    let conditions: FindConditions<Thesis> = {
       ...notDeleteCondition,
-      students: { student: { id: userId } }
+      students: [{ student: { id: userId } }]
     };
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
 
     return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
+      // relations: { creator: { user: {} } },
+      relations: ['creator', 'creator.user'],
       where: conditions,
       skip: offset,
       take: limit,
@@ -535,14 +537,14 @@ export class ThesisService {
   }
 
   private getSearchConditions(
-    initConditions: FindOptionsWhere<Thesis>,
+    initConditions: FindConditions<Thesis>,
     keyword: string
-  ): FindOptionsWhere<Thesis> {
+  ): FindConditions<Thesis> {
     return { ...initConditions, subject: Like(`%${keyword}%`) };
   }
 
   private async getAmountForAdmin(keyword?: string): Promise<number> {
-    let conditions: FindOptionsWhere<Thesis> = { ...notDeleteCondition };
+    let conditions: FindConditions<Thesis> = { ...notDeleteCondition };
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
@@ -551,27 +553,27 @@ export class ThesisService {
   }
 
   private async getAmountForLecturer(userId: number, keyword?: string): Promise<number> {
-    let conditions: FindOptionsWhere<Thesis> = {
+    let conditions: FindConditions<Thesis> = {
       ...notDeleteCondition,
-      lecturers: { lecturer: { id: userId } }
+      lecturers: [{ lecturer: { id: userId } }]
     };
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
 
-    return this.thesisRepository.count(conditions);
+    return this.thesisRepository.count({ where: conditions, cache: true });
   }
 
   private async getAmountForStudent(userId: number, keyword?: string): Promise<number> {
-    let conditions: FindOptionsWhere<Thesis> = {
+    let conditions: FindConditions<Thesis> = {
       ...notDeleteCondition,
-      students: { student: { id: userId } }
+      students: [{ student: { id: userId } }]
     };
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
 
-    return this.thesisRepository.count(conditions);
+    return this.thesisRepository.count({ where: conditions, cache: true });
   }
 
   private async handleChangeStateWithTransaction(

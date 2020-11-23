@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, Repository } from 'typeorm';
+import { FindConditions, LessThanOrEqual, Repository } from 'typeorm';
 
 import { Payload } from '../auth/strategies/jwt.strategy';
 import { RefreshEntity } from './refresh.entity';
@@ -10,7 +10,7 @@ import {
   REFRESH_EXPIRE_TIME,
   REFRESH_EXPIRE_TIME_BY_DAYS
 } from './refresh.resource';
-import { CreateRefresh, GetRefresh, Refresh } from './refresh.type';
+import { CreateRefresh, Refresh } from './refresh.type';
 
 @Injectable()
 export class RefreshService {
@@ -63,9 +63,9 @@ export class RefreshService {
     }
   }
 
-  public async getByConditions(conditions: GetRefresh): Promise<Refresh | undefined> {
+  public async getByConditions(conditions: FindConditions<Refresh>): Promise<Refresh | undefined> {
     return this.refreshRepository.findOne(conditions, {
-      cache: { milliseconds: 1000 * 60 * 15 }
+      cache: true
     });
   }
 
@@ -73,6 +73,9 @@ export class RefreshService {
     const expiredTime = new Date();
     expiredTime.setDate(expiredTime.getDate() - REFRESH_EXPIRE_TIME_BY_DAYS);
 
-    await this.refreshRepository.delete({ userId, updatedAt: LessThanOrEqual(expiredTime) });
+    await this.refreshRepository.delete({
+      userId,
+      updatedAt: LessThanOrEqual(expiredTime)
+    });
   }
 }

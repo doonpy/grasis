@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, EntityManager, FindOptionsWhere, Like, Repository } from 'typeorm';
+import { Connection, EntityManager, FindConditions, Like, Repository } from 'typeorm';
 
 import { notDeleteCondition } from '../common/common.resource';
 import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
@@ -32,14 +32,14 @@ export class LecturerService {
     limit: number,
     keyword?: string
   ): Promise<LecturerForListView[]> {
-    let conditions: FindOptionsWhere<Lecturer> | undefined = undefined;
+    let conditions: FindConditions<Lecturer>[] | undefined = undefined;
     if (keyword) {
       conditions = this.getSearchConditions(keyword);
     }
 
     return (
       await this.lecturerRepository.find({
-        relations: { user: {} },
+        relations: ['user'],
         where: conditions ? conditions : { ...notDeleteCondition },
         skip: offset,
         take: limit,
@@ -58,7 +58,7 @@ export class LecturerService {
 
   public async getById(id: number): Promise<Lecturer> {
     const lecturer: Lecturer | undefined = await this.lecturerRepository.findOne(id, {
-      relations: { user: {} },
+      relations: ['user'],
       where: { ...notDeleteCondition }
     });
 
@@ -165,12 +165,15 @@ export class LecturerService {
   }
 
   public async getLecturerAmount(keyword?: string): Promise<number> {
-    let conditions: FindOptionsWhere<Lecturer> | undefined = undefined;
+    let conditions: FindConditions<Lecturer>[] | undefined = undefined;
     if (keyword) {
       conditions = this.getSearchConditions(keyword);
     }
 
-    return this.lecturerRepository.count(conditions ? conditions : { ...notDeleteCondition });
+    return this.lecturerRepository.count({
+      where: conditions ? conditions : { ...notDeleteCondition },
+      cache: true
+    });
   }
 
   public sanitizeLevel(level: string): string {
@@ -194,7 +197,7 @@ export class LecturerService {
       return [];
     }
 
-    const conditions: FindOptionsWhere<Lecturer> = [];
+    const conditions: FindConditions<Lecturer>[] = [];
     if (searchTypes.includes(LecturerSearchType.LECTURER_ID)) {
       conditions.push({
         ...notDeleteCondition,
@@ -221,7 +224,7 @@ export class LecturerService {
     }
 
     const lecturers = await this.lecturerRepository.find({
-      relations: { user: {} },
+      relations: ['user'],
       where: conditions,
       cache: true
     });
@@ -235,7 +238,8 @@ export class LecturerService {
 
   public async findByIds(ids: number[]): Promise<Lecturer[]> {
     return await this.lecturerRepository.findByIds(ids, {
-      relations: { user: {} },
+      // relations: { user: {} },
+      relations: ['user'],
       where: { ...notDeleteCondition },
       cache: true
     });
@@ -246,7 +250,7 @@ export class LecturerService {
     ids: number[]
   ): Promise<Lecturer[]> {
     return await manager.findByIds(LecturerEntity, ids, {
-      relations: { user: {} },
+      relations: ['user'],
       where: { ...notDeleteCondition },
       cache: true
     });
@@ -267,7 +271,7 @@ export class LecturerService {
     }
   }
 
-  private getSearchConditions(keyword: string): FindOptionsWhere<Lecturer> {
+  private getSearchConditions(keyword: string): FindConditions<Lecturer>[] {
     return [
       {
         ...notDeleteCondition,
