@@ -1,3 +1,4 @@
+![CI](https://github.com/doonpy/grasis/workflows/CI/badge.svg)
 # Graduation thesis 2020 Project
 ## Overview
 ### Topic
@@ -14,20 +15,6 @@ Updating
 
 ## Technical stacks
 Updating
-
-## How to run
-### For development
-❗**IMPORTANT:** Install dependencies with `npm install` before run any command following.
-
-- To build:
-`npm run build`
-- To run for development: 
-`npm run start-all:dev`
-- To run for production:
-`npm run start-all:prod`
-
-### For deployment
-Updating...
 
 ## Directory structure
 
