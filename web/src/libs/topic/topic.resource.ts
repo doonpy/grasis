@@ -32,5 +32,6 @@ export const TopicTabKey = {
   STUDENT_INFO: '2',
   PRIVATE_CONTENT: '3',
   PROGRESS_REPORT: '4',
-  REVIEW: '5'
+  REVIEW: '5',
+  DEFENSE: '6'
 };

@@ -14,7 +14,7 @@ import {
 import { Response } from 'express';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommonQueryValue, ReportModule } from '../common/common.resource';
+import { CommonQueryValue, ReportModule, ResultModule } from '../common/common.resource';
 import { CommonResponse } from '../common/common.type';
 import {
   commonFilenameValidationSchema,
@@ -37,8 +37,8 @@ interface DownloadReportLinkResponse extends CommonResponse {
 export class DownloadController {
   constructor(private readonly downloadService: DownloadService) {}
 
-  @Get(DownloadPath.REPORT)
-  public downloadReport(
+  @Get([DownloadPath.REPORT, DownloadPath.RESULT])
+  public downloadStateDocument(
     @Query(DownloadQuery.PATH) downloadPath: string,
     @Res() res: Response
   ): void {
@@ -70,8 +70,37 @@ export class DownloadController {
     @Req() request: Express.CustomRequest
   ): Promise<DownloadReportLinkResponse> {
     const loginUserId = request.user!.userId;
-    await this.downloadService.checkReportPermission(loginUserId, topicId, module);
-    const sourcePath = this.downloadService.getSourcePath(topicId, module);
+    await this.downloadService.checkDocumentPermission(loginUserId, topicId);
+    const sourcePath = this.downloadService.getReportSourcePath(topicId, module);
+    const path = this.downloadService.getDownloadPath(filename, sourcePath);
+
+    return { statusCode: HttpStatus.OK, path: path };
+  }
+
+  @Post(DownloadPath.RESULT)
+  @UseGuards(JwtAuthGuard)
+  public async getDownloadResultLink(
+    @Body(
+      DownloadReportQuery.TOPIC_ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    topicId: number,
+    @Body(
+      DownloadReportQuery.MODULE,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    module: ResultModule,
+    @Body(DownloadReportQuery.FILE_NAME, new JoiValidationPipe(commonFilenameValidationSchema))
+    filename: string,
+    @Req() request: Express.CustomRequest
+  ): Promise<DownloadReportLinkResponse> {
+    const loginUserId = request.user!.userId;
+    await this.downloadService.checkDocumentPermission(loginUserId, topicId);
+    const sourcePath = this.downloadService.getResultSourcePath(topicId, module);
     const path = this.downloadService.getDownloadPath(filename, sourcePath);
 
     return { statusCode: HttpStatus.OK, path: path };

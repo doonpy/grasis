@@ -3,18 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment';
 import { EntityManager, Repository } from 'typeorm';
 
-import { notDeleteCondition } from '../common/common.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { LecturerForFastView } from '../lecturer/lecturer.type';
-import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
+import { ThesisState } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
 import { Thesis } from '../thesis/thesis.type';
 import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { StateResult } from '../topic/topic.resource';
 import { TopicService } from '../topic/topic.service';
-import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
-import { User } from '../user/user.type';
 import { ReviewEntity } from './review.entity';
 import { ReviewError } from './review.resource';
 import {
@@ -50,7 +47,7 @@ export class ReviewService {
 
   public async getById(id: number): Promise<Review> {
     const review = await this.reviewRepository.findOne({
-      where: { ...notDeleteCondition, id },
+      where: { id },
       cache: true
     });
     if (!review) {
@@ -60,10 +57,11 @@ export class ReviewService {
     return review;
   }
 
-  public async updateById(id: number, data: ReviewRequestBody): Promise<void> {
+  public async updateById(id: number, data: ReviewRequestBody, userId: number): Promise<void> {
     const currentReview = await this.getById(id);
     this.checkResultIsNotDecided(currentReview.result);
     const topic = await this.topicService.getById(id);
+    await this.topicService.checkPermission(topic, userId);
     const thesis = await this.thesisService.getById(topic.thesisId);
     if (data.time) {
       await this.checkValidTime(thesis, data.time);
@@ -77,7 +75,7 @@ export class ReviewService {
     id: number,
     deletedAt = new Date()
   ): Promise<void> {
-    await manager.update(ReviewEntity, { ...notDeleteCondition, id }, { deletedAt });
+    await manager.update(ReviewEntity, { id }, { deletedAt });
   }
 
   public async getByIdForView(id: number): Promise<ReviewForView> {
@@ -119,27 +117,16 @@ export class ReviewService {
     }
   }
 
-  public async checkDownloadReportPermission(topicId: number, userId: number): Promise<void> {
+  public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
     const topic = await this.topicService.getById(topicId);
     await this.topicService.checkPermission(topic, userId);
-    if (topic.thesis.status === ThesisStatus.INACTIVE) {
-      throw new BadRequestException(ReviewError.ERR_5);
-    }
-  }
-
-  public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
-    const user = await this.userService.findById(userId);
-    const topic = await this.topicService.getById(topicId);
-    await this.topicService.checkPermission(topic, user);
-    if (topic.thesis.status === ThesisStatus.INACTIVE) {
-      throw new BadRequestException(ReviewError.ERR_5);
-    }
+    this.thesisService.checkThesisIsActive(topic.thesis);
 
     if (topic.thesis.state !== ThesisState.REVIEW) {
       throw new BadRequestException(ReviewError.ERR_6);
     }
 
-    if (user.userType !== UserType.STUDENT) {
+    if (!(await this.topicStudentService.hasParticipatedTopic(topicId, userId))) {
       throw new BadRequestException(ReviewError.ERR_4);
     }
 
@@ -160,21 +147,19 @@ export class ReviewService {
   }
 
   public async getByIds(ids: number[]): Promise<Review[]> {
-    return this.reviewRepository.findByIds(ids, { where: { ...notDeleteCondition }, cache: true });
+    return this.reviewRepository.findByIds(ids, { where: {}, cache: true });
   }
 
-  public async checkUploadResultPermission(topicId: number, user: User): Promise<void> {
+  public async checkUploadResultPermission(topicId: number, userId: number): Promise<void> {
     const { thesis } = await this.topicService.getById(topicId);
-    if (thesis.status === ThesisStatus.INACTIVE) {
-      throw new BadRequestException(ReviewError.ERR_5);
-    }
+    this.thesisService.checkThesisIsActive(thesis);
 
     if (thesis.state !== ThesisState.REVIEW) {
       throw new BadRequestException(ReviewError.ERR_6);
     }
 
     const review = await this.getById(topicId);
-    if (!(await this.hasReviewerPermission(review, user))) {
+    if (!(await this.hasReviewerPermission(review, userId))) {
       throw new BadRequestException(ReviewError.ERR_7);
     }
 
@@ -187,10 +172,7 @@ export class ReviewService {
     }
   }
 
-  public async hasReviewerPermission(
-    review: number | Review,
-    user: number | User
-  ): Promise<boolean> {
+  public async hasReviewerPermission(review: number | Review, userId: number): Promise<boolean> {
     let reviewData: Review | undefined;
     if (typeof review === 'number') {
       reviewData = await this.getById(review);
@@ -198,13 +180,6 @@ export class ReviewService {
       reviewData = review;
     }
 
-    let userData: User | undefined;
-    if (typeof user === 'number') {
-      userData = await this.userService.findById(user);
-    } else {
-      userData = user;
-    }
-
-    return userData.userType === UserType.LECTURER && userData.id === reviewData.reviewerId;
+    return userId === reviewData.reviewerId;
   }
 }

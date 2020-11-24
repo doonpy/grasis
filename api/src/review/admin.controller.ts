@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Req,
   UseGuards
 } from '@nestjs/common';
 
@@ -14,13 +15,12 @@ import { CommonParam, CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
-import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { ReviewPath } from './review.resource';
 import { ReviewService } from './review.service';
 import { ReviewCreateOrUpdateResponse, ReviewRequestBody } from './review.type';
 import { reviewCreateValidationSchema } from './review.validation';
 
-@UseGuards(JwtAuthGuard, AdminGuard, TopicPermissionGuard)
+@UseGuards(JwtAuthGuard, AdminGuard)
 @Controller(ReviewPath.ADMIN_ROOT)
 export class ReviewAdminController {
   constructor(private readonly reviewService: ReviewService) {}
@@ -35,9 +35,10 @@ export class ReviewAdminController {
     )
     id: number,
     @Body(new JoiValidationPipe(reviewCreateValidationSchema))
-    body: ReviewRequestBody
+    body: ReviewRequestBody,
+    @Req() request: Express.CustomRequest
   ): Promise<ReviewCreateOrUpdateResponse> {
-    await this.reviewService.updateById(id, body);
+    await this.reviewService.updateById(id, body, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,

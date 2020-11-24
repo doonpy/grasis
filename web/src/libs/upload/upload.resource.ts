@@ -35,9 +35,3 @@ export const UploadBody = {
 export const UPLOAD_REPORT_LIMIT_FILES = 2;
 
 export const UPLOAD_RESULT_LIMIT_FILES = 1;
-
-export const UploadResultMimeTypes = [
-  'application/pdf',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-];

@@ -36,7 +36,7 @@ export class StudentController {
     )
     id: number
   ): Promise<StudentFindByIdResponse> {
-    const student: Student = await this.studentService.findById(id);
+    const student: Student = await this.studentService.getById(id);
 
     return {
       statusCode: HttpStatus.OK,

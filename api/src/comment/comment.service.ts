@@ -1,8 +1,8 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
+import { EntityManager, FindConditions, Repository } from 'typeorm';
 
-import { notDeleteCondition, ReportModule } from '../common/common.resource';
+import { ReportModule } from '../common/common.resource';
 import { TopicService } from '../topic/topic.service';
 import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
@@ -20,7 +20,7 @@ export class CommentService {
   ) {}
 
   public async create(creatorId: number, data: CommentRequestBody): Promise<Comment> {
-    const user = await this.userService.findById(creatorId);
+    const user = await this.userService.getById(creatorId);
     await this.topicService.checkPermission(data.topicId, user);
     if (data.mode === CommentMode.PRIVATE && user.userType === UserType.STUDENT) {
       throw new BadRequestException(CommentError.ERR_1);
@@ -41,10 +41,9 @@ export class CommentService {
     offset: number,
     limit: number
   ): Promise<CommentForView[]> {
-    const user = await this.userService.findById(userId);
+    const user = await this.userService.getById(userId);
     await this.topicService.checkPermission(topicId, user);
-    const conditions: FindOptionsWhere<Comment> = {
-      ...notDeleteCondition,
+    const conditions: FindConditions<Comment> = {
       topicId,
       module
     };
@@ -54,7 +53,7 @@ export class CommentService {
 
     return (
       await this.commentRepository.find({
-        relations: { creator: true },
+        relations: ['creator'],
         where: conditions,
         cache: true,
         skip: offset,
@@ -71,10 +70,9 @@ export class CommentService {
   }
 
   public async getAmount(topicId: number, userId: number, module: ReportModule): Promise<number> {
-    const user = await this.userService.findById(userId);
+    const user = await this.userService.getById(userId);
     await this.topicService.checkPermission(topicId, user);
-    const conditions: FindOptionsWhere<Comment> = {
-      ...notDeleteCondition,
+    const conditions: FindConditions<Comment> = {
       topicId,
       module
     };
@@ -96,10 +94,7 @@ export class CommentService {
   }
 
   public async getById(id: number): Promise<Comment> {
-    const comment = await this.commentRepository.findOne(
-      { ...notDeleteCondition, id },
-      { cache: true }
-    );
+    const comment = await this.commentRepository.findOne({ id }, { cache: true });
     if (!comment) {
       throw new BadRequestException(CommentError.ERR_2);
     }
@@ -112,6 +107,6 @@ export class CommentService {
     topicId: number,
     deletedAt = new Date()
   ): Promise<void> {
-    await manager.update(CommentEntity, { ...notDeleteCondition, topicId }, { deletedAt });
+    await manager.update(CommentEntity, { topicId }, { deletedAt });
   }
 }

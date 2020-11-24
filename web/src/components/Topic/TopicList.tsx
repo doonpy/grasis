@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { DEFAULT_PAGE_SIZE } from '../../libs/common/common.resource';
 import { ThesisState } from '../../libs/thesis/thesis.resource';
-import ThesisService from '../../libs/thesis/thesis.service';
+import { ThesisForView } from '../../libs/thesis/thesis.type';
 import TopicService from '../../libs/topic/topic.service';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import SearchBox from '../Common/SearchBox';
@@ -13,11 +13,11 @@ import TopicCreateAndUpdate from './TopicCreateAndUpdate';
 import { TopicTableColumns } from './TopicTableColumns';
 
 interface ComponentProps {
-  thesisId: number;
+  thesis: ThesisForView;
   canFetch: boolean;
 }
 
-const TopicList: React.FC<ComponentProps> = ({ thesisId, canFetch }) => {
+const TopicList: React.FC<ComponentProps> = ({ thesis, canFetch }) => {
   const loginUser = LoginUser.getInstance();
   const [pagination, setPagination] = useState<PaginationProps>({
     current: 1,
@@ -27,16 +27,14 @@ const TopicList: React.FC<ComponentProps> = ({ thesisId, canFetch }) => {
   });
   const [keyword, setKeyword] = useState<string>('');
   const topicService = TopicService.getInstance();
-  const thesisService = ThesisService.getInstance();
   const { data: topicData, isLoading } = topicService.useTopics(
-    thesisId,
+    thesis.id,
     pagination.current,
     pagination.pageSize,
     keyword,
     canFetch
   );
-  const { data: thesisData } = thesisService.useThesis(thesisId, canFetch);
-  if (!topicData || !thesisData) {
+  if (!topicData) {
     return <Empty description={TopicTerminology.TOPIC_63} />;
   }
 
@@ -52,11 +50,9 @@ const TopicList: React.FC<ComponentProps> = ({ thesisId, canFetch }) => {
     <Table
       title={() => (
         <Space size="middle">
-          {loginUser.isLecturer() &&
-            thesisData &&
-            thesisData.thesis.state === ThesisState.LECTURER_TOPIC_REGISTER && (
-              <TopicCreateAndUpdate thesisId={thesisId} />
-            )}
+          {loginUser.isLecturer() && thesis.state === ThesisState.LECTURER_TOPIC_REGISTER && (
+            <TopicCreateAndUpdate thesisId={thesis.id} />
+          )}
           <SearchBox onSearch={onSearch} disabled={isLoading} />
         </Space>
       )}

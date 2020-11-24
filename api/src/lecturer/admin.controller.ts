@@ -64,7 +64,7 @@ export class LecturerAdminController {
     @Query(CommonQuery.KEYWORD, new DefaultValuePipe(undefined)) keyword: string
   ): Promise<LecturerFindManyResponse> {
     const lecturers = await this.lecturerService.getManyForView(offset, limit, keyword);
-    const total: number = await this.lecturerService.getLecturerAmount(keyword);
+    const total = await this.lecturerService.getLecturerAmount(keyword);
 
     return {
       statusCode: HttpStatus.OK,

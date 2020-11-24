@@ -41,3 +41,5 @@ export enum ResultModule {
   REVIEW = 1,
   DEFENSE
 }
+
+export const NOT_SELECT_ID = -1;

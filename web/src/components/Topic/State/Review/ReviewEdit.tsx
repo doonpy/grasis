@@ -8,12 +8,13 @@ import EditIcon from '../../../../assets/svg/regular/edit.svg';
 import { CommonTerminology } from '../../../../assets/terminology/common.terminology';
 import { ReviewTerminology } from '../../../../assets/terminology/review.terminology';
 import { TopicTerminology } from '../../../../assets/terminology/topic.terminology';
+import { NOT_SELECT_ID } from '../../../../libs/common/common.resource';
 import ReviewAdminService from '../../../../libs/review/admin.service';
 import { REVIEWER_ID_FIELD } from '../../../../libs/review/review.resource';
 import { ReviewForView, ReviewRequestBody } from '../../../../libs/review/review.type';
 import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
-import ThesisSelectLecturerInThesis from '../../../Thesis/ThesisSelectLecturerInThesis';
+import ThesisSelectLecturerAttendee from '../../../Thesis/ThesisSelectLecturerAttendee';
 import StateEditBaseItem from '../StateEditBaseItem';
 
 interface ComponentProps {
@@ -64,6 +65,10 @@ const ReviewEdit: React.FC<ComponentProps> = ({
   useEffect(() => {
     if (!visible) {
       review.time = moment(review.time);
+      if (review.reviewerId === null) {
+        review.reviewerId = NOT_SELECT_ID;
+      }
+
       form.setFieldsValue(review);
     }
   }, [review]);
@@ -85,11 +90,12 @@ const ReviewEdit: React.FC<ComponentProps> = ({
         visible={visible}>
         <Form form={form} requiredMark={true} layout="vertical" onFinish={onFormSubmit}>
           <StateEditBaseItem validDateRange={validDateRange} />
-          <ThesisSelectLecturerInThesis
+          <ThesisSelectLecturerAttendee
             thesisId={thesisId}
             fieldName={REVIEWER_ID_FIELD}
             defaultValue={review.reviewer}
             label={ReviewTerminology.REVIEW_5}
+            emptyValue={true}
           />
           <Space size="middle">
             <Button loading={loading} onClick={handleOk} type="primary">

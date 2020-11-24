@@ -1,14 +1,5 @@
-export interface Refresh {
-  id: number;
-  userId: number;
-  browser: string;
-  version: string;
-  platform: string;
-  os: string;
-  refreshToken: string;
-  source: string;
-  updatedAt: string;
-}
+import { RefreshEntity } from './refresh.entity';
 
-export type CreateRefresh = Omit<Refresh, 'id' | 'updatedAt'>;
-export type GetRefresh = Partial<Refresh>;
+export type Refresh = RefreshEntity;
+
+export type CreateRefresh = Omit<Refresh, 'id' | 'updatedAt' | 'deletedAt' | 'createdAt'>;

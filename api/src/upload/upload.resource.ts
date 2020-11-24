@@ -18,7 +18,8 @@ export const UploadDestination = {
   REPORT_ROOT: 'report',
   RESULT_ROOT: 'result',
   PROGRESS_REPORT: 'progress-report',
-  REVIEW: 'review'
+  REVIEW: 'review',
+  DEFENSE: 'defense'
 };
 
 export const UploadFileSize = {

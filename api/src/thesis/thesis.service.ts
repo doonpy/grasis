@@ -5,15 +5,16 @@ import moment, { Moment } from 'moment';
 import {
   Connection,
   EntityManager,
-  FindOptionsWhere,
   LessThanOrEqual,
   Like,
   MoreThanOrEqual,
   Not,
-  Repository
+  Repository,
+  SelectQueryBuilder
 } from 'typeorm';
+import { FindConditions } from 'typeorm/find-options/FindConditions';
 
-import { notDeleteCondition } from '../common/common.resource';
+import { CouncilService } from '../council/council.service';
 import { LecturerError } from '../lecturer/lecturer.resource';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { StudentError } from '../student/student.resource';
@@ -22,8 +23,10 @@ import { TopicService } from '../topic/topic.service';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.type';
+import { ThesisLecturerColumn } from './thesis-lecturer/thesis-lecturer.resource';
 import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
 import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
+import { ThesisStudentColumn } from './thesis-student/thesis-student.resource';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
 import { ThesisStudent } from './thesis-student/thesis-student.type';
 import { ThesisEntity } from './thesis.entity';
@@ -47,18 +50,19 @@ export class ThesisService {
     private readonly thesisStudentService: ThesisStudentService,
     private readonly thesisLecturerService: ThesisLecturerService,
     private readonly userService: UserService,
-    private readonly topicService: TopicService
+    private readonly topicService: TopicService,
+    private readonly councilService: CouncilService
   ) {}
 
   public async getManyForView(
     offset: number,
     limit: number,
-    loginUserId: number,
+    userId: number,
     keyword?: string
   ): Promise<ThesisForListView[]> {
-    const loginUser = await this.userService.findById(loginUserId);
+    const user = await this.userService.getById(userId);
 
-    if (loginUser.isAdmin === IsAdmin.TRUE) {
+    if (user.isAdmin === IsAdmin.TRUE) {
       return (await this.getManyForAdmin(offset, limit, keyword)).map(
         ({ id, subject, startTime, endTime, state, status, creator }) => ({
           id,
@@ -72,8 +76,8 @@ export class ThesisService {
       );
     }
 
-    if (loginUser.userType === UserType.LECTURER) {
-      return (await this.getManyForLecturer(loginUserId, offset, limit, keyword)).map(
+    if (user.userType === UserType.LECTURER) {
+      return (await this.getManyForLecturer(userId, offset, limit, keyword)).map(
         ({ id, subject, startTime, endTime, state, status, creator }) => ({
           id,
           subject,
@@ -86,8 +90,8 @@ export class ThesisService {
       );
     }
 
-    if (loginUser.userType === UserType.STUDENT) {
-      return (await this.getManyForStudent(loginUserId, offset, limit, keyword)).map(
+    if (user.userType === UserType.STUDENT) {
+      return (await this.getManyForStudent(userId, offset, limit, keyword)).map(
         ({ id, subject, startTime, endTime, state, status, creator }) => ({
           id,
           subject,
@@ -104,7 +108,7 @@ export class ThesisService {
   }
 
   public async getAmount(loginUserId: number, keyword?: string): Promise<number> {
-    const loginUser = await this.userService.findById(loginUserId);
+    const loginUser = await this.userService.getById(loginUserId);
 
     if (loginUser.isAdmin === IsAdmin.TRUE) {
       return this.getAmountForAdmin(keyword);
@@ -182,8 +186,8 @@ export class ThesisService {
 
   public async getById(id: number): Promise<Thesis> {
     const thesis = await this.thesisRepository.findOne(id, {
-      relations: { creator: { user: {} } },
-      where: { ...notDeleteCondition }
+      relations: ['creator', 'creator.user'],
+      where: {}
     });
     if (!thesis) {
       throw new BadRequestException(ThesisError.ERR_7);
@@ -210,12 +214,12 @@ export class ThesisService {
     return false;
   }
 
-  public async isThesisExistById(id: number): Promise<boolean> {
+  public async isExistById(id: number): Promise<boolean> {
     return (await this.thesisRepository.count({ id })) > 0;
   }
 
-  public async checkThesisExistById(id: number): Promise<void> {
-    if (!(await this.isThesisExistById(id))) {
+  public async checkExistById(id: number): Promise<void> {
+    if (!(await this.isExistById(id))) {
       throw new BadRequestException(ThesisError.ERR_7);
     }
   }
@@ -223,7 +227,7 @@ export class ThesisService {
   public async checkPermission(thesisId: number | Thesis, userId: number | User): Promise<void> {
     let user: User;
     if (typeof userId === 'number') {
-      user = await this.userService.findById(userId);
+      user = await this.userService.getById(userId);
     } else {
       user = userId;
     }
@@ -241,7 +245,7 @@ export class ThesisService {
   }
 
   public async getByIdForEdit(id: number): Promise<ThesisForEdit> {
-    const thesis = await this.thesisRepository.findOne({ id, ...notDeleteCondition });
+    const thesis = await this.thesisRepository.findOne({ id });
     if (!thesis) {
       throw new BadRequestException(ThesisError.ERR_7);
     }
@@ -336,8 +340,7 @@ export class ThesisService {
       where: {
         state: Not(ThesisState.FINISH),
         startTime: LessThanOrEqual(current.toISOString()),
-        endTime: MoreThanOrEqual(current.toISOString()),
-        ...notDeleteCondition
+        endTime: MoreThanOrEqual(current.toISOString())
       },
       cache: true
     });
@@ -355,12 +358,13 @@ export class ThesisService {
   }
 
   public async deleteById(id: number): Promise<void> {
-    await this.checkThesisExistById(id);
+    await this.checkExistById(id);
     await this.connection.transaction(async (manager) => {
       const deletedAt = new Date();
       await this.thesisLecturerService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
       await this.thesisStudentService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
       await this.topicService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
+      await this.councilService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
       await manager.update(ThesisEntity, { id }, { deletedAt });
     });
   }
@@ -381,13 +385,13 @@ export class ThesisService {
     limit: number,
     keyword?: string
   ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> = { ...notDeleteCondition };
+    let conditions: FindConditions<Thesis> = {};
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
 
     return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
+      relations: ['creator', 'creator.user'],
       where: conditions,
       skip: offset,
       take: limit,
@@ -401,17 +405,19 @@ export class ThesisService {
     limit: number,
     keyword?: string
   ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> = {
-      ...notDeleteCondition,
-      lecturers: { lecturer: { id: userId } }
-    };
+    let conditions: FindConditions<Thesis> = {};
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
 
     return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
-      where: conditions,
+      join: { alias: 't', innerJoin: { lecturers: 't.lecturers' } },
+      relations: ['creator', 'creator.user'],
+      where: (qb: SelectQueryBuilder<Thesis>) => {
+        qb.where(`lecturers.${ThesisLecturerColumn.LECTURER_ID} = :userId`, { userId }).where(
+          conditions
+        );
+      },
       skip: offset,
       take: limit,
       cache: true
@@ -424,17 +430,19 @@ export class ThesisService {
     limit: number,
     keyword?: string
   ): Promise<Thesis[]> {
-    let conditions: FindOptionsWhere<Thesis> = {
-      ...notDeleteCondition,
-      students: { student: { id: userId } }
-    };
+    let conditions: FindConditions<Thesis> = {};
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
 
     return this.thesisRepository.find({
-      relations: { creator: { user: {} } },
-      where: conditions,
+      relations: ['creator', 'creator.user'],
+      join: { alias: 't', innerJoin: { students: 't.students' } },
+      where: (qb: SelectQueryBuilder<Thesis>) => {
+        qb.where(`students.${ThesisStudentColumn.STUDENT_ID} = :userId`, { userId }).where(
+          conditions
+        );
+      },
       skip: offset,
       take: limit,
       cache: true
@@ -532,14 +540,14 @@ export class ThesisService {
   }
 
   private getSearchConditions(
-    initConditions: FindOptionsWhere<Thesis>,
+    initConditions: FindConditions<Thesis>,
     keyword: string
-  ): FindOptionsWhere<Thesis> {
+  ): FindConditions<Thesis> {
     return { ...initConditions, subject: Like(`%${keyword}%`) };
   }
 
   private async getAmountForAdmin(keyword?: string): Promise<number> {
-    let conditions: FindOptionsWhere<Thesis> = { ...notDeleteCondition };
+    let conditions: FindConditions<Thesis> = {};
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
@@ -548,27 +556,37 @@ export class ThesisService {
   }
 
   private async getAmountForLecturer(userId: number, keyword?: string): Promise<number> {
-    let conditions: FindOptionsWhere<Thesis> = {
-      ...notDeleteCondition,
-      lecturers: { lecturer: { id: userId } }
-    };
+    let conditions: FindConditions<Thesis> = {};
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
 
-    return this.thesisRepository.count(conditions);
+    return this.thesisRepository.count({
+      join: { alias: 't', innerJoin: { lecturers: 't.lecturers' } },
+      where: (qb: SelectQueryBuilder<Thesis>) => {
+        qb.where(`lecturers.${ThesisLecturerColumn.LECTURER_ID} = :userId`, { userId }).where(
+          conditions
+        );
+      },
+      cache: true
+    });
   }
 
   private async getAmountForStudent(userId: number, keyword?: string): Promise<number> {
-    let conditions: FindOptionsWhere<Thesis> = {
-      ...notDeleteCondition,
-      students: { student: { id: userId } }
-    };
+    let conditions: FindConditions<Thesis> = {};
     if (keyword) {
       conditions = this.getSearchConditions(conditions, keyword);
     }
 
-    return this.thesisRepository.count(conditions);
+    return this.thesisRepository.count({
+      join: { alias: 't', innerJoin: { students: 't.students' } },
+      where: (qb: SelectQueryBuilder<Thesis>) => {
+        qb.where(`students.${ThesisStudentColumn.STUDENT_ID} = :userId`, { userId }).where(
+          conditions
+        );
+      },
+      cache: true
+    });
   }
 
   private async handleChangeStateWithTransaction(
@@ -588,11 +606,16 @@ export class ThesisService {
     if (state === ThesisState.REVIEW) {
       await this.topicService.createReviewWithTransaction(manager, thesis);
     }
+
+    if (state === ThesisState.DEFENSE) {
+      await this.topicService.createDefenseWithTransaction(manager, thesis);
+    }
   }
 
-  public async getByIdForView(id: number): Promise<ThesisForView> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { deletedAt, creator, ...remain } = await this.getById(id);
+  public async getByIdForView(id: number, userId: number): Promise<ThesisForView> {
+    const thesis = await this.getById(id);
+    await this.checkPermission(thesis, userId);
+    const { creator, ...remain } = thesis;
 
     return {
       ...remain,
@@ -603,7 +626,6 @@ export class ThesisService {
   public async isCreatorActiveThesis(userId: number): Promise<boolean> {
     return (
       (await this.thesisRepository.count({
-        ...notDeleteCondition,
         status: ThesisStatus.ACTIVE,
         creatorId: userId
       })) > 0

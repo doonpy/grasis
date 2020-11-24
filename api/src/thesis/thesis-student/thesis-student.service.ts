@@ -1,15 +1,19 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, FindOptionsWhere, In, Like, Not, Repository } from 'typeorm';
+import { EntityManager, In, Not, Repository } from 'typeorm';
+import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 
-import { notDeleteCondition } from '../../common/common.resource';
-import { StudentError } from '../../student/student.resource';
+import { StudentColumn, StudentError } from '../../student/student.resource';
 import { StudentService } from '../../student/student.service';
 import { StudentSearchAttendee } from '../../student/student.type';
+import { UserColumn } from '../../user/user.resource';
 import { User } from '../../user/user.type';
-import { ThesisStatus } from '../thesis.resource';
+import { ThesisLecturerColumn } from '../thesis-lecturer/thesis-lecturer.resource';
+import { ThesisLecturer } from '../thesis-lecturer/thesis-lecturer.type';
+import { ThesisColumn, ThesisStatus } from '../thesis.resource';
 import { Thesis } from '../thesis.type';
 import { ThesisStudentEntity } from './thesis-student.entity';
+import { ThesisStudentColumn } from './thesis-student.resource';
 import { ThesisStudent, ThesisStudentForView } from './thesis-student.type';
 
 @Injectable()
@@ -31,11 +35,13 @@ export class ThesisStudentService {
     }
 
     return this.thesisStudentRepository.find({
-      where: {
-        studentId: In(ids),
-        thesis: { status: ThesisStatus.ACTIVE },
-        student: { user: { ...notDeleteCondition } },
-        ...notDeleteCondition
+      join: { alias: 'ts', innerJoin: { thesis: 'ts.thesis' } },
+      where: (qb: SelectQueryBuilder<ThesisStudent>) => {
+        qb.where(`thesis.${ThesisColumn.STATUS} = :status`, {
+          status: ThesisStatus.ACTIVE
+        }).andWhere(`ts.${ThesisStudentColumn.STUDENT_ID} IN (:studentIds)`, {
+          studentIds: In(ids).value
+        });
       },
       cache: true
     });
@@ -55,8 +61,7 @@ export class ThesisStudentService {
         studentId: In(ids),
         thesisId: Not(thesisId),
         thesis: { status: ThesisStatus.ACTIVE },
-        student: { user: { ...notDeleteCondition } },
-        ...notDeleteCondition
+        student: { user: {} }
       },
       cache: true
     });
@@ -68,19 +73,13 @@ export class ThesisStudentService {
     thesisId: number,
     keyword?: string
   ): Promise<ThesisStudentForView[]> {
-    let conditions: FindOptionsWhere<ThesisStudent> | undefined = {
-      ...notDeleteCondition,
-      thesisId,
-      student: { user: { ...notDeleteCondition } }
-    };
-    if (keyword) {
-      conditions = this.getSearchConditions(thesisId, keyword);
-    }
-
     return (
       await this.thesisStudentRepository.find({
-        relations: { student: { user: {} } },
-        where: conditions,
+        join: {
+          alias: 'ts',
+          innerJoinAndSelect: { student: 'ts.student', user: 'student.user' }
+        },
+        where: this.getSearchConditions(thesisId, keyword),
         skip: offset,
         take: limit,
         cache: true
@@ -99,32 +98,29 @@ export class ThesisStudentService {
   }
 
   public async getAmountStudentAttendee(thesisId: number, keyword?: string): Promise<number> {
-    let conditions: FindOptionsWhere<ThesisStudent> | undefined = {
-      ...notDeleteCondition,
-      thesisId,
-      student: { user: { ...notDeleteCondition } }
-    };
-    if (keyword) {
-      conditions = this.getSearchConditions(thesisId, keyword);
-    }
-
-    return this.thesisStudentRepository.count(conditions);
+    return this.thesisStudentRepository.count({
+      join: {
+        alias: 'ts',
+        innerJoin: { student: 'ts.student', user: 'student.user' }
+      },
+      where: this.getSearchConditions(thesisId, keyword),
+      cache: true
+    });
   }
 
   public async hasPermission(id: number, loginUser: User): Promise<boolean> {
     return (
       (await this.thesisStudentRepository.count({
         thesisId: id,
-        student: { user: { ...notDeleteCondition, id: loginUser.id } },
-        ...notDeleteCondition
+        student: { user: { id: loginUser.id } }
       })) > 0
     );
   }
 
   public async getThesisStudentsForEditView(thesisId: number): Promise<StudentSearchAttendee[]> {
     const students = await this.thesisStudentRepository.find({
-      relations: { student: { user: {} } },
-      where: { thesisId, student: { user: { ...notDeleteCondition } }, ...notDeleteCondition },
+      relations: ['student', 'student.user'],
+      where: { thesisId, student: { user: {} } },
       cache: true
     });
 
@@ -149,7 +145,7 @@ export class ThesisStudentService {
 
   public async getThesisStudentsForEdit(thesisId: number): Promise<ThesisStudent[]> {
     return this.thesisStudentRepository.find({
-      where: { thesis: { id: thesisId }, ...notDeleteCondition },
+      where: { thesis: { id: thesisId } },
       cache: true
     });
   }
@@ -224,44 +220,30 @@ export class ThesisStudentService {
   public async isParticipatedByUserId(id: number): Promise<boolean> {
     return (
       (await this.thesisStudentRepository.count({
-        ...notDeleteCondition,
         studentId: id,
         thesis: { status: ThesisStatus.ACTIVE }
       })) > 0
     );
   }
 
-  private getSearchConditions(thesisId: number, keyword: string): FindOptionsWhere<ThesisStudent> {
-    const commonConditions = { ...notDeleteCondition, thesisId };
-
-    return [
-      { ...commonConditions, student: { studentId: Like(`%${keyword}%`) } },
-      { ...commonConditions, student: { schoolYear: Like(`%${keyword}%`) } },
-      { ...commonConditions, student: { studentClass: Like(`%${keyword}%`) } },
-      {
-        ...commonConditions,
-        student: {
-          user: {
-            ...notDeleteCondition,
-            firstname: Like(`%${keyword}%`)
-          }
+  private getSearchConditions(thesisId: number, keyword = '') {
+    return (qb: SelectQueryBuilder<ThesisLecturer>) => {
+      qb.andWhere(`ts.${ThesisLecturerColumn.THESIS_ID} = :thesisId`, { thesisId }).andWhere(
+        `(user.${UserColumn.FIRSTNAME} LIKE :firstname OR user.${UserColumn.LASTNAME} LIKE :lastname OR student.${StudentColumn.STUDENT_ID} LIKE :studentId OR student.${StudentColumn.SCHOOL_YEAR} LIKE :schoolYear OR student.${StudentColumn.STUDENT_CLASS} LIKE :studentClass)`,
+        {
+          firstname: `%${keyword}%`,
+          lastname: `%${keyword}%`,
+          studentId: `%${keyword}%`,
+          schoolYear: `%${keyword}%`,
+          studentClass: `%${keyword}%`
         }
-      },
-      {
-        ...commonConditions,
-        student: {
-          user: {
-            ...notDeleteCondition,
-            lastname: Like(`%${keyword}%`)
-          }
-        }
-      }
-    ];
+      );
+    };
   }
 
   public async getByIds(ids: { thesisId: number; studentId: number }[]): Promise<ThesisStudent[]> {
     return this.thesisStudentRepository.findByIds(ids, {
-      where: { ...notDeleteCondition },
+      where: {},
       cache: true
     });
   }

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
-import { notDeleteCondition } from '../../common/common.resource';
 import { TopicStateEntity } from './topic-state.entity';
 import { TopicState } from './topic-state.type';
 
@@ -19,8 +18,8 @@ export class TopicStateService {
 
   public async getMany(topicId: number): Promise<TopicState[]> {
     return this.topicStateRepository.find({
-      relations: { processor: { user: {} } },
-      where: { ...notDeleteCondition, topicId },
+      relations: ['processor', 'processor.user'],
+      where: { topicId },
       cache: true
     });
   }
@@ -30,6 +29,6 @@ export class TopicStateService {
     topicId: number,
     deletedAt = new Date()
   ): Promise<void> {
-    await manager.update(TopicStateEntity, { ...notDeleteCondition, topicId }, { deletedAt });
+    await manager.update(TopicStateEntity, { topicId }, { deletedAt });
   }
 }

@@ -1,9 +1,9 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, EntityManager, FindOptionsWhere, In, Like, Repository } from 'typeorm';
+import { Connection, EntityManager, FindConditions, In, Like, Repository } from 'typeorm';
 
 import { CommentService } from '../comment/comment.service';
-import { notDeleteCondition } from '../common/common.resource';
+import { DefenseService } from '../defense/defense.service';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { ReviewService } from '../review/review.service';
@@ -41,7 +41,8 @@ export class TopicService {
     private readonly studentService: StudentService,
     private readonly progressReportService: ProgressReportService,
     private readonly commentService: CommentService,
-    private readonly reviewService: ReviewService
+    private readonly reviewService: ReviewService,
+    private readonly defenseService: DefenseService
   ) {}
 
   public async create(thesisId: number, topicBody: TopicRequestBody): Promise<Topic> {
@@ -66,7 +67,7 @@ export class TopicService {
   ): Promise<Topic[]> {
     let login: User | undefined;
     if (typeof loginUser === 'number') {
-      login = await this.userService.findById(loginUser);
+      login = await this.userService.getById(loginUser);
     } else {
       login = loginUser;
     }
@@ -75,6 +76,7 @@ export class TopicService {
     if (login.userType === UserType.LECTURER) {
       const topicIds = topics.map(({ id }) => id);
       const reviews = await this.reviewService.getByIds(topicIds);
+      const defenses = await this.defenseService.getByIds(topicIds);
       for (const topic of topics) {
         if (topic.creatorId === login.id) {
           result.push(topic);
@@ -86,7 +88,16 @@ export class TopicService {
           continue;
         }
 
-        if (await this.reviewService.hasReviewerPermission(review, login)) {
+        if (await this.reviewService.hasReviewerPermission(review, login.id)) {
+          result.push(topic);
+        }
+
+        const defense = defenses.find((defense) => defense.id === topic.id);
+        if (!defense) {
+          continue;
+        }
+
+        if (await this.defenseService.hasCouncilPermission(defense, login.id)) {
           result.push(topic);
         }
       }
@@ -117,7 +128,7 @@ export class TopicService {
     loginUserId: number,
     keyword?: string
   ): Promise<Topic[]> {
-    const loginUser = await this.userService.findById(loginUserId);
+    const loginUser = await this.userService.getById(loginUserId);
 
     if (loginUser.isAdmin === IsAdmin.TRUE) {
       return this.getManyForAdmin(thesisId, loginUserId, offset, limit, keyword);
@@ -141,13 +152,11 @@ export class TopicService {
     limit: number,
     keyword?: string
   ): Promise<Topic[]> {
-    const ownerConditions: FindOptionsWhere<Topic> = {
-      ...notDeleteCondition,
+    const ownerConditions: FindConditions<Topic> = {
       thesisId,
       creatorId: loginUserId
     };
-    const adminConditions: FindOptionsWhere<Topic> = {
-      ...notDeleteCondition,
+    const adminConditions: FindConditions<Topic> = {
       thesisId,
       status: In([
         TopicStateAction.APPROVED,
@@ -158,7 +167,7 @@ export class TopicService {
     };
 
     return this.topicRepository.find({
-      relations: { creator: { user: {} }, thesis: {} },
+      relations: ['creator', 'creator.user', 'thesis'],
       where: keyword
         ? [
             { ...adminConditions, subject: Like(`%${keyword}%`) },
@@ -180,19 +189,17 @@ export class TopicService {
     limit: number,
     keyword?: string
   ): Promise<Topic[]> {
-    const ownerConditions: FindOptionsWhere<Topic> = {
-      ...notDeleteCondition,
+    const ownerConditions: FindConditions<Topic> = {
       thesisId,
       creatorId: loginUserId
     };
-    const thesisConditions: FindOptionsWhere<Topic> = {
-      ...notDeleteCondition,
+    const thesisConditions: FindConditions<Topic> = {
       thesisId,
       status: TopicStateAction.APPROVED
     };
 
     const topics = await this.topicRepository.find({
-      relations: { creator: { user: true }, thesis: true },
+      relations: ['creator', 'creator.user', 'thesis'],
       where: keyword
         ? [
             { ...ownerConditions, subject: Like(`%${keyword}%`) },
@@ -216,14 +223,13 @@ export class TopicService {
     loginUser: number,
     keyword?: string
   ): Promise<Topic[]> {
-    const conditions: FindOptionsWhere<Topic> = {
-      ...notDeleteCondition,
+    const conditions: FindConditions<Topic> = {
       thesisId,
       status: TopicStateAction.APPROVED
     };
 
     const topics = await this.topicRepository.find({
-      relations: { creator: { user: true }, thesis: true },
+      relations: ['creator', 'creator.user', 'thesis'],
       where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
@@ -239,7 +245,7 @@ export class TopicService {
   }
 
   public async getAmount(thesisId: number, loginUserId: number, keyword?: string): Promise<number> {
-    const loginUser = await this.userService.findById(loginUserId);
+    const loginUser = await this.userService.getById(loginUserId);
 
     if (loginUser.isAdmin === IsAdmin.TRUE) {
       return this.getAmountForAdmin(thesisId, keyword);
@@ -257,8 +263,7 @@ export class TopicService {
   }
 
   private async getAmountForAdmin(thesisId: number, keyword?: string): Promise<number> {
-    const conditions: FindOptionsWhere<Topic> = {
-      ...notDeleteCondition,
+    const conditions: FindConditions<Topic> = {
       thesisId,
       status: In([
         TopicStateAction.APPROVED,
@@ -267,14 +272,15 @@ export class TopicService {
       ])
     };
 
-    return this.topicRepository.count(
-      keyword
+    return this.topicRepository.count({
+      where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
             { ...conditions, description: Like(`%${keyword}%`) }
           ]
-        : conditions
-    );
+        : conditions,
+      cache: true
+    });
   }
 
   private async getAmountForLecturer(
@@ -282,13 +288,11 @@ export class TopicService {
     loginUser: User,
     keyword?: string
   ): Promise<number> {
-    const ownerConditions: FindOptionsWhere<Topic> = {
-      ...notDeleteCondition,
+    const ownerConditions: FindConditions<Topic> = {
       thesisId,
       creatorId: loginUser.id
     };
-    const thesisConditions: FindOptionsWhere<Topic> = {
-      ...notDeleteCondition,
+    const thesisConditions: FindConditions<Topic> = {
       thesisId,
       status: TopicStateAction.APPROVED
     };
@@ -313,14 +317,13 @@ export class TopicService {
     loginUser: User,
     keyword?: string
   ): Promise<number> {
-    const conditions: FindOptionsWhere<Topic> = {
-      ...notDeleteCondition,
+    const conditions: FindConditions<Topic> = {
       thesisId,
       status: TopicStateAction.APPROVED
     };
 
     const topics = await this.topicRepository.find({
-      relations: { thesis: true },
+      relations: ['thesis'],
       where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
@@ -335,12 +338,9 @@ export class TopicService {
 
   public async getById(id: number): Promise<Topic> {
     const topic = await this.topicRepository.findOne(
-      { ...notDeleteCondition, id },
+      { id },
       {
-        relations: {
-          creator: { user: {} },
-          thesis: true
-        },
+        relations: ['creator', 'creator.user', 'thesis'],
         cache: true
       }
     );
@@ -351,8 +351,11 @@ export class TopicService {
     return topic;
   }
 
-  public async getByIdForView(id: number): Promise<TopicForView> {
+  public async getByIdForView(topicId: number, userId: number): Promise<TopicForView> {
+    const topic = await this.getById(topicId);
+    await this.checkPermission(topic, userId);
     const {
+      id,
       subject,
       status,
       description,
@@ -363,7 +366,7 @@ export class TopicService {
       currentStudent,
       maxStudent,
       approverId
-    } = await this.getById(id);
+    } = topic;
     const approver = (await this.lecturerService.getById(approverId)).convertToFastView();
 
     return {
@@ -390,7 +393,9 @@ export class TopicService {
       case UserType.LECTURER:
         if (
           (topic.thesis.state >= ThesisState.REVIEW &&
-            (await this.reviewService.hasReviewerPermission(topic.id, user))) ||
+            (await this.reviewService.hasReviewerPermission(topic.id, user.id))) ||
+          (topic.thesis.state >= ThesisState.DEFENSE &&
+            (await this.defenseService.hasCouncilPermission(topic.id, user.id))) ||
           topic.creatorId === user.id
         ) {
           return true;
@@ -422,7 +427,7 @@ export class TopicService {
 
     let user: User;
     if (typeof userId === 'number') {
-      user = await this.userService.findById(userId);
+      user = await this.userService.getById(userId);
     } else {
       user = userId;
     }
@@ -433,8 +438,9 @@ export class TopicService {
     }
   }
 
-  public async updateById(topicId: number, user: User, data: TopicRequestBody): Promise<Topic> {
+  public async updateById(topicId: number, userId: number, data: TopicRequestBody): Promise<Topic> {
     const currentTopic = await this.getById(topicId);
+    const user = await this.userService.getById(userId);
     await this.checkPermission(currentTopic, user);
     const thesis = await this.thesisService.getById(currentTopic.thesisId);
     this.thesisService.checkThesisIsActive(thesis);
@@ -452,8 +458,9 @@ export class TopicService {
     );
   }
 
-  public async deleteById(topicId: number, user: User): Promise<void> {
+  public async deleteById(topicId: number, userId: number): Promise<void> {
     const currentTopic = await this.getById(topicId);
+    const user = await this.userService.getById(userId);
     if (!this.canEdit(user, currentTopic)) {
       throw new BadRequestException(TopicError.ERR_6);
     }
@@ -465,18 +472,13 @@ export class TopicService {
 
   public async changeStatus(
     topicId: number,
-    user: User,
+    userId: number,
     data: TopicChangeStatusRequestBody
   ): Promise<void> {
     const { action, note } = data;
-    const topic = await this.topicRepository.findOne(
-      { ...notDeleteCondition, id: topicId },
-      { relations: { states: true, thesis: true }, cache: true }
-    );
-    if (!topic) {
-      throw new BadRequestException(TopicError.ERR_5);
-    }
-
+    const user = await this.userService.getById(userId);
+    const topic = await this.getById(topicId);
+    await this.checkPermission(topic, user);
     const creatorActions = [
       TopicStateAction.SEND_REQUEST,
       TopicStateAction.WITHDRAW,
@@ -573,16 +575,10 @@ export class TopicService {
     }
   }
 
-  public async changeRegisterStatus(id: number, user: User): Promise<void> {
-    const topic = await this.topicRepository.findOne(
-      { ...notDeleteCondition, id },
-      { cache: true }
-    );
-    if (!topic) {
-      throw new BadRequestException(TopicError.ERR_5);
-    }
-
-    if (topic.creatorId !== user.id) {
+  public async changeRegisterStatus(id: number, userId: number): Promise<void> {
+    const topic = await this.getById(id);
+    await this.checkPermission(topic, userId);
+    if (topic.creatorId !== userId) {
       throw new BadRequestException(TopicError.ERR_6);
     }
 
@@ -604,7 +600,7 @@ export class TopicService {
   }
 
   public async registerTopic(topicId: number, studentId: number): Promise<void> {
-    const user = await this.userService.findById(studentId);
+    const user = await this.userService.getById(studentId);
     if (user.userType === UserType.STUDENT) {
       if (await this.topicStudentService.hasRegisteredTopic(topicId, studentId)) {
         throw new BadRequestException(TopicError.ERR_10);
@@ -616,6 +612,7 @@ export class TopicService {
     }
 
     const topic = await this.getById(topicId);
+    await this.checkPermission(topic, studentId);
     if (topic.status !== TopicStateAction.APPROVED) {
       throw new BadRequestException(TopicError.ERR_8);
     }
@@ -632,12 +629,14 @@ export class TopicService {
   }
 
   public async changeStudentRegisterStatus(
-    user: User,
+    userId: number,
     topicId: number,
     studentId: number,
     status: TopicStudentStatus
   ): Promise<void> {
+    const user = await this.userService.getById(userId);
     const topic = await this.getById(topicId);
+    await this.checkPermission(topic, user);
     if (user.userType !== UserType.LECTURER && topic.creatorId !== user.id) {
       throw new BadRequestException(TopicError.ERR_14);
     }
@@ -688,7 +687,6 @@ export class TopicService {
   private async getManyByThesisId(thesisId: number): Promise<Topic[]> {
     return this.topicRepository.find({
       where: {
-        ...notDeleteCondition,
         thesisId
       },
       cache: true
@@ -721,9 +719,8 @@ export class TopicService {
     thesisId: number
   ): Promise<Topic[]> {
     return manager.find(TopicEntity, {
-      relations: { states: {} },
+      relations: ['states'],
       where: {
-        ...notDeleteCondition,
         thesisId,
         status: In([
           TopicStateAction.NEW,
@@ -741,7 +738,7 @@ export class TopicService {
     thesisId: number
   ): Promise<void> {
     const topics = await manager.find(TopicEntity, {
-      where: { ...notDeleteCondition, thesisId, status: TopicStateAction.APPROVED },
+      where: { thesisId, status: TopicStateAction.APPROVED },
       cache: true
     });
     const topicIds = topics.map(({ id }) => id);
@@ -754,13 +751,13 @@ export class TopicService {
   ): Promise<void> {
     await manager.update(
       TopicEntity,
-      { ...notDeleteCondition, thesisId, registerStatus: TopicRegisterStatus.ENABLE },
+      { thesisId, registerStatus: TopicRegisterStatus.ENABLE },
       { registerStatus: TopicRegisterStatus.DISABLE }
     );
   }
 
   public async checkTopicIsExisted(topicId: number): Promise<void> {
-    if ((await this.topicRepository.count({ ...notDeleteCondition, id: topicId })) === 0) {
+    if ((await this.topicRepository.count({ id: topicId })) === 0) {
       throw new BadRequestException(TopicError.ERR_5);
     }
   }
@@ -771,7 +768,7 @@ export class TopicService {
     deletedAt = new Date()
   ): Promise<void> {
     const topics = await manager.find(TopicEntity, {
-      where: { ...notDeleteCondition, thesisId },
+      where: { thesisId },
       cache: true
     });
     for (const topic of topics) {
@@ -789,16 +786,14 @@ export class TopicService {
       this.topicStudentService.deleteByTopicIdsWithTransaction(manager, topicId, deletedAt),
       this.progressReportService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt),
       this.commentService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt),
-      this.reviewService.deleteByIdWithTransaction(manager, topicId, deletedAt)
+      this.reviewService.deleteByIdWithTransaction(manager, topicId, deletedAt),
+      this.defenseService.deleteByIdWithTransaction(manager, topicId, deletedAt)
     ]);
     await manager.update(TopicEntity, { id: topicId }, { deletedAt });
   }
 
   public async createReviewWithTransaction(manager: EntityManager, thesis: Thesis): Promise<void> {
-    const topics = await manager.find(TopicEntity, {
-      where: { ...notDeleteCondition, thesisId: thesis.id },
-      cache: true
-    });
+    const topics = await this.getByThesisIdWithTransaction(manager, thesis.id);
     const topicIds = topics.map(({ id }) => id);
     const [progressReports, reviews] = await Promise.all([
       this.progressReportService.getByIds(topicIds),
@@ -818,5 +813,38 @@ export class TopicService {
         });
       }
     }
+  }
+
+  public async createDefenseWithTransaction(manager: EntityManager, thesis: Thesis): Promise<void> {
+    const topics = await this.getByThesisIdWithTransaction(manager, thesis.id);
+    const topicIds = topics.map(({ id }) => id);
+    const [reviews, defenses] = await Promise.all([
+      this.reviewService.getByIds(topicIds),
+      this.defenseService.getByIds(topicIds)
+    ]);
+    for (const topic of topics) {
+      const review = reviews.find(({ id }) => id === topic.id);
+      const isDefenseExisted = defenses.findIndex(({ id }) => id === topic.id) >= 0;
+      if (!review || isDefenseExisted) {
+        continue;
+      }
+
+      if (review.result === StateResult.TRUE) {
+        await this.defenseService.createWithTransaction(manager, {
+          id: topic.id,
+          time: thesis.review
+        });
+      }
+    }
+  }
+
+  private async getByThesisIdWithTransaction(
+    manager: EntityManager,
+    thesisId: number
+  ): Promise<Topic[]> {
+    return manager.find(TopicEntity, {
+      where: { thesisId },
+      cache: true
+    });
   }
 }

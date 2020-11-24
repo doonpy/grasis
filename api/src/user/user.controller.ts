@@ -18,7 +18,7 @@ export class UserController {
 
   @Get(UserPath.SPECIFY)
   public async findUserById(@Param(CommonParam.ID) id: number): Promise<FindUserByIdResponse> {
-    const user: User = await this.userService.findById(id);
+    const user: User = await this.userService.getById(id);
 
     return {
       statusCode: HttpStatus.OK,

@@ -66,17 +66,15 @@ export class ThesisEntity extends CommonEntity {
   @Column({ name: ThesisColumn.STATUS, type: 'int', default: ThesisStatus.INACTIVE })
   public status!: ThesisStatus;
 
-  @OneToMany(() => ThesisStudentEntity, ({ thesis }) => thesis, { cascade: true })
+  @OneToMany(() => ThesisStudentEntity, ({ thesis }) => thesis)
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ThesisStudentColumn.THESIS_ID })
   public students!: ThesisStudent[];
 
-  @OneToMany(() => ThesisLecturerEntity, ({ thesis }) => thesis, { cascade: true })
+  @OneToMany(() => ThesisLecturerEntity, ({ thesis }) => thesis)
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ThesisLecturerColumn.THESIS_ID })
   public lecturers!: ThesisLecturer[];
 
-  @ManyToOne(() => LecturerEntity, ({ theses }) => theses, {
-    cascade: true
-  })
+  @ManyToOne(() => LecturerEntity, ({ theses }) => theses)
   @JoinColumn({ name: ThesisColumn.CREATOR_ID, referencedColumnName: CommonColumn.ID })
   public creator!: Lecturer;
 

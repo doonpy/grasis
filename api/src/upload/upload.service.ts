@@ -6,6 +6,7 @@ import { AwsService } from '../aws/aws.service';
 import { isProductionMode } from '../common/common.helper';
 import { ReportModule, ResultModule } from '../common/common.resource';
 import { FileInfo } from '../common/common.type';
+import { DefenseService } from '../defense/defense.service';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { ReviewService } from '../review/review.service';
 import { TopicService } from '../topic/topic.service';
@@ -20,7 +21,8 @@ export class UploadService {
     private readonly progressReportService: ProgressReportService,
     private readonly awsService: AwsService,
     private readonly reviewService: ReviewService,
-    private readonly topicService: TopicService
+    private readonly topicService: TopicService,
+    private readonly defenseService: DefenseService
   ) {}
 
   public async checkReportPermission(
@@ -36,6 +38,7 @@ export class UploadService {
         await this.reviewService.checkUploadReportPermission(topicId, userId);
         break;
       case ReportModule.DEFENSE:
+        await this.defenseService.checkUploadReportPermission(topicId, userId);
         break;
       default:
         throw new BadRequestException(UploadError.ERR_4);
@@ -52,6 +55,8 @@ export class UploadService {
         result += `/${topicId}/${UploadDestination.REVIEW}`;
         break;
       case ReportModule.DEFENSE:
+        result += `/${topicId}/${UploadDestination.DEFENSE}`;
+        break;
     }
 
     return `${UPLOAD_ROOT_FOLDER}/${result}`;
@@ -100,13 +105,13 @@ export class UploadService {
     topicId: number,
     resultModule: ResultModule
   ): Promise<void> {
-    const user = await this.userService.findById(userId);
-    await this.topicService.checkPermission(topicId, user);
+    await this.topicService.checkPermission(topicId, userId);
     switch (resultModule) {
       case ResultModule.REVIEW:
-        await this.reviewService.checkUploadResultPermission(topicId, user);
+        await this.reviewService.checkUploadResultPermission(topicId, userId);
         break;
       case ResultModule.DEFENSE:
+        await this.defenseService.checkUploadResultPermission(topicId, userId);
         break;
       default:
         throw new BadRequestException(UploadError.ERR_4);
@@ -120,6 +125,8 @@ export class UploadService {
         result += `/${topicId}/${UploadDestination.REVIEW}`;
         break;
       case ResultModule.DEFENSE:
+        result += `/${topicId}/${UploadDestination.DEFENSE}`;
+        break;
     }
 
     return `${UPLOAD_ROOT_FOLDER}/${result}`;

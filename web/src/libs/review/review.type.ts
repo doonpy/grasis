@@ -15,8 +15,8 @@ export interface ReviewCreateOrUpdateResponse extends CommonResponse {
 }
 
 export type ReviewRequestBody = WithOptional<
-  Omit<Review, keyof CommonColumns | 'id' | 'reviewerId'>,
-  'note' | 'place'
+  Omit<Review, keyof CommonColumns | 'result' | 'reviewer' | 'topic' | 'reviewerComment'>,
+  'note' | 'place' | 'reviewerId'
 >;
 
 export interface ReviewGetByIdResponse extends CommonResponse {

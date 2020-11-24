@@ -2,11 +2,11 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import fs from 'fs';
 import { v4 } from 'uuid';
 
-import { ReportModule } from '../common/common.resource';
+import { ReportModule, ResultModule } from '../common/common.resource';
 import { ProgressReportService } from '../progress-report/progress-report.service';
 import { ReviewService } from '../review/review.service';
+import { ThesisService } from '../thesis/thesis.service';
 import { TopicService } from '../topic/topic.service';
-import { UploadError } from '../upload/upload.resource';
 import { UploadService } from '../upload/upload.service';
 import { UserService } from '../user/user.service';
 import { DOWNLOAD_ROOT_FOLDER, DownloadError } from './download.resource';
@@ -18,7 +18,8 @@ export class DownloadService {
     private readonly topicService: TopicService,
     private readonly userService: UserService,
     private readonly progressReportService: ProgressReportService,
-    private readonly reviewService: ReviewService
+    private readonly reviewService: ReviewService,
+    private readonly thesisService: ThesisService
   ) {}
 
   public removePrefix(filename: string): string {
@@ -45,7 +46,7 @@ export class DownloadService {
     }
   }
 
-  public getSourcePath(topicId: number, module: ReportModule): string {
+  public getReportSourcePath(topicId: number, module: ReportModule): string {
     let path = '';
     switch (module) {
       case ReportModule.PROGRESS_REPORT:
@@ -55,6 +56,20 @@ export class DownloadService {
         path = this.uploadService.getReportFolderPath(ReportModule.REVIEW, topicId);
         break;
       case ReportModule.DEFENSE:
+        break;
+    }
+
+    return path;
+  }
+
+  public getResultSourcePath(topicId: number, module: ResultModule): string {
+    let path = '';
+    switch (module) {
+      case ResultModule.REVIEW:
+        path = this.uploadService.getResultFolderPath(ResultModule.REVIEW, topicId);
+        break;
+      case ResultModule.DEFENSE:
+        path = this.uploadService.getResultFolderPath(ResultModule.DEFENSE, topicId);
         break;
     }
 
@@ -84,22 +99,9 @@ export class DownloadService {
     }
   }
 
-  public async checkReportPermission(
-    userId: number,
-    topicId: number,
-    module: ReportModule
-  ): Promise<void> {
-    switch (module) {
-      case ReportModule.PROGRESS_REPORT:
-        await this.progressReportService.checkDownloadReportPermission(topicId, userId);
-        break;
-      case ReportModule.REVIEW:
-        await this.reviewService.checkDownloadReportPermission(topicId, userId);
-        break;
-      case ReportModule.DEFENSE:
-        break;
-      default:
-        throw new BadRequestException(UploadError.ERR_4);
-    }
+  public async checkDocumentPermission(userId: number, topicId: number): Promise<void> {
+    const topic = await this.topicService.getById(topicId);
+    await this.topicService.checkPermission(topic, userId);
+    this.thesisService.checkThesisIsActive(topic.thesis);
   }
 }
