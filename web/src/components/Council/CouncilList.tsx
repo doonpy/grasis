@@ -1,10 +1,9 @@
 import Icon from '@ant-design/icons';
-import { Button, Empty, Space, Table } from 'antd';
+import { Button, Space, Table } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination';
 import React, { useState } from 'react';
 
 import PlusIcon from '../../assets/svg/regular/plus.svg';
-import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { CouncilTerminology } from '../../assets/terminology/council.terminology';
 import { DEFAULT_PAGE_SIZE } from '../../libs/common/common.resource';
 import CouncilAdminService from '../../libs/council/admin.service';
@@ -38,10 +37,6 @@ const CouncilList: React.FC<ComponentProps> = ({ thesis, canFetch }) => {
     keyword,
     canFetch
   );
-
-  if (!councilData) {
-    return <Empty description={CommonTerminology.COMMON_11} />;
-  }
 
   const handleTableChange = (paginationValues: PaginationProps) => {
     setPagination({ ...pagination, ...paginationValues });

@@ -21,7 +21,7 @@ export class ProgressReportGuard implements CanActivate {
       throw new BadRequestException(TopicError.ERR_5);
     }
 
-    const topic = await this.topicService.getById(parseInt(topicId));
+    const topic = await this.topicService.getById(parseInt(topicId), true);
     this.thesisService.checkThesisIsActive(topic.thesis);
 
     if (topic.thesis.state !== ThesisState.PROGRESS_REPORT) {

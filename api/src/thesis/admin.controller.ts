@@ -52,7 +52,7 @@ export class ThesisAdminController {
   }
 
   @Get(ThesisPath.ADMIN_EDIT)
-  public async getById(
+  public async getByIdForEdit(
     @Param(
       CommonParam.ID,
       new JoiValidationPipe(commonIdValidateSchema),

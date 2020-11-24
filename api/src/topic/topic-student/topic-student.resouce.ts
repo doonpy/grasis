@@ -13,3 +13,7 @@ export enum TopicStudentStatus {
   APPROVED,
   REJECTED
 }
+
+export const TopicStudentError = {
+  ERR_1: 'Bạn không phải sinh viên thực hiện đề tài này.'
+};

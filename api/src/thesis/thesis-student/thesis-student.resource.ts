@@ -4,10 +4,7 @@ export const THESIS_STUDENT_TABLE = `${THESIS_TABLE}_student`;
 
 export const ThesisStudentColumn = {
   THESIS_ID: 'thesis_id',
-  STUDENT_ID: 'student_id',
-  INSTRUCTOR_RESULT: 'instructor_result',
-  REVIEW_RESULT: 'review_result',
-  DEFENSE_RESULT: 'defense_result'
+  STUDENT_ID: 'student_id'
 };
 
 export const ThesisStudentError = {

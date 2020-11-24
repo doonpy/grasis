@@ -25,6 +25,7 @@ import {
   commonOffsetValidateSchema
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
+import { ResultService } from '../result/result.service';
 import { ThesisPermissionGuard } from './guards/thesis-permission.guard';
 import { TopicLecturerRegisterGuard } from './guards/topic-lecturer-register.guard';
 import { TopicPermissionGuard } from './guards/topic-permission.guard';
@@ -45,6 +46,7 @@ import {
   TopicCreateOrUpdateResponse,
   TopicGetByIdResponse,
   TopicGetManyResponse,
+  TopicGetResultsForViewResponse,
   TopicRequestBody
 } from './topic.type';
 import {
@@ -60,7 +62,8 @@ export class TopicController {
   constructor(
     private readonly topicService: TopicService,
     private readonly topicStudentService: TopicStudentService,
-    private readonly topicStateService: TopicStateService
+    private readonly topicStateService: TopicStateService,
+    private readonly resultService: ResultService
   ) {}
 
   @Post()
@@ -338,7 +341,7 @@ export class TopicController {
     @Req() request: Express.CustomRequest
   ): Promise<TopicGetStatesResponse> {
     const loginUserId = request.user!.userId;
-    const topic = await this.topicService.getById(id);
+    const topic = await this.topicService.getById(id, true);
     if (topic.creatorId !== loginUserId && topic.thesis.creatorId !== loginUserId) {
       throw new BadRequestException(TopicError.ERR_14);
     }
@@ -351,6 +354,27 @@ export class TopicController {
     return {
       statusCode: HttpStatus.OK,
       states
+    };
+  }
+
+  @Get(TopicPath.GET_RESULTS)
+  @UseGuards(TopicPermissionGuard)
+  public async getByResultForView(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number,
+    @Req()
+    request: Express.CustomRequest
+  ): Promise<TopicGetResultsForViewResponse> {
+    const results = await this.resultService.getByTopicIdForView(id, request.user!.userId);
+
+    return {
+      statusCode: HttpStatus.OK,
+      results
     };
   }
 }

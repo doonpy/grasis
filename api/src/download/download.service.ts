@@ -100,7 +100,7 @@ export class DownloadService {
   }
 
   public async checkDocumentPermission(userId: number, topicId: number): Promise<void> {
-    const topic = await this.topicService.getById(topicId);
+    const topic = await this.topicService.getById(topicId, true);
     await this.topicService.checkPermission(topic, userId);
     this.thesisService.checkThesisIsActive(topic.thesis);
   }

@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
 import { CommonEntity } from '../../common/common.entity';
 import { COMMON_ENTITY_OPTIONS, CommonColumn } from '../../common/common.resource';
@@ -15,15 +15,6 @@ export class ThesisStudentEntity extends CommonEntity {
 
   @PrimaryColumn({ name: ThesisStudentColumn.STUDENT_ID, type: 'int' })
   public studentId!: number;
-
-  @Column({ name: ThesisStudentColumn.INSTRUCTOR_RESULT, type: 'float', nullable: true })
-  public instructorResult!: number | null;
-
-  @Column({ name: ThesisStudentColumn.REVIEW_RESULT, type: 'float', nullable: true })
-  public reviewResult!: number | null;
-
-  @Column({ name: ThesisStudentColumn.DEFENSE_RESULT, type: 'float', nullable: true })
-  public defenseResult!: number | null;
 
   @ManyToOne(() => ThesisEntity, ({ students }) => students)
   @JoinColumn({ name: ThesisStudentColumn.THESIS_ID, referencedColumnName: CommonColumn.ID })

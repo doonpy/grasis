@@ -22,8 +22,7 @@ export class TopicLecturerRegisterGuard implements CanActivate {
       throw new BadRequestException(TopicError.ERR_5);
     }
 
-    const topic = await this.topicService.getById(parseInt(topicId));
-    const thesis = await this.thesisService.getById(topic.thesisId);
+    const { thesis } = await this.topicService.getById(parseInt(topicId), true);
     this.thesisService.checkThesisIsActive(thesis);
 
     if (thesis.state !== ThesisState.LECTURER_TOPIC_REGISTER) {

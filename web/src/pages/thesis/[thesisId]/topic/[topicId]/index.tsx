@@ -1,20 +1,23 @@
 import Icon, { InfoCircleOutlined, LockOutlined, UnorderedListOutlined } from '@ant-design/icons';
-import { Card, Empty, Tabs } from 'antd';
+import { Card, Tabs } from 'antd';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useState } from 'react';
 
 import FileChartLineIcon from '../../../../../assets/svg/regular/file-chart-line.svg';
 import FileSearchIcon from '../../../../../assets/svg/regular/file-search.svg';
+import PollPeopleIcon from '../../../../../assets/svg/regular/poll-people.svg';
 import ShieldAltIcon from '../../../../../assets/svg/regular/shield-alt.svg';
 import { DefenseTerminology } from '../../../../../assets/terminology/defense.terminology';
 import { ProgressReportTerminology } from '../../../../../assets/terminology/progress-report.terminology';
+import { ResultTerminology } from '../../../../../assets/terminology/result.terminology';
 import { ReviewTerminology } from '../../../../../assets/terminology/review.terminology';
 import { ThesisTerminology } from '../../../../../assets/terminology/thesis.terminology';
 import { TopicTerminology } from '../../../../../assets/terminology/topic.terminology';
 import MainLayout from '../../../../../components/Layout/MainLayout';
 import DefenseInfo from '../../../../../components/Topic/State/Defense/DefenseInfo';
 import ProgressReportInfo from '../../../../../components/Topic/State/ProgressReport/ProgressReportInfo';
+import ResultInfo from '../../../../../components/Topic/State/Result/ResultInfo';
 import ReviewInfo from '../../../../../components/Topic/State/Review/ReviewInfo';
 import TopicInfo from '../../../../../components/Topic/TopicInfo';
 import TopicPrivateInfo from '../../../../../components/Topic/TopicPrivateInfo';
@@ -28,7 +31,9 @@ import {
   ThesisState
 } from '../../../../../libs/thesis/thesis.resource';
 import ThesisService from '../../../../../libs/thesis/thesis.service';
+import { TopicStateAction } from '../../../../../libs/topic/topic-state/topic-state.resource';
 import { TopicTabKey } from '../../../../../libs/topic/topic.resource';
+import TopicService from '../../../../../libs/topic/topic.service';
 import { UserType } from '../../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {
@@ -45,106 +50,121 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const topicId = parseInt(params.topicId);
   const [currentTab, setCurrentTab] = useState<string>(TopicTabKey.INFO);
   const thesisService = ThesisService.getInstance();
-  const { data, isLoading } = thesisService.useThesis(thesisId);
+  const { data: thesisData, isLoading: thesisLoading } = thesisService.useThesis(thesisId);
+  const topicService = TopicService.getInstance();
+  const { data: topicData, isLoading: topicLoading } = topicService.useTopic(topicId);
 
   const onTabChange = (activeKey: string) => {
     setCurrentTab(activeKey);
   };
 
-  if (!data) {
-    return <Empty />;
-  }
-
   return (
-    <Card title={TopicTerminology.TOPIC_11} loading={isLoading}>
-      <Tabs defaultActiveKey={currentTab} onChange={onTabChange}>
-        <Tabs.TabPane
-          tab={
-            <span>
-              <InfoCircleOutlined />
-              {TopicTerminology.TOPIC_12}
-            </span>
-          }
-          key={TopicTabKey.INFO}>
-          <TopicInfo
-            topicId={topicId}
-            thesisId={thesisId}
-            canFetch={currentTab === TopicTabKey.INFO}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          tab={
-            <span>
-              <LockOutlined />
-              {TopicTerminology.TOPIC_13}
-            </span>
-          }
-          key={TopicTabKey.PRIVATE_CONTENT}>
-          <TopicPrivateInfo
-            topicId={topicId}
-            thesis={data.thesis}
-            canFetch={currentTab === TopicTabKey.PRIVATE_CONTENT}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          tab={
-            <span>
-              <UnorderedListOutlined />
-              {TopicTerminology.TOPIC_46}
-            </span>
-          }
-          key={TopicTabKey.STUDENT_INFO}>
-          <TopicStudentInfo topicId={topicId} canFetch={currentTab === TopicTabKey.STUDENT_INFO} />
-        </Tabs.TabPane>
-        {data.thesis.state >= ThesisState.PROGRESS_REPORT && (
+    <Card title={TopicTerminology.TOPIC_11} loading={thesisLoading || topicLoading}>
+      {thesisData && topicData && (
+        <Tabs defaultActiveKey={currentTab} onChange={onTabChange}>
           <Tabs.TabPane
             tab={
               <span>
-                <Icon component={FileChartLineIcon} />
-                {ProgressReportTerminology.PR_1}
+                <InfoCircleOutlined />
+                {TopicTerminology.TOPIC_12}
               </span>
             }
-            key={TopicTabKey.PROGRESS_REPORT}>
-            <ProgressReportInfo
-              topicId={topicId}
-              thesis={data.thesis}
-              canFetch={currentTab === TopicTabKey.PROGRESS_REPORT}
-            />
+            key={TopicTabKey.INFO}>
+            <TopicInfo topic={topicData.topic} thesisId={thesisId} />
           </Tabs.TabPane>
-        )}
-        {data.thesis.state >= ThesisState.REVIEW && (
           <Tabs.TabPane
             tab={
               <span>
-                <Icon component={FileSearchIcon} />
-                {ReviewTerminology.REVIEW_3}
+                <LockOutlined />
+                {TopicTerminology.TOPIC_13}
               </span>
             }
-            key={TopicTabKey.REVIEW}>
-            <ReviewInfo
+            key={TopicTabKey.PRIVATE_CONTENT}>
+            <TopicPrivateInfo
               topicId={topicId}
-              thesis={data.thesis}
-              canFetch={currentTab === TopicTabKey.REVIEW}
+              thesis={thesisData.thesis}
+              canFetch={currentTab === TopicTabKey.PRIVATE_CONTENT}
             />
           </Tabs.TabPane>
-        )}
-        {data.thesis.state >= ThesisState.DEFENSE && (
-          <Tabs.TabPane
-            tab={
-              <span>
-                <Icon component={ShieldAltIcon} />
-                {DefenseTerminology.DEFENSE_4}
-              </span>
-            }
-            key={TopicTabKey.DEFENSE}>
-            <DefenseInfo
-              topicId={topicId}
-              thesis={data.thesis}
-              canFetch={currentTab === TopicTabKey.DEFENSE}
-            />
-          </Tabs.TabPane>
-        )}
-      </Tabs>
+          {topicData.topic.status === TopicStateAction.APPROVED && (
+            <>
+              <Tabs.TabPane
+                tab={
+                  <span>
+                    <UnorderedListOutlined />
+                    {TopicTerminology.TOPIC_46}
+                  </span>
+                }
+                key={TopicTabKey.STUDENT_INFO}>
+                <TopicStudentInfo
+                  topicId={topicId}
+                  canFetch={currentTab === TopicTabKey.STUDENT_INFO}
+                />
+              </Tabs.TabPane>
+              {thesisData.thesis.state >= ThesisState.PROGRESS_REPORT && (
+                <Tabs.TabPane
+                  tab={
+                    <span>
+                      <Icon component={FileChartLineIcon} />
+                      {ProgressReportTerminology.PR_1}
+                    </span>
+                  }
+                  key={TopicTabKey.PROGRESS_REPORT}>
+                  <ProgressReportInfo
+                    topicId={topicId}
+                    thesis={thesisData.thesis}
+                    canFetch={currentTab === TopicTabKey.PROGRESS_REPORT}
+                  />
+                </Tabs.TabPane>
+              )}
+              {thesisData.thesis.state >= ThesisState.REVIEW && (
+                <Tabs.TabPane
+                  tab={
+                    <span>
+                      <Icon component={FileSearchIcon} />
+                      {ReviewTerminology.REVIEW_3}
+                    </span>
+                  }
+                  key={TopicTabKey.REVIEW}>
+                  <ReviewInfo
+                    topicId={topicId}
+                    thesis={thesisData.thesis}
+                    canFetch={currentTab === TopicTabKey.REVIEW}
+                  />
+                </Tabs.TabPane>
+              )}
+              {thesisData.thesis.state >= ThesisState.DEFENSE && (
+                <Tabs.TabPane
+                  tab={
+                    <span>
+                      <Icon component={ShieldAltIcon} />
+                      {DefenseTerminology.DEFENSE_4}
+                    </span>
+                  }
+                  key={TopicTabKey.DEFENSE}>
+                  <DefenseInfo
+                    topicId={topicId}
+                    thesis={thesisData.thesis}
+                    canFetch={currentTab === TopicTabKey.DEFENSE}
+                  />
+                </Tabs.TabPane>
+              )}
+              {thesisData.thesis.state >= ThesisState.RESULT && (
+                <Tabs.TabPane
+                  tab={
+                    <span>
+                      <Icon component={PollPeopleIcon} />
+                      {ResultTerminology.RESULT_1}
+                    </span>
+                  }
+                  key={TopicTabKey.RESULT}>
+                  <ResultInfo topicId={topicId} canFetch={currentTab === TopicTabKey.RESULT} />
+                </Tabs.TabPane>
+              )}
+            </>
+          )}
+        </Tabs>
+      )}
     </Card>
   );
 };

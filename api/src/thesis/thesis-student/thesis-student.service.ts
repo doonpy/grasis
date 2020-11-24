@@ -60,8 +60,7 @@ export class ThesisStudentService {
       where: {
         studentId: In(ids),
         thesisId: Not(thesisId),
-        thesis: { status: ThesisStatus.ACTIVE },
-        student: { user: {} }
+        thesis: { status: ThesisStatus.ACTIVE }
       },
       cache: true
     });
@@ -120,7 +119,7 @@ export class ThesisStudentService {
   public async getThesisStudentsForEditView(thesisId: number): Promise<StudentSearchAttendee[]> {
     const students = await this.thesisStudentRepository.find({
       relations: ['student', 'student.user'],
-      where: { thesisId, student: { user: {} } },
+      where: { thesisId },
       cache: true
     });
 
@@ -239,12 +238,5 @@ export class ThesisStudentService {
         }
       );
     };
-  }
-
-  public async getByIds(ids: { thesisId: number; studentId: number }[]): Promise<ThesisStudent[]> {
-    return this.thesisStudentRepository.findByIds(ids, {
-      where: {},
-      cache: true
-    });
   }
 }

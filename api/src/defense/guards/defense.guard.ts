@@ -21,10 +21,10 @@ export class DefenseGuard implements CanActivate {
       throw new BadRequestException(TopicError.ERR_5);
     }
 
-    const topic = await this.topicService.getById(parseInt(topicId));
+    const topic = await this.topicService.getById(parseInt(topicId), true);
     this.thesisService.checkThesisIsActive(topic.thesis);
     if (topic.thesis.state !== ThesisState.DEFENSE) {
-      throw new BadRequestException(DefenseError.ERR_6);
+      throw new BadRequestException(DefenseError.ERR_5);
     }
 
     return true;

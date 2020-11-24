@@ -15,8 +15,10 @@ import {
   TopicFindManyResponse,
   TopicForView,
   TopicGetByIdResponse,
+  TopicGetResultsForViewResponse,
   TopicRequestBody,
   UseTopic,
+  UseTopicResult,
   UseTopics
 } from './topic.type';
 
@@ -174,5 +176,13 @@ export default class TopicService extends CommonService {
     }
 
     return loginUser.getId() === topic.creator.id;
+  }
+
+  public useTopicResult(topicId: number, canFetch = true): UseTopicResult {
+    const { data } = useSWR<TopicGetResultsForViewResponse>(
+      canFetch ? this.replaceParams(TopicApi.GET_RESULTS, [topicId]) : null
+    );
+
+    return { data, isLoading: !data };
   }
 }

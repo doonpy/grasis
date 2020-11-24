@@ -49,11 +49,10 @@ export class DefenseService {
 
   public async updateById(id: number, data: DefenseRequestBody, userId: number): Promise<void> {
     const currentDefense = await this.getById(id);
-    const topic = await this.topicService.getById(id);
+    const topic = await this.topicService.getById(id, true);
     await this.topicService.checkPermission(topic, userId);
-    const thesis = await this.thesisService.getById(topic.thesisId);
     if (data.time) {
-      await this.checkValidTime(thesis, data.time);
+      await this.checkValidTime(topic.thesis, data.time);
     }
 
     if (data.councilId) {
@@ -98,37 +97,33 @@ export class DefenseService {
   }
 
   public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
-    const topic = await this.topicService.getById(topicId);
+    const topic = await this.topicService.getById(topicId, true);
     await this.topicService.checkPermission(topic, userId);
     if (topic.thesis.status === ThesisStatus.INACTIVE) {
-      throw new BadRequestException(DefenseError.ERR_5);
+      throw new BadRequestException(DefenseError.ERR_4);
     }
 
     if (topic.thesis.state !== ThesisState.DEFENSE) {
-      throw new BadRequestException(DefenseError.ERR_6);
+      throw new BadRequestException(DefenseError.ERR_5);
     }
 
-    if (!(await this.topicStudentService.hasParticipatedTopic(topic.id, userId))) {
-      throw new BadRequestException(DefenseError.ERR_4);
-    }
+    await this.topicStudentService.checkParticipatedTopic(topic.id, userId);
   }
 
   public async getByIds(ids: number[]): Promise<Defense[]> {
-    return this.defenseRepository.findByIds(ids, { where: {}, cache: true });
+    return this.defenseRepository.findByIds(ids, { cache: true });
   }
 
   public async checkUploadResultPermission(topicId: number, userId: number): Promise<void> {
-    const { thesis } = await this.topicService.getById(topicId);
+    const { thesis } = await this.topicService.getById(topicId, true);
     await this.thesisService.checkThesisIsActive(thesis);
 
     if (thesis.state !== ThesisState.DEFENSE) {
-      throw new BadRequestException(DefenseError.ERR_6);
+      throw new BadRequestException(DefenseError.ERR_5);
     }
 
     const defense = await this.getById(topicId);
-    if (!(await this.hasCouncilPermission(defense, userId))) {
-      throw new BadRequestException(DefenseError.ERR_7);
-    }
+    await this.checkCouncilPermission(defense, userId);
   }
 
   public async hasCouncilPermission(defenseId: number | Defense, userId: number): Promise<boolean> {
@@ -148,5 +143,11 @@ export class DefenseService {
     );
 
     return userId === chairmanId || userId === instructorId || userId === commissionerId;
+  }
+
+  public async checkCouncilPermission(defenseId: number | Defense, userId: number): Promise<void> {
+    if (!(await this.hasCouncilPermission(defenseId, userId))) {
+      throw new BadRequestException(DefenseError.ERR_6);
+    }
   }
 }

@@ -3,9 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, FindConditions, In, Like, Repository } from 'typeorm';
 
 import { CommentService } from '../comment/comment.service';
+import { CouncilService } from '../council/council.service';
 import { DefenseService } from '../defense/defense.service';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { ProgressReportService } from '../progress-report/progress-report.service';
+import { ResultType } from '../result/result.resource';
+import { ResultService } from '../result/result.service';
 import { ReviewService } from '../review/review.service';
 import { StudentService } from '../student/student.service';
 import { ThesisState } from '../thesis/thesis.resource';
@@ -42,7 +45,9 @@ export class TopicService {
     private readonly progressReportService: ProgressReportService,
     private readonly commentService: CommentService,
     private readonly reviewService: ReviewService,
-    private readonly defenseService: DefenseService
+    private readonly defenseService: DefenseService,
+    private readonly resultService: ResultService,
+    private readonly councilService: CouncilService
   ) {}
 
   public async create(thesisId: number, topicBody: TopicRequestBody): Promise<Topic> {
@@ -63,58 +68,19 @@ export class TopicService {
 
   private async filterTopicHasNotPermission(
     topics: Topic[],
-    loginUser: number | User
+    userId: number | User
   ): Promise<Topic[]> {
-    let login: User | undefined;
-    if (typeof loginUser === 'number') {
-      login = await this.userService.getById(loginUser);
+    let user: User | undefined;
+    if (typeof userId === 'number') {
+      user = await this.userService.getById(userId);
     } else {
-      login = loginUser;
+      user = userId;
     }
 
     const result: Topic[] = [];
-    if (login.userType === UserType.LECTURER) {
-      const topicIds = topics.map(({ id }) => id);
-      const reviews = await this.reviewService.getByIds(topicIds);
-      const defenses = await this.defenseService.getByIds(topicIds);
-      for (const topic of topics) {
-        if (topic.creatorId === login.id) {
-          result.push(topic);
-          continue;
-        }
-
-        const review = reviews.find((review) => review.id === topic.id);
-        if (!review) {
-          continue;
-        }
-
-        if (await this.reviewService.hasReviewerPermission(review, login.id)) {
-          result.push(topic);
-        }
-
-        const defense = defenses.find((defense) => defense.id === topic.id);
-        if (!defense) {
-          continue;
-        }
-
-        if (await this.defenseService.hasCouncilPermission(defense, login.id)) {
-          result.push(topic);
-        }
-      }
-    }
-
-    if (login.userType === UserType.STUDENT) {
-      const participatingTopicIds = (
-        await this.topicStudentService.getParticipatingTopics(login.id)
-      ).map(({ topicId }) => topicId);
-      for (const topic of topics) {
-        if (
-          (topic.thesis.state === ThesisState.STUDENT_TOPIC_REGISTER &&
-            topic.status === TopicStateAction.APPROVED) ||
-          participatingTopicIds.includes(topic.id)
-        ) {
-          result.push(topic);
-        }
+    for (const topic of topics) {
+      if (await this.hasPermission(topic, user)) {
+        result.push(topic);
       }
     }
 
@@ -273,6 +239,7 @@ export class TopicService {
     };
 
     return this.topicRepository.count({
+      relations: ['creator', 'creator.user', 'thesis'],
       where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
@@ -298,6 +265,7 @@ export class TopicService {
     };
 
     const topics = await this.topicRepository.find({
+      relations: ['creator', 'creator.user', 'thesis'],
       where: keyword
         ? [
             { ...ownerConditions, subject: Like(`%${keyword}%`) },
@@ -323,7 +291,7 @@ export class TopicService {
     };
 
     const topics = await this.topicRepository.find({
-      relations: ['thesis'],
+      relations: ['creator', 'creator.user', 'thesis'],
       where: keyword
         ? [
             { ...conditions, subject: Like(`%${keyword}%`) },
@@ -336,14 +304,16 @@ export class TopicService {
     return (await this.filterTopicHasNotPermission(topics, loginUser)).length;
   }
 
-  public async getById(id: number): Promise<Topic> {
-    const topic = await this.topicRepository.findOne(
-      { id },
-      {
-        relations: ['creator', 'creator.user', 'thesis'],
-        cache: true
-      }
-    );
+  public async getById(id: number, includeThesis = false): Promise<Topic> {
+    const relations = ['creator', 'creator.user'];
+    if (includeThesis) {
+      relations.push('thesis');
+    }
+
+    const topic = await this.topicRepository.findOne(id, {
+      relations,
+      cache: true
+    });
     if (!topic) {
       throw new BadRequestException(TopicError.ERR_5);
     }
@@ -352,7 +322,7 @@ export class TopicService {
   }
 
   public async getByIdForView(topicId: number, userId: number): Promise<TopicForView> {
-    const topic = await this.getById(topicId);
+    const topic = await this.getById(topicId, true);
     await this.checkPermission(topic, userId);
     const {
       id,
@@ -420,7 +390,7 @@ export class TopicService {
   public async checkPermission(topicId: number | Topic, userId: number | User): Promise<void> {
     let topic: Topic;
     if (typeof topicId === 'number') {
-      topic = await this.getById(topicId);
+      topic = await this.getById(topicId, true);
     } else {
       topic = topicId;
     }
@@ -432,18 +402,17 @@ export class TopicService {
       user = userId;
     }
 
-    await this.thesisService.checkPermission(topic.thesisId, user);
+    await this.thesisService.checkPermission(topic.thesis, user);
     if (!(await this.hasPermission(topic, user))) {
       throw new BadRequestException(TopicError.ERR_6);
     }
   }
 
   public async updateById(topicId: number, userId: number, data: TopicRequestBody): Promise<Topic> {
-    const currentTopic = await this.getById(topicId);
+    const currentTopic = await this.getById(topicId, true);
     const user = await this.userService.getById(userId);
     await this.checkPermission(currentTopic, user);
-    const thesis = await this.thesisService.getById(currentTopic.thesisId);
-    this.thesisService.checkThesisIsActive(thesis);
+    this.thesisService.checkThesisIsActive(currentTopic.thesis);
     if (!this.canEdit(user, currentTopic)) {
       throw new BadRequestException(TopicError.ERR_6);
     }
@@ -477,7 +446,14 @@ export class TopicService {
   ): Promise<void> {
     const { action, note } = data;
     const user = await this.userService.getById(userId);
-    const topic = await this.getById(topicId);
+    const topic = await this.topicRepository.findOne(topicId, {
+      relations: ['states', 'thesis'],
+      cache: true
+    });
+    if (!topic) {
+      throw new BadRequestException(TopicError.ERR_5);
+    }
+
     await this.checkPermission(topic, user);
     const creatorActions = [
       TopicStateAction.SEND_REQUEST,
@@ -579,7 +555,7 @@ export class TopicService {
     const topic = await this.getById(id);
     await this.checkPermission(topic, userId);
     if (topic.creatorId !== userId) {
-      throw new BadRequestException(TopicError.ERR_6);
+      throw new BadRequestException(TopicError.ERR_14);
     }
 
     if (topic.status !== TopicStateAction.APPROVED) {
@@ -611,7 +587,7 @@ export class TopicService {
       }
     }
 
-    const topic = await this.getById(topicId);
+    const topic = await this.getById(topicId, true);
     await this.checkPermission(topic, studentId);
     if (topic.status !== TopicStateAction.APPROVED) {
       throw new BadRequestException(TopicError.ERR_8);
@@ -635,10 +611,14 @@ export class TopicService {
     status: TopicStudentStatus
   ): Promise<void> {
     const user = await this.userService.getById(userId);
-    const topic = await this.getById(topicId);
+    const topic = await this.getById(topicId, true);
     await this.checkPermission(topic, user);
-    if (user.userType !== UserType.LECTURER && topic.creatorId !== user.id) {
+    if (topic.creatorId !== user.id) {
       throw new BadRequestException(TopicError.ERR_14);
+    }
+
+    if (topic.currentStudent === topic.maxStudent) {
+      throw new BadRequestException(TopicError.ERR_9);
     }
 
     const topicStudent = await this.topicStudentService.getOne(topicId, studentId);
@@ -787,13 +767,17 @@ export class TopicService {
       this.progressReportService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt),
       this.commentService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt),
       this.reviewService.deleteByIdWithTransaction(manager, topicId, deletedAt),
-      this.defenseService.deleteByIdWithTransaction(manager, topicId, deletedAt)
+      this.defenseService.deleteByIdWithTransaction(manager, topicId, deletedAt),
+      this.resultService.deleteByTopicIdWithTransaction(manager, topicId, deletedAt)
     ]);
     await manager.update(TopicEntity, { id: topicId }, { deletedAt });
   }
 
   public async createReviewWithTransaction(manager: EntityManager, thesis: Thesis): Promise<void> {
-    const topics = await this.getByThesisIdWithTransaction(manager, thesis.id);
+    const topics = await this.getByConditionsWithTransaction(manager, {
+      thesisId: thesis.id,
+      status: TopicStateAction.APPROVED
+    });
     const topicIds = topics.map(({ id }) => id);
     const [progressReports, reviews] = await Promise.all([
       this.progressReportService.getByIds(topicIds),
@@ -806,7 +790,7 @@ export class TopicService {
         continue;
       }
 
-      if (progressReport.result === StateResult.TRUE) {
+      if (progressReport.result === StateResult.PASSED) {
         await this.reviewService.createWithTransaction(manager, {
           id: topic.id,
           time: thesis.review
@@ -816,7 +800,10 @@ export class TopicService {
   }
 
   public async createDefenseWithTransaction(manager: EntityManager, thesis: Thesis): Promise<void> {
-    const topics = await this.getByThesisIdWithTransaction(manager, thesis.id);
+    const topics = await this.getByConditionsWithTransaction(manager, {
+      thesisId: thesis.id,
+      status: TopicStateAction.APPROVED
+    });
     const topicIds = topics.map(({ id }) => id);
     const [reviews, defenses] = await Promise.all([
       this.reviewService.getByIds(topicIds),
@@ -829,7 +816,7 @@ export class TopicService {
         continue;
       }
 
-      if (review.result === StateResult.TRUE) {
+      if (review.result === StateResult.PASSED) {
         await this.defenseService.createWithTransaction(manager, {
           id: topic.id,
           time: thesis.review
@@ -838,13 +825,100 @@ export class TopicService {
     }
   }
 
-  private async getByThesisIdWithTransaction(
+  private async getByConditionsWithTransaction(
     manager: EntityManager,
-    thesisId: number
+    conditions: FindConditions<Topic>
   ): Promise<Topic[]> {
     return manager.find(TopicEntity, {
-      where: { thesisId },
+      where: conditions,
       cache: true
     });
+  }
+
+  public async checkCreatorPermission(topicId: number | Topic, userId: number): Promise<void> {
+    let topic: Topic;
+    if (typeof topicId === 'number') {
+      topic = await this.getById(topicId);
+    } else {
+      topic = topicId;
+    }
+
+    if (topic.creatorId !== userId) {
+      throw new BadRequestException(TopicError.ERR_14);
+    }
+  }
+
+  public async createResultWithTransaction(manager: EntityManager, thesis: Thesis): Promise<void> {
+    const topics = await this.getByConditionsWithTransaction(manager, {
+      thesisId: thesis.id,
+      status: TopicStateAction.APPROVED
+    });
+    const topicIds = topics.map(({ id }) => id);
+    const [reviews, defenses] = await Promise.all([
+      this.reviewService.getByIds(topicIds),
+      this.defenseService.getByIds(topicIds)
+    ]);
+    for (const topic of topics) {
+      const students = await this.topicStudentService.getStudentsParticipated(topic.id);
+      for (const student of students) {
+        const defense = defenses.find(({ id }) => id === topic.id);
+        const review = reviews.find(({ id }) => id === topic.id);
+        if (!review || !defense) {
+          // Failed thesis
+          continue;
+        }
+
+        await this.resultService.initializeResultWithTransaction(manager, {
+          topicId: topic.id,
+          creatorId: topic.creatorId,
+          studentId: student.studentId,
+          type: ResultType.INSTRUCTOR
+        });
+
+        if (review.reviewerId) {
+          await this.resultService.initializeResultWithTransaction(manager, {
+            topicId: topic.id,
+            creatorId: review.reviewerId,
+            studentId: student.studentId,
+            type: ResultType.REVIEW
+          });
+        }
+
+        if (defense.councilId) {
+          const council = await this.councilService.getById(defense.councilId);
+          await this.resultService.initializeResultWithTransaction(manager, {
+            topicId: topic.id,
+            creatorId: council.chairmanId,
+            studentId: student.studentId,
+            type: ResultType.DEFENSE
+          });
+          await this.resultService.initializeResultWithTransaction(manager, {
+            topicId: topic.id,
+            creatorId: council.instructorId,
+            studentId: student.studentId,
+            type: ResultType.DEFENSE
+          });
+          await this.resultService.initializeResultWithTransaction(manager, {
+            topicId: topic.id,
+            creatorId: council.commissionerId,
+            studentId: student.studentId,
+            type: ResultType.DEFENSE
+          });
+        }
+      }
+    }
+  }
+
+  public async enableRegisterByThesisIdWithTransaction(
+    manager: EntityManager,
+    thesisId: number
+  ): Promise<void> {
+    const topics = await manager.find(TopicEntity, { thesisId });
+    topics.forEach((topic) => {
+      if (topic.currentStudent < topic.maxStudent) {
+        topic.registerStatus = TopicRegisterStatus.ENABLE;
+      }
+    });
+    await manager.save(topics);
   }
 }

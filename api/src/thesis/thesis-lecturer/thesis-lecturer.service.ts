@@ -1,12 +1,12 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, In, Like, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 
 import { LecturerColumn, LecturerError } from '../../lecturer/lecturer.resource';
 import { LecturerService } from '../../lecturer/lecturer.service';
 import { LecturerForFastView, LecturerSearchAttendee } from '../../lecturer/lecturer.type';
-import { UserColumn, UserStatus } from '../../user/user.resource';
+import { UserColumn } from '../../user/user.resource';
 import { User } from '../../user/user.type';
 import { ThesisStatus } from '../thesis.resource';
 import { Thesis } from '../thesis.type';
@@ -56,7 +56,7 @@ export class ThesisLecturerService {
   public async getThesisLecturersForEdit(thesisId: number): Promise<LecturerSearchAttendee[]> {
     const lecturers = await this.thesisLecturerRepository.find({
       relations: ['lecturer', 'lecturer.user'],
-      where: { thesisId, lecturer: { user: {} } },
+      where: { thesisId },
       cache: true
     });
 
@@ -175,18 +175,16 @@ export class ThesisLecturerService {
     keyword: string,
     thesisId: number
   ): Promise<LecturerForFastView[]> {
+    if (!keyword) {
+      return [];
+    }
+
     const thesisLecturers = await this.thesisLecturerRepository.find({
-      relations: ['lecturer', 'lecturer.user'],
-      where: [
-        {
-          thesisId,
-          lecturer: { user: { firstname: Like(`%${keyword}%`), status: UserStatus.ACTIVE } }
-        },
-        {
-          thesisId,
-          lecturer: { user: { lastname: Like(`%${keyword}%`), status: UserStatus.ACTIVE } }
-        }
-      ],
+      join: {
+        alias: 'tl',
+        innerJoinAndSelect: { lecturer: 'tl.lecturer', user: 'lecturer.user' }
+      },
+      where: this.getSearchConditions(thesisId, keyword),
       cache: true
     });
 

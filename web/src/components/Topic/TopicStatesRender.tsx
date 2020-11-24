@@ -26,7 +26,12 @@ const TopicStatesRender: React.FC<ComponentProps> = ({ states }) => {
           <Timeline.Item
             key={index}
             color={TopicStateActionColor[action]}
-            dot={<Icon component={TopicStateActionIcon[action]} />}>
+            dot={
+              <Icon
+                style={{ color: TopicStateActionColor[action] }}
+                component={TopicStateActionIcon[action]}
+              />
+            }>
             <Space>
               <Tag color={TopicStateActionColor[action]}>{TopicStateActionText[action]}</Tag>
             </Space>

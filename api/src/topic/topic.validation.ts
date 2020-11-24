@@ -91,7 +91,7 @@ export const topicChangeStudentRegisterStatusValidationSchema = Joi.object<
 
 export const stateResultValidationSchema = Joi.number()
   .integer()
-  .valid(StateResult.FALSE, StateResult.TRUE)
+  .valid(StateResult.FAILED, StateResult.PASSED)
   .required()
   .messages({
     'number.base': 'Kết quả không hợp lệ (NUMBER).',
