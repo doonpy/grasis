@@ -52,7 +52,7 @@ const MainLayout: React.FC<CommonPageProps> = (props) => {
         userType={data && data.user.userType}
       />
       <Layout className={styles.layout}>
-        <Header username={data && data.user.username} userId={data && data.user.id} />
+        <Header />
         <Layout.Content className={styles.content}>
           <Breadcrumb breadcrumbs={props.breadcrumbs || []} />
           <div>{props.children}</div>

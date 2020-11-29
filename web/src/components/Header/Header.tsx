@@ -6,18 +6,13 @@ import UserMenu from './UserMenu';
 
 const { Header: AntHeader } = Layout;
 
-interface ComponentProps {
-  username: string;
-  userId: number;
-}
-
-const Header: React.FC<ComponentProps> = ({ username, userId }) => {
+const Header: React.FC = () => {
   return (
     <AntHeader className="site-layout-background">
       <Row justify="end" align="middle">
-        <Space size="middle">
+        <Space>
           <NotificationMenu />
-          <UserMenu username={username} userId={userId} />
+          <UserMenu />
         </Space>
       </Row>
     </AntHeader>
