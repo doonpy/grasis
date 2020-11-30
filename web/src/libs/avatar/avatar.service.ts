@@ -1,13 +1,15 @@
 import { message } from 'antd';
 import { RcFile } from 'antd/lib/upload';
 
+import CommonService from '../common/common.service';
+
 export function getBase64(img: Blob, callback: (imageUrl: string) => void) {
   const reader = new FileReader();
   reader.addEventListener('load', () => callback(reader.result ? reader.result.toString() : ''));
   reader.readAsDataURL(img);
 }
 
-export function beforeUpload(file: RcFile) {
+export async function beforeUpload(file: RcFile): Promise<any> {
   const isValidType = file.type === 'image/jpeg' || file.type === 'image/png';
   if (!isValidType) {
     message.error('Ảnh đại diện phải có định dạng JPG/PNG!');
@@ -17,6 +19,8 @@ export function beforeUpload(file: RcFile) {
   if (!isValidSize) {
     message.error('Ảnh đại diện phải nhỏ hơn 2MB!');
   }
+
+  await CommonService.getInstance().apiService.bindAuthorizationForClient();
 
   return isValidType && isValidSize;
 }

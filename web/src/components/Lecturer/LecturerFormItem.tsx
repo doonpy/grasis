@@ -21,13 +21,14 @@ const LecturerFormItem: React.FC = () => {
             label={LecturerTerminology.LECTURER_6}>
             {LecturerTerminology.LECTURER_6}
           </Select.Option>
+          /Users/p001707/poonne/grasis/api/src/upload/upload.controller.ts
           <Select.Option
             value={LecturerTerminology.LECTURER_7}
             label={LecturerTerminology.LECTURER_7}>
             {LecturerTerminology.LECTURER_7}
           </Select.Option>
           <Select.Option
-            value={LecturerTerminology.LECTURER_5}
+            value={LecturerTerminology.LECTURER_8}
             label={LecturerTerminology.LECTURER_8}>
             {LecturerTerminology.LECTURER_8}
           </Select.Option>

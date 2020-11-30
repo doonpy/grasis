@@ -76,7 +76,8 @@ export default class UserService extends CommonService {
         if (userId && currentPath === COMMON_PATH.LOGIN) {
           await this.redirectService.redirectTo(COMMON_PATH.INDEX);
         }
-      }
+      },
+      refreshInterval: 5000
     });
 
     return data;

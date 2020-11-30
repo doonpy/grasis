@@ -6,7 +6,6 @@ import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 
 const { confirm } = Modal;
-import styles from '../../../../assets/css/pages/student/admin/index.module.css';
 import { StudentTerminology } from '../../../../assets/terminology/student.terminology';
 import AvatarView from '../../../../components/Avatar/AvatarView';
 import MainLayout from '../../../../components/Layout/MainLayout';
@@ -78,9 +77,9 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       }>
       {data && (
         <Space size={48} align={'start'}>
-          <div className={styles.avatar}>
+          <Space direction="vertical" align="center">
             <AvatarView userId={studentId} width={250} height={250} />
-          </div>
+          </Space>
           <UserView user={data.student.user} userType={UserType.STUDENT} />
           <StudentView student={data.student} />
         </Space>

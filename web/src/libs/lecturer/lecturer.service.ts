@@ -1,7 +1,9 @@
 import { TransferItem } from 'antd/lib/transfer';
+import useSWR from 'swr';
 
 import LecturerBase from './lecturer.base';
-import { LecturerSearchAttendee } from './lecturer.type';
+import { LecturerApi } from './lecturer.resource';
+import { FindOneLecturerResponse, LecturerSearchAttendee, UseLecturer } from './lecturer.type';
 
 export default class LecturerService extends LecturerBase {
   private static instance: LecturerService;
@@ -24,5 +26,14 @@ export default class LecturerService extends LecturerBase {
       fullName: fullName,
       attendeeId: attendeeId
     }));
+  }
+
+  public useLecturer(id: number): UseLecturer {
+    const { data } = useSWR<FindOneLecturerResponse>(this.replaceParams(LecturerApi.SPECIFY, [id]));
+    if (data && data.lecturer.level && typeof data.lecturer.level === 'string') {
+      data.lecturer.level = data.lecturer.level.split(';');
+    }
+
+    return { data, isLoading: !data };
   }
 }

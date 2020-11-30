@@ -62,3 +62,5 @@ export const UploadError = {
   ERR_8: 'Dung lượng tệp quá lớn.',
   ERR_9: `Số lượng tài liệu kết quả không vượt quá ${UPLOAD_RESULT_LIMIT_FILES}.`
 };
+
+export const UPLOAD_AVATAR_BODY_PROPERTY = 'avatar';
