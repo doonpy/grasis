@@ -76,9 +76,6 @@ export class LecturerService {
     userBody: UserRequestBody,
     lecturerBody?: LecturerRequestBody
   ): Promise<Lecturer> {
-    const userEntity = await this.userService.createUser(userBody);
-    userEntity.userType = UserType.LECTURER;
-
     let lecturerEntity: Lecturer;
     if (lecturerBody) {
       if (lecturerBody.lecturerId) {
@@ -94,8 +91,13 @@ export class LecturerService {
       lecturerEntity = this.lecturerRepository.create({});
     }
 
-    lecturerEntity.user = userEntity;
-    return this.lecturerRepository.save(lecturerEntity);
+    return this.connection.transaction(async (manager) => {
+      userBody.userType = UserType.LECTURER;
+      const user = await this.userService.createUserWithTransaction(manager, userBody);
+      lecturerEntity.id = user.id;
+
+      return manager.save(lecturerEntity);
+    });
   }
 
   public async updateById(

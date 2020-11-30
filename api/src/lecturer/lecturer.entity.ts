@@ -16,7 +16,7 @@ import { LecturerForFastView } from './lecturer.type';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: LECTURER_TABLE })
 export class LecturerEntity extends CommonEntity {
-  @PrimaryColumn({ name: CommonColumn.ID, type: 'int' })
+  @PrimaryColumn({ name: CommonColumn.ID })
   public id!: number;
 
   @Column({
@@ -50,7 +50,7 @@ export class LecturerEntity extends CommonEntity {
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: ThesisLecturerColumn.LECTURER_ID })
   public theses!: ThesisLecturer[];
 
-  @OneToOne(() => UserEntity, { cascade: true })
+  @OneToOne(() => UserEntity, (user) => user, { cascade: true })
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: CommonColumn.ID })
   public user!: User;
 

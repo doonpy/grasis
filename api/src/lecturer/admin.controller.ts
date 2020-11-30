@@ -102,11 +102,11 @@ export class LecturerAdminController {
     @Body(LecturerBodyProps.LECTURER, new JoiValidationPipe(lecturerValidationSchema))
     lecturer: LecturerRequestBody
   ): Promise<LecturerCreateOrUpdateResponse> {
-    const createdLecturer: Lecturer = await this.lecturerService.create(user, lecturer);
+    const { id } = await this.lecturerService.create(user, lecturer);
 
     return {
       statusCode: HttpStatus.CREATED,
-      id: createdLecturer.user.id
+      id
     };
   }
 

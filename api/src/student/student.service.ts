@@ -91,9 +91,6 @@ export class StudentService {
     userBody: UserRequestBody,
     studentBody?: StudentRequestBody
   ): Promise<Student> {
-    const userEntity = await this.userService.createUser(userBody);
-    userEntity.userType = UserType.STUDENT;
-
     let studentEntity: Student;
     if (studentBody) {
       if (studentBody.studentId) {
@@ -105,8 +102,13 @@ export class StudentService {
       studentEntity = this.studentRepository.create({});
     }
 
-    studentEntity.user = userEntity;
-    return this.studentRepository.save(studentEntity);
+    return this.connection.transaction(async (manager) => {
+      userBody.userType = UserType.STUDENT;
+      const user = await this.userService.createUserWithTransaction(manager, userBody);
+      studentEntity.id = user.id;
+
+      return manager.save(studentEntity);
+    });
   }
 
   public async updateById(

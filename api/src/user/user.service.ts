@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createHmac } from 'crypto';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { UserEntity } from './user.entity';
 import { IsAdmin, UserError, UserStatus, UserType } from './user.resource';
@@ -45,14 +45,15 @@ export class UserService {
     }
   }
 
-  public async createUser(user: UserRequestBody): Promise<User> {
-    const { username, password, confirmPassword, userType, isAdmin } = user;
-    this.checkStudentCantNotAdministrator(isAdmin, userType);
-    await this.checkUserNotExistByUsername(username);
-    this.checkPasswordConfirm(password, confirmPassword);
+  public async createUserWithTransaction(
+    manager: EntityManager,
+    user: UserRequestBody
+  ): Promise<User> {
+    const { username, password } = user;
     user.password = this.hashPassword(password, username!);
+    const entity = manager.create(UserEntity, user);
 
-    return this.usersRepository.create(user);
+    return manager.save(UserEntity, entity);
   }
 
   public async updateById(currentUser: User, userBody: UserRequestBody): Promise<User> {
@@ -153,5 +154,12 @@ export class UserService {
     const { id, firstname, lastname } = user;
 
     return { id, firstname, lastname };
+  }
+
+  public async validate(user: UserRequestBody): Promise<void> {
+    const { username, password, confirmPassword, userType, isAdmin } = user;
+    this.checkStudentCantNotAdministrator(isAdmin, userType);
+    await this.checkUserNotExistByUsername(username);
+    this.checkPasswordConfirm(password, confirmPassword);
   }
 }
