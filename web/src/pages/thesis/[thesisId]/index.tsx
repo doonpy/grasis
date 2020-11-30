@@ -19,7 +19,7 @@ import ThesisStudentList from '../../../components/Thesis/ThesisStudentList';
 import TopicList from '../../../components/Topic/TopicList';
 import { SIDER_KEYS } from '../../../libs/common/common.resource';
 import { CommonPageProps, NextPageWithLayout } from '../../../libs/common/common.type';
-import { THESIS_PATH_ROOT, ThesisTabKey } from '../../../libs/thesis/thesis.resource';
+import { THESIS_PATH_ROOT, ThesisState, ThesisTabKey } from '../../../libs/thesis/thesis.resource';
 import ThesisService from '../../../libs/thesis/thesis.service';
 import LoginUser from '../../../libs/user/instance/LoginUser';
 import { UserType } from '../../../libs/user/user.resource';
@@ -42,6 +42,32 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
     setCurrentTab(activeKey);
   };
 
+  if (!data) {
+    return <Empty description={TopicTerminology.TOPIC_63} />;
+  }
+
+  const topicListRender = () => {
+    if (
+      (loginUser.isStudent() && data.thesis.state >= ThesisState.STUDENT_TOPIC_REGISTER) ||
+      (loginUser.isLecturer() && data.thesis.state >= ThesisState.LECTURER_TOPIC_REGISTER)
+    ) {
+      return (
+        <Tabs.TabPane
+          tab={
+            <span>
+              <Icon component={ListAltIcon} />
+              {TopicTerminology.TOPIC_6}
+            </span>
+          }
+          key={ThesisTabKey.TOPICS}>
+          <TopicList thesis={data.thesis} canFetch={currentTab === ThesisTabKey.TOPICS} />
+        </Tabs.TabPane>
+      );
+    }
+
+    return <></>;
+  };
+
   return (
     <Card title={ThesisTerminology.THESIS_4}>
       {!data ? (
@@ -58,18 +84,6 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
             key={ThesisTabKey.INFO}>
             <ThesisInfo thesis={data.thesis} />
           </Tabs.TabPane>
-          {loginUser.getId() === data.thesis.creatorId && (
-            <Tabs.TabPane
-              tab={
-                <span>
-                  <Icon component={UsersIcon} />
-                  {CouncilTerminology.COUNCIL_1}
-                </span>
-              }
-              key={ThesisTabKey.COUNCILS}>
-              <CouncilList thesis={data.thesis} canFetch={currentTab === ThesisTabKey.COUNCILS} />
-            </Tabs.TabPane>
-          )}
           <Tabs.TabPane
             tab={
               <span>
@@ -96,16 +110,19 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               canFetch={currentTab === ThesisTabKey.STUDENTS}
             />
           </Tabs.TabPane>
-          <Tabs.TabPane
-            tab={
-              <span>
-                <Icon component={ListAltIcon} />
-                {TopicTerminology.TOPIC_6}
-              </span>
-            }
-            key={ThesisTabKey.TOPICS}>
-            <TopicList thesis={data.thesis} canFetch={currentTab === ThesisTabKey.TOPICS} />
-          </Tabs.TabPane>
+          {topicListRender()}
+          {data.thesis.state >= ThesisState.DEFENSE && loginUser.getId() === data.thesis.creatorId && (
+            <Tabs.TabPane
+              tab={
+                <span>
+                  <Icon component={UsersIcon} />
+                  {CouncilTerminology.COUNCIL_1}
+                </span>
+              }
+              key={ThesisTabKey.COUNCILS}>
+              <CouncilList thesis={data.thesis} canFetch={currentTab === ThesisTabKey.COUNCILS} />
+            </Tabs.TabPane>
+          )}
         </Tabs>
       )}
     </Card>

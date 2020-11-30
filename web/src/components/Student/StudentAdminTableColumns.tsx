@@ -4,6 +4,7 @@ import { ColumnsType } from 'antd/lib/table';
 import Link from 'next/link';
 import React from 'react';
 
+import { StudentTerminology } from '../../assets/terminology/student.terminology';
 import { sortByString } from '../../libs/common/common.helper';
 import { STUDENT_ADMIN_PATH_ROOT } from '../../libs/student/student.resource';
 import { StudentForListView } from '../../libs/student/student.type';
@@ -27,7 +28,7 @@ export const StudentAdminTableColumns: ColumnsType<StudentForListView> = [
     render: idRender
   },
   {
-    title: 'Mã sinh viên',
+    title: StudentTerminology.STUDENT_3,
     dataIndex: 'studentId',
     key: 'studentId',
     width: '10%',

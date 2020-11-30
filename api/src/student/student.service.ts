@@ -243,7 +243,6 @@ export class StudentService {
   public async findByIdsForThesis(ids: number[]): Promise<Student[]> {
     return await this.studentRepository.findByIds(ids, {
       relations: ['user'],
-      where: {},
       cache: true
     });
   }
@@ -251,7 +250,6 @@ export class StudentService {
   public async findByIdsWithTransaction(manager: EntityManager, ids: number[]): Promise<Student[]> {
     return await manager.findByIds(StudentEntity, ids, {
       relations: ['user'],
-      where: {},
       cache: true
     });
   }

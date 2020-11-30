@@ -16,7 +16,6 @@ export class UserService {
 
   public async getById(id: number): Promise<User> {
     const user: User | undefined = await this.usersRepository.findOne(id, {
-      where: {},
       cache: true
     });
     if (!user) {

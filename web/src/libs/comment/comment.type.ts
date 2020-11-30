@@ -1,6 +1,6 @@
 import { ReportModule } from '../common/common.resource';
 import { CommonColumns, CommonResponse } from '../common/common.type';
-import { UserForCommentView } from '../user/user.type';
+import { UserForFastView } from '../user/user.type';
 import { CommentMode } from './comment.resource';
 
 export interface Comment extends CommonColumns {
@@ -13,7 +13,7 @@ export interface Comment extends CommonColumns {
 }
 
 export type CommentForView = Pick<Comment, 'id' | 'content' | 'mode' | 'createdAt'> & {
-  creatorInfo: UserForCommentView;
+  creatorInfo: UserForFastView;
 };
 
 export interface CommentGetManyResponse extends CommonResponse {

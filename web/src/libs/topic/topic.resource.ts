@@ -16,7 +16,8 @@ export const TopicApi = {
   CHANGE_STUDENT_REGISTER_STATUS: `${TOPIC_API_ROOT}/@0/students/@1/change-register-topic-status`,
   GET_REVIEW: `${TOPIC_API_ROOT}/@0/review`,
   GET_STUDENTS: `${TOPIC_API_ROOT}/@0/students?offset=@1`,
-  GET_STATES: `${TOPIC_API_ROOT}/@0/states`
+  GET_STATES: `${TOPIC_API_ROOT}/@0/states`,
+  GET_RESULTS: `${TOPIC_API_ROOT}/@0/results`
 };
 
 export const TOPIC_PATH_ROOT = `${THESIS_PATH_ROOT}/@0/topic`;
@@ -33,5 +34,6 @@ export const TopicTabKey = {
   PRIVATE_CONTENT: '3',
   PROGRESS_REPORT: '4',
   REVIEW: '5',
-  DEFENSE: '6'
+  DEFENSE: '6',
+  RESULT: '7'
 };

@@ -1,8 +1,7 @@
-import { Empty, Table } from 'antd';
+import { Table } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination';
 import React, { useEffect, useState } from 'react';
 
-import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import { DEFAULT_PAGE_SIZE } from '../../libs/common/common.resource';
 import ThesisService from '../../libs/thesis/thesis.service';
 import SearchBox from '../Common/SearchBox';
@@ -39,10 +38,6 @@ const ThesisLecturerList: React.FC<ComponentPros> = ({ thesisId, canFetch }) => 
     }
   }, [data]);
 
-  if (!data) {
-    return <Empty description={ThesisTerminology.THESIS_48} />;
-  }
-
   const handleTableChange = (paginationValues: PaginationProps) => {
     setPagination({ ...pagination, ...paginationValues });
   };
@@ -51,7 +46,7 @@ const ThesisLecturerList: React.FC<ComponentPros> = ({ thesisId, canFetch }) => 
     <Table
       bordered
       columns={ThesisLecturerTableColumns}
-      dataSource={data.lecturers}
+      dataSource={data && data.lecturers}
       loading={isLoading}
       pagination={pagination}
       size="middle"

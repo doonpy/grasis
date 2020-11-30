@@ -18,6 +18,7 @@ import { DownloadModule } from './download/download.module';
 import { LecturerModule } from './lecturer/lecturer.module';
 import { ProgressReportModule } from './progress-report/progress-report.module';
 import { RefreshModule } from './refresh/refresh.module';
+import { ResultModule } from './result/result.module';
 import { ReviewModule } from './review/review.module';
 import { StudentModule } from './student/student.module';
 import { ThesisModule } from './thesis/thesis.module';
@@ -65,7 +66,8 @@ function getEnvFilePath(): string {
     DownloadModule,
     ReviewModule,
     CouncilModule,
-    DefenseModule
+    DefenseModule,
+    ResultModule
   ],
   controllers: [AppController],
   providers: [AppService]

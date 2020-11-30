@@ -71,13 +71,12 @@ LOCK TABLES thesis_student WRITE;
 ALTER TABLE thesis_student
     DISABLE KEYS;
 
-REPLACE INTO thesis_student (deleted_at, created_at, updated_at, thesis_id, student_id, instructor_result,
-                             review_result, defense_result)
-VALUES (NULL, DEFAULT, DEFAULT, 1, 2, NULL, NULL, NULL),
-       (NULL, DEFAULT, DEFAULT, 1, 3, NULL, NULL, NULL),
-       (NULL, DEFAULT, DEFAULT, 1, 4, NULL, NULL, NULL),
-       (NULL, DEFAULT, DEFAULT, 1, 5, NULL, NULL, NULL),
-       (NULL, DEFAULT, DEFAULT, 1, 6, NULL, NULL, NULL);
+REPLACE INTO thesis_student (deleted_at, created_at, updated_at, thesis_id, student_id)
+VALUES (NULL, DEFAULT, DEFAULT, 1, 2),
+       (NULL, DEFAULT, DEFAULT, 1, 3),
+       (NULL, DEFAULT, DEFAULT, 1, 4),
+       (NULL, DEFAULT, DEFAULT, 1, 5),
+       (NULL, DEFAULT, DEFAULT, 1, 6);
 
 ALTER TABLE thesis_student
     ENABLE KEYS;

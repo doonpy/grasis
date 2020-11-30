@@ -8,10 +8,10 @@ export const DefenseError = {
   ERR_1: 'Vị trí giảng viên hướng dẫn của hội đồng bảo vệ không phù hợp với đề tài này.',
   ERR_2: 'Bảo vệ không tồn tại.',
   ERR_3: 'Thời gian bảo vệ không hợp lệ.',
-  ERR_4: 'Bạn không phải sinh viên thực hiện đề tài này.',
-  ERR_5: 'Khóa luận đang ngưng hoạt động.',
-  ERR_6: 'Hiện tại không phải thời gian bảo vệ.',
-  ERR_7: 'Bạn không thuộc hội đồng bảo vệ đề tài này.'
+  ERR_4: 'Khóa luận đang ngưng hoạt động.',
+  ERR_5: 'Hiện tại không phải thời gian bảo vệ.',
+  ERR_6: 'Bạn không thuộc hội đồng bảo vệ đề tài này.',
+  ERR_7: 'Đề tài này chưa có hội đồng bảo vệ.'
 };
 
 export const DefensePath = {

@@ -60,11 +60,10 @@ export class ReviewService {
   public async updateById(id: number, data: ReviewRequestBody, userId: number): Promise<void> {
     const currentReview = await this.getById(id);
     this.checkResultIsNotDecided(currentReview.result);
-    const topic = await this.topicService.getById(id);
+    const topic = await this.topicService.getById(id, true);
     await this.topicService.checkPermission(topic, userId);
-    const thesis = await this.thesisService.getById(topic.thesisId);
     if (data.time) {
-      await this.checkValidTime(thesis, data.time);
+      await this.checkValidTime(topic.thesis, data.time);
     }
 
     await this.reviewRepository.update({ id }, { ...currentReview, ...data });
@@ -118,7 +117,7 @@ export class ReviewService {
   }
 
   public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
-    const topic = await this.topicService.getById(topicId);
+    const topic = await this.topicService.getById(topicId, true);
     await this.topicService.checkPermission(topic, userId);
     this.thesisService.checkThesisIsActive(topic.thesis);
 
@@ -126,10 +125,7 @@ export class ReviewService {
       throw new BadRequestException(ReviewError.ERR_6);
     }
 
-    if (!(await this.topicStudentService.hasParticipatedTopic(topicId, userId))) {
-      throw new BadRequestException(ReviewError.ERR_4);
-    }
-
+    await this.topicStudentService.checkParticipatedTopic(topic.id, userId);
     const review = await this.getById(topicId);
     this.checkResultIsNotDecided(review.result);
   }
@@ -147,7 +143,7 @@ export class ReviewService {
   }
 
   public async getByIds(ids: number[]): Promise<Review[]> {
-    return this.reviewRepository.findByIds(ids, { where: {}, cache: true });
+    return this.reviewRepository.findByIds(ids, { cache: true });
   }
 
   public async checkUploadResultPermission(topicId: number, userId: number): Promise<void> {
@@ -159,10 +155,7 @@ export class ReviewService {
     }
 
     const review = await this.getById(topicId);
-    if (!(await this.hasReviewerPermission(review, userId))) {
-      throw new BadRequestException(ReviewError.ERR_7);
-    }
-
+    await this.checkReviewerPermission(review, userId);
     this.checkResultIsNotDecided(review.result);
   }
 
@@ -172,14 +165,26 @@ export class ReviewService {
     }
   }
 
-  public async hasReviewerPermission(review: number | Review, userId: number): Promise<boolean> {
+  public checkResultIsPassed(result: StateResult): void {
+    if (result !== StateResult.PASSED) {
+      throw new BadRequestException(ReviewError.ERR_10);
+    }
+  }
+
+  public async hasReviewerPermission(reviewId: number | Review, userId: number): Promise<boolean> {
     let reviewData: Review | undefined;
-    if (typeof review === 'number') {
-      reviewData = await this.getById(review);
+    if (typeof reviewId === 'number') {
+      reviewData = await this.getById(reviewId);
     } else {
-      reviewData = review;
+      reviewData = reviewId;
     }
 
     return userId === reviewData.reviewerId;
+  }
+
+  public async checkReviewerPermission(reviewId: number | Review, userId: number): Promise<void> {
+    if (!(await this.hasReviewerPermission(reviewId, userId))) {
+      throw new BadRequestException(ReviewError.ERR_7);
+    }
   }
 }

@@ -5,7 +5,7 @@ import { EntityManager, In, Not, Repository } from 'typeorm';
 import { ThesisStatus } from '../../thesis/thesis.resource';
 import { TopicError } from '../topic.resource';
 import { TopicStudentEntity } from './topic_student.entity';
-import { TopicStudentStatus } from './topic-student.resouce';
+import { TopicStudentError, TopicStudentStatus } from './topic-student.resouce';
 import { TopicStudent } from './topic-student.type';
 
 @Injectable()
@@ -169,5 +169,11 @@ export class TopicStudentService {
       },
       cache: true
     });
+  }
+
+  public async checkParticipatedTopic(topicId: number, studentId: number): Promise<void> {
+    if (!(await this.hasParticipatedTopic(topicId, studentId))) {
+      throw new BadRequestException(TopicStudentError.ERR_1);
+    }
   }
 }

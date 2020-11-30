@@ -27,7 +27,8 @@ export const TopicPath = {
   CHANGE_STUDENT_REGISTER_STATUS: ':id/students/:studentId/change-register-topic-status',
   GET_REVIEW: ':id/review',
   GET_STUDENTS: ':id/students',
-  GET_STATES: ':id/states'
+  GET_STATES: ':id/states',
+  GET_RESULTS: ':id/results'
 };
 
 export const TopicError = {
@@ -56,8 +57,8 @@ export const TopicQuery = {
 
 export enum StateResult {
   NOT_DECIDED = 1,
-  TRUE,
-  FALSE
+  PASSED,
+  FAILED
 }
 
 export const TopicStateBaseColumn = {

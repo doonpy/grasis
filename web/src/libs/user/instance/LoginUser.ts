@@ -40,4 +40,8 @@ export default class LoginUser {
   public isStudent(): boolean {
     return this.user.userType === UserType.STUDENT;
   }
+
+  public getFullName(): string {
+    return `${this.user.lastname || ''} ${this.user.firstname || ''}`;
+  }
 }

@@ -54,8 +54,7 @@ export class ProgressReportService {
   public async updateById(id: number, data: ProgressReportRequestBody): Promise<void> {
     const currentProgressReport = await this.getById(id);
     this.checkResultIsNotDecided(currentProgressReport.result);
-
-    const { thesis } = await this.topicService.getById(id);
+    const { thesis } = await this.topicService.getById(id, true);
     if (data.time) {
       await this.checkValidTime(thesis, data.time);
     }
@@ -99,7 +98,7 @@ export class ProgressReportService {
   }
 
   public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
-    const topic = await this.topicService.getById(topicId);
+    const topic = await this.topicService.getById(topicId, true);
     await this.topicService.checkPermission(topic, userId);
     this.thesisService.checkThesisIsActive(topic.thesis);
 
@@ -107,10 +106,7 @@ export class ProgressReportService {
       throw new BadRequestException(ProgressReportError.ERR_6);
     }
 
-    if (!(await this.topicStudentService.hasParticipatedTopic(topicId, userId))) {
-      throw new BadRequestException(ProgressReportError.ERR_4);
-    }
-
+    await this.topicStudentService.checkParticipatedTopic(topic.id, userId);
     const progressReport = await this.getById(topicId);
     this.checkResultIsNotDecided(progressReport.result);
   }
@@ -124,7 +120,6 @@ export class ProgressReportService {
 
   public async getByIds(ids: number[]): Promise<ProgressReport[]> {
     return this.progressReportRepository.findByIds(ids, {
-      where: {},
       cache: true
     });
   }

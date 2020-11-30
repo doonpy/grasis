@@ -1,10 +1,10 @@
 import ArrowAltCircleDown from '../../../assets/svg/regular/arrow-alt-circle-down.svg';
-import BanIcon from '../../../assets/svg/regular/ban.svg';
 import CheckCircleIcon from '../../../assets/svg/regular/check-circle.svg';
 import MinusCircleIcon from '../../../assets/svg/regular/minus-circle.svg';
 import PlusCircleIcon from '../../../assets/svg/regular/plus-circle.svg';
-import SendBackIcon from '../../../assets/svg/regular/send-back.svg';
 import StampIcon from '../../../assets/svg/regular/stamp.svg';
+import TimesCircleIcon from '../../../assets/svg/regular/times-circle.svg';
+import UndoAltIcon from '../../../assets/svg/regular/undo-alt.svg';
 import { CommonTerminology } from '../../../assets/terminology/common.terminology';
 import { TopicTerminology } from '../../../assets/terminology/topic.terminology';
 
@@ -36,10 +36,10 @@ export const TopicStateActionIcon = [
   PlusCircleIcon,
   CheckCircleIcon,
   MinusCircleIcon,
-  SendBackIcon,
+  UndoAltIcon,
   ArrowAltCircleDown,
   StampIcon,
-  BanIcon
+  TimesCircleIcon
 ];
 
 export enum StateResult {

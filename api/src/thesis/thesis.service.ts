@@ -186,8 +186,7 @@ export class ThesisService {
 
   public async getById(id: number): Promise<Thesis> {
     const thesis = await this.thesisRepository.findOne(id, {
-      relations: ['creator', 'creator.user'],
-      where: {}
+      relations: ['creator', 'creator.user']
     });
     if (!thesis) {
       throw new BadRequestException(ThesisError.ERR_7);
@@ -603,12 +602,20 @@ export class ThesisService {
       await this.topicService.disableRegisterStatusByThesisIdWithTransaction(manager, thesis.id);
     }
 
+    if (state === ThesisState.STUDENT_TOPIC_REGISTER) {
+      await this.topicService.enableRegisterByThesisIdWithTransaction(manager, thesis.id);
+    }
+
     if (state === ThesisState.REVIEW) {
       await this.topicService.createReviewWithTransaction(manager, thesis);
     }
 
     if (state === ThesisState.DEFENSE) {
       await this.topicService.createDefenseWithTransaction(manager, thesis);
+    }
+
+    if (state === ThesisState.RESULT) {
+      await this.topicService.createResultWithTransaction(manager, thesis);
     }
   }
 

@@ -52,8 +52,7 @@ export class LecturerService {
 
   public async getById(id: number): Promise<Lecturer> {
     const lecturer: Lecturer | undefined = await this.lecturerRepository.findOne(id, {
-      relations: ['user'],
-      where: {}
+      relations: ['user']
     });
 
     if (!lecturer) {
@@ -222,7 +221,6 @@ export class LecturerService {
   public async findByIds(ids: number[]): Promise<Lecturer[]> {
     return await this.lecturerRepository.findByIds(ids, {
       relations: ['user'],
-      where: {},
       cache: true
     });
   }
@@ -233,7 +231,6 @@ export class LecturerService {
   ): Promise<Lecturer[]> {
     return await manager.findByIds(LecturerEntity, ids, {
       relations: ['user'],
-      where: {},
       cache: true
     });
   }
