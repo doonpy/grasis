@@ -41,11 +41,14 @@ export class TopicService {
     private readonly lecturerService: LecturerService,
     private readonly connection: Connection,
     private readonly topicStudentService: TopicStudentService,
+    @Inject(forwardRef(() => StudentService))
     private readonly studentService: StudentService,
     private readonly progressReportService: ProgressReportService,
     private readonly commentService: CommentService,
     private readonly reviewService: ReviewService,
+    @Inject(forwardRef(() => DefenseService))
     private readonly defenseService: DefenseService,
+    @Inject(forwardRef(() => ResultService))
     private readonly resultService: ResultService,
     private readonly councilService: CouncilService
   ) {}
@@ -664,7 +667,7 @@ export class TopicService {
     }
   }
 
-  private async getManyByThesisId(thesisId: number): Promise<Topic[]> {
+  public async getManyByThesisId(thesisId: number): Promise<Topic[]> {
     return this.topicRepository.find({
       where: {
         thesisId

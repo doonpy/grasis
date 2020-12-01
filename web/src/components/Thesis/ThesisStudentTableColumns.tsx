@@ -4,10 +4,12 @@ import { ColumnsType } from 'antd/lib/table';
 import Link from 'next/link';
 import React from 'react';
 
+import { ResultTerminology } from '../../assets/terminology/result.terminology';
 import { StudentTerminology } from '../../assets/terminology/student.terminology';
 import UserTerminology from '../../assets/terminology/user.terminology';
 import { sortByNumber, sortByString } from '../../libs/common/common.helper';
 import CommonService from '../../libs/common/common.service';
+import { ResultPointColor } from '../../libs/result/result.resource';
 import { StudentPath } from '../../libs/student/student.resource';
 import { ThesisStudentForView } from '../../libs/thesis/thesis-student/thesis-student.type';
 import { Gender } from '../../libs/user/user.resource';
@@ -95,5 +97,21 @@ export const ThesisStudentTableColumns: ColumnsType<ThesisStudentForView> = [
       multiple: 7
     },
     render: (value: string | null) => <TextData text={value} />
+  },
+  {
+    title: ResultTerminology.RESULT_1,
+    key: 'result',
+    dataIndex: 'result',
+    align: 'center',
+    sorter: {
+      compare: (a, b) => sortByNumber(a.result, b.result),
+      multiple: 8
+    },
+    render: (value: number) => (
+      <TextData
+        color={value < 5 ? ResultPointColor.RED : ResultPointColor.GREEN}
+        text={value.toString()}
+      />
+    )
   }
 ];
