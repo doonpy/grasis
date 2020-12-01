@@ -1,58 +1,71 @@
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { Upload } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { Button, message, Space, Upload } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { UploadChangeParam } from 'antd/lib/upload';
 import React, { useState } from 'react';
 
+import FallbackImage from '../../assets/img/fallback-img.png';
+import { UploadTerminology } from '../../assets/terminology/upload.terminology';
 import { beforeUpload, getBase64 } from '../../libs/avatar/avatar.service';
-import JwtClient from '../../libs/jwt/jwt.client';
+import CommonService from '../../libs/common/common.service';
+import { UPLOAD_AVATAR_BODY_PROPERTY, UploadApi } from '../../libs/upload/upload.resource';
 
-const AvatarFormItem: React.FC = () => {
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>('');
-  const jwtService = JwtClient.getInstance();
+interface ComponentProps {
+  defaultImageUrl: string;
+  width?: number | string;
+  height?: number | string;
+}
+
+const AvatarFormItem: React.FC<ComponentProps> = ({ defaultImageUrl, width, height }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [imageUrl, setImageUrl] = useState<string>(defaultImageUrl);
+  const commonService = CommonService.getInstance();
 
   const handleChange = (info: UploadChangeParam) => {
     if (info.file.status === 'uploading') {
       setLoading(true);
       return;
     }
+
     if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj as Blob, (imageUrl: string) => {
-        setLoading(true);
-        setImageUrl(imageUrl);
+      getBase64(info.file.originFileObj as Blob, (uploadedUrl: string) => {
+        setImageUrl(uploadedUrl);
+        message.success(UploadTerminology.UPLOAD_3);
+        setLoading(false);
       });
     }
   };
 
-  const uploadButton = (
-    <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Tải lên</div>
-    </div>
-  );
-
   return (
-    <ImgCrop rotate grid modalTitle="Chỉnh sửa ảnh đại diện" modalOk="Hoàn thành" modalCancel="Hủy">
-      <Upload
-        name="avatar"
-        listType="picture-card"
-        className="avatar-uploader"
-        headers={{
-          Authorization: jwtService.getAccessTokenForAuth()
-        }}
-        action={`${process.env.NEXT_PUBLIC_API_SERVER}/upload/avatar`}
-        showUploadList={false}
-        beforeUpload={beforeUpload}
-        onChange={handleChange}>
-        {imageUrl ? (
-          <img src={imageUrl} alt="avatar" style={{ width: '100px', height: '100px' }} />
-        ) : (
-          uploadButton
-        )}
-      </Upload>
-    </ImgCrop>
+    <Space direction="vertical" align="center">
+      <img
+        src={imageUrl}
+        width={width}
+        height={height}
+        onError={() => setImageUrl(FallbackImage)}
+        alt="avatar"
+      />
+      <ImgCrop
+        rotate
+        grid
+        modalTitle="Chỉnh sửa ảnh đại diện"
+        modalOk="Hoàn thành"
+        modalCancel="Hủy">
+        <Upload
+          name={UPLOAD_AVATAR_BODY_PROPERTY}
+          headers={{
+            Authorization: commonService.jwtService.getAccessTokenForAuth()
+          }}
+          action={`${commonService.apiService.getBaseUrl()}/${UploadApi.AVATAR}`}
+          showUploadList={false}
+          beforeUpload={beforeUpload}
+          onChange={handleChange}>
+          <Button loading={loading} icon={<UploadOutlined />}>
+            {UploadTerminology.UPLOAD_5}
+          </Button>
+        </Upload>
+      </ImgCrop>
+    </Space>
   );
 };
 

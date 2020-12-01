@@ -3,9 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Not, Repository } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 
+import { ResultService } from '../../result/result.service';
 import { StudentColumn, StudentError } from '../../student/student.resource';
 import { StudentService } from '../../student/student.service';
 import { StudentSearchAttendee } from '../../student/student.type';
+import { TopicService } from '../../topic/topic.service';
 import { UserColumn } from '../../user/user.resource';
 import { User } from '../../user/user.type';
 import { ThesisLecturerColumn } from '../thesis-lecturer/thesis-lecturer.resource';
@@ -22,7 +24,9 @@ export class ThesisStudentService {
     @InjectRepository(ThesisStudentEntity)
     private readonly thesisStudentRepository: Repository<ThesisStudent>,
     @Inject(forwardRef(() => StudentService))
-    private readonly studentService: StudentService
+    private readonly studentService: StudentService,
+    private readonly resultService: ResultService,
+    private readonly topicService: TopicService
   ) {}
 
   public createEntity(data: Partial<ThesisStudent>): ThesisStudent {
@@ -72,18 +76,21 @@ export class ThesisStudentService {
     thesisId: number,
     keyword?: string
   ): Promise<ThesisStudentForView[]> {
-    return (
-      await this.thesisStudentRepository.find({
-        join: {
-          alias: 'ts',
-          innerJoinAndSelect: { student: 'ts.student', user: 'student.user' }
-        },
-        where: this.getSearchConditions(thesisId, keyword),
-        skip: offset,
-        take: limit,
-        cache: true
-      })
-    ).map(
+    const topicIds = (await this.topicService.getManyByThesisId(thesisId)).map(({ id }) => id);
+    const students = await this.thesisStudentRepository.find({
+      join: {
+        alias: 'ts',
+        innerJoinAndSelect: { student: 'ts.student', user: 'student.user' }
+      },
+      where: this.getSearchConditions(thesisId, keyword),
+      skip: offset,
+      take: limit,
+      cache: true
+    });
+    const studentIds = students.map(({ studentId }) => studentId);
+    const studentResults = await this.resultService.getByStudentIds(topicIds, studentIds);
+
+    return students.map(
       ({
         student: {
           id,
@@ -92,7 +99,12 @@ export class ThesisStudentService {
           schoolYear,
           user: { firstname, lastname, gender }
         }
-      }) => ({ id, schoolYear, studentClass, studentId, firstname, lastname, gender })
+      }) => {
+        const results = studentResults.filter(({ studentId }) => studentId === id);
+        const result = this.resultService.calculateFinishAverage(results);
+
+        return { id, schoolYear, studentClass, studentId, firstname, lastname, gender, result };
+      }
     );
   }
 

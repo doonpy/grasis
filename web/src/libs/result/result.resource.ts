@@ -18,3 +18,5 @@ export const ResultApi = {
   ADMIN_SPECIFY: `${RESULT_ADMIN_API_ROOT}/@0`,
   ADMIN_CHANGE_RESULT: `${RESULT_ADMIN_API_ROOT}/@0/change-result`
 };
+
+export const ResultPointColor = { RED: '#cf1322', GREEN: '#3f8600' };

@@ -32,7 +32,7 @@ import { UploadReportInterceptor } from './interceptors/upload-report.intercepto
 import { UploadResultInterceptor } from './interceptors/upload-result.interceptor';
 import { avatarFileFilter, getAvatarDestination, getAvatarFilename } from './upload.helper';
 import {
-  UPLOAD_REPORT_BODY_PROPERTY,
+  UPLOAD_AVATAR_BODY_PROPERTY,
   UploadBody,
   UploadFileSize,
   UploadPath
@@ -47,7 +47,7 @@ export class UploadController {
 
   @Post(UploadPath.AVATAR)
   @UseInterceptors(
-    FileInterceptor(UPLOAD_REPORT_BODY_PROPERTY, {
+    FileInterceptor(UPLOAD_AVATAR_BODY_PROPERTY, {
       fileFilter: avatarFileFilter,
       limits: { fileSize: UploadFileSize.AVATAR },
       storage: diskStorage({
@@ -56,7 +56,11 @@ export class UploadController {
       })
     })
   )
-  public uploadAvatar(): CommonResponse {
+  public async uploadAvatar(@UploadedFile() file: Express.Multer.File): Promise<CommonResponse> {
+    if (isProductionMode()) {
+      await this.uploadService.uploadToS3([file]);
+    }
+
     return {
       statusCode: HttpStatus.OK
     };

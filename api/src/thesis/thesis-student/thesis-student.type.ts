@@ -12,6 +12,7 @@ export interface ThesisStudentForView {
   studentId: string | null;
   schoolYear: string | null;
   studentClass: string | null;
+  result: number;
 }
 
 export interface ThesisGetThesisStudentsResponse extends CommonResponse {

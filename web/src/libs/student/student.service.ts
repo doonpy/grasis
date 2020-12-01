@@ -6,8 +6,10 @@ import StudentBase from './student.base';
 import { STUDENT_API_ROOT, StudentApi } from './student.resource';
 import {
   FindManyStudentResponse,
+  FindOneStudentResponse,
   StudentRequestBody,
   StudentSearchAttendee,
+  UseStudent,
   UseStudents
 } from './student.type';
 
@@ -53,5 +55,11 @@ export default class StudentService extends StudentBase {
       studentClass,
       schoolYear
     }));
+  }
+
+  public useStudent(id: number): UseStudent {
+    const { data } = useSWR<FindOneStudentResponse>(this.replaceParams(StudentApi.SPECIFY, [id]));
+
+    return { data, isLoading: !data };
   }
 }

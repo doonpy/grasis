@@ -5,6 +5,7 @@ interface ComponentProps {
   text?: string | null;
   enableTruncate?: boolean;
   isParagraph?: boolean;
+  color?: string;
 }
 
 const TRUNCATE_LIMIT = 50;
@@ -21,7 +22,7 @@ function truncateString(str?: string | null): string {
   return `${str.slice(0, TRUNCATE_LIMIT)}...`;
 }
 
-const TextData: React.FC<ComponentProps> = ({ text, enableTruncate, isParagraph }) => {
+const TextData: React.FC<ComponentProps> = ({ text, enableTruncate, isParagraph, color }) => {
   if (enableTruncate) {
     text = truncateString(text);
   }
@@ -42,7 +43,7 @@ const TextData: React.FC<ComponentProps> = ({ text, enableTruncate, isParagraph 
     return <Typography.Text disabled>NULL</Typography.Text>;
   }
 
-  return <Typography.Text>{text}</Typography.Text>;
+  return <Typography.Text style={{ color }}>{text}</Typography.Text>;
 };
 
 export default TextData;

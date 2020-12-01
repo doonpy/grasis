@@ -44,4 +44,8 @@ export default class LoginUser {
   public getFullName(): string {
     return `${this.user.lastname || ''} ${this.user.firstname || ''}`;
   }
+
+  public getUser(): User {
+    return this.user;
+  }
 }

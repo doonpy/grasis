@@ -17,7 +17,7 @@ import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { UserType } from '../user/user.resource';
 import { StudentPath } from './student.resource';
 import { StudentService } from './student.service';
-import { Student, StudentFindByIdResponse } from './student.type';
+import { StudentFindByIdResponse } from './student.type';
 
 @UseGuards(JwtAuthGuard)
 @Controller(StudentPath.ROOT)
@@ -36,7 +36,7 @@ export class StudentController {
     )
     id: number
   ): Promise<StudentFindByIdResponse> {
-    const student: Student = await this.studentService.getById(id);
+    const student = await this.studentService.getById(id);
 
     return {
       statusCode: HttpStatus.OK,

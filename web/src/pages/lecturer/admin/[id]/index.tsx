@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 
-import styles from '../../../../assets/css/pages/lecturer/admin/index.module.css';
 import { LecturerTerminology } from '../../../../assets/terminology/lecturer.terminology';
 import AvatarView from '../../../../components/Avatar/AvatarView';
 import MainLayout from '../../../../components/Layout/MainLayout';
@@ -81,9 +80,9 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       }>
       {data && (
         <Space size={48} align={'start'}>
-          <div className={styles.avatar}>
+          <Space direction="vertical" align="center">
             <AvatarView userId={lecturerId} width={250} height={250} />
-          </div>
+          </Space>
           <UserView user={data.lecturer.user} userType={UserType.LECTURER} />
           <LecturerView lecturer={data.lecturer} />
         </Space>

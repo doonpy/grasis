@@ -1,6 +1,6 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, FindConditions, Repository } from 'typeorm';
+import { EntityManager, FindConditions, In, Repository } from 'typeorm';
 
 import { DefenseService } from '../defense/defense.service';
 import { LecturerService } from '../lecturer/lecturer.service';
@@ -135,7 +135,7 @@ export class ResultService {
     return this.convertForView(currentResult, userId);
   }
 
-  private calculateAverage({ point }: Result): number {
+  public calculateAverage({ point }: Result): number {
     if (!point) {
       return 0;
     }
@@ -245,5 +245,37 @@ export class ResultService {
     deletedAt = new Date()
   ): Promise<void> {
     await manager.update(ResultEntity, { topicId }, { deletedAt });
+  }
+
+  public async getByStudentIds(topicIds: number[], studentIds: number[]): Promise<Result[]> {
+    return this.resultRepository.find({
+      where: { studentId: In(studentIds), topicId: In(topicIds) },
+      cache: true
+    });
+  }
+
+  public calculateFinishAverage(results: Result[]): number {
+    let instructorResult = 0;
+    let reviewResult = 0;
+    let councilResult = 0;
+    let councilMember = 0;
+    results.forEach((result) => {
+      switch (result.type) {
+        case ResultType.INSTRUCTOR:
+          instructorResult =
+            Math.round((instructorResult + this.calculateAverage(result)) * 100) / 100;
+          break;
+        case ResultType.REVIEW:
+          reviewResult = Math.round((reviewResult + this.calculateAverage(result)) * 100) / 100;
+          break;
+        case ResultType.DEFENSE:
+          councilResult = Math.round((councilResult + this.calculateAverage(result)) * 100) / 100;
+          councilMember++;
+          break;
+      }
+    });
+    const total = instructorResult + reviewResult + councilResult / councilMember;
+
+    return Math.round((total / 3) * 100) / 100;
   }
 }

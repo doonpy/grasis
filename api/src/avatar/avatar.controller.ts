@@ -3,6 +3,7 @@ import { Response } from 'express';
 
 import { commonIdValidateSchema } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
+import { UPLOAD_ROOT_FOLDER } from '../upload/upload.resource';
 import { UserService } from '../user/user.service';
 import { AVATAR_CONTROLLER_RESOURCE, AVATAR_DIRECTORY } from './avatar.resource';
 import { AvatarService } from './avatar.service';
@@ -21,8 +22,8 @@ export class AvatarController {
     @Res() res: Response
   ): Promise<void> {
     await this.userService.checkUserExistById(userId);
-    this.avatarService.checkAvatarExist(userId);
+    await this.avatarService.checkAvatarExist(userId);
 
-    res.sendFile(`${AVATAR_DIRECTORY}/${userId}`, { root: 'files' });
+    res.sendFile(`${AVATAR_DIRECTORY}/${userId}`, { root: UPLOAD_ROOT_FOLDER });
   }
 }

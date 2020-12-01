@@ -6,7 +6,8 @@ export const UploadApi = {
   DELETE_REPORT: `${UPLOAD_API_ROOT}/delete-report`,
   RESULT: `${UPLOAD_API_ROOT}/result`,
   DELETE_RESULT: `${UPLOAD_API_ROOT}/delete-result`,
-  GET_RESULTS: `${UPLOAD_API_ROOT}/result?topicId=@0&module=@1`
+  GET_RESULTS: `${UPLOAD_API_ROOT}/result?topicId=@0&module=@1`,
+  AVATAR: `${UPLOAD_API_ROOT}/avatar`
 };
 
 export const UploadMimeType = {
@@ -35,3 +36,5 @@ export const UploadBody = {
 export const UPLOAD_REPORT_LIMIT_FILES = 2;
 
 export const UPLOAD_RESULT_LIMIT_FILES = 1;
+
+export const UPLOAD_AVATAR_BODY_PROPERTY = 'avatar';
