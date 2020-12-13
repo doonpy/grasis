@@ -107,10 +107,10 @@ export const ThesisStudentTableColumns: ColumnsType<ThesisStudentForView> = [
       compare: (a, b) => sortByNumber(a.result, b.result),
       multiple: 8
     },
-    render: (value: number) => (
+    render: (value: number | null) => (
       <TextData
-        color={value < 5 ? ResultPointColor.RED : ResultPointColor.GREEN}
-        text={value.toString()}
+        color={value === null || value < 5 ? ResultPointColor.RED : ResultPointColor.GREEN}
+        text={value === null ? null : value.toString()}
       />
     )
   }
