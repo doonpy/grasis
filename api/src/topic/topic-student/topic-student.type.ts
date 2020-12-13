@@ -1,6 +1,6 @@
 import { CommonResponse } from '../../common/common.type';
 import { StudentForFastView } from '../../student/student.type';
-import { TopicStudentEntity } from './topic_student.entity';
+import { TopicStudentEntity } from './topic-student.entity';
 
 export type TopicStudent = TopicStudentEntity;
 

@@ -10,8 +10,8 @@ export class ReviewerGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Express.CustomRequest>();
     const loginUserId = request.user!.userId;
-    const reviewId = request.params![CommonParam.ID];
-    await this.reviewService.checkReviewerPermission(reviewId, loginUserId);
+    const reviewId: string = request.params![CommonParam.ID];
+    await this.reviewService.checkReviewerPermission(parseInt(reviewId), loginUserId);
 
     return true;
   }

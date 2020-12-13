@@ -52,6 +52,7 @@ const ReviewInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) => 
             />
           )}
           {thesis.state === ThesisState.REVIEW &&
+            reviewData.review.reviewerId === loginUser.getId() &&
             reviewData.review.result === StateResult.NOT_DECIDED && (
               <ReviewChangeResult topicId={topicId} />
             )}

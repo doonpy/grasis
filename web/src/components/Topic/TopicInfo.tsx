@@ -5,6 +5,8 @@ import React from 'react';
 import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
 import MinusCircleIcon from '../../assets/svg/regular/minus-circle.svg';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
+import { ThesisState } from '../../libs/thesis/thesis.resource';
+import { ThesisForView } from '../../libs/thesis/thesis.type';
 import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
 import { TOPIC_PATH_ROOT, TopicRegisterStatus } from '../../libs/topic/topic.resource';
 import TopicService from '../../libs/topic/topic.service';
@@ -19,10 +21,10 @@ const { confirm } = Modal;
 
 interface ComponentProps {
   topic: TopicForView;
-  thesisId: number;
+  thesis: ThesisForView;
 }
 
-const TopicInfo: React.FC<ComponentProps> = ({ topic, thesisId }) => {
+const TopicInfo: React.FC<ComponentProps> = ({ topic, thesis }) => {
   const topicService = TopicService.getInstance();
   const loginUser = LoginUser.getInstance();
 
@@ -56,7 +58,11 @@ const TopicInfo: React.FC<ComponentProps> = ({ topic, thesisId }) => {
   };
 
   const changeRegisterStatusButton = () => {
-    if (topic.status !== TopicStateAction.APPROVED || topic.creator.id !== loginUser.getId()) {
+    if (
+      topic.status !== TopicStateAction.APPROVED ||
+      topic.creator.id !== loginUser.getId() ||
+      thesis.state !== ThesisState.STUDENT_TOPIC_REGISTER
+    ) {
       return <></>;
     }
 
@@ -94,7 +100,7 @@ const TopicInfo: React.FC<ComponentProps> = ({ topic, thesisId }) => {
         try {
           await topicService.deleteById(topic.id);
           await topicService.redirectService.redirectTo(
-            topicService.replaceParams(TOPIC_PATH_ROOT, [thesisId])
+            topicService.replaceParams(TOPIC_PATH_ROOT, [thesis.id])
           );
         } catch (error) {
           await topicService.requestErrorHandler(error);
@@ -110,7 +116,7 @@ const TopicInfo: React.FC<ComponentProps> = ({ topic, thesisId }) => {
         <>
           {topicService.canEdit(topic) && (
             <Space size="middle">
-              <TopicCreateAndUpdate thesisId={thesisId} topic={topic} />
+              <TopicCreateAndUpdate thesisId={thesis.id} topic={topic} />
               <Button type="primary" danger icon={<DeleteOutlined />} onClick={showDeleteConfirm}>
                 {TopicTerminology.TOPIC_64}
               </Button>

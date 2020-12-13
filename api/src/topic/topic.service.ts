@@ -585,7 +585,11 @@ export class TopicService {
         throw new BadRequestException(TopicError.ERR_10);
       }
 
-      if (await this.topicStudentService.hasParticipatedAnotherTopic(topicId, studentId)) {
+      const topic = await this.getById(topicId);
+      const topicIds = (await this.getManyByThesisId(topic.thesisId))
+        .map(({ id }) => id)
+        .filter((id) => id !== topicId);
+      if (await this.topicStudentService.hasParticipatedAnotherTopic(topicIds, studentId)) {
         throw new BadRequestException(TopicError.ERR_15);
       }
     }

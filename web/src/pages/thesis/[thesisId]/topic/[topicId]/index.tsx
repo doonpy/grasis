@@ -70,7 +70,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
               </span>
             }
             key={TopicTabKey.INFO}>
-            <TopicInfo topic={topicData.topic} thesisId={thesisId} />
+            <TopicInfo topic={topicData.topic} thesis={thesisData.thesis} />
           </Tabs.TabPane>
           <Tabs.TabPane
             tab={

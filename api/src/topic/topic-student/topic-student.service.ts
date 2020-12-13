@@ -4,7 +4,7 @@ import { EntityManager, In, Not, Repository } from 'typeorm';
 
 import { ThesisStatus } from '../../thesis/thesis.resource';
 import { TopicError } from '../topic.resource';
-import { TopicStudentEntity } from './topic_student.entity';
+import { TopicStudentEntity } from './topic-student.entity';
 import { TopicStudentError, TopicStudentStatus } from './topic-student.resouce';
 import { TopicStudent } from './topic-student.type';
 
@@ -84,10 +84,13 @@ export class TopicStudentService {
     return topicStudent;
   }
 
-  public async hasParticipatedAnotherTopic(topicId: number, studentId: number): Promise<boolean> {
+  public async hasParticipatedAnotherTopic(
+    topicIds: number[],
+    studentId: number
+  ): Promise<boolean> {
     return (
       (await this.topicStudentRepository.count({
-        topicId: Not(topicId),
+        topicId: In(topicIds),
         studentId,
         status: TopicStudentStatus.APPROVED
       })) > 0

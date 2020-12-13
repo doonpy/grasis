@@ -15,7 +15,7 @@ import { Thesis } from '../../thesis/thesis.type';
 import { TopicStateEntity } from '../topic-state/topic-state.entity';
 import { TopicStateAction, TopicStateColumn } from '../topic-state/topic-state.resource';
 import { TopicState } from '../topic-state/topic-state.type';
-import { TopicStudentEntity } from '../topic-student/topic_student.entity';
+import { TopicStudentEntity } from '../topic-student/topic-student.entity';
 import { TopicStudentColumn } from '../topic-student/topic-student.resouce';
 import { TopicStudent } from '../topic-student/topic-student.type';
 import { TOPIC_TABLE, TopicColumn, TopicRegisterStatus } from '../topic.resource';
