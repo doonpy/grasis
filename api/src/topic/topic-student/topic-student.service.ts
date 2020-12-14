@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, In, Not, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 
 import { ThesisStatus } from '../../thesis/thesis.resource';
 import { TopicError } from '../topic.resource';
