@@ -108,11 +108,13 @@ export default class TopicService extends CommonService {
 
   public canEdit({ creator: { id }, status }: Topic | TopicForView): boolean {
     const loginUser = LoginUser.getInstance();
+    const allowEditStates = [
+      TopicStateAction.NEW,
+      TopicStateAction.WITHDRAW,
+      TopicStateAction.SEND_BACK
+    ];
 
-    return (
-      loginUser.getId() === id &&
-      (status === TopicStateAction.NEW || status === TopicStateAction.WITHDRAW)
-    );
+    return loginUser.getId() === id && allowEditStates.includes(status);
   }
 
   public async changeRegisterStatus(topicId: number): Promise<void> {
