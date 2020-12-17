@@ -1,3 +1,4 @@
+import { Image } from 'antd';
 import React from 'react';
 
 import FallbackImage from '../../assets/img/fallback-img.png';
@@ -11,12 +12,12 @@ interface ComponentProps {
 
 const AvatarView: React.FC<ComponentProps> = ({ userId, width, height }) => {
   return (
-    <img
+    <Image
       alt="avatar"
       width={width}
       height={height}
       src={getAvatarUrl(userId)}
-      onError={() => FallbackImage}
+      fallback={FallbackImage}
     />
   );
 };
