@@ -12,8 +12,7 @@
   "scripts": {
     "lint": "eslint --fix --max-warnings=0 --ext .ts,.tsx .",
     "test": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"yarn --cwd ./api test\" \"yarn --cwd ./web test\"",
-    "install": "yarn --cwd ./api install:dependencies && yarn --cwd ./web install:dependencies",
-    "prune": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"yarn --cwd ./api prune:dependencies\" \"yarn --cwd ./web prune:dependencies\"",
+    "install": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"yarn --cwd ./api install\" \"PORT=3001 yarn --cwd ./web install\"",
     "build": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"yarn --cwd ./api build\" \"yarn --cwd ./web build\"",
     "start:prod": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"yarn --cwd ./api start:prod\" \"PORT=3001 yarn --cwd ./web start:prod\""
   },
