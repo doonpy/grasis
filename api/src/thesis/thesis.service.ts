@@ -130,12 +130,13 @@ export class ThesisService {
     this.validateThesisStateDate(thesis as Thesis);
     const thesisEntity = this.thesisRepository.create(thesis);
     thesisEntity.state = this.getThesisCurrentState(thesisEntity);
-    thesisEntity.creator = await this.lecturerService.getById(data.creatorId);
+    thesisEntity.creatorId = data.creatorId;
+    const thesisLecturers: ThesisLecturer[] = [];
+    const thesisStudents: ThesisStudent[] = [];
 
     if (attendees && attendees.lecturers) {
       const { lecturers } = attendees;
       const lecturerEntities = await this.lecturerService.findByIds(lecturers);
-      const thesisLecturers: ThesisLecturer[] = [];
       for (const lecturer of lecturers) {
         const lecturerEntity = lecturerEntities.find(({ id }) => id === lecturer);
         if (!lecturerEntity) {
@@ -145,13 +146,10 @@ export class ThesisService {
         await this.lecturerService.checkIsActive(lecturerEntity);
         thesisLecturers.push(
           this.thesisLecturerService.createEntity({
-            thesisId: thesisEntity.id,
             lecturerId: lecturerEntity.id
           })
         );
       }
-
-      thesisEntity.lecturers = thesisLecturers;
     }
 
     if (attendees && attendees.students) {
@@ -160,7 +158,6 @@ export class ThesisService {
         await this.thesisStudentService.getStudentParticipatedThesisByIds(students)
       ).map(({ studentId }) => studentId);
       const studentEntities = await this.studentService.findByIdsForThesis(students);
-      const thesisStudents: ThesisStudent[] = [];
       for (const student of students) {
         const studentEntity = studentEntities.find(({ id }) => id === student);
         if (!studentEntity) {
@@ -172,16 +169,31 @@ export class ThesisService {
         this.studentService.checkHasParticipatedThesis(studentEntity, participatedThesisStudentIds);
         thesisStudents.push(
           this.thesisStudentService.createEntity({
-            thesisId: thesisEntity.id,
             studentId: studentEntity.id
           })
         );
       }
-
-      thesisEntity.students = thesisStudents;
     }
 
-    return await this.thesisRepository.save(thesisEntity);
+    return this.connection.transaction(async (manager) => {
+      const thesis = await manager.save(thesisEntity);
+      await manager.save(
+        thesisLecturers.map((lecturer) => {
+          lecturer.thesisId = thesis.id;
+
+          return lecturer;
+        })
+      );
+      await manager.save(
+        thesisStudents.map((student) => {
+          student.thesisId = thesis.id;
+
+          return student;
+        })
+      );
+
+      return thesis;
+    });
   }
 
   public async getById(id: number): Promise<Thesis> {

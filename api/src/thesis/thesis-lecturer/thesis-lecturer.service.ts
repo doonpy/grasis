@@ -95,8 +95,7 @@ export class ThesisLecturerService {
       thesisLecturers.push(
         this.createEntity({
           thesisId: thesis.id,
-          lecturerId: lecturerEntity.id,
-          deletedAt: null
+          lecturerId: lecturerEntity.id
         })
       );
     }

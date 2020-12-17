@@ -183,8 +183,7 @@ export class ThesisStudentService {
       thesisStudents.push(
         this.createEntity({
           thesisId: thesis.id,
-          studentId: studentEntity.id,
-          deletedAt: null
+          studentId: studentEntity.id
         })
       );
     }
