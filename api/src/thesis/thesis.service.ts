@@ -394,6 +394,9 @@ export class ThesisService {
       where: conditions,
       skip: offset,
       take: limit,
+      order: {
+        status: 'DESC'
+      },
       cache: true
     });
   }
@@ -419,6 +422,9 @@ export class ThesisService {
       },
       skip: offset,
       take: limit,
+      order: {
+        status: 'DESC'
+      },
       cache: true
     });
   }
@@ -444,6 +450,9 @@ export class ThesisService {
       },
       skip: offset,
       take: limit,
+      order: {
+        status: 'DESC'
+      },
       cache: true
     });
   }

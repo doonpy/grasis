@@ -172,14 +172,18 @@ export class ReviewService {
   }
 
   public async hasReviewerPermission(reviewId: number | Review, userId: number): Promise<boolean> {
-    let reviewData: Review | undefined;
-    if (typeof reviewId === 'number') {
-      reviewData = await this.getById(reviewId);
-    } else {
-      reviewData = reviewId;
-    }
+    try {
+      let reviewData: Review | undefined;
+      if (typeof reviewId === 'number') {
+        reviewData = await this.getById(reviewId);
+      } else {
+        reviewData = reviewId;
+      }
 
-    return userId === reviewData.reviewerId;
+      return userId === reviewData.reviewerId;
+    } catch (error) {
+      return false;
+    }
   }
 
   public async checkReviewerPermission(reviewId: number | Review, userId: number): Promise<void> {

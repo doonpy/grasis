@@ -127,22 +127,26 @@ export class DefenseService {
   }
 
   public async hasCouncilPermission(defenseId: number | Defense, userId: number): Promise<boolean> {
-    let defense: Defense | undefined;
-    if (typeof defenseId === 'number') {
-      defense = await this.getById(defenseId);
-    } else {
-      defense = defenseId;
-    }
+    try {
+      let defense: Defense | undefined;
+      if (typeof defenseId === 'number') {
+        defense = await this.getById(defenseId);
+      } else {
+        defense = defenseId;
+      }
 
-    if (!defense.councilId) {
+      if (!defense.councilId) {
+        return false;
+      }
+
+      const { chairmanId, instructorId, commissionerId } = await this.councilService.getById(
+        defense.councilId
+      );
+
+      return userId === chairmanId || userId === instructorId || userId === commissionerId;
+    } catch (error) {
       return false;
     }
-
-    const { chairmanId, instructorId, commissionerId } = await this.councilService.getById(
-      defense.councilId
-    );
-
-    return userId === chairmanId || userId === instructorId || userId === commissionerId;
   }
 
   public async checkCouncilPermission(defenseId: number | Defense, userId: number): Promise<void> {

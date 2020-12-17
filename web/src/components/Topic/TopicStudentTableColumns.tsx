@@ -22,7 +22,6 @@ import TopicStudentStatusRender from './TopicStudentStatusRender';
 const { confirm } = Modal;
 
 function idRender(id: number): JSX.Element {
-  console.log(id);
   return (
     <Link href={CommonService.getInstance().replaceParams(StudentPath.SPECIFY, [id])}>
       <Button ghost type="primary" shape="circle" icon={<FileTextTwoTone />} />

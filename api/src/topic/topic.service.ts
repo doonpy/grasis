@@ -147,6 +147,9 @@ export class TopicService {
         : [adminConditions, ownerConditions],
       skip: offset,
       take: limit,
+      order: {
+        status: 'ASC'
+      },
       cache: true
     });
   }
@@ -179,6 +182,9 @@ export class TopicService {
         : [ownerConditions, thesisConditions],
       skip: offset,
       take: limit,
+      order: {
+        status: 'ASC'
+      },
       cache: true
     });
 
@@ -207,6 +213,9 @@ export class TopicService {
         : conditions,
       skip: offset,
       take: limit,
+      order: {
+        status: 'ASC'
+      },
       cache: true
     });
 
