@@ -147,7 +147,7 @@ export class ReviewService {
   }
 
   public async checkUploadResultPermission(topicId: number, userId: number): Promise<void> {
-    const { thesis } = await this.topicService.getById(topicId);
+    const { thesis } = await this.topicService.getById(topicId, true);
     this.thesisService.checkThesisIsActive(thesis);
 
     if (thesis.state !== ThesisState.REVIEW) {

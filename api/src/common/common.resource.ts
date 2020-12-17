@@ -38,7 +38,7 @@ export const EnvFileName = {
 };
 
 export const CORS_OPTIONS: CorsOptions = {
-  origin: /^https:\/\/grasis.*\.herokuapp.com$/,
+  origin: [/^https:\/\/grasis.*\.herokuapp.com$/, 'http://localhost:3000'],
   optionsSuccessStatus: 200
 };
 

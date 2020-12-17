@@ -556,7 +556,6 @@ export class TopicService {
 
   public async changeRegisterStatus(id: number, userId: number): Promise<void> {
     const topic = await this.getById(id);
-    await this.checkPermission(topic, userId);
     if (topic.creatorId !== userId) {
       throw new BadRequestException(TopicError.ERR_14);
     }
