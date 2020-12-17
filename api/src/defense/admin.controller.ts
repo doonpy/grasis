@@ -19,6 +19,7 @@ import { DefensePath } from './defense.resource';
 import { DefenseService } from './defense.service';
 import { DefenseCreateOrUpdateResponse, DefenseRequestBody } from './defense.type';
 import { defenseCreateValidationSchema } from './defense.validation';
+import { DefenseGuard } from './guards/defense.guard';
 
 @UseGuards(JwtAuthGuard, AdminGuard)
 @Controller(DefensePath.ADMIN_ROOT)
@@ -26,6 +27,7 @@ export class DefenseAdminController {
   constructor(private readonly defenseService: DefenseService) {}
 
   @Patch(DefensePath.SPECIFY)
+  @UseGuards(DefenseGuard)
   public async updateById(
     @Param(
       CommonParam.ID,

@@ -6,6 +6,7 @@ import { DefenseTerminology } from '../../../../assets/terminology/defense.termi
 import { NOT_SELECT_ID, ReportModule, ResultModule } from '../../../../libs/common/common.resource';
 import CouncilService from '../../../../libs/council/council.service';
 import DefenseService from '../../../../libs/defense/defense.service';
+import { ThesisState } from '../../../../libs/thesis/thesis.resource';
 import { ThesisForView } from '../../../../libs/thesis/thesis.type';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
 import TextData from '../../../Common/TextData';
@@ -48,13 +49,15 @@ const DefenseInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) =>
       stateInfo={defenseData.defense}
       buttons={
         <Space>
-          <DefenseEdit
-            thesisId={thesis.id}
-            defense={defenseData.defense}
-            validDateRange={validDateRange}
-            thesisCreatorId={thesis.creatorId}
-            defaultCouncil={councilData ? councilData.council : null}
-          />
+          {thesis.state === ThesisState.DEFENSE && (
+            <DefenseEdit
+              thesisId={thesis.id}
+              defense={defenseData.defense}
+              validDateRange={validDateRange}
+              thesisCreatorId={thesis.creatorId}
+              defaultCouncil={councilData ? councilData.council : null}
+            />
+          )}
         </Space>
       }
       extendInfo={[
