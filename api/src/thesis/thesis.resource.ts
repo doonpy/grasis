@@ -36,7 +36,8 @@ export const ThesisError = {
   ERR_6: 'Thời gian bắt đầu và kết thúc khóa luận không hợp lệ.',
   ERR_7: 'Khóa luận không tồn tại.',
   ERR_8: 'Bạn không có quyền tương tác với khóa luận này.',
-  ERR_9: 'Khóa luận đang ngưng hoạt động.'
+  ERR_9: 'Khóa luận đang ngưng hoạt động.',
+  ERR_10: 'Khóa luận đang hoạt động.'
 };
 
 export enum ThesisState {

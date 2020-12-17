@@ -79,21 +79,6 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
   };
 
   if (loginUser.isAdmin()) {
-    buttonList.push(
-      () => (
-        <Link href={adminService.replaceParams(ThesisPath.EDIT, [thesisId])}>
-          <Button type="primary" icon={<EditOutlined />}>
-            {ThesisTerminology.THESIS_26}
-          </Button>
-        </Link>
-      ),
-      () => (
-        <Button type="primary" danger icon={<DeleteOutlined />} onClick={showDeleteConfirm}>
-          {ThesisTerminology.THESIS_49}
-        </Button>
-      )
-    );
-
     if (thesisStatus === ThesisStatus.ACTIVE) {
       buttonList.push(() => (
         <Button
@@ -107,15 +92,29 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
     }
 
     if (thesisStatus === ThesisStatus.INACTIVE) {
-      buttonList.push(() => (
-        <Button
-          type="primary"
-          icon={<Icon component={CheckCircleIcon} />}
-          loading={switchButtonLoading}
-          onClick={showStatusConfirm}>
-          {ThesisTerminology.THESIS_29}
-        </Button>
-      ));
+      buttonList.push(
+        () => (
+          <Link href={adminService.replaceParams(ThesisPath.EDIT, [thesisId])}>
+            <Button type="primary" icon={<EditOutlined />}>
+              {ThesisTerminology.THESIS_26}
+            </Button>
+          </Link>
+        ),
+        () => (
+          <Button type="primary" danger icon={<DeleteOutlined />} onClick={showDeleteConfirm}>
+            {ThesisTerminology.THESIS_49}
+          </Button>
+        ),
+        () => (
+          <Button
+            type="primary"
+            icon={<Icon component={CheckCircleIcon} />}
+            loading={switchButtonLoading}
+            onClick={showStatusConfirm}>
+            {ThesisTerminology.THESIS_29}
+          </Button>
+        )
+      );
     }
   }
 
