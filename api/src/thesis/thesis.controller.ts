@@ -90,11 +90,12 @@ export class ThesisController {
     @Req()
     request: Express.CustomRequest
   ): Promise<ThesisGetByIdResponse> {
-    const thesis = await this.thesisService.getByIdForView(id, request.user!.userId);
+    const thesis = await this.thesisService.getById(id);
+    await this.thesisService.checkPermission(thesis, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,
-      thesis
+      thesis: this.thesisService.convertForView(thesis)
     };
   }
 

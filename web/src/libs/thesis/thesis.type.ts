@@ -75,7 +75,7 @@ export interface AttendeesRequestBody {
 }
 
 export interface ThesisSwitchStatusResponse extends CommonResponse {
-  currentStatus: ThesisStatus;
+  thesis: ThesisForView;
 }
 
 export interface ThesisForListView {

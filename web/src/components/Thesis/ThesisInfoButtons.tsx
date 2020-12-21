@@ -1,24 +1,24 @@
 import Icon, { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Space } from 'antd';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
 import MinusCircleIcon from '../../assets/svg/regular/minus-circle.svg';
 import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
 import ThesisAdminService from '../../libs/thesis/admin.service';
 import { THESIS_PATH_ROOT, ThesisPath, ThesisStatus } from '../../libs/thesis/thesis.resource';
+import { ThesisForView } from '../../libs/thesis/thesis.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
 const { confirm } = Modal;
 
 interface ComponentProps {
-  thesisId: number;
-  status: ThesisStatus;
+  thesis: ThesisForView;
+  setThesis: React.Dispatch<ThesisForView>;
 }
 
-const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
+const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesis, setThesis }) => {
   const [switchButtonLoading, setSwitchButtonLoading] = useState<boolean>(false);
-  const [thesisStatus, setThesisStatus] = useState<ThesisStatus>(status);
   const loginUser = LoginUser.getInstance();
   const adminService = ThesisAdminService.getInstance();
   const buttonList: React.FC[] = [];
@@ -33,7 +33,7 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
       cancelButtonProps: { type: 'primary', danger: true },
       async onOk() {
         try {
-          await adminService.deleteById(thesisId);
+          await adminService.deleteById(thesis.id);
           await adminService.redirectService.redirectTo(THESIS_PATH_ROOT);
         } catch (error) {
           await adminService.requestErrorHandler(error);
@@ -45,12 +45,12 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
   const showStatusConfirm = () => {
     confirm({
       title:
-        thesisStatus === ThesisStatus.INACTIVE
+        thesis.status === ThesisStatus.INACTIVE
           ? ThesisTerminology.THESIS_38
           : ThesisTerminology.THESIS_39,
       icon: <ExclamationCircleOutlined />,
       content:
-        thesisStatus === ThesisStatus.INACTIVE
+        thesis.status === ThesisStatus.INACTIVE
           ? ThesisTerminology.THESIS_41
           : ThesisTerminology.THESIS_40,
       okText: ThesisTerminology.THESIS_23,
@@ -63,9 +63,9 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
           }
 
           setSwitchButtonLoading(true);
-          const { data } = await adminService.switchStatus(thesisId);
-          setThesisStatus(data.currentStatus);
-          if (thesisStatus === ThesisStatus.INACTIVE) {
+          const { data } = await adminService.switchStatus(thesis.id);
+          setThesis(data.thesis);
+          if (thesis.status === ThesisStatus.INACTIVE) {
             message.success(ThesisTerminology.THESIS_43);
           } else {
             message.success(ThesisTerminology.THESIS_44);
@@ -79,7 +79,7 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
   };
 
   if (loginUser.isAdmin()) {
-    if (thesisStatus === ThesisStatus.ACTIVE) {
+    if (thesis.status === ThesisStatus.ACTIVE) {
       buttonList.push(() => (
         <Button
           type="primary"
@@ -91,10 +91,10 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
       ));
     }
 
-    if (thesisStatus === ThesisStatus.INACTIVE) {
+    if (thesis.status === ThesisStatus.INACTIVE) {
       buttonList.push(
         () => (
-          <Link href={adminService.replaceParams(ThesisPath.EDIT, [thesisId])}>
+          <Link href={adminService.replaceParams(ThesisPath.EDIT, [thesis.id])}>
             <Button type="primary" icon={<EditOutlined />}>
               {ThesisTerminology.THESIS_26}
             </Button>
@@ -117,10 +117,6 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesisId, status }) => {
       );
     }
   }
-
-  useEffect(() => {
-    setThesisStatus(status);
-  }, [status]);
 
   return (
     <Space size="middle">

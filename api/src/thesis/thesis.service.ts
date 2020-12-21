@@ -381,15 +381,17 @@ export class ThesisService {
     });
   }
 
-  public async switchStatus(id: number): Promise<ThesisStatus> {
+  public async switchStatus(id: number): Promise<ThesisForView> {
     const thesis = await this.getById(id);
     if (thesis.status === ThesisStatus.INACTIVE) {
-      await this.thesisRepository.update({ id }, { status: ThesisStatus.ACTIVE });
-      return ThesisStatus.ACTIVE;
+      thesis.status = ThesisStatus.ACTIVE;
     } else {
-      await this.thesisRepository.update({ id }, { status: ThesisStatus.INACTIVE });
-      return ThesisStatus.INACTIVE;
+      thesis.status = ThesisStatus.INACTIVE;
     }
+
+    await this.thesisRepository.save(thesis);
+
+    return this.convertForView(thesis);
   }
 
   private async getManyForAdmin(
@@ -641,17 +643,6 @@ export class ThesisService {
     }
   }
 
-  public async getByIdForView(id: number, userId: number): Promise<ThesisForView> {
-    const thesis = await this.getById(id);
-    await this.checkPermission(thesis, userId);
-    const { creator, ...remain } = thesis;
-
-    return {
-      ...remain,
-      creator: creator.convertToFastView()
-    };
-  }
-
   public async isCreatorActiveThesis(userId: number): Promise<boolean> {
     return (
       (await this.thesisRepository.count({
@@ -671,5 +662,14 @@ export class ThesisService {
     if (status === ThesisStatus.ACTIVE) {
       throw new BadRequestException(ThesisError.ERR_10);
     }
+  }
+
+  public convertForView(thesis: Thesis): ThesisForView {
+    const { creator, ...remain } = thesis;
+
+    return {
+      ...remain,
+      creator: creator.convertToFastView()
+    };
   }
 }

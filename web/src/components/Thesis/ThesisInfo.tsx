@@ -1,5 +1,5 @@
 import { Descriptions } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
@@ -17,10 +17,12 @@ interface ComponentProps {
   thesis: ThesisForView;
 }
 
-const ThesisInfo: React.FC<ComponentProps> = ({ thesis }) => {
+const ThesisInfo: React.FC<ComponentProps> = ({ thesis: initThesis }) => {
+  const [thesis, setThesis] = useState<ThesisForView>(initThesis);
+
   return (
     <Descriptions
-      title={<ThesisInfoButtons thesisId={thesis.id} status={thesis.status} />}
+      title={<ThesisInfoButtons thesis={thesis} setThesis={setThesis} />}
       bordered
       column={4}>
       <Descriptions.Item label={<b>{ThesisTerminology.THESIS_10}</b>} span={2}>

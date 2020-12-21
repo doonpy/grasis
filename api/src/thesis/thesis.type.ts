@@ -49,7 +49,7 @@ export interface ThesisGetByIdForEditResponse extends CommonResponse {
 }
 
 export interface ThesisSwitchStatusResponse extends CommonResponse {
-  currentStatus: ThesisStatus;
+  thesis: ThesisForView;
 }
 
 export type ThesisForListView = Pick<

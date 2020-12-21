@@ -118,11 +118,11 @@ export class ThesisAdminController {
     )
     id: number
   ): Promise<ThesisSwitchStatusResponse> {
-    const currentStatus = await this.thesisService.switchStatus(id);
+    const thesis = await this.thesisService.switchStatus(id);
 
     return {
       statusCode: HttpStatus.OK,
-      currentStatus
+      thesis
     };
   }
 }
