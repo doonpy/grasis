@@ -11,12 +11,13 @@ import { TopicStudent } from './topic-student/topic-student.type';
 import { TOPIC_API_ROOT, TopicApi } from './topic.resource';
 import {
   Topic,
-  TopicCreateOrUpdateResponse,
+  TopicCreateResponse,
   TopicFindManyResponse,
   TopicForView,
   TopicGetByIdResponse,
   TopicGetResultsForViewResponse,
   TopicRequestBody,
+  TopicUpdateResponse,
   UseTopic,
   UseTopicResult,
   UseTopics
@@ -40,14 +41,12 @@ export default class TopicService extends CommonService {
   public async create(
     thesisId: number,
     topic: TopicRequestBody
-  ): Promise<AxiosResponse<TopicCreateOrUpdateResponse>> {
+  ): Promise<AxiosResponse<TopicCreateResponse>> {
     await this.apiService.bindAuthorizationForClient();
 
-    return this.apiService.post<TopicCreateOrUpdateResponse>(
-      `${TOPIC_API_ROOT}?thesisId=@0`,
-      topic,
-      [thesisId]
-    );
+    return this.apiService.post<TopicCreateResponse>(`${TOPIC_API_ROOT}?thesisId=@0`, topic, [
+      thesisId
+    ]);
   }
 
   public useTopics(
@@ -76,9 +75,12 @@ export default class TopicService extends CommonService {
     return { data, isLoading: !data };
   }
 
-  public async updateById(topicId: number, topic: TopicRequestBody): Promise<void> {
+  public async updateById(
+    topicId: number,
+    topic: TopicRequestBody
+  ): Promise<AxiosResponse<TopicUpdateResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.patch<TopicCreateOrUpdateResponse>(TopicApi.SPECIFY, topic, [topicId]);
+    return this.apiService.patch<TopicUpdateResponse>(TopicApi.SPECIFY, topic, [topicId]);
   }
 
   public async getInitialForEdit(thesisId: number, topicId: number): Promise<TopicForView> {

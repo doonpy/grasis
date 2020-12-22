@@ -333,39 +333,6 @@ export class TopicService {
     return topic;
   }
 
-  public async getByIdForView(topicId: number, userId: number): Promise<TopicForView> {
-    const topic = await this.getById(topicId, true);
-    await this.checkPermission(topic, userId);
-    const {
-      id,
-      subject,
-      status,
-      description,
-      creator,
-      registerStatus,
-      createdAt,
-      updatedAt,
-      currentStudent,
-      maxStudent,
-      approverId
-    } = topic;
-    const approver = (await this.lecturerService.getById(approverId)).convertToFastView();
-
-    return {
-      id,
-      subject,
-      description,
-      status,
-      registerStatus,
-      creator: creator.convertToFastView(),
-      currentStudent,
-      maxStudent,
-      createdAt,
-      updatedAt,
-      approver
-    };
-  }
-
   public async hasPermission(topic: Topic, user: User): Promise<boolean> {
     if (topic.thesis.creatorId === user.id && user.isAdmin === IsAdmin.TRUE) {
       return topic.status !== TopicStateAction.NEW || topic.creatorId === user.id;
@@ -935,5 +902,15 @@ export class TopicService {
       }
     });
     await manager.save(topics);
+  }
+
+  public async convertForView({ approverId, creator, ...remain }: Topic): Promise<TopicForView> {
+    const approver = (await this.lecturerService.getById(approverId)).convertToFastView();
+
+    return {
+      ...remain,
+      creator: creator.convertToFastView(),
+      approver
+    };
   }
 }

@@ -1,9 +1,10 @@
 import Icon, { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Descriptions, message, Modal, Space } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 
 import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
 import MinusCircleIcon from '../../assets/svg/regular/minus-circle.svg';
+import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { ThesisState } from '../../libs/thesis/thesis.resource';
 import { ThesisForView } from '../../libs/thesis/thesis.type';
@@ -12,6 +13,7 @@ import { TOPIC_PATH_ROOT, TopicRegisterStatus } from '../../libs/topic/topic.res
 import TopicService from '../../libs/topic/topic.service';
 import { TopicForView } from '../../libs/topic/topic.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
+import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import LecturerFastView from '../Lecturer/LecturerFastView';
 import TopicCreateAndUpdate from './TopicCreateAndUpdate';
@@ -24,9 +26,10 @@ interface ComponentProps {
   thesis: ThesisForView;
 }
 
-const TopicInfo: React.FC<ComponentProps> = ({ topic, thesis }) => {
+const TopicInfo: React.FC<ComponentProps> = ({ topic: initTopic, thesis }) => {
   const topicService = TopicService.getInstance();
   const loginUser = LoginUser.getInstance();
+  const [topic, setTopic] = useState<TopicForView>(initTopic);
 
   const onConfirmChangeRegisterStatus = async () => {
     confirm({
@@ -116,7 +119,7 @@ const TopicInfo: React.FC<ComponentProps> = ({ topic, thesis }) => {
         <>
           {topicService.canEdit(topic) && (
             <Space size="middle">
-              <TopicCreateAndUpdate thesisId={thesis.id} topic={topic} />
+              <TopicCreateAndUpdate thesisId={thesis.id} topic={topic} setTopic={setTopic} />
               <Button type="primary" danger icon={<DeleteOutlined />} onClick={showDeleteConfirm}>
                 {TopicTerminology.TOPIC_64}
               </Button>
@@ -142,6 +145,12 @@ const TopicInfo: React.FC<ComponentProps> = ({ topic, thesis }) => {
       </Descriptions.Item>
       <Descriptions.Item label={<b>{TopicTerminology.TOPIC_3}</b>} span={3}>
         <TextData text={topic.description} isParagraph={true} />
+      </Descriptions.Item>
+      <Descriptions.Item label={<b>{CommonTerminology.COMMON_1}</b>} span={3}>
+        <DateData date={topic.createdAt as string} dateOnly={true} />
+      </Descriptions.Item>
+      <Descriptions.Item label={<b>{CommonTerminology.COMMON_2}</b>} span={3}>
+        <DateData date={topic.updatedAt as string} dateOnly={true} isRelative={true} />
       </Descriptions.Item>
     </Descriptions>
   );

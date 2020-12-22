@@ -43,11 +43,12 @@ import {
   Topic,
   TopicChangeStatusRequestBody,
   TopicChangeStudentRegisterStatusRequestBody,
-  TopicCreateOrUpdateResponse,
+  TopicCreateResponse,
   TopicGetByIdResponse,
   TopicGetManyResponse,
   TopicGetResultsForViewResponse,
-  TopicRequestBody
+  TopicRequestBody,
+  TopicUpdateResponse
 } from './topic.type';
 import {
   topicChangeActionValidationSchema,
@@ -79,7 +80,7 @@ export class TopicController {
     @Body(new JoiValidationPipe(topicCreateValidationSchema), ParseTopicRequestBodyPipe)
     body: TopicRequestBody,
     @Request() req: Express.Request
-  ): Promise<TopicCreateOrUpdateResponse> {
+  ): Promise<TopicCreateResponse> {
     body.creatorId = req.user?.userId as number;
     const createdTopic: Topic = await this.topicService.create(thesisId, body);
 
@@ -138,11 +139,12 @@ export class TopicController {
     topicId: number,
     @Req() request: Express.CustomRequest
   ): Promise<TopicGetByIdResponse> {
-    const topic = await this.topicService.getByIdForView(topicId, request.user!.userId);
+    const topic = await this.topicService.getById(topicId, true);
+    await this.topicService.checkPermission(topic, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,
-      topic
+      topic: await this.topicService.convertForView(topic)
     };
   }
 
@@ -159,12 +161,12 @@ export class TopicController {
     @Body(new JoiValidationPipe(topicUpdateValidationSchema), ParseTopicRequestBodyPipe)
     body: TopicRequestBody,
     @Request() req: Express.Request
-  ): Promise<TopicCreateOrUpdateResponse> {
-    await this.topicService.updateById(id, req.user!.userId, body);
+  ): Promise<TopicUpdateResponse> {
+    const topic = await this.topicService.updateById(id, req.user!.userId, body);
 
     return {
       statusCode: HttpStatus.OK,
-      id
+      topic: await this.topicService.convertForView(topic)
     };
   }
 

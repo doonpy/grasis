@@ -14,9 +14,10 @@ import TopicFormItem from './TopicFormItem';
 interface ComponentProps {
   thesisId: number;
   topic?: TopicForView;
+  setTopic: React.Dispatch<TopicForView>;
 }
 
-const TopicCreateAndUpdate: React.FC<ComponentProps> = ({ thesisId, topic }) => {
+const TopicCreateAndUpdate: React.FC<ComponentProps> = ({ thesisId, topic, setTopic }) => {
   const topicService = TopicService.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
@@ -39,8 +40,9 @@ const TopicCreateAndUpdate: React.FC<ComponentProps> = ({ thesisId, topic }) => 
     try {
       setLoading(true);
       if (topic) {
-        await topicService.updateById(topic.id, formValues);
+        const { data } = await topicService.updateById(topic.id, formValues);
         message.success(TopicTerminology.TOPIC_68);
+        setTopic(data.topic);
         setVisible(false);
         setLoading(false);
       } else {

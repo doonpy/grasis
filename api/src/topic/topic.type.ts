@@ -29,8 +29,12 @@ export type RawTopicRequestBody = {
   [K in keyof TopicRequestBody]?: any;
 };
 
-export interface TopicCreateOrUpdateResponse extends CommonResponse {
+export interface TopicCreateResponse extends CommonResponse {
   id: number;
+}
+
+export interface TopicUpdateResponse extends CommonResponse {
+  topic: TopicForView;
 }
 
 export interface TopicGetManyResponse extends CommonResponse {
@@ -38,9 +42,7 @@ export interface TopicGetManyResponse extends CommonResponse {
   total: number;
 }
 
-export interface TopicGetByIdResponse extends CommonResponse {
-  topic: TopicForView;
-}
+export type TopicGetByIdResponse = TopicUpdateResponse;
 
 export interface TopicChangeStatusRequestBody {
   note?: string;
@@ -70,6 +72,7 @@ export type TopicForView = Pick<
   | 'status'
   | 'createdAt'
   | 'updatedAt'
+  | 'deletedAt'
 > & {
   creator: LecturerForFastView;
   approver: LecturerForFastView;

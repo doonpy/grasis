@@ -44,8 +44,12 @@ export type TopicRequestBody = WithOptional<
   'description'
 >;
 
-export interface TopicCreateOrUpdateResponse extends CommonResponse {
+export interface TopicCreateResponse extends CommonResponse {
   id: number;
+}
+
+export interface TopicUpdateResponse extends CommonResponse {
+  topic: TopicForView;
 }
 
 export interface TopicFindManyResponse extends CommonResponse {
@@ -58,9 +62,7 @@ export interface UseTopics {
   data?: TopicFindManyResponse;
 }
 
-export interface TopicGetByIdResponse extends CommonResponse {
-  topic: TopicForView;
-}
+export type TopicGetByIdResponse = TopicUpdateResponse;
 
 export interface UseTopic {
   isLoading: boolean;
