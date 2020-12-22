@@ -6,7 +6,7 @@ import { ThesisStatus } from '../../thesis/thesis.resource';
 import { TopicError } from '../topic.resource';
 import { TopicStudentEntity } from './topic-student.entity';
 import { TopicStudentError, TopicStudentStatus } from './topic-student.resouce';
-import { TopicStudent } from './topic-student.type';
+import { TopicStudent, TopicStudentForView } from './topic-student.type';
 
 @Injectable()
 export class TopicStudentService {
@@ -29,7 +29,7 @@ export class TopicStudentService {
     );
   }
 
-  public async registerTopic(topicId: number, studentId: number): Promise<void> {
+  public async registerTopic(topicId: number, studentId: number): Promise<TopicStudent> {
     const topicStudent = await this.topicStudentRepository.findOne({
       where: {
         topicId,
@@ -43,11 +43,13 @@ export class TopicStudentService {
         studentId,
         status: TopicStudentStatus.PENDING
       });
-      await this.topicStudentRepository.save(topicStudentEntity);
+
+      return this.topicStudentRepository.save(topicStudentEntity);
     } else {
       topicStudent.status = TopicStudentStatus.PENDING;
       topicStudent.createdAt = new Date();
-      await this.topicStudentRepository.save(topicStudent);
+
+      return this.topicStudentRepository.save(topicStudent);
     }
   }
 
@@ -178,5 +180,27 @@ export class TopicStudentService {
     if (!(await this.hasParticipatedTopic(topicId, studentId))) {
       throw new BadRequestException(TopicStudentError.ERR_1);
     }
+  }
+
+  public convertForView({
+    topicId,
+    status,
+    updatedAt,
+    student: {
+      id,
+      studentId,
+      user: { firstname, lastname, deletedAt }
+    }
+  }: TopicStudent): TopicStudentForView {
+    return {
+      id,
+      topicId,
+      studentId,
+      firstname,
+      lastname,
+      status,
+      deletedAt,
+      updatedAt
+    };
   }
 }

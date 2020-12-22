@@ -27,6 +27,7 @@ import { TopicStateService } from './topic-state/topic-state.service';
 import { TopicState } from './topic-state/topic-state.type';
 import { TopicStudentStatus } from './topic-student/topic-student.resouce';
 import { TopicStudentService } from './topic-student/topic-student.service';
+import { TopicStudent } from './topic-student/topic-student.type';
 import { StateResult, TopicError, TopicRegisterStatus } from './topic.resource';
 import { Topic, TopicChangeStatusRequestBody, TopicForView, TopicRequestBody } from './topic.type';
 
@@ -558,14 +559,14 @@ export class TopicService {
     await this.topicRepository.save(topic);
   }
 
-  public async registerTopic(topicId: number, studentId: number): Promise<void> {
-    const user = await this.userService.getById(studentId);
-    if (user.userType === UserType.STUDENT) {
+  public async registerTopic(topicId: number, studentId: number): Promise<TopicStudent> {
+    const student = await this.studentService.getById(studentId);
+    const topic = await this.getById(topicId, true);
+    if (student.user.userType === UserType.STUDENT) {
       if (await this.topicStudentService.hasRegisteredTopic(topicId, studentId)) {
         throw new BadRequestException(TopicError.ERR_10);
       }
 
-      const topic = await this.getById(topicId);
       const topicIds = (await this.getManyByThesisId(topic.thesisId))
         .map(({ id }) => id)
         .filter((id) => id !== topicId);
@@ -574,8 +575,7 @@ export class TopicService {
       }
     }
 
-    const topic = await this.getById(topicId, true);
-    await this.checkPermission(topic, studentId);
+    await this.checkPermission(topic, student.user);
     if (topic.status !== TopicStateAction.APPROVED) {
       throw new BadRequestException(TopicError.ERR_8);
     }
@@ -588,7 +588,10 @@ export class TopicService {
       throw new BadRequestException(TopicError.ERR_9);
     }
 
-    await this.topicStudentService.registerTopic(topicId, studentId);
+    const topicStudent = await this.topicStudentService.registerTopic(topicId, studentId);
+    topicStudent.student = student;
+
+    return topicStudent;
   }
 
   public async changeStudentRegisterStatus(
@@ -902,7 +905,7 @@ export class TopicService {
   ): Promise<void> {
     const topics = await manager.find(TopicEntity, { thesisId });
     topics.forEach((topic) => {
-      if (topic.currentStudent < topic.maxStudent) {
+      if (topic.currentStudent < topic.maxStudent && topic.status === TopicStateAction.APPROVED) {
         topic.registerStatus = TopicRegisterStatus.ENABLE;
       }
     });

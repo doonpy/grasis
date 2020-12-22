@@ -10,3 +10,7 @@ export type TopicStudentForView = Pick<TopicStudent, 'status' | 'updatedAt' | 't
 export interface TopicGetStudentsResponse extends CommonResponse {
   students: TopicStudentForView[];
 }
+
+export interface TopicRegisterResponse extends CommonResponse {
+  student: TopicStudentForView;
+}

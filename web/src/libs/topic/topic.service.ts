@@ -8,7 +8,7 @@ import LoginUser from '../user/instance/LoginUser';
 import { TopicStateAction } from './topic-state/topic-state.resource';
 import { TopicChangeStateResponse } from './topic-state/topic-state.type';
 import { TopicStudentStatus } from './topic-student/topic-student.resource';
-import { TopicStudent } from './topic-student/topic-student.type';
+import { TopicRegisterResponse, TopicStudent } from './topic-student/topic-student.type';
 import { TOPIC_API_ROOT, TopicApi } from './topic.resource';
 import {
   Topic,
@@ -124,9 +124,13 @@ export default class TopicService extends CommonService {
     await this.apiService.post(TopicApi.CHANGE_REGISTER_STATUS, {}, [topicId]);
   }
 
-  public async registerTopic(topicId: number, studentId: number): Promise<void> {
+  public async registerTopic(
+    topicId: number,
+    studentId: number
+  ): Promise<AxiosResponse<TopicRegisterResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(TopicApi.REGISTER_TOPIC, {}, [topicId, studentId]);
+
+    return this.apiService.post(TopicApi.REGISTER_TOPIC, {}, [topicId, studentId]);
   }
 
   public hasStudentParticipated(students: TopicStudent[]): boolean {

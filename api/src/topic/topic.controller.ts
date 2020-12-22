@@ -36,7 +36,11 @@ import { ParseTopicRequestBodyPipe } from './pipes/parse-topic-request-body.pipe
 import { TopicStateService } from './topic-state/topic-state.service';
 import { TopicChangeStateResponse, TopicGetStatesResponse } from './topic-state/topic-state.type';
 import { TopicStudentService } from './topic-student/topic-student.service';
-import { TopicGetStudentsResponse, TopicStudentForView } from './topic-student/topic-student.type';
+import {
+  TopicGetStudentsResponse,
+  TopicRegisterResponse,
+  TopicStudentForView
+} from './topic-student/topic-student.type';
 import { TopicError, TopicPath, TopicQuery } from './topic.resource';
 import { TopicService } from './topic.service';
 import {
@@ -225,7 +229,7 @@ export class TopicController {
     await this.topicService.changeRegisterStatus(id, req.user!.userId);
   }
 
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @Post(TopicPath.REGISTER_TOPIC)
   @UseGuards(TopicStudentRegisterGuard)
   public async registerTopic(
@@ -243,8 +247,13 @@ export class TopicController {
       ParseIntPipe
     )
     studentId: number
-  ): Promise<void> {
-    await this.topicService.registerTopic(id, studentId);
+  ): Promise<TopicRegisterResponse> {
+    const student = await this.topicService.registerTopic(id, studentId);
+
+    return {
+      statusCode: HttpStatus.OK,
+      student: this.topicStudentService.convertForView(student)
+    };
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -307,27 +316,7 @@ export class TopicController {
   ): Promise<TopicGetStudentsResponse> {
     const students: TopicStudentForView[] = (
       await this.topicStudentService.getMany(id, limit, offset)
-    ).map(
-      ({
-        topicId,
-        status,
-        updatedAt,
-        student: {
-          id,
-          studentId,
-          user: { firstname, lastname, deletedAt }
-        }
-      }) => ({
-        id,
-        topicId,
-        studentId,
-        firstname,
-        lastname,
-        status,
-        deletedAt,
-        updatedAt
-      })
-    );
+    ).map((student) => this.topicStudentService.convertForView(student));
 
     return {
       statusCode: HttpStatus.OK,

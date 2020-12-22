@@ -97,7 +97,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
                 }
                 key={TopicTabKey.STUDENT_INFO}>
                 <TopicStudentInfo
-                  topicId={topicId}
+                  topic={topicData.topic}
                   canFetch={currentTab === TopicTabKey.STUDENT_INFO}
                 />
               </Tabs.TabPane>

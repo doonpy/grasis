@@ -1,17 +1,7 @@
 import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Descriptions,
-  Divider,
-  Empty,
-  message,
-  Modal,
-  Space,
-  Statistic,
-  Table
-} from 'antd';
+import { Button, Descriptions, Divider, message, Modal, Space, Statistic, Table } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import BanIcon from '../../assets/svg/regular/ban.svg';
 import CheckIcon from '../../assets/svg/regular/check.svg';
@@ -24,19 +14,21 @@ import { DEFAULT_PAGE_SIZE } from '../../libs/common/common.resource';
 import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
 import { TopicStudentStatus } from '../../libs/topic/topic-student/topic-student.resource';
 import TopicStudentService from '../../libs/topic/topic-student/topic-student.service';
+import { TopicStudentForView } from '../../libs/topic/topic-student/topic-student.type';
 import { TopicRegisterStatus } from '../../libs/topic/topic.resource';
 import TopicService from '../../libs/topic/topic.service';
+import { TopicForView } from '../../libs/topic/topic.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import { TopicStudentTableColumns } from './TopicStudentTableColumns';
 
 const { confirm } = Modal;
 
 interface ComponentProps {
-  topicId: number;
+  topic: TopicForView;
   canFetch: boolean;
 }
 
-const TopicStudentInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
+const TopicStudentInfo: React.FC<ComponentProps> = ({ topic, canFetch }) => {
   const topicService = TopicService.getInstance();
   const topicStudentService = TopicStudentService.getInstance();
   const loginUser = LoginUser.getInstance();
@@ -47,18 +39,23 @@ const TopicStudentInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
     size: 'small',
     showSizeChanger: false
   };
-  const { data: topicData } = topicService.useTopic(topicId, canFetch);
   const { data: topicStudentsData } = topicStudentService.useTopicStudents(
-    topicId,
+    topic.id,
     pagination.current,
-    pagination.pageSize
+    pagination.pageSize,
+    canFetch
   );
-  if (!topicData || !topicStudentsData) {
-    return <Empty />;
-  }
+  const [topicStudents, setTopicStudents] = useState<TopicStudentForView[]>(
+    topicStudentsData ? topicStudentsData.students : []
+  );
+  useEffect(() => {
+    if (topicStudentsData) {
+      setTopicStudents(topicStudentsData.students);
+    }
+  }, [topicStudentsData]);
 
   let topicStudentTableColumn = [...TopicStudentTableColumns];
-  if (loginUser.getId() !== topicData.topic.creator.id) {
+  if (loginUser.getId() !== topic.creator.id) {
     topicStudentTableColumn = topicStudentTableColumn.filter(({ key }) => key !== 'action');
   }
 
@@ -72,7 +69,8 @@ const TopicStudentInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
       cancelButtonProps: { type: 'primary', danger: true },
       async onOk() {
         try {
-          await topicService.registerTopic(topicId, loginUser.getId());
+          const { data } = await topicService.registerTopic(topic.id, loginUser.getId());
+          setTopicStudents([...topicStudents, data.student]);
           message.success(TopicTerminology.TOPIC_45);
         } catch (error) {
           await topicService.requestErrorHandler(error);
@@ -83,7 +81,7 @@ const TopicStudentInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
 
   const registerTopicButton = () => {
     const isRegistered =
-      topicStudentsData.students.findIndex(
+      topicStudents.findIndex(
         ({ id, status }) =>
           (status === TopicStudentStatus.APPROVED || status === TopicStudentStatus.PENDING) &&
           loginUser.getId() === id
@@ -91,8 +89,8 @@ const TopicStudentInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
     if (
       loginUser.isStudent() &&
       !isRegistered &&
-      topicData.topic.status === TopicStateAction.APPROVED &&
-      topicData.topic.registerStatus === TopicRegisterStatus.ENABLE
+      topic.status === TopicStateAction.APPROVED &&
+      topic.registerStatus === TopicRegisterStatus.ENABLE
     ) {
       return (
         <Button
@@ -106,25 +104,25 @@ const TopicStudentInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
   };
 
   const studentsStatistic = () => {
-    if (loginUser.getId() !== topicData.topic.creator.id) {
+    if (loginUser.getId() !== topic.creator.id) {
       return <></>;
     }
 
-    const total = topicStudentsData.students.length;
-    const acceptAmount = topicStudentsData.students.filter(
+    const total = topicStudents.length;
+    const acceptAmount = topicStudents.filter(
       ({ status }) => status === TopicStudentStatus.APPROVED
     ).length;
-    const rejectAmount = topicStudentsData.students.filter(
+    const rejectAmount = topicStudents.filter(
       ({ status }) => status === TopicStudentStatus.REJECTED
     ).length;
-    const remainAmount = topicData.topic.maxStudent - topicData.topic.currentStudent;
+    const remainAmount = topic.maxStudent - topic.currentStudent;
 
     return (
       <Space size="large" split={<Divider type="vertical" />}>
         <Statistic
           title={TopicTerminology.TOPIC_5}
           prefix={<Icon component={UsersClassIcon} />}
-          value={topicData.topic.maxStudent}
+          value={topic.maxStudent}
         />
         <Statistic
           title={TopicTerminology.TOPIC_51}
@@ -159,7 +157,7 @@ const TopicStudentInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
         <Table
           title={studentsStatistic}
           columns={topicStudentTableColumn}
-          dataSource={topicStudentsData.students}
+          dataSource={topicStudents}
           bordered
           pagination={pagination}
         />

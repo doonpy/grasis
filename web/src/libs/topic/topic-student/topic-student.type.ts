@@ -22,3 +22,7 @@ export interface UseTopicStudents {
   data?: TopicGetStudentsResponse;
   isLoading: boolean;
 }
+
+export interface TopicRegisterResponse extends CommonResponse {
+  student: TopicStudentForView;
+}
