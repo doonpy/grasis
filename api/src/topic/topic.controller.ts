@@ -213,7 +213,7 @@ export class TopicController {
     };
   }
 
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @Post(TopicPath.CHANGE_REGISTER_STATUS)
   @UseGuards(TopicStudentRegisterGuard)
   public async changeRegisterStatus(
@@ -225,8 +225,13 @@ export class TopicController {
     )
     id: number,
     @Request() req: Express.Request
-  ): Promise<void> {
-    await this.topicService.changeRegisterStatus(id, req.user!.userId);
+  ): Promise<TopicUpdateResponse> {
+    const topic = await this.topicService.changeRegisterStatus(id, req.user!.userId);
+
+    return {
+      statusCode: HttpStatus.OK,
+      topic: await this.topicService.convertForView(topic)
+    };
   }
 
   @HttpCode(HttpStatus.OK)

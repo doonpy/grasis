@@ -119,9 +119,10 @@ export default class TopicService extends CommonService {
     return loginUser.getId() === id && allowEditStates.includes(status);
   }
 
-  public async changeRegisterStatus(topicId: number): Promise<void> {
+  public async changeRegisterStatus(topicId: number): Promise<AxiosResponse<TopicUpdateResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(TopicApi.CHANGE_REGISTER_STATUS, {}, [topicId]);
+
+    return this.apiService.post(TopicApi.CHANGE_REGISTER_STATUS, {}, [topicId]);
   }
 
   public async registerTopic(

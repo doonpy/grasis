@@ -536,7 +536,7 @@ export class TopicService {
     return topic.states;
   }
 
-  public async changeRegisterStatus(id: number, userId: number): Promise<void> {
+  public async changeRegisterStatus(id: number, userId: number): Promise<Topic> {
     const topic = await this.getById(id);
     if (topic.creatorId !== userId) {
       throw new BadRequestException(TopicError.ERR_14);
@@ -556,7 +556,7 @@ export class TopicService {
       topic.registerStatus = TopicRegisterStatus.ENABLE;
     }
 
-    await this.topicRepository.save(topic);
+    return this.topicRepository.save(topic);
   }
 
   public async registerTopic(topicId: number, studentId: number): Promise<TopicStudent> {
