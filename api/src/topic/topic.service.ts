@@ -24,6 +24,7 @@ import {
   TopicStateAction
 } from './topic-state/topic-state.resource';
 import { TopicStateService } from './topic-state/topic-state.service';
+import { TopicState } from './topic-state/topic-state.type';
 import { TopicStudentStatus } from './topic-student/topic-student.resouce';
 import { TopicStudentService } from './topic-student/topic-student.service';
 import { StateResult, TopicError, TopicRegisterStatus } from './topic.resource';
@@ -393,7 +394,7 @@ export class TopicService {
     await this.checkPermission(currentTopic, user);
     this.thesisService.checkThesisIsActive(currentTopic.thesis.status);
     if (!this.canEdit(user, currentTopic)) {
-      throw new BadRequestException(TopicError.ERR_6);
+      throw new BadRequestException(TopicError.ERR_17);
     }
 
     return this.topicRepository.save({ ...currentTopic, ...data });
@@ -410,7 +411,7 @@ export class TopicService {
     const currentTopic = await this.getById(topicId);
     const user = await this.userService.getById(userId);
     if (!this.canEdit(user, currentTopic)) {
-      throw new BadRequestException(TopicError.ERR_6);
+      throw new BadRequestException(TopicError.ERR_18);
     }
 
     await this.connection.transaction(async (manager) => {
@@ -422,11 +423,11 @@ export class TopicService {
     topicId: number,
     userId: number,
     data: TopicChangeStatusRequestBody
-  ): Promise<void> {
+  ): Promise<TopicState[]> {
     const { action, note } = data;
     const user = await this.userService.getById(userId);
     const topic = await this.topicRepository.findOne(topicId, {
-      relations: ['states', 'thesis'],
+      relations: ['states', 'states.processor', 'states.processor.user', 'thesis'],
       cache: true
     });
     if (!topic) {
@@ -497,7 +498,7 @@ export class TopicService {
       throw new BadRequestException(TopicError.ERR_7);
     }
 
-    await this.handleChangeStatus(topic, user.id, action, note);
+    return this.handleChangeStatus(topic, user.id, action, note);
   }
 
   private async handleChangeStatus(
@@ -505,12 +506,14 @@ export class TopicService {
     processorId: number,
     action: TopicStateAction,
     note?: string
-  ) {
+  ): Promise<TopicState[]> {
+    const processor = await this.lecturerService.getById(processorId);
     topic.status = action;
     topic.states.push(
       this.topicStateService.createEntity({
         topicId: topic.id,
-        processorId,
+        processorId: processor.id,
+        processor,
         action: action,
         note: note || null
       })
@@ -528,6 +531,8 @@ export class TopicService {
     } else {
       await this.topicRepository.save(topic);
     }
+
+    return topic.states;
   }
 
   public async changeRegisterStatus(id: number, userId: number): Promise<void> {

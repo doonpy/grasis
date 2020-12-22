@@ -17,3 +17,5 @@ export type TopicStateForView = Omit<TopicState, 'processor'> & {
 export interface TopicGetStatesResponse extends CommonResponse {
   states: TopicStateForView[];
 }
+
+export type TopicChangeStateResponse = TopicGetStatesResponse;

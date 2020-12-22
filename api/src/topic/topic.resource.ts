@@ -47,7 +47,9 @@ export const TopicError = {
   ERR_13: 'Đề tài này hiện không mở đăng ký.',
   ERR_14: 'Bạn không có quyền thực hiện thao tác này.',
   ERR_15: 'Sinh viên đã đăng ký đề tài khác.',
-  ERR_16: 'Đề tài này đã đủ sinh viên thực hiện.'
+  ERR_16: 'Đề tài này đã đủ sinh viên thực hiện.',
+  ERR_17: 'Không thể chỉnh sửa đề tài đã được phê duyệt.',
+  ERR_18: 'Không thể xóa đề tài đã được phê duyệt.'
 };
 
 export const TopicQuery = {

@@ -81,7 +81,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
             }
             key={TopicTabKey.PRIVATE_CONTENT}>
             <TopicPrivateInfo
-              topicId={topicId}
+              topic={topicData.topic}
               thesis={thesisData.thesis}
               canFetch={currentTab === TopicTabKey.PRIVATE_CONTENT}
             />

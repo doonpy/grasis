@@ -14,7 +14,7 @@ import TopicFormItem from './TopicFormItem';
 interface ComponentProps {
   thesisId: number;
   topic?: TopicForView;
-  setTopic: React.Dispatch<TopicForView>;
+  setTopic?: React.Dispatch<TopicForView>;
 }
 
 const TopicCreateAndUpdate: React.FC<ComponentProps> = ({ thesisId, topic, setTopic }) => {
@@ -42,7 +42,10 @@ const TopicCreateAndUpdate: React.FC<ComponentProps> = ({ thesisId, topic, setTo
       if (topic) {
         const { data } = await topicService.updateById(topic.id, formValues);
         message.success(TopicTerminology.TOPIC_68);
-        setTopic(data.topic);
+        if (setTopic) {
+          setTopic(data.topic);
+        }
+
         setVisible(false);
         setLoading(false);
       } else {
@@ -66,6 +69,8 @@ const TopicCreateAndUpdate: React.FC<ComponentProps> = ({ thesisId, topic, setTo
         form.setFieldsValue(topic);
       }
     }, [topic]);
+  } else {
+    form.setFieldsValue({ maxStudent: 2 });
   }
 
   return (

@@ -16,7 +16,7 @@ const TopicFormItem: React.FC = () => {
         <Input.TextArea rows={5} />
       </Form.Item>
       <Form.Item label={<b>{TopicTerminology.TOPIC_5}</b>} name="maxStudent">
-        <InputNumber min={1} max={2} defaultValue={2} />
+        <InputNumber min={1} max={2} />
       </Form.Item>
     </>
   );

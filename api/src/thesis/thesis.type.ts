@@ -2,7 +2,6 @@ import { CommonColumns, CommonResponse } from '../common/common.type';
 import { LecturerForFastView, LecturerSearchAttendee } from '../lecturer/lecturer.type';
 import { StudentSearchAttendee } from '../student/student.type';
 import { ThesisEntity } from './thesis.entity';
-import { ThesisStatus } from './thesis.resource';
 
 export type Thesis = ThesisEntity;
 

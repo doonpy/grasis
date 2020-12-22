@@ -39,3 +39,5 @@ export interface UseTopicStates {
   data?: TopicGetStatesResponse;
   isLoading: boolean;
 }
+
+export type TopicChangeStateResponse = TopicGetStatesResponse;

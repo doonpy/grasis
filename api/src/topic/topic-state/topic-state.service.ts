@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
 import { TopicStateEntity } from './topic-state.entity';
-import { TopicState } from './topic-state.type';
+import { TopicState, TopicStateForView } from './topic-state.type';
 
 @Injectable()
 export class TopicStateService {
@@ -30,5 +30,12 @@ export class TopicStateService {
     deletedAt = new Date()
   ): Promise<void> {
     await manager.update(TopicStateEntity, { topicId }, { deletedAt });
+  }
+
+  public convertForView(states: TopicState[]): TopicStateForView[] {
+    return states.map(({ processor, ...remain }) => ({
+      ...remain,
+      processor: processor.convertToFastView()
+    }));
   }
 }

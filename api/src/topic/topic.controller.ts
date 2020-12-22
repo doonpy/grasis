@@ -34,7 +34,7 @@ import { ParseTopicChangeStatusPipe } from './pipes/parse-topic-change-status.pi
 import { ParseTopicChangeStudentRegisterStatusPipe } from './pipes/parse-topic-change-student-register-status.pipe';
 import { ParseTopicRequestBodyPipe } from './pipes/parse-topic-request-body.pipe';
 import { TopicStateService } from './topic-state/topic-state.service';
-import { TopicGetStatesResponse } from './topic-state/topic-state.type';
+import { TopicChangeStateResponse, TopicGetStatesResponse } from './topic-state/topic-state.type';
 import { TopicStudentService } from './topic-student/topic-student.service';
 import { TopicGetStudentsResponse, TopicStudentForView } from './topic-student/topic-student.type';
 import { TopicError, TopicPath, TopicQuery } from './topic.resource';
@@ -186,7 +186,7 @@ export class TopicController {
     await this.topicService.deleteById(id, req.user!.userId);
   }
 
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @Post(TopicPath.CHANGE_STATUS)
   @UseGuards(TopicLecturerRegisterGuard)
   public async changeStatus(
@@ -200,8 +200,13 @@ export class TopicController {
     @Body(new JoiValidationPipe(topicChangeActionValidationSchema), ParseTopicChangeStatusPipe)
     body: TopicChangeStatusRequestBody,
     @Request() req: Express.Request
-  ): Promise<void> {
-    await this.topicService.changeStatus(id, req.user!.userId, body);
+  ): Promise<TopicChangeStateResponse> {
+    const states = await this.topicService.changeStatus(id, req.user!.userId, body);
+
+    return {
+      statusCode: HttpStatus.OK,
+      states: this.topicStateService.convertForView(states)
+    };
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -348,14 +353,11 @@ export class TopicController {
       throw new BadRequestException(TopicError.ERR_14);
     }
 
-    const states = (await this.topicStateService.getMany(id)).map(({ processor, ...remain }) => ({
-      ...remain,
-      processor: processor.convertToFastView()
-    }));
+    const states = await this.topicStateService.getMany(id);
 
     return {
       statusCode: HttpStatus.OK,
-      states
+      states: this.topicStateService.convertForView(states)
     };
   }
 

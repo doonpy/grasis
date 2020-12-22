@@ -6,6 +6,7 @@ import CommonService from '../common/common.service';
 import { ThesisForView } from '../thesis/thesis.type';
 import LoginUser from '../user/instance/LoginUser';
 import { TopicStateAction } from './topic-state/topic-state.resource';
+import { TopicChangeStateResponse } from './topic-state/topic-state.type';
 import { TopicStudentStatus } from './topic-student/topic-student.resource';
 import { TopicStudent } from './topic-student/topic-student.type';
 import { TOPIC_API_ROOT, TopicApi } from './topic.resource';
@@ -99,13 +100,12 @@ export default class TopicService extends CommonService {
   }
 
   public async changeStatus(
-    thesisId: number,
     topicId: number,
     action: TopicStateAction,
     note?: string
-  ): Promise<void> {
+  ): Promise<AxiosResponse<TopicChangeStateResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(TopicApi.CHANGE_STATUS, { action, note }, [topicId, thesisId]);
+    return this.apiService.post(TopicApi.CHANGE_STATUS, { action, note }, [topicId]);
   }
 
   public canEdit({ creator: { id }, status }: Topic | TopicForView): boolean {
