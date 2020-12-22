@@ -276,7 +276,7 @@ export class ThesisService {
     const { attendees, ...thesis } = data;
     this.validateThesisStateDate(thesis as Thesis);
     const currentThesis = await this.getById(id);
-    this.checkThesisIsInactive(currentThesis);
+    this.checkThesisIsInactive(currentThesis.status);
 
     return await this.connection.transaction(async (manager) => {
       if (attendees) {
@@ -652,13 +652,13 @@ export class ThesisService {
     );
   }
 
-  public checkThesisIsActive({ status }: Thesis): void {
+  public checkThesisIsActive(status: ThesisStatus): void {
     if (status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(ThesisError.ERR_9);
     }
   }
 
-  public checkThesisIsInactive({ status }: Thesis): void {
+  public checkThesisIsInactive(status: ThesisStatus): void {
     if (status === ThesisStatus.ACTIVE) {
       throw new BadRequestException(ThesisError.ERR_10);
     }

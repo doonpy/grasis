@@ -100,7 +100,7 @@ export class ProgressReportService {
   public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
     const topic = await this.topicService.getById(topicId, true);
     await this.topicService.checkPermission(topic, userId);
-    this.thesisService.checkThesisIsActive(topic.thesis);
+    this.thesisService.checkThesisIsActive(topic.thesis.status);
 
     if (topic.thesis.state !== ThesisState.PROGRESS_REPORT) {
       throw new BadRequestException(ProgressReportError.ERR_6);

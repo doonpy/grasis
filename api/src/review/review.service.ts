@@ -119,7 +119,7 @@ export class ReviewService {
   public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
     const topic = await this.topicService.getById(topicId, true);
     await this.topicService.checkPermission(topic, userId);
-    this.thesisService.checkThesisIsActive(topic.thesis);
+    this.thesisService.checkThesisIsActive(topic.thesis.status);
 
     if (topic.thesis.state !== ThesisState.REVIEW) {
       throw new BadRequestException(ReviewError.ERR_6);
@@ -148,7 +148,7 @@ export class ReviewService {
 
   public async checkUploadResultPermission(topicId: number, userId: number): Promise<void> {
     const { thesis } = await this.topicService.getById(topicId, true);
-    this.thesisService.checkThesisIsActive(thesis);
+    this.thesisService.checkThesisIsActive(thesis.status);
 
     if (thesis.state !== ThesisState.REVIEW) {
       throw new BadRequestException(ReviewError.ERR_6);

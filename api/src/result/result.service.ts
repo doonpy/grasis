@@ -106,7 +106,7 @@ export class ResultService {
   public async updateById(id: number, data: ResultRequestBody, userId: number): Promise<void> {
     const currentResult = await this.getById(id);
     const topic = await this.topicService.getById(currentResult.topicId, true);
-    this.thesisService.checkThesisIsActive(topic.thesis);
+    this.thesisService.checkThesisIsActive(topic.thesis.status);
     await this.topicService.checkPermission(topic, userId);
     this.checkStatePermission(topic.thesis.state);
     this.checkEditPermission(currentResult, userId);

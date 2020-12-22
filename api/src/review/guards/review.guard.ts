@@ -22,7 +22,7 @@ export class ReviewGuard implements CanActivate {
     }
 
     const topic = await this.topicService.getById(parseInt(topicId), true);
-    this.thesisService.checkThesisIsActive(topic.thesis);
+    this.thesisService.checkThesisIsActive(topic.thesis.status);
 
     if (topic.thesis.state !== ThesisState.REVIEW) {
       throw new BadRequestException(ReviewError.ERR_6);

@@ -28,7 +28,7 @@ export class CouncilService {
   public async create(data: CouncilRequestBody, userId: number): Promise<Council> {
     const thesis = await this.thesisService.getById(data.thesisId);
     await this.thesisService.checkPermission(thesis, userId);
-    this.thesisService.checkThesisIsActive(thesis);
+    this.thesisService.checkThesisIsActive(thesis.status);
     await this.validateMember(data);
 
     const entity = this.councilRepository.create(data);
@@ -183,7 +183,7 @@ export class CouncilService {
     const council = await this.getById(id);
     const thesis = await this.thesisService.getById(council.thesisId);
     await this.thesisService.checkPermission(thesis, userId);
-    this.thesisService.checkThesisIsActive(thesis);
+    this.thesisService.checkThesisIsActive(thesis.status);
     await this.validateMember(data);
 
     await this.councilRepository.update(id, { ...council, ...data });
@@ -193,7 +193,7 @@ export class CouncilService {
     const council = await this.getById(id);
     const thesis = await this.thesisService.getById(council.thesisId);
     await this.thesisService.checkPermission(thesis, userId);
-    this.thesisService.checkThesisIsActive(thesis);
+    this.thesisService.checkThesisIsActive(thesis.status);
 
     await this.councilRepository.update(id, { deletedAt: new Date() });
   }

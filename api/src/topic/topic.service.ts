@@ -56,7 +56,7 @@ export class TopicService {
   public async create(thesisId: number, topicBody: TopicRequestBody): Promise<Topic> {
     await this.thesisService.checkPermission(thesisId, topicBody.creatorId);
     const thesis = await this.thesisService.getById(thesisId);
-    this.thesisService.checkThesisIsActive(thesis);
+    this.thesisService.checkThesisIsActive(thesis.status);
     const topicEntity = await this.topicRepository.create({ ...topicBody, thesisId });
     topicEntity.approverId = thesis.creatorId;
     const newState = this.topicStateService.createEntity({
@@ -424,7 +424,7 @@ export class TopicService {
     const currentTopic = await this.getById(topicId, true);
     const user = await this.userService.getById(userId);
     await this.checkPermission(currentTopic, user);
-    this.thesisService.checkThesisIsActive(currentTopic.thesis);
+    this.thesisService.checkThesisIsActive(currentTopic.thesis.status);
     if (!this.canEdit(user, currentTopic)) {
       throw new BadRequestException(TopicError.ERR_6);
     }

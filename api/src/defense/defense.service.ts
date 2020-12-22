@@ -116,7 +116,7 @@ export class DefenseService {
 
   public async checkUploadResultPermission(topicId: number, userId: number): Promise<void> {
     const { thesis } = await this.topicService.getById(topicId, true);
-    await this.thesisService.checkThesisIsActive(thesis);
+    await this.thesisService.checkThesisIsActive(thesis.status);
 
     if (thesis.state !== ThesisState.DEFENSE) {
       throw new BadRequestException(DefenseError.ERR_5);
