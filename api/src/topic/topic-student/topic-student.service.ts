@@ -54,11 +54,12 @@ export class TopicStudentService {
   }
 
   public async changeRegisterStatus(
-    topicId: number,
-    studentId: number,
+    topicStudent: TopicStudent,
     status: TopicStudentStatus
-  ): Promise<void> {
-    await this.topicStudentRepository.update({ topicId, studentId }, { status });
+  ): Promise<TopicStudent> {
+    topicStudent.status = status;
+
+    return this.topicStudentRepository.save(topicStudent);
   }
 
   public async getMany(topicId: number, limit: number, offset: number): Promise<TopicStudent[]> {
@@ -101,11 +102,12 @@ export class TopicStudentService {
 
   public async changeRegisterStatusWithTransaction(
     manager: EntityManager,
-    topicId: number,
-    studentId: number,
+    topicStudent: TopicStudent,
     status: TopicStudentStatus
-  ): Promise<void> {
-    await manager.update(TopicStudentEntity, { topicId, studentId }, { status });
+  ): Promise<TopicStudent> {
+    topicStudent.status = status;
+
+    return manager.save(topicStudent);
   }
 
   public async rejectRegisterOfStudentByTopicIdsWithTransaction(

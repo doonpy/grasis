@@ -599,7 +599,7 @@ export class TopicService {
     topicId: number,
     studentId: number,
     status: TopicStudentStatus
-  ): Promise<void> {
+  ): Promise<TopicStudent> {
     const user = await this.userService.getById(userId);
     const topic = await this.getById(topicId, true);
     await this.checkPermission(topic, user);
@@ -625,13 +625,7 @@ export class TopicService {
         .map(({ id }) => id)
         .filter((id) => id !== topicId);
 
-      await this.connection.transaction(async (manager) => {
-        await this.topicStudentService.changeRegisterStatusWithTransaction(
-          manager,
-          topicId,
-          studentId,
-          status
-        );
+      return this.connection.transaction(async (manager) => {
         await this.topicStudentService.rejectRegisterOfStudentByTopicIdsWithTransaction(
           manager,
           anotherTopicIds,
@@ -648,9 +642,15 @@ export class TopicService {
           { id: topicId },
           { currentStudent: topic.currentStudent, registerStatus: topic.registerStatus }
         );
+
+        return this.topicStudentService.changeRegisterStatusWithTransaction(
+          manager,
+          topicStudent,
+          status
+        );
       });
     } else {
-      await this.topicStudentService.changeRegisterStatus(topicId, studentId, status);
+      return this.topicStudentService.changeRegisterStatus(topicStudent, status);
     }
   }
 

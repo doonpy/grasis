@@ -3,7 +3,12 @@ import useSWR from 'swr';
 import { DEFAULT_PAGE_SIZE } from '../../common/common.resource';
 import CommonService from '../../common/common.service';
 import { TopicApi } from '../topic.resource';
-import { TopicGetStudentsResponse, UseTopicStudents } from './topic-student.type';
+import {
+  TopicGetStudentsResponse,
+  TopicStudent,
+  TopicStudentForView,
+  UseTopicStudents
+} from './topic-student.type';
 
 export default class TopicStudentService extends CommonService {
   private static instance: TopicStudentService;
@@ -38,5 +43,21 @@ export default class TopicStudentService extends CommonService {
     }
 
     return { data, isLoading: !data };
+  }
+
+  public updateItemInStudentList(
+    list: TopicStudentForView[],
+    student: TopicStudent
+  ): TopicStudentForView[] {
+    return list.map((item) => {
+      if (item.id !== student.studentId) {
+        return item;
+      }
+
+      item.status = student.status;
+      item.updatedAt = student.updatedAt;
+
+      return item;
+    });
   }
 }

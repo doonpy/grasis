@@ -11,6 +11,10 @@ export interface TopicGetStudentsResponse extends CommonResponse {
   students: TopicStudentForView[];
 }
 
-export interface TopicRegisterResponse extends CommonResponse {
+export interface TopicStudentRegisterResponse extends CommonResponse {
   student: TopicStudentForView;
+}
+
+export interface TopicStudentChangeRegisterStatusResponse extends CommonResponse {
+  student: TopicStudent;
 }

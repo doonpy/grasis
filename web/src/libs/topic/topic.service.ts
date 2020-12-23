@@ -8,7 +8,11 @@ import LoginUser from '../user/instance/LoginUser';
 import { TopicStateAction } from './topic-state/topic-state.resource';
 import { TopicChangeStateResponse } from './topic-state/topic-state.type';
 import { TopicStudentStatus } from './topic-student/topic-student.resource';
-import { TopicRegisterResponse, TopicStudent } from './topic-student/topic-student.type';
+import {
+  TopicRegisterResponse,
+  TopicStudent,
+  TopicStudentChangeRegisterStatusResponse
+} from './topic-student/topic-student.type';
 import { TOPIC_API_ROOT, TopicApi } from './topic.resource';
 import {
   Topic,
@@ -150,9 +154,10 @@ export default class TopicService extends CommonService {
     topicId: number,
     studentId: number,
     status: TopicStudentStatus
-  ): Promise<void> {
+  ): Promise<AxiosResponse<TopicStudentChangeRegisterStatusResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(TopicApi.CHANGE_STUDENT_REGISTER_STATUS, { status }, [
+
+    return this.apiService.post(TopicApi.CHANGE_STUDENT_REGISTER_STATUS, { status }, [
       topicId,
       studentId
     ]);

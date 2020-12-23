@@ -38,8 +38,9 @@ import { TopicChangeStateResponse, TopicGetStatesResponse } from './topic-state/
 import { TopicStudentService } from './topic-student/topic-student.service';
 import {
   TopicGetStudentsResponse,
-  TopicRegisterResponse,
-  TopicStudentForView
+  TopicStudentChangeRegisterStatusResponse,
+  TopicStudentForView,
+  TopicStudentRegisterResponse
 } from './topic-student/topic-student.type';
 import { TopicError, TopicPath, TopicQuery } from './topic.resource';
 import { TopicService } from './topic.service';
@@ -252,7 +253,7 @@ export class TopicController {
       ParseIntPipe
     )
     studentId: number
-  ): Promise<TopicRegisterResponse> {
+  ): Promise<TopicStudentRegisterResponse> {
     const student = await this.topicService.registerTopic(id, studentId);
 
     return {
@@ -261,7 +262,7 @@ export class TopicController {
     };
   }
 
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @Post(TopicPath.CHANGE_STUDENT_REGISTER_STATUS)
   @UseGuards(TopicStudentRegisterGuard)
   public async changStudentRegisterStatus(
@@ -285,13 +286,18 @@ export class TopicController {
     )
     body: TopicChangeStudentRegisterStatusRequestBody,
     @Request() req: Express.Request
-  ): Promise<void> {
-    await this.topicService.changeStudentRegisterStatus(
+  ): Promise<TopicStudentChangeRegisterStatusResponse> {
+    const topicStudent = await this.topicService.changeStudentRegisterStatus(
       req.user!.userId,
       id,
       studentId,
       body.status
     );
+
+    return {
+      statusCode: HttpStatus.OK,
+      student: topicStudent
+    };
   }
 
   @Get(TopicPath.GET_STUDENTS)

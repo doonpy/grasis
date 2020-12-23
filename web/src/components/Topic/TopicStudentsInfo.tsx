@@ -19,6 +19,7 @@ import { TopicRegisterStatus } from '../../libs/topic/topic.resource';
 import TopicService from '../../libs/topic/topic.service';
 import { TopicForView } from '../../libs/topic/topic.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
+import TopicStudentRegisterAction from './TopicStudentRegisterAction';
 import { TopicStudentTableColumns } from './TopicStudentTableColumns';
 
 const { confirm } = Modal;
@@ -28,7 +29,7 @@ interface ComponentProps {
   canFetch: boolean;
 }
 
-const TopicStudentInfo: React.FC<ComponentProps> = ({ topic, canFetch }) => {
+const TopicStudentInfo: React.FC<ComponentProps> = ({ topic: initTopic, canFetch }) => {
   const topicService = TopicService.getInstance();
   const topicStudentService = TopicStudentService.getInstance();
   const loginUser = LoginUser.getInstance();
@@ -39,6 +40,7 @@ const TopicStudentInfo: React.FC<ComponentProps> = ({ topic, canFetch }) => {
     size: 'small',
     showSizeChanger: false
   };
+  const [topic, setTopic] = useState<TopicForView>(initTopic);
   const { data: topicStudentsData } = topicStudentService.useTopicStudents(
     topic.id,
     pagination.current,
@@ -57,6 +59,19 @@ const TopicStudentInfo: React.FC<ComponentProps> = ({ topic, canFetch }) => {
   let topicStudentTableColumn = [...TopicStudentTableColumns];
   if (loginUser.getId() !== topic.creator.id) {
     topicStudentTableColumn = topicStudentTableColumn.filter(({ key }) => key !== 'action');
+  } else {
+    const actionColumn = topicStudentTableColumn.find(({ key }) => key === 'action');
+    if (actionColumn) {
+      actionColumn.render = (value: TopicStudentForView) => (
+        <TopicStudentRegisterAction
+          topicStudent={value}
+          topic={topic}
+          setTopic={setTopic}
+          topicStudents={topicStudents}
+          setTopicStudents={setTopicStudents}
+        />
+      );
+    }
   }
 
   const onConfirmRegisterTopic = async () => {
