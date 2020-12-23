@@ -1,5 +1,5 @@
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, message, Space, Upload } from 'antd';
+import { Button, Image, message, Space, Upload } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { UploadChangeParam } from 'antd/lib/upload';
 import React, { useState } from 'react';
@@ -14,9 +14,10 @@ interface ComponentProps {
   defaultImageUrl: string;
   width?: number | string;
   height?: number | string;
+  isEdit?: boolean;
 }
 
-const AvatarFormItem: React.FC<ComponentProps> = ({ defaultImageUrl, width, height }) => {
+const AvatarFormItem: React.FC<ComponentProps> = ({ defaultImageUrl, width, height, isEdit }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>(defaultImageUrl);
   const commonService = CommonService.getInstance();
@@ -38,33 +39,35 @@ const AvatarFormItem: React.FC<ComponentProps> = ({ defaultImageUrl, width, heig
 
   return (
     <Space direction="vertical" align="center">
-      <img
+      <Image
         src={imageUrl}
         width={width}
         height={height}
         onError={() => setImageUrl(FallbackImage)}
         alt="avatar"
       />
-      <ImgCrop
-        rotate
-        grid
-        modalTitle="Chỉnh sửa ảnh đại diện"
-        modalOk="Hoàn thành"
-        modalCancel="Hủy">
-        <Upload
-          name={UPLOAD_AVATAR_BODY_PROPERTY}
-          headers={{
-            Authorization: commonService.jwtService.getAccessTokenForAuth()
-          }}
-          action={`${commonService.apiService.getBaseUrl()}/${UploadApi.AVATAR}`}
-          showUploadList={false}
-          beforeUpload={beforeUpload}
-          onChange={handleChange}>
-          <Button loading={loading} icon={<UploadOutlined />}>
-            {UploadTerminology.UPLOAD_5}
-          </Button>
-        </Upload>
-      </ImgCrop>
+      {isEdit && (
+        <ImgCrop
+          rotate
+          grid
+          modalTitle="Chỉnh sửa ảnh đại diện"
+          modalOk="Hoàn thành"
+          modalCancel="Hủy">
+          <Upload
+            name={UPLOAD_AVATAR_BODY_PROPERTY}
+            headers={{
+              Authorization: commonService.jwtService.getAccessTokenForAuth()
+            }}
+            action={`${commonService.apiService.getBaseUrl()}/${UploadApi.AVATAR}`}
+            showUploadList={false}
+            beforeUpload={beforeUpload}
+            onChange={handleChange}>
+            <Button loading={loading} icon={<UploadOutlined />}>
+              {UploadTerminology.UPLOAD_5}
+            </Button>
+          </Upload>
+        </ImgCrop>
+      )}
     </Space>
   );
 };

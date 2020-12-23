@@ -26,21 +26,20 @@ interface PageParams extends ParsedUrlQuery {
 const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const studentService = StudentService.getInstance();
   const studentId = parseInt(params.id);
-  const login = LoginUser.getInstance();
   const { data, isLoading } = studentService.useStudent(studentId);
+  const login = LoginUser.getInstance();
 
   return (
     <Card title={StudentTerminology.STUDENT_7} loading={isLoading}>
       {data && (
         <Space size={48} align={'start'}>
           <Space direction="vertical" align="center">
-            {login.getId() === data.student.id && (
-              <AvatarFormItem
-                defaultImageUrl={getAvatarUrl(login.getId())}
-                width={250}
-                height={250}
-              />
-            )}
+            <AvatarFormItem
+              defaultImageUrl={getAvatarUrl(studentId)}
+              width={250}
+              height={250}
+              isEdit={login.getId() === studentId}
+            />
           </Space>
           <UserView user={data.student.user} userType={UserType.STUDENT} />
           <StudentView student={data.student} />
