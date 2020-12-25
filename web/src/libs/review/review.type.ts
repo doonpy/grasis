@@ -10,10 +10,6 @@ export interface Review extends TopicStateBase {
   reviewerComment: string | null;
 }
 
-export interface ReviewCreateOrUpdateResponse extends CommonResponse {
-  id: number;
-}
-
 export type ReviewRequestBody = WithOptional<
   Omit<Review, keyof CommonColumns | 'result' | 'reviewer' | 'topic' | 'reviewerComment'>,
   'note' | 'place' | 'reviewerId'
@@ -33,3 +29,5 @@ export interface UseReview {
   isLoading: boolean;
   data?: ReviewGetByIdResponse;
 }
+
+export type ReviewUpdateResponse = ReviewGetByIdResponse;

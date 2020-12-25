@@ -57,16 +57,17 @@ export class ReviewService {
     return review;
   }
 
-  public async updateById(id: number, data: ReviewRequestBody, userId: number): Promise<void> {
+  public async updateById(id: number, data: ReviewRequestBody, userId: number): Promise<Review> {
     const currentReview = await this.getById(id);
     this.checkResultIsNotDecided(currentReview.result);
     const topic = await this.topicService.getById(id, true);
     await this.topicService.checkPermission(topic, userId);
+    await this.thesisService.checkThesisIsActive(topic.thesis.status);
     if (data.time) {
       await this.checkValidTime(topic.thesis, data.time);
     }
 
-    await this.reviewRepository.update({ id }, { ...currentReview, ...data });
+    return this.reviewRepository.save({ ...currentReview, ...data });
   }
 
   public async deleteByIdWithTransaction(
@@ -75,39 +76,6 @@ export class ReviewService {
     deletedAt = new Date()
   ): Promise<void> {
     await manager.update(ReviewEntity, { id }, { deletedAt });
-  }
-
-  public async getByIdForView(id: number): Promise<ReviewForView> {
-    const {
-      createdAt,
-      updatedAt,
-      time,
-      place,
-      note,
-      result,
-      reviewerId,
-      reviewerComment
-    } = await this.getById(id);
-    const participates = await this.topicStudentService.getStudentsParticipated(id);
-    const reporters = participates.map(({ student }) => student.convertToFastView());
-    let reviewer: LecturerForFastView | null = null;
-    if (reviewerId) {
-      reviewer = (await this.lecturerService.getById(reviewerId)).convertToFastView();
-    }
-
-    return {
-      id,
-      createdAt,
-      updatedAt,
-      time,
-      place,
-      note,
-      reporters,
-      result,
-      reviewerId,
-      reviewer,
-      reviewerComment
-    };
   }
 
   private checkValidTime({ studentTopicRegister, review }: Thesis, time: string | Date): void {
@@ -190,5 +158,38 @@ export class ReviewService {
     if (!(await this.hasReviewerPermission(reviewId, userId))) {
       throw new BadRequestException(ReviewError.ERR_7);
     }
+  }
+
+  public async convertForView({
+    id,
+    createdAt,
+    updatedAt,
+    time,
+    place,
+    note,
+    result,
+    reviewerId,
+    reviewerComment
+  }: Review): Promise<ReviewForView> {
+    const participates = await this.topicStudentService.getStudentsParticipated(id);
+    const reporters = participates.map(({ student }) => student.convertToFastView());
+    let reviewer: LecturerForFastView | null = null;
+    if (reviewerId) {
+      reviewer = (await this.lecturerService.getById(reviewerId)).convertToFastView();
+    }
+
+    return {
+      id,
+      createdAt,
+      updatedAt,
+      time,
+      place,
+      note,
+      reporters,
+      result,
+      reviewerId,
+      reviewer,
+      reviewerComment
+    };
   }
 }

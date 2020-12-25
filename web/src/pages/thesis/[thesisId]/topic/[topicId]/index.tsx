@@ -127,7 +127,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
                   }
                   key={TopicTabKey.REVIEW}>
                   <ReviewInfo
-                    topicId={topicId}
+                    topic={topicData.topic}
                     thesis={thesisData.thesis}
                     canFetch={currentTab === TopicTabKey.REVIEW}
                   />

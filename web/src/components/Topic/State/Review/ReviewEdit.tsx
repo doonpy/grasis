@@ -20,6 +20,7 @@ import StateEditBaseItem from '../StateEditBaseItem';
 interface ComponentProps {
   thesisId: number;
   review: ReviewForView;
+  setReview: React.Dispatch<ReviewForView>;
   validDateRange: [string | Moment, string | Moment];
   thesisCreatorId: number;
 }
@@ -27,6 +28,7 @@ interface ComponentProps {
 const ReviewEdit: React.FC<ComponentProps> = ({
   thesisId,
   review,
+  setReview,
   validDateRange,
   thesisCreatorId
 }) => {
@@ -52,7 +54,8 @@ const ReviewEdit: React.FC<ComponentProps> = ({
   const onFormSubmit = async (formValues: ReviewRequestBody) => {
     setLoading(true);
     try {
-      await adminService.updateById(review.id, formValues);
+      const { data } = await adminService.updateById(review.id, formValues);
+      setReview({ ...review, ...data.review });
       message.success(ReviewTerminology.REVIEW_11);
       setLoading(false);
       setVisible(false);

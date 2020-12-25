@@ -52,11 +52,11 @@ export class ReviewController {
     )
     topicId: number
   ): Promise<ReviewGetByIdResponse> {
-    const review = await this.reviewService.getByIdForView(topicId);
+    const review = await this.reviewService.getById(topicId);
 
     return {
       statusCode: HttpStatus.OK,
-      review
+      review: await this.reviewService.convertForView(review)
     };
   }
 }

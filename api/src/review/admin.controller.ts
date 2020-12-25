@@ -17,7 +17,7 @@ import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { ReviewPath } from './review.resource';
 import { ReviewService } from './review.service';
-import { ReviewCreateOrUpdateResponse, ReviewRequestBody } from './review.type';
+import { ReviewRequestBody, ReviewUpdateResponse } from './review.type';
 import { reviewCreateValidationSchema } from './review.validation';
 
 @UseGuards(JwtAuthGuard, AdminGuard)
@@ -37,12 +37,12 @@ export class ReviewAdminController {
     @Body(new JoiValidationPipe(reviewCreateValidationSchema))
     body: ReviewRequestBody,
     @Req() request: Express.CustomRequest
-  ): Promise<ReviewCreateOrUpdateResponse> {
-    await this.reviewService.updateById(id, body, request.user!.userId);
+  ): Promise<ReviewUpdateResponse> {
+    const review = await this.reviewService.updateById(id, body, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,
-      id
+      review: await this.reviewService.convertForView(review)
     };
   }
 }

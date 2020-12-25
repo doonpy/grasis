@@ -11,15 +11,15 @@ export type ReviewRequestBody = WithOptional<
   'note' | 'place' | 'reviewerId'
 >;
 
-export interface ReviewCreateOrUpdateResponse extends CommonResponse {
-  id: number;
+export interface ReviewUpdateResponse extends CommonResponse {
+  review: ReviewForView;
 }
 
 export interface ReviewGetByIdResponse extends CommonResponse {
   review: ReviewForView | null;
 }
 
-export type ReviewForView = Omit<TopicStateBaseForView, 'deletedAt' | 'topic'> &
+export type ReviewForView = Omit<TopicStateBaseForView, 'topic'> &
   Pick<Review, 'reviewerId' | 'reviewerComment'> & {
     result: StateResult;
     reviewer: LecturerForFastView | null;
