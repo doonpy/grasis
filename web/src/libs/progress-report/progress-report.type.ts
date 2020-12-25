@@ -12,18 +12,10 @@ export interface ProgressReport extends CommonColumns {
   result: StateResult;
 }
 
-export interface ProgressReportCreateOrUpdateResponse extends CommonResponse {
-  id: number;
-}
-
 export type ProgressReportRequestBody = WithOptional<
   Omit<ProgressReport, keyof CommonColumns | 'id'>,
   'note' | 'place'
 >;
-
-export interface ProgressReportCreateOrUpdateResponse extends CommonResponse {
-  id: number;
-}
 
 export interface ProgressReportGetByIdResponse extends CommonResponse {
   progressReport: ProgressReportForView;
@@ -37,3 +29,5 @@ export interface UseProgressReport {
   isLoading: boolean;
   data?: ProgressReportGetByIdResponse;
 }
+
+export type ProgressReportUpdateResponse = ProgressReportGetByIdResponse;

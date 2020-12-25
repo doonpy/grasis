@@ -9,10 +9,6 @@ export type ProgressReportRequestBody = WithOptional<
   'note' | 'place'
 >;
 
-export interface ProgressReportCreateOrUpdateResponse extends CommonResponse {
-  id: number;
-}
-
 export interface ProgressReportGetByIdResponse extends CommonResponse {
   progressReport: ProgressReportForView;
 }
@@ -20,3 +16,5 @@ export interface ProgressReportGetByIdResponse extends CommonResponse {
 export type ProgressReportForView = Omit<ProgressReport, 'deletedAt' | 'topic'> & {
   reporters: StudentForFastView[];
 };
+
+export type ProgressReportUpdateResponse = ProgressReportGetByIdResponse;

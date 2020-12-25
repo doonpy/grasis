@@ -48,7 +48,7 @@ const TopicInfo: React.FC<ComponentProps> = ({ topic: initTopic, thesis }) => {
       async onOk() {
         try {
           const { data } = await topicService.changeRegisterStatus(topic.id);
-          setTopic(data.topic);
+          setTopic({ ...topic, ...data.topic });
           if (topic.registerStatus === TopicRegisterStatus.DISABLE) {
             message.success(TopicTerminology.TOPIC_47);
           } else {

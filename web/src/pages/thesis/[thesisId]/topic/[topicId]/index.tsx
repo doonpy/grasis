@@ -111,7 +111,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
                   }
                   key={TopicTabKey.PROGRESS_REPORT}>
                   <ProgressReportInfo
-                    topicId={topicId}
+                    topic={topicData.topic}
                     thesis={thesisData.thesis}
                     canFetch={currentTab === TopicTabKey.PROGRESS_REPORT}
                   />

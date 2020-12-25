@@ -19,12 +19,14 @@ import StateEditBaseItem from '../StateEditBaseItem';
 
 interface ComponentProps {
   progressReport: ProgressReportForView;
+  setProgressReport: React.Dispatch<ProgressReportForView>;
   validDateRange: [string | Moment, string | Moment];
   thesisCreatorId: number;
 }
 
 const ProgressReportEdit: React.FC<ComponentProps> = ({
   progressReport,
+  setProgressReport,
   validDateRange,
   thesisCreatorId
 }) => {
@@ -50,7 +52,8 @@ const ProgressReportEdit: React.FC<ComponentProps> = ({
   const onFormSubmit = async (formValues: ProgressReportRequestBody) => {
     setLoading(true);
     try {
-      await adminService.updateById(progressReport.id, formValues);
+      const { data } = await adminService.updateById(progressReport.id, formValues);
+      setProgressReport({ ...progressReport, ...data.progressReport });
       message.success(ProgressReportTerminology.PR_21);
       setLoading(false);
       setVisible(false);

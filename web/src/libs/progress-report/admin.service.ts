@@ -2,10 +2,7 @@ import { AxiosResponse } from 'axios';
 
 import CommonService from '../common/common.service';
 import { ProgressReportApi } from './progress-report.resource';
-import {
-  ProgressReportCreateOrUpdateResponse,
-  ProgressReportRequestBody
-} from './progress-report.type';
+import { ProgressReportRequestBody, ProgressReportUpdateResponse } from './progress-report.type';
 
 export default class ProgressReportAdminService extends CommonService {
   private static instance: ProgressReportAdminService;
@@ -25,9 +22,10 @@ export default class ProgressReportAdminService extends CommonService {
   public async updateById(
     topicId: number,
     body: ProgressReportRequestBody
-  ): Promise<AxiosResponse<ProgressReportCreateOrUpdateResponse>> {
+  ): Promise<AxiosResponse<ProgressReportUpdateResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    return this.apiService.patch<ProgressReportCreateOrUpdateResponse>(
+
+    return this.apiService.patch<ProgressReportUpdateResponse>(
       ProgressReportApi.ADMIN_SPECIFY,
       body,
       [topicId]

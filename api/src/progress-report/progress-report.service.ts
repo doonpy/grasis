@@ -51,7 +51,7 @@ export class ProgressReportService {
     return progressReport;
   }
 
-  public async updateById(id: number, data: ProgressReportRequestBody): Promise<void> {
+  public async updateById(id: number, data: ProgressReportRequestBody): Promise<ProgressReport> {
     const currentProgressReport = await this.getById(id);
     this.checkResultIsNotDecided(currentProgressReport.result);
     const { thesis } = await this.topicService.getById(id, true);
@@ -59,7 +59,7 @@ export class ProgressReportService {
       await this.checkValidTime(thesis, data.time);
     }
 
-    await this.progressReportRepository.update({ id }, { ...currentProgressReport, ...data });
+    return this.progressReportRepository.save({ ...currentProgressReport, ...data });
   }
 
   public async deleteByTopicIdWithTransaction(
@@ -128,5 +128,16 @@ export class ProgressReportService {
     if (result !== StateResult.NOT_DECIDED) {
       throw new BadRequestException(ProgressReportError.ERR_7);
     }
+  }
+
+  public async convertForView(progressReport: ProgressReport): Promise<ProgressReportForView> {
+    const reporters = (
+      await this.topicStudentService.getStudentsParticipated(progressReport.id)
+    ).map(({ student }) => student.convertToFastView());
+
+    return {
+      ...progressReport,
+      reporters
+    };
   }
 }
