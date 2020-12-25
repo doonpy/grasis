@@ -2,21 +2,25 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Button, message, Space, Upload } from 'antd';
 import { RcFile } from 'antd/lib/upload';
 import { UploadProps } from 'antd/lib/upload/interface';
+import { AxiosResponse } from 'axios';
 import React, { useState } from 'react';
 
 import { UploadTerminology } from '../../assets/terminology/upload.terminology';
 import { FILENAME_PATTERN } from '../../libs/common/common.resource';
+import { FileInfo } from '../../libs/common/common.type';
 import { UploadBody } from '../../libs/upload/upload.resource';
 import UploadService from '../../libs/upload/upload.service';
-import { ExtraRequestBody } from '../../libs/upload/upload.type';
+import { ExtraRequestBody, UploadFilesResponse } from '../../libs/upload/upload.type';
 
 interface ComponentProps {
   fileLimit: number;
   multiple: boolean;
   validMimeTypes: string[];
   extraRequestBody: ExtraRequestBody[];
-  action: (formData: FormData) => Promise<void>;
+  action: (formData: FormData) => Promise<AxiosResponse<UploadFilesResponse>>;
   currentAmount?: number;
+  files: FileInfo[];
+  setFiles: React.Dispatch<FileInfo[]>;
 }
 
 const UploadBase: React.FC<ComponentProps> = ({
@@ -25,7 +29,9 @@ const UploadBase: React.FC<ComponentProps> = ({
   multiple,
   validMimeTypes,
   extraRequestBody,
-  action
+  action,
+  files,
+  setFiles
 }) => {
   const uploadService = UploadService.getInstance();
   const [uploadFiles, setUploadFiles] = useState<RcFile[]>([]);
@@ -73,7 +79,8 @@ const UploadBase: React.FC<ComponentProps> = ({
         formData.append(UploadBody.FILE, file || '');
       }
 
-      await action(formData);
+      const { data } = await action(formData);
+      setFiles([...files, ...data.files]);
       setUploadFiles([]);
       setUploading(false);
       message.success(UploadTerminology.UPLOAD_3);

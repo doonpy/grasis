@@ -166,4 +166,10 @@ export class UploadService {
 
     return result;
   }
+
+  public convertToFileInfo({ filename, destination }: Express.Multer.File): FileInfo {
+    const { size, ctime, mtime } = fs.statSync(`${destination}/${filename}`);
+
+    return { name: filename, size, type: mime.lookup(filename) || '', ctime, mtime };
+  }
 }

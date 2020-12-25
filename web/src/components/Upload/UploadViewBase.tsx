@@ -18,6 +18,7 @@ const { confirm } = Modal;
 
 interface ComponentProps {
   files: FileInfo[];
+  setFiles: React.Dispatch<FileInfo[]>;
   canUpload: boolean;
   downloadAction: (...args: any[]) => Promise<void>;
   deleteAction: (...args: any[]) => Promise<void>;
@@ -26,6 +27,7 @@ interface ComponentProps {
 
 const UploadViewBase: React.FC<ComponentProps> = ({
   files,
+  setFiles,
   canUpload,
   downloadAction,
   deleteAction,
@@ -57,6 +59,7 @@ const UploadViewBase: React.FC<ComponentProps> = ({
       async onOk() {
         try {
           await deleteAction(filename);
+          setFiles(files.filter(({ name }) => name !== filename));
           message.success(UploadTerminology.UPLOAD_10);
         } catch (error) {
           await downloadService.requestErrorHandler(error);

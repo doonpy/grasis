@@ -9,3 +9,5 @@ export type FileFilterCallback = (error: null | Error, acceptFile: boolean) => v
 export interface GetFilesResponse extends CommonResponse {
   files: FileInfo[];
 }
+
+export type UploadFilesResponse = GetFilesResponse;

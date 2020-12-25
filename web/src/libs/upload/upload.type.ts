@@ -1,11 +1,11 @@
 import { CommonResponse, FileInfo } from '../common/common.type';
 
-export interface GetFilesReponse extends CommonResponse {
+export interface GetFilesResponse extends CommonResponse {
   files: FileInfo[];
 }
 
 export interface UseReports {
-  data?: GetFilesReponse;
+  data?: GetFilesResponse;
   isLoading: boolean;
 }
 
@@ -15,6 +15,8 @@ export interface ExtraRequestBody {
 }
 
 export interface UseResults {
-  data?: GetFilesReponse;
+  data?: GetFilesResponse;
   isLoading: boolean;
 }
+
+export type UploadFilesResponse = GetFilesResponse;

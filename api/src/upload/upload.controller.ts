@@ -38,7 +38,7 @@ import {
   UploadPath
 } from './upload.resource';
 import { UploadService } from './upload.service';
-import { GetFilesResponse } from './upload.type';
+import { GetFilesResponse, UploadFilesResponse } from './upload.type';
 
 @UseGuards(JwtAuthGuard)
 @Controller(UploadPath.ROOT)
@@ -92,13 +92,14 @@ export class UploadController {
   @UseInterceptors(UploadReportInterceptor)
   public async uploadReport(
     @UploadedFiles() files: Express.Multer.File[]
-  ): Promise<CommonResponse> {
+  ): Promise<UploadFilesResponse> {
     if (isProductionMode()) {
       await this.uploadService.uploadToS3(files);
     }
 
     return {
-      statusCode: HttpStatus.OK
+      statusCode: HttpStatus.OK,
+      files: files.map((file) => this.uploadService.convertToFileInfo(file))
     };
   }
 

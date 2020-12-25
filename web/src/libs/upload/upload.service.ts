@@ -1,9 +1,10 @@
+import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
 import { ReportModule, ResultModule } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { UploadApi } from './upload.resource';
-import { GetFilesReponse, UseReports, UseResults } from './upload.type';
+import { GetFilesResponse, UploadFilesResponse, UseReports, UseResults } from './upload.type';
 
 export default class UploadService extends CommonService {
   private static instance: UploadService;
@@ -21,7 +22,7 @@ export default class UploadService extends CommonService {
   }
 
   public useReports(topicId: number, module: ReportModule, canFetch = true): UseReports {
-    const { data } = useSWR<GetFilesReponse>(
+    const { data } = useSWR<GetFilesResponse>(
       canFetch ? this.replaceParams(UploadApi.GET_REPORTS, [topicId, module]) : null
     );
     if (data) {
@@ -31,9 +32,10 @@ export default class UploadService extends CommonService {
     return { data, isLoading: !data };
   }
 
-  public async uploadReport(data: FormData): Promise<void> {
+  public async uploadReport(data: FormData): Promise<AxiosResponse<UploadFilesResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.postFile(UploadApi.REPORT, data);
+
+    return this.apiService.postFile(UploadApi.REPORT, data);
   }
 
   public async deleteReport(
@@ -51,7 +53,7 @@ export default class UploadService extends CommonService {
   }
 
   public useResults(topicId: number, module: ResultModule, canFetch = true): UseResults {
-    const { data } = useSWR<GetFilesReponse>(
+    const { data } = useSWR<GetFilesResponse>(
       canFetch ? this.replaceParams(UploadApi.GET_RESULTS, [topicId, module]) : null
     );
     if (data) {
