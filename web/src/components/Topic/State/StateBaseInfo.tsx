@@ -6,7 +6,6 @@ import { TopicTerminology } from '../../../assets/terminology/topic.terminology'
 import { ReportModule } from '../../../libs/common/common.resource';
 import { TopicStateBaseForView } from '../../../libs/topic/topic-state/topic-state.type';
 import LoginUser from '../../../libs/user/instance/LoginUser';
-import CommentAdd from '../../Comment/CommentAdd';
 import CommentList from '../../Comment/CommentList';
 import DateData from '../../Common/DateData';
 import TextData from '../../Common/TextData';
