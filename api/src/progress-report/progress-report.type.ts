@@ -18,3 +18,5 @@ export type ProgressReportForView = Omit<ProgressReport, 'deletedAt' | 'topic'> 
 };
 
 export type ProgressReportUpdateResponse = ProgressReportGetByIdResponse;
+
+export type ProgressReportChangeResultResponse = ProgressReportGetByIdResponse;

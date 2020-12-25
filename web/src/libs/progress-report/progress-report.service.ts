@@ -1,9 +1,14 @@
+import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
 import CommonService from '../common/common.service';
 import { StateResult } from '../topic/topic-state/topic-state.resource';
 import { ProgressReportApi } from './progress-report.resource';
-import { ProgressReportGetByIdResponse, UseProgressReport } from './progress-report.type';
+import {
+  ProgressReportChangeResultResponse,
+  ProgressReportGetByIdResponse,
+  UseProgressReport
+} from './progress-report.type';
 
 export default class ProgressReportService extends CommonService {
   private static instance: ProgressReportService;
@@ -28,9 +33,13 @@ export default class ProgressReportService extends CommonService {
     return { data, isLoading: !data };
   }
 
-  public async changeResult(id: number, result: StateResult): Promise<void> {
+  public async changeResult(
+    id: number,
+    result: StateResult
+  ): Promise<AxiosResponse<ProgressReportChangeResultResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(this.replaceParams(ProgressReportApi.ADMIN_CHANGE_RESULT, [id]), {
+
+    return this.apiService.post(this.replaceParams(ProgressReportApi.ADMIN_CHANGE_RESULT, [id]), {
       result
     });
   }

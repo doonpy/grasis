@@ -21,7 +21,11 @@ import { stateResultValidationSchema } from '../topic/topic.validation';
 import { ProgressReportGuard } from './guards/progress-report.guard';
 import { ProgressReportBody, ProgressReportPath } from './progress-report.resource';
 import { ProgressReportService } from './progress-report.service';
-import { ProgressReportRequestBody, ProgressReportUpdateResponse } from './progress-report.type';
+import {
+  ProgressReportChangeResultResponse,
+  ProgressReportRequestBody,
+  ProgressReportUpdateResponse
+} from './progress-report.type';
 import { progressReportCreateValidationSchema } from './progress-report.validation';
 
 @UseGuards(JwtAuthGuard, AdminGuard, TopicPermissionGuard)
@@ -61,7 +65,12 @@ export class ProgressReportAdminController {
     id: number,
     @Body(ProgressReportBody.RESULT, new JoiValidationPipe(stateResultValidationSchema))
     result: StateResult
-  ): Promise<void> {
-    await this.progressReportService.changeResult(id, result);
+  ): Promise<ProgressReportChangeResultResponse> {
+    const progressReport = await this.progressReportService.changeResult(id, result);
+
+    return {
+      statusCode: HttpStatus.OK,
+      progressReport: await this.progressReportService.convertForView(progressReport)
+    };
   }
 }

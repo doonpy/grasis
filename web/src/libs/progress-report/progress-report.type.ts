@@ -31,3 +31,5 @@ export interface UseProgressReport {
 }
 
 export type ProgressReportUpdateResponse = ProgressReportGetByIdResponse;
+
+export type ProgressReportChangeResultResponse = ProgressReportGetByIdResponse;

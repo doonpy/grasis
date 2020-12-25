@@ -17,10 +17,15 @@ const { confirm } = Modal;
 
 interface ComponentProps {
   progressReport: ProgressReportForView;
+  setProgressReport: React.Dispatch<ProgressReportForView>;
   thesisCreatorId: number;
 }
 
-const ProgressReportButton: React.FC<ComponentProps> = ({ progressReport, thesisCreatorId }) => {
+const ProgressReportButton: React.FC<ComponentProps> = ({
+  progressReport,
+  setProgressReport,
+  thesisCreatorId
+}) => {
   const progressReportService = ProgressReportService.getInstance();
   const loginUser = LoginUser.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,7 +40,8 @@ const ProgressReportButton: React.FC<ComponentProps> = ({ progressReport, thesis
       async onOk() {
         try {
           setLoading(true);
-          await progressReportService.changeResult(progressReport.id, result);
+          const { data } = await progressReportService.changeResult(progressReport.id, result);
+          setProgressReport({ ...progressReport, ...data.progressReport });
           message.success(TopicTerminology.TOPIC_61);
           setLoading(false);
         } catch (error) {

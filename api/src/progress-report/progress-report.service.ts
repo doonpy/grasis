@@ -111,11 +111,11 @@ export class ProgressReportService {
     this.checkResultIsNotDecided(progressReport.result);
   }
 
-  public async changeResult(id: number, result: StateResult): Promise<void> {
+  public async changeResult(id: number, result: StateResult): Promise<ProgressReport> {
     const progressReview = await this.getById(id);
     this.checkResultIsNotDecided(progressReview.result);
 
-    await this.progressReportRepository.update({ id }, { result });
+    return this.progressReportRepository.save({ ...progressReview, result });
   }
 
   public async getByIds(ids: number[]): Promise<ProgressReport[]> {

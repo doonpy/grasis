@@ -59,6 +59,7 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch 
           {thesis.state === ThesisState.PROGRESS_REPORT && (
             <ProgressReportButton
               progressReport={progressReport}
+              setProgressReport={setProgressReport}
               thesisCreatorId={thesis.creatorId}
             />
           )}
