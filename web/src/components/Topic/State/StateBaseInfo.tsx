@@ -78,7 +78,6 @@ const StateBaseInfo: React.FC<ComponentProps> = ({
         </Descriptions>
       </Col>
       <Col span={9} offset={1}>
-        <CommentAdd topicId={stateInfo.id} module={module} />
         <CommentList topicId={stateInfo.id} module={module} />
       </Col>
     </Row>

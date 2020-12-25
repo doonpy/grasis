@@ -4,6 +4,7 @@ import React, { ChangeEvent, useState } from 'react';
 import { CommentTerminology } from '../../assets/terminology/comment.terminology';
 import { CommentMode } from '../../libs/comment/comment.resource';
 import CommentService from '../../libs/comment/comment.service';
+import { CommentForView } from '../../libs/comment/comment.type';
 import { ReportModule } from '../../libs/common/common.resource';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import AvatarForComment from '../Avatar/AvatarForComment';
@@ -11,9 +12,11 @@ import AvatarForComment from '../Avatar/AvatarForComment';
 interface ComponentProps {
   topicId: number;
   module: ReportModule;
+  comments: CommentForView[];
+  setComments: React.Dispatch<CommentForView[]>;
 }
 
-const CommentAdd: React.FC<ComponentProps> = ({ topicId, module }) => {
+const CommentAdd: React.FC<ComponentProps> = ({ topicId, module, comments, setComments }) => {
   const loginUser = LoginUser.getInstance();
   const commentService = CommentService.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
@@ -31,7 +34,8 @@ const CommentAdd: React.FC<ComponentProps> = ({ topicId, module }) => {
   const onSubmit = async () => {
     try {
       setLoading(true);
-      await commentService.addComment(topicId, mode, module, content);
+      const { data } = await commentService.addComment(topicId, mode, module, content);
+      setComments([data.comment, ...comments]);
       setContent('');
       message.success(CommentTerminology.COMMENT_6);
       setLoading(false);

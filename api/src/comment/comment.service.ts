@@ -31,7 +31,10 @@ export class CommentService {
       creatorId
     });
 
-    return this.commentRepository.save(commentEntity);
+    const comment = await this.commentRepository.save(commentEntity);
+    comment.creator = user;
+
+    return comment;
   }
 
   public async getManyForView(
@@ -60,13 +63,7 @@ export class CommentService {
         take: limit,
         order: { createdAt: 'DESC' }
       })
-    ).map(({ id, content, createdAt, mode, creator }) => ({
-      id,
-      content,
-      createdAt,
-      mode,
-      creatorInfo: this.userService.convertToCommentView(creator)
-    }));
+    ).map((comment) => this.convertForView(comment));
   }
 
   public async getAmount(topicId: number, userId: number, module: ReportModule): Promise<number> {
@@ -108,5 +105,15 @@ export class CommentService {
     deletedAt = new Date()
   ): Promise<void> {
     await manager.update(CommentEntity, { topicId }, { deletedAt });
+  }
+
+  public convertForView({ id, content, createdAt, mode, creator }: Comment): CommentForView {
+    return {
+      id,
+      content,
+      createdAt,
+      mode,
+      creatorInfo: this.userService.convertToCommentView(creator)
+    };
   }
 }

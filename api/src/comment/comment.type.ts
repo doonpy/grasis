@@ -10,7 +10,7 @@ export type CommentRequestBody = Omit<
 >;
 
 export interface CommentCreateResponse extends CommonResponse {
-  id: number;
+  comment: CommentForView;
 }
 
 export type CommentForView = Pick<Comment, 'id' | 'content' | 'mode' | 'createdAt'> & {

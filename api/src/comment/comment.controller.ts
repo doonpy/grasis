@@ -49,11 +49,11 @@ export class CommentController {
     @Req() req: Express.CustomRequest
   ): Promise<CommentCreateResponse> {
     const loginUserId = req.user!.userId;
-    const { id } = await this.commentService.create(loginUserId, body);
+    const comment = await this.commentService.create(loginUserId, body);
 
     return {
       statusCode: HttpStatus.CREATED,
-      id
+      comment: this.commentService.convertForView(comment)
     };
   }
 

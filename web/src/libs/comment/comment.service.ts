@@ -1,9 +1,10 @@
+import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
 import { DEFAULT_PAGE_SIZE, ReportModule } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { COMMENT_API_ROOT, CommentApi, CommentMode } from './comment.resource';
-import { CommentGetManyResponse, UseComment } from './comment.type';
+import { CommentCreateResponse, CommentGetManyResponse, UseComment } from './comment.type';
 
 export default class CommentService extends CommonService {
   private static instance: CommentService;
@@ -45,9 +46,10 @@ export default class CommentService extends CommonService {
     mode: CommentMode,
     module: ReportModule,
     content: string
-  ): Promise<void> {
+  ): Promise<AxiosResponse<CommentCreateResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(COMMENT_API_ROOT, { topicId, mode, module, content });
+
+    return this.apiService.post(COMMENT_API_ROOT, { topicId, mode, module, content });
   }
 
   public async deleteById(id: number): Promise<void> {

@@ -151,9 +151,9 @@ export class UserService {
   }
 
   public convertToCommentView(user: User): UserForCommentView {
-    const { id, firstname, lastname } = user;
+    const { id, firstname, lastname, userType } = user;
 
-    return { id, firstname, lastname };
+    return { id, firstname, lastname, userType };
   }
 
   public async validate(user: UserRequestBody): Promise<void> {
