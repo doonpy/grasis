@@ -11,10 +11,6 @@ export type ReviewRequestBody = WithOptional<
   'note' | 'place' | 'reviewerId'
 >;
 
-export interface ReviewUpdateResponse extends CommonResponse {
-  review: ReviewForView;
-}
-
 export interface ReviewGetByIdResponse extends CommonResponse {
   review: ReviewForView | null;
 }
@@ -26,3 +22,7 @@ export type ReviewForView = Omit<TopicStateBaseForView, 'topic'> &
   };
 
 export type ReviewChangeResultRequestBody = Pick<Review, 'reviewerComment' | 'result'>;
+
+export type ReviewChangeResultResponse = ReviewGetByIdResponse;
+
+export type ReviewUpdateResponse = ReviewGetByIdResponse;

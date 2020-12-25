@@ -1,9 +1,10 @@
+import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
 import CommonService from '../common/common.service';
 import { StateResult } from '../topic/topic-state/topic-state.resource';
 import { ReviewApi } from './review.resource';
-import { ReviewGetByIdResponse, UseReview } from './review.type';
+import { ReviewChangeResultResponse, ReviewGetByIdResponse, UseReview } from './review.type';
 
 export default class ReviewService extends CommonService {
   private static instance: ReviewService;
@@ -32,9 +33,10 @@ export default class ReviewService extends CommonService {
     id: number,
     result: StateResult,
     reviewerComment: string
-  ): Promise<void> {
+  ): Promise<AxiosResponse<ReviewChangeResultResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.post(this.replaceParams(ReviewApi.CHANGE_RESULT, [id]), {
+
+    return this.apiService.post(this.replaceParams(ReviewApi.CHANGE_RESULT, [id]), {
       result,
       reviewerComment
     });

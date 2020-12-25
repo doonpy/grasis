@@ -101,13 +101,14 @@ export class ReviewService {
   public async changeResult(
     id: number,
     { result, reviewerComment }: ReviewChangeResultRequestBody
-  ): Promise<void> {
+  ): Promise<Review> {
     const review = await this.getById(id);
     this.checkResultIsNotDecided(review.result);
 
     review.result = result;
     review.reviewerComment = reviewerComment;
-    await this.reviewRepository.save(review);
+
+    return this.reviewRepository.save(review);
   }
 
   public async getByIds(ids: number[]): Promise<Review[]> {

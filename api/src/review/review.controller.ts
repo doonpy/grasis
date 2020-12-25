@@ -18,7 +18,11 @@ import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { ReviewerGuard } from './guards/reviewer.guard';
 import { ReviewPath } from './review.resource';
 import { ReviewService } from './review.service';
-import { ReviewChangeResultRequestBody, ReviewGetByIdResponse } from './review.type';
+import {
+  ReviewChangeResultRequestBody,
+  ReviewChangeResultResponse,
+  ReviewGetByIdResponse
+} from './review.type';
 import { reviewChangeResultValidationSchema } from './review.validation';
 
 @UseGuards(JwtAuthGuard, TopicPermissionGuard)
@@ -38,8 +42,13 @@ export class ReviewController {
     id: number,
     @Body(new JoiValidationPipe(reviewChangeResultValidationSchema))
     body: ReviewChangeResultRequestBody
-  ): Promise<void> {
-    await this.reviewService.changeResult(id, body);
+  ): Promise<ReviewChangeResultResponse> {
+    const review = await this.reviewService.changeResult(id, body);
+
+    return {
+      statusCode: HttpStatus.OK,
+      review: await this.reviewService.convertForView(review)
+    };
   }
 
   @Get(ReviewPath.SPECIFY)

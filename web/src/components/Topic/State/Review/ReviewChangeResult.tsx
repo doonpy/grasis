@@ -10,14 +10,16 @@ import { ReviewTerminology } from '../../../../assets/terminology/review.termino
 import { TopicTerminology } from '../../../../assets/terminology/topic.terminology';
 import { ReviewResultText } from '../../../../libs/review/review.resource';
 import ReviewService from '../../../../libs/review/review.service';
+import { ReviewForView } from '../../../../libs/review/review.type';
 import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
 const { confirm } = Modal;
 
 interface ComponentProps {
-  topicId: number;
+  review: ReviewForView;
+  setReview: React.Dispatch<ReviewForView>;
 }
 
-const ReviewChangeResult: React.FC<ComponentProps> = ({ topicId }) => {
+const ReviewChangeResult: React.FC<ComponentProps> = ({ review, setReview }) => {
   const reviewService = ReviewService.getInstance();
   const [reviewerComment, setReviewerComment] = useState<string>('');
   const [visible, setVisible] = useState<boolean>(false);
@@ -47,7 +49,8 @@ const ReviewChangeResult: React.FC<ComponentProps> = ({ topicId }) => {
       async onOk() {
         try {
           setLoading(true);
-          await reviewService.changeResult(topicId, result, reviewerComment);
+          const { data } = await reviewService.changeResult(review.id, result, reviewerComment);
+          setReview({ ...review, ...data.review });
           message.success(TopicTerminology.TOPIC_61);
           setReviewerComment('');
           setLoading(false);

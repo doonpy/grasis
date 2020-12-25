@@ -60,7 +60,9 @@ const ReviewInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch }) => {
           )}
           {thesis.state === ThesisState.REVIEW &&
             review.reviewerId === loginUser.getId() &&
-            review.result === StateResult.NOT_DECIDED && <ReviewChangeResult topicId={topic.id} />}
+            review.result === StateResult.NOT_DECIDED && (
+              <ReviewChangeResult review={review} setReview={setReview} />
+            )}
         </Space>
       }
       extendInfo={[

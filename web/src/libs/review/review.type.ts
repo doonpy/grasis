@@ -31,3 +31,5 @@ export interface UseReview {
 }
 
 export type ReviewUpdateResponse = ReviewGetByIdResponse;
+
+export type ReviewChangeResultResponse = ReviewGetByIdResponse;
