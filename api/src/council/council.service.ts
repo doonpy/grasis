@@ -2,6 +2,7 @@ import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/com
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, FindConditions, Like, Repository } from 'typeorm';
 
+import { DefenseService } from '../defense/defense.service';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
 import { ThesisService } from '../thesis/thesis.service';
@@ -22,7 +23,8 @@ export class CouncilService {
     private readonly thesisService: ThesisService,
     private readonly thesisLecturerService: ThesisLecturerService,
     @Inject(forwardRef(() => LecturerService))
-    private readonly lecturerService: LecturerService
+    private readonly lecturerService: LecturerService,
+    private readonly defenseService: DefenseService
   ) {}
 
   public async create(data: CouncilRequestBody, userId: number): Promise<Council> {
@@ -177,6 +179,10 @@ export class CouncilService {
     await this.thesisService.checkPermission(thesis, userId);
     this.thesisService.checkThesisIsActive(thesis.status);
     await this.validateMember(data);
+    const defenses = await this.defenseService.getByCouncilId(id);
+    if (defenses.length > 0) {
+      throw new BadRequestException(CouncilError.ERR_7);
+    }
 
     return this.councilRepository.save({ ...council, ...data });
   }
@@ -186,6 +192,10 @@ export class CouncilService {
     const thesis = await this.thesisService.getById(council.thesisId);
     await this.thesisService.checkPermission(thesis, userId);
     this.thesisService.checkThesisIsActive(thesis.status);
+    const defenses = await this.defenseService.getByCouncilId(id);
+    if (defenses.length > 0) {
+      throw new BadRequestException(CouncilError.ERR_6);
+    }
 
     await this.councilRepository.update(id, { deletedAt: new Date() });
   }

@@ -24,6 +24,7 @@ export class DefenseService {
     private readonly topicStudentService: TopicStudentService,
     @Inject(forwardRef(() => ThesisService))
     private readonly thesisService: ThesisService,
+    @Inject(forwardRef(() => CouncilService))
     private readonly councilService: CouncilService,
     @Inject(forwardRef(() => ResultService))
     private readonly resultService: ResultService,
@@ -163,5 +164,14 @@ export class DefenseService {
       ...defense,
       reporters
     };
+  }
+
+  public async getByCouncilId(councilId: number): Promise<Defense[]> {
+    return this.defenseRepository.find({
+      where: {
+        councilId
+      },
+      cache: true
+    });
   }
 }

@@ -25,7 +25,9 @@ export class ThesisStudentService {
     private readonly thesisStudentRepository: Repository<ThesisStudent>,
     @Inject(forwardRef(() => StudentService))
     private readonly studentService: StudentService,
+    @Inject(forwardRef(() => ResultService))
     private readonly resultService: ResultService,
+    @Inject(forwardRef(() => TopicService))
     private readonly topicService: TopicService
   ) {}
 

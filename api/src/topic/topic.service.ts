@@ -46,6 +46,7 @@ export class TopicService {
     private readonly studentService: StudentService,
     private readonly progressReportService: ProgressReportService,
     private readonly commentService: CommentService,
+    @Inject(forwardRef(() => ReviewService))
     private readonly reviewService: ReviewService,
     @Inject(forwardRef(() => DefenseService))
     private readonly defenseService: DefenseService,

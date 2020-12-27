@@ -13,7 +13,9 @@ export const CouncilError = {
   ERR_2: 'Giảng viên được chọn làm giảng viên hướng dẫn không tham gia khóa luận này.',
   ERR_3: 'Giảng viên được chọn làm ủy viên không tham gia khóa luận này.',
   ERR_4: 'Hội đồng không tồn tại.',
-  ERR_5: 'Một giảng viên chỉ có tối đa 1 vị trí trong hội đồng.'
+  ERR_5: 'Một giảng viên chỉ có tối đa 1 vị trí trong hội đồng.',
+  ERR_6: 'Không thể xóa hội đồng đang tham gia phản biện đề tài.',
+  ERR_7: 'Không thể sửa hội đồng đang tham gia phản biện đề tài.'
 };
 
 export const CouncilPath = {
