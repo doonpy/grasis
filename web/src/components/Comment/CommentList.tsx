@@ -75,10 +75,6 @@ export const CommentList: React.FC<ComponentProps> = ({ topicId, module }) => {
     }
   }, [data]);
 
-  if (comments.length === 0) {
-    return <></>;
-  }
-
   return (
     <>
       <CommentAdd topicId={topicId} module={module} comments={comments} setComments={setComments} />
