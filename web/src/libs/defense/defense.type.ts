@@ -12,12 +12,8 @@ export type DefenseRequestBody = WithOptional<
   'note' | 'place' | 'councilId'
 >;
 
-export interface DefenseCreateOrUpdateResponse extends CommonResponse {
-  id: number;
-}
-
 export interface DefenseGetByIdResponse extends CommonResponse {
-  defense: DefenseForView | null;
+  defense: DefenseForView;
 }
 
 export type DefenseForView = Omit<TopicStateBaseForView, 'deletedAt' | 'topic'> &
@@ -33,3 +29,5 @@ export type CouncilSearchInThesisByName = Pick<Council, 'id' | 'name'>;
 export interface CouncilSearchInThesisByNameResponse extends CommonResponse {
   result: CouncilSearchInThesisByName[];
 }
+
+export type DefenseUpdateResponse = DefenseGetByIdResponse;

@@ -14,6 +14,8 @@ export const ReviewTerminology = {
   REVIEW_13: 'Tài liệu phản biện',
   REVIEW_14: 'Thay đổi kết quả',
   REVIEW_15: 'Nhận xét',
-  REVIEW_16: 'Tài liệu phản biện không thể thay đổi nếu phản biện đã có kết quả.',
-  REVIEW_17: 'Tài liệu báo cáo không thể thay đổi nếu phản biện đã có kết quả.'
+  REVIEW_16:
+    'Tài liệu phản biện không thể thay đổi nếu phản biện đã có kết quả hoặc khóa luận không đang trong giai đoạn phản biện.',
+  REVIEW_17:
+    'Tài liệu báo cáo không thể thay đổi nếu phản biện đã có kết quả hoặc khóa luận không đang trong giai đoạn phản biện.'
 };

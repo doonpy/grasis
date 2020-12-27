@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios';
 import { NOT_SELECT_ID } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { DefenseApi } from './defense.resource';
-import { DefenseCreateOrUpdateResponse, DefenseRequestBody } from './defense.type';
+import { DefenseRequestBody, DefenseUpdateResponse } from './defense.type';
 
 export default class DefenseAdminService extends CommonService {
   private static instance: DefenseAdminService;
@@ -23,14 +23,13 @@ export default class DefenseAdminService extends CommonService {
   public async updateById(
     id: number,
     body: DefenseRequestBody
-  ): Promise<AxiosResponse<DefenseCreateOrUpdateResponse>> {
+  ): Promise<AxiosResponse<DefenseUpdateResponse>> {
     if (body.councilId === NOT_SELECT_ID) {
       delete body.councilId;
     }
 
     await this.apiService.bindAuthorizationForClient();
-    return this.apiService.patch<DefenseCreateOrUpdateResponse>(DefenseApi.ADMIN_SPECIFY, body, [
-      id
-    ]);
+
+    return this.apiService.patch<DefenseUpdateResponse>(DefenseApi.ADMIN_SPECIFY, body, [id]);
   }
 }

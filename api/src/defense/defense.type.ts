@@ -9,13 +9,11 @@ export type DefenseRequestBody = WithOptional<
   'note' | 'place' | 'councilId'
 >;
 
-export interface DefenseCreateOrUpdateResponse extends CommonResponse {
-  id: number;
-}
-
 export interface DefenseGetByIdResponse extends CommonResponse {
   defense: DefenseForView | null;
 }
 
 export type DefenseForView = Omit<TopicStateBaseForView, 'deletedAt' | 'topic'> &
   Pick<Defense, 'councilId'>;
+
+export type DefenseUpdateResponse = DefenseGetByIdResponse;

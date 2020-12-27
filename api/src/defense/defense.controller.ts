@@ -32,11 +32,11 @@ export class DefenseController {
     )
     topicId: number
   ): Promise<DefenseGetByIdResponse> {
-    const defense = await this.defenseService.getByIdForView(topicId);
+    const defense = await this.defenseService.getById(topicId);
 
     return {
       statusCode: HttpStatus.OK,
-      defense
+      defense: await this.defenseService.convertForView(defense)
     };
   }
 }

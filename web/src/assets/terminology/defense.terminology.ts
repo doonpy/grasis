@@ -5,5 +5,6 @@ export const DefenseTerminology = {
   DEFENSE_4: 'Bảo vệ',
   DEFENSE_5: 'Chỉnh sửa bảo vệ',
   DEFENSE_6: 'Chỉnh sửa bảo vệ thành công.',
-  DEFENSE_7: 'Tài liệu báo cáo không thể thay đổi nếu bảo vệ đã có kết quả.'
+  DEFENSE_7: 'Tài liệu báo cáo không thể thay đổi nếu khóa luận không đang trong giai đoạn bảo vệ.',
+  DEFENSE_8: 'Tài liệu bảo vệ không thể thay đổi nếu khóa luận không đang trong giai đoạn bảo vệ.'
 };

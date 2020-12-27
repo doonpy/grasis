@@ -17,7 +17,7 @@ import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { DefensePath } from './defense.resource';
 import { DefenseService } from './defense.service';
-import { DefenseCreateOrUpdateResponse, DefenseRequestBody } from './defense.type';
+import { DefenseRequestBody, DefenseUpdateResponse } from './defense.type';
 import { defenseCreateValidationSchema } from './defense.validation';
 import { DefenseGuard } from './guards/defense.guard';
 
@@ -39,12 +39,12 @@ export class DefenseAdminController {
     @Body(new JoiValidationPipe(defenseCreateValidationSchema))
     body: DefenseRequestBody,
     @Req() request: Express.CustomRequest
-  ): Promise<DefenseCreateOrUpdateResponse> {
-    await this.defenseService.updateById(id, body, request.user!.userId);
+  ): Promise<DefenseUpdateResponse> {
+    const defense = await this.defenseService.updateById(id, body, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,
-      id
+      defense: await this.defenseService.convertForView(defense)
     };
   }
 }

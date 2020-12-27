@@ -47,7 +47,7 @@ export class DefenseService {
     return defense;
   }
 
-  public async updateById(id: number, data: DefenseRequestBody, userId: number): Promise<void> {
+  public async updateById(id: number, data: DefenseRequestBody, userId: number): Promise<Defense> {
     const currentDefense = await this.getById(id);
     const topic = await this.topicService.getById(id, true);
     await this.topicService.checkPermission(topic, userId);
@@ -62,7 +62,7 @@ export class DefenseService {
       }
     }
 
-    await this.defenseRepository.update({ id }, { ...currentDefense, ...data });
+    return this.defenseRepository.save({ ...currentDefense, ...data });
   }
 
   public async deleteByIdWithTransaction(
@@ -71,23 +71,6 @@ export class DefenseService {
     deletedAt = new Date()
   ): Promise<void> {
     await manager.update(DefenseEntity, { id }, { deletedAt });
-  }
-
-  public async getByIdForView(id: number): Promise<DefenseForView> {
-    const { createdAt, updatedAt, time, place, note, councilId } = await this.getById(id);
-    const participates = await this.topicStudentService.getStudentsParticipated(id);
-    const reporters = participates.map(({ student }) => student.convertToFastView());
-
-    return {
-      id,
-      createdAt,
-      updatedAt,
-      time,
-      place,
-      note,
-      reporters,
-      councilId
-    };
   }
 
   private checkValidTime({ studentTopicRegister, review }: Thesis, time: string | Date): void {
@@ -153,5 +136,15 @@ export class DefenseService {
     if (!(await this.hasCouncilPermission(defenseId, userId))) {
       throw new BadRequestException(DefenseError.ERR_6);
     }
+  }
+
+  public async convertForView(defense: Defense): Promise<DefenseForView> {
+    const participates = await this.topicStudentService.getStudentsParticipated(defense.id);
+    const reporters = participates.map(({ student }) => student.convertToFastView());
+
+    return {
+      ...defense,
+      reporters
+    };
   }
 }

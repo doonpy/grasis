@@ -19,5 +19,6 @@ export const ProgressReportTerminology = {
   PR_19: 'Thay đổi kết quả thành công.',
   PR_20: 'Không có dữ liệu báo cáo tiến độ',
   PR_21: 'Chỉnh sửa báo cáo tiến độ thành công',
-  PR_22: 'Tài liệu báo cáo không thể thay đổi nếu báo cáo tiến độ đã có kết quả.'
+  PR_22:
+    'Tài liệu báo cáo không thể thay đổi nếu báo cáo tiến độ đã có kết quả hoặc khóa luận không đang trong giai đoạn báo cáo tiến độ.'
 };

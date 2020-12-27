@@ -19,6 +19,7 @@ import StateEditBaseItem from '../StateEditBaseItem';
 interface ComponentProps {
   thesisId: number;
   defense: DefenseForView;
+  setDefense: React.Dispatch<DefenseForView>;
   validDateRange: [string | Moment, string | Moment];
   thesisCreatorId: number;
   defaultCouncil: CouncilForView | null;
@@ -27,6 +28,7 @@ interface ComponentProps {
 const DefenseEdit: React.FC<ComponentProps> = ({
   thesisId,
   defense,
+  setDefense,
   validDateRange,
   thesisCreatorId,
   defaultCouncil
@@ -53,7 +55,8 @@ const DefenseEdit: React.FC<ComponentProps> = ({
   const onFormSubmit = async (formValues: DefenseRequestBody) => {
     setLoading(true);
     try {
-      await adminService.updateById(defense.id, formValues);
+      const { data } = await adminService.updateById(defense.id, formValues);
+      setDefense({ ...defense, ...data.defense });
       message.success(DefenseTerminology.DEFENSE_6);
       setLoading(false);
       setVisible(false);
