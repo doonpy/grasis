@@ -14,6 +14,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommonParam, CommonQuery, CommonQueryValue } from '../common/common.resource';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
+import { ThesisService } from '../thesis/thesis.service';
 import { CouncilPath, CouncilQuery } from './council.resource';
 import { CouncilService } from './council.service';
 import { CouncilGetByIdForViewResponse, CouncilSearchInThesisByNameResponse } from './council.type';
@@ -22,7 +23,10 @@ import { TopicPermissionGuard } from './guards/topic-permission.guard';
 @UseGuards(JwtAuthGuard)
 @Controller(CouncilPath.ROOT)
 export class CouncilController {
-  constructor(private readonly councilService: CouncilService) {}
+  constructor(
+    private readonly councilService: CouncilService,
+    private readonly thesisService: ThesisService
+  ) {}
 
   @Get(CouncilPath.SPECIFY)
   @UseGuards(TopicPermissionGuard)
@@ -36,11 +40,12 @@ export class CouncilController {
     id: number,
     @Req() request: Express.CustomRequest
   ): Promise<CouncilGetByIdForViewResponse> {
-    const council = await this.councilService.getByIdForView(id, request.user!.userId);
+    const council = await this.councilService.getById(id);
+    await this.thesisService.checkPermission(council.thesisId, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,
-      council
+      council: this.councilService.convertForView(council)
     };
   }
 

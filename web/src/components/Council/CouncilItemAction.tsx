@@ -1,5 +1,5 @@
 import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Modal, Space } from 'antd';
+import { Button, message, Modal, Space } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
@@ -14,9 +14,11 @@ const { confirm } = Modal;
 
 interface ComponentProps {
   council: CouncilForView;
+  councils: CouncilForView[];
+  setCouncils: React.Dispatch<CouncilForView[]>;
 }
 
-const CouncilItemAction: React.FC<ComponentProps> = ({ council }) => {
+const CouncilItemAction: React.FC<ComponentProps> = ({ council, councils, setCouncils }) => {
   const router = useRouter();
   const councilService = CouncilAdminService.getInstance();
   const thesisId = parseInt(router.query.thesisId as string);
@@ -33,6 +35,8 @@ const CouncilItemAction: React.FC<ComponentProps> = ({ council }) => {
       async onOk() {
         try {
           await councilService.deleteById(council.id);
+          setCouncils(councils.filter(({ id }) => id !== council.id));
+          message.success(CouncilTerminology.COUNCIL_14);
         } catch (error) {
           await councilService.requestErrorHandler(error);
         }
@@ -53,6 +57,8 @@ const CouncilItemAction: React.FC<ComponentProps> = ({ council }) => {
         council={council}
         visible={visible}
         setVisible={setVisible}
+        councils={councils}
+        setCouncils={setCouncils}
       />
       <Button
         shape="circle"

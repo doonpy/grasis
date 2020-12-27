@@ -62,9 +62,13 @@ export default class CouncilAdminService extends CommonService {
     );
   }
 
-  public async updateById(id: number, body: CouncilRequestBody): Promise<void> {
+  public async updateById(
+    id: number,
+    body: CouncilRequestBody
+  ): Promise<AxiosResponse<CouncilCreateOrUpdateResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.patch(CouncilApi.ADMIN_SPECIFY, body, [id]);
+
+    return this.apiService.patch(CouncilApi.ADMIN_SPECIFY, body, [id]);
   }
 
   public async deleteById(id: number): Promise<void> {

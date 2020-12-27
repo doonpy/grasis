@@ -30,9 +30,13 @@ export class CouncilService {
     await this.thesisService.checkPermission(thesis, userId);
     this.thesisService.checkThesisIsActive(thesis.status);
     await this.validateMember(data);
-
     const entity = this.councilRepository.create(data);
-    return this.councilRepository.save(entity);
+    const council = await this.councilRepository.save(entity);
+    council.chairman = await this.lecturerService.getById(council.chairmanId);
+    council.instructor = await this.lecturerService.getById(council.instructorId);
+    council.commissioner = await this.lecturerService.getById(council.commissionerId);
+
+    return council;
   }
 
   private async validateMember({
@@ -70,40 +74,28 @@ export class CouncilService {
     }
   }
 
-  public async getById(id: number): Promise<Council> {
-    const council = await this.councilRepository.findOne({ id }, { cache: true });
+  public async getById(id: number, includeRelation?: boolean): Promise<Council> {
+    const council = await this.councilRepository.findOne(
+      { id },
+      {
+        relations: includeRelation
+          ? [
+              'chairman',
+              'chairman.user',
+              'instructor',
+              'instructor.user',
+              'commissioner',
+              'commissioner.user'
+            ]
+          : [],
+        cache: true
+      }
+    );
     if (!council) {
       throw new BadRequestException(CouncilError.ERR_4);
     }
 
     return council;
-  }
-
-  public async getByIdForView(id: number, userId: number): Promise<CouncilForView> {
-    const council = await this.councilRepository.findOne({
-      relations: [
-        'chairman',
-        'chairman.user',
-        'instructor',
-        'instructor.user',
-        'commissioner',
-        'commissioner.user'
-      ],
-      where: { id },
-      cache: true
-    });
-    if (!council) {
-      throw new BadRequestException(CouncilError.ERR_4);
-    }
-
-    await this.thesisService.checkPermission(council.thesisId, userId);
-
-    return {
-      ...council,
-      chairman: council.chairman.convertToFastView(),
-      instructor: council.instructor.convertToFastView(),
-      commissioner: council.commissioner.convertToFastView()
-    };
   }
 
   public async getManyByThesisId(
@@ -179,14 +171,14 @@ export class CouncilService {
     return this.councilRepository.count(conditions);
   }
 
-  public async updateById(id: number, data: CouncilRequestBody, userId: number): Promise<void> {
-    const council = await this.getById(id);
+  public async updateById(id: number, data: CouncilRequestBody, userId: number): Promise<Council> {
+    const council = await this.getById(id, true);
     const thesis = await this.thesisService.getById(council.thesisId);
     await this.thesisService.checkPermission(thesis, userId);
     this.thesisService.checkThesisIsActive(thesis.status);
     await this.validateMember(data);
 
-    await this.councilRepository.update(id, { ...council, ...data });
+    return this.councilRepository.save({ ...council, ...data });
   }
 
   public async deleteById(id: number, userId: number): Promise<void> {
@@ -224,5 +216,14 @@ export class CouncilService {
       id,
       name
     }));
+  }
+
+  public convertForView(council: Council): CouncilForView {
+    return {
+      ...council,
+      chairman: council.chairman.convertToFastView(),
+      instructor: council.instructor.convertToFastView(),
+      commissioner: council.commissioner.convertToFastView()
+    };
   }
 }

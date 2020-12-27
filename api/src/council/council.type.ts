@@ -20,7 +20,7 @@ export type CouncilForView = Pick<Council, keyof CommonColumns | 'id' | 'thesisI
 };
 
 export interface CouncilCreateOrUpdateResponse extends CommonResponse {
-  id: number;
+  council: CouncilForView;
 }
 
 export interface CouncilGetByIdForViewResponse extends CommonResponse {

@@ -10,7 +10,6 @@ import { LecturerForFastView } from '../../libs/lecturer/lecturer.type';
 import DateData from '../Common/DateData';
 import TextData from '../Common/TextData';
 import LecturerFastView from '../Lecturer/LecturerFastView';
-import CouncilItemAction from './CouncilItemAction';
 
 export const CouncilTableColumns: ColumnsType<CouncilForView> = [
   {
@@ -63,7 +62,6 @@ export const CouncilTableColumns: ColumnsType<CouncilForView> = [
   {
     key: 'action',
     width: '10%',
-    align: 'center',
-    render: (value: CouncilForView) => <CouncilItemAction council={value} />
+    align: 'center'
   }
 ];

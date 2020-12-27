@@ -1,16 +1,18 @@
 import Icon from '@ant-design/icons';
 import { Button, Space, Table } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import PlusIcon from '../../assets/svg/regular/plus.svg';
 import { CouncilTerminology } from '../../assets/terminology/council.terminology';
 import { DEFAULT_PAGE_SIZE } from '../../libs/common/common.resource';
 import CouncilAdminService from '../../libs/council/admin.service';
+import { CouncilForView } from '../../libs/council/council.type';
 import { ThesisForView } from '../../libs/thesis/thesis.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import SearchBox from '../Common/SearchBox';
 import CouncilForm from './CouncilForm';
+import CouncilItemAction from './CouncilItemAction';
 import { CouncilTableColumns } from './CouncilTableColumns';
 
 interface ComponentProps {
@@ -29,14 +31,19 @@ const CouncilList: React.FC<ComponentProps> = ({ thesis, canFetch }) => {
     total: 0,
     showSizeChanger: false
   });
-
-  const { data: councilData, isLoading } = councilService.useCouncils(
+  const { data, isLoading } = councilService.useCouncils(
     thesis.id,
     pagination.current,
     pagination.pageSize,
     keyword,
     canFetch
   );
+  const [councils, setCouncils] = useState<CouncilForView[]>(data ? data.councils : []);
+  useEffect(() => {
+    if (data) {
+      setCouncils(data.councils);
+    }
+  }, [data]);
 
   const handleTableChange = (paginationValues: PaginationProps) => {
     setPagination({ ...pagination, ...paginationValues });
@@ -52,13 +59,26 @@ const CouncilList: React.FC<ComponentProps> = ({ thesis, canFetch }) => {
     }
   };
 
+  const actionColumn = CouncilTableColumns.find(({ key }) => key === 'action');
+  if (actionColumn) {
+    actionColumn.render = (value: CouncilForView) => (
+      <CouncilItemAction council={value} councils={councils} setCouncils={setCouncils} />
+    );
+  }
+
   return (
     <Table
       title={() => (
         <Space size="middle">
           {loginUser.isAdmin() && thesis.creatorId === loginUser.getId() && (
             <>
-              <CouncilForm thesisId={thesis.id} visible={visible} setVisible={setVisible} />
+              <CouncilForm
+                thesisId={thesis.id}
+                visible={visible}
+                setVisible={setVisible}
+                councils={councils}
+                setCouncils={setCouncils}
+              />
               <Button
                 type="primary"
                 icon={<Icon component={PlusIcon} />}
@@ -72,7 +92,7 @@ const CouncilList: React.FC<ComponentProps> = ({ thesis, canFetch }) => {
       )}
       bordered
       columns={CouncilTableColumns}
-      dataSource={councilData && councilData.councils}
+      dataSource={councils}
       loading={isLoading}
       pagination={pagination}
       size="middle"

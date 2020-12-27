@@ -13,10 +13,19 @@ interface ComponentProps {
   thesisId: number;
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  councils: CouncilForView[];
+  setCouncils: React.Dispatch<CouncilForView[]>;
   council?: CouncilForView;
 }
 
-const CouncilForm: React.FC<ComponentProps> = ({ thesisId, council, visible, setVisible }) => {
+const CouncilForm: React.FC<ComponentProps> = ({
+  thesisId,
+  council,
+  visible,
+  setVisible,
+  councils,
+  setCouncils
+}) => {
   const councilService = CouncilAdminService.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -38,10 +47,20 @@ const CouncilForm: React.FC<ComponentProps> = ({ thesisId, council, visible, set
       setLoading(true);
       formValues.thesisId = thesisId;
       if (council) {
-        await councilService.updateById(council.id, formValues);
+        const { data } = await councilService.updateById(council.id, formValues);
+        setCouncils(
+          councils.map((item) => {
+            if (item.id === data.council.id) {
+              return data.council;
+            }
+
+            return item;
+          })
+        );
         message.success(CouncilTerminology.COUNCIL_13);
       } else {
-        await councilService.create(formValues);
+        const { data } = await councilService.create(formValues);
+        setCouncils([...councils, data.council]);
         message.success(CouncilTerminology.COUNCIL_12);
       }
       setVisible(false);

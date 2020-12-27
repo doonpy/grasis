@@ -24,6 +24,7 @@ import {
 } from '../common/common.validation';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
+import { ThesisService } from '../thesis/thesis.service';
 import { CouncilPath, CouncilQuery } from './council.resource';
 import { CouncilService } from './council.service';
 import {
@@ -39,7 +40,10 @@ import { ParseCouncilRequestBodyPipe } from './pipes/parse-council-request-body.
 @UseGuards(JwtAuthGuard, AdminGuard)
 @Controller(CouncilPath.ADMIN_ROOT)
 export class CouncilAdminController {
-  constructor(private readonly councilService: CouncilService) {}
+  constructor(
+    private readonly councilService: CouncilService,
+    private readonly thesisService: ThesisService
+  ) {}
 
   @Post()
   public async create(
@@ -47,11 +51,11 @@ export class CouncilAdminController {
     body: CouncilRequestBody,
     @Req() request: Express.CustomRequest
   ): Promise<CouncilCreateOrUpdateResponse> {
-    const createdCouncil = await this.councilService.create(body, request.user!.userId);
+    const council = await this.councilService.create(body, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,
-      id: createdCouncil.id
+      council: this.councilService.convertForView(council)
     };
   }
 
@@ -66,11 +70,12 @@ export class CouncilAdminController {
     id: number,
     @Req() request: Express.CustomRequest
   ): Promise<CouncilGetByIdForViewResponse> {
-    const council = await this.councilService.getByIdForView(id, request.user!.userId);
+    const council = await this.councilService.getById(id);
+    await this.thesisService.checkPermission(council.thesisId, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,
-      council
+      council: this.councilService.convertForView(council)
     };
   }
 
@@ -129,11 +134,11 @@ export class CouncilAdminController {
     body: CouncilRequestBody,
     @Req() request: Express.CustomRequest
   ): Promise<CouncilCreateOrUpdateResponse> {
-    await this.councilService.updateById(id, body, request.user!.userId);
+    const council = await this.councilService.updateById(id, body, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,
-      id
+      council: this.councilService.convertForView(council)
     };
   }
 
