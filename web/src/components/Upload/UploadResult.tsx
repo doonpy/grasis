@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { ResultModule } from '../../libs/common/common.resource';
+import { FileInfo } from '../../libs/common/common.type';
 import {
   UPLOAD_RESULT_LIMIT_FILES,
   UploadBody,
@@ -14,9 +15,17 @@ interface ComponentProps {
   module: ResultModule;
   topicId: number;
   currentAmount: number;
+  files: FileInfo[];
+  setFiles: React.Dispatch<FileInfo[]>;
 }
 
-const UploadResult: React.FC<ComponentProps> = ({ module, topicId, currentAmount }) => {
+const UploadResult: React.FC<ComponentProps> = ({
+  module,
+  topicId,
+  currentAmount,
+  files,
+  setFiles
+}) => {
   const uploadService = UploadService.getInstance();
   const extraRequestBodyBody: ExtraRequestBody[] = [
     {
@@ -37,6 +46,8 @@ const UploadResult: React.FC<ComponentProps> = ({ module, topicId, currentAmount
       extraRequestBody={extraRequestBodyBody}
       currentAmount={currentAmount}
       action={uploadService.uploadResult.bind(uploadService)}
+      files={files}
+      setFiles={setFiles}
     />
   );
 };

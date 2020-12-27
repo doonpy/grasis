@@ -12,16 +12,23 @@ interface ComponentProps {
   topicId: number;
   module: ReportModule;
   canUpload: boolean;
+  canDelete: boolean;
   canFetch: boolean;
 }
 
-const UploadViewReport: React.FC<ComponentProps> = ({ topicId, module, canUpload, canFetch }) => {
+const UploadViewReport: React.FC<ComponentProps> = ({
+  topicId,
+  module,
+  canUpload,
+  canDelete,
+  canFetch
+}) => {
   const uploadService = UploadService.getInstance();
   const { data } = uploadService.useReports(topicId, module, canFetch);
   const [files, setFiles] = useState<FileInfo[]>(data ? data.files : []);
   useEffect(() => {
     if (data) {
-      setFiles(files);
+      setFiles(data.files);
     }
   }, [data]);
 
@@ -36,6 +43,7 @@ const UploadViewReport: React.FC<ComponentProps> = ({ topicId, module, canUpload
       files={files}
       setFiles={setFiles}
       canUpload={canUpload}
+      canDelete={canDelete}
       downloadAction={downloadService.downloadReport.bind(downloadService, topicId, module)}
       deleteAction={uploadService.deleteReport.bind(uploadService, topicId, module)}
       uploadElement={

@@ -1,6 +1,9 @@
 import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
+import { DefenseTerminology } from '../../assets/terminology/defense.terminology';
+import { ProgressReportTerminology } from '../../assets/terminology/progress-report.terminology';
+import { ReviewTerminology } from '../../assets/terminology/review.terminology';
 import { ReportModule, ResultModule } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { UploadApi } from './upload.resource';
@@ -47,9 +50,10 @@ export default class UploadService extends CommonService {
     await this.apiService.post(UploadApi.DELETE_REPORT, { module, topicId, filename });
   }
 
-  public async uploadResult(data: FormData): Promise<void> {
+  public async uploadResult(data: FormData): Promise<AxiosResponse<UploadFilesResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.postFile(UploadApi.RESULT, data);
+
+    return this.apiService.postFile(UploadApi.RESULT, data);
   }
 
   public useResults(topicId: number, module: ResultModule, canFetch = true): UseResults {
@@ -70,5 +74,16 @@ export default class UploadService extends CommonService {
   ): Promise<void> {
     await this.apiService.bindAuthorizationForClient();
     await this.apiService.post(UploadApi.DELETE_RESULT, { module, topicId, filename });
+  }
+
+  public getUploadReportMessage(module: ReportModule): string {
+    switch (module) {
+      case ReportModule.PROGRESS_REPORT:
+        return ProgressReportTerminology.PR_22;
+      case ReportModule.REVIEW:
+        return ReviewTerminology.REVIEW_16;
+      case ReportModule.DEFENSE:
+        return DefenseTerminology.DEFENSE_7;
+    }
   }
 }

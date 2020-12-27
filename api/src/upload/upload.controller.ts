@@ -127,13 +127,16 @@ export class UploadController {
 
   @Post(UploadPath.RESULT)
   @UseInterceptors(UploadResultInterceptor)
-  public async uploadResult(@UploadedFile() file: Express.Multer.File): Promise<CommonResponse> {
+  public async uploadResult(
+    @UploadedFile() file: Express.Multer.File
+  ): Promise<UploadFilesResponse> {
     if (isProductionMode()) {
       await this.uploadService.uploadToS3([file]);
     }
 
     return {
-      statusCode: HttpStatus.OK
+      statusCode: HttpStatus.OK,
+      files: [this.uploadService.convertToFileInfo(file)]
     };
   }
 

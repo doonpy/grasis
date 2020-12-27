@@ -1,11 +1,11 @@
-import { Col, Descriptions, Row, Space } from 'antd';
+import { Alert, Col, Descriptions, Row, Space } from 'antd';
 import React, { ReactElement } from 'react';
 
 import { CommonTerminology } from '../../../assets/terminology/common.terminology';
 import { TopicTerminology } from '../../../assets/terminology/topic.terminology';
 import { ReportModule } from '../../../libs/common/common.resource';
 import { TopicStateBaseForView } from '../../../libs/topic/topic-state/topic-state.type';
-import LoginUser from '../../../libs/user/instance/LoginUser';
+import UploadService from '../../../libs/upload/upload.service';
 import CommentList from '../../Comment/CommentList';
 import DateData from '../../Common/DateData';
 import TextData from '../../Common/TextData';
@@ -24,6 +24,8 @@ interface ComponentProps {
   module: ReportModule;
   extendInfo?: ExtendInfo[];
   canFetch: boolean;
+  canUpload: boolean;
+  canDelete: boolean;
 }
 
 const StateBaseInfo: React.FC<ComponentProps> = ({
@@ -31,9 +33,11 @@ const StateBaseInfo: React.FC<ComponentProps> = ({
   buttons,
   module,
   extendInfo = [],
-  canFetch
+  canFetch,
+  canUpload,
+  canDelete
 }) => {
-  const loginUser = LoginUser.getInstance();
+  const uploadService = UploadService.getInstance();
 
   return (
     <Row gutter={24}>
@@ -67,10 +71,12 @@ const StateBaseInfo: React.FC<ComponentProps> = ({
             </Descriptions.Item>
           ))}
           <Descriptions.Item label={<b>{TopicTerminology.TOPIC_60}</b>} span={3}>
+            <Alert message={uploadService.getUploadReportMessage(module)} type="info" showIcon />
             <UploadViewReport
               topicId={stateInfo.id}
               module={module}
-              canUpload={loginUser.isStudent()}
+              canUpload={canUpload}
+              canDelete={canDelete}
               canFetch={canFetch}
             />
           </Descriptions.Item>

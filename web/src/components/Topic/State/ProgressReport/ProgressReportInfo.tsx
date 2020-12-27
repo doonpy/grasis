@@ -10,6 +10,7 @@ import { ThesisState } from '../../../../libs/thesis/thesis.resource';
 import { ThesisForView } from '../../../../libs/thesis/thesis.type';
 import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
 import { TopicForView } from '../../../../libs/topic/topic.type';
+import LoginUser from '../../../../libs/user/instance/LoginUser';
 import StateBaseInfo from '../StateBaseInfo';
 import ProgressReportButton from './ProgressReportButton';
 import ProgressReportEdit from './ProgressReportEdit';
@@ -23,15 +24,16 @@ interface ComponentProps {
 
 const ProgressReportInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch }) => {
   const progressReportService = ProgressReportService.getInstance();
-  const { data: progressReportData } = progressReportService.useProgressReport(topic.id, canFetch);
+  const loginUser = LoginUser.getInstance();
+  const { data } = progressReportService.useProgressReport(topic.id, canFetch);
   const [progressReport, setProgressReport] = useState<ProgressReportForView | undefined>(
-    progressReportData ? progressReportData.progressReport : undefined
+    data ? data.progressReport : undefined
   );
   useEffect(() => {
-    if (progressReportData) {
-      setProgressReport(progressReportData.progressReport);
+    if (data) {
+      setProgressReport(data.progressReport);
     }
-  }, [progressReportData]);
+  }, [data]);
 
   if (!progressReport) {
     return <Empty description={ProgressReportTerminology.PR_20} />;
@@ -41,6 +43,11 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch 
     thesis.studentTopicRegister,
     thesis.progressReport
   ];
+  const canModifyUploadReport =
+    loginUser.isStudent() &&
+    thesis.state === ThesisState.REVIEW &&
+    progressReport.reporters.findIndex(({ id }) => id === loginUser.getId()) !== -1 &&
+    progressReport.result === StateResult.NOT_DECIDED;
 
   return (
     <StateBaseInfo
@@ -72,6 +79,8 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch 
         }
       ]}
       canFetch={canFetch}
+      canUpload={canModifyUploadReport}
+      canDelete={canModifyUploadReport}
     />
   );
 };

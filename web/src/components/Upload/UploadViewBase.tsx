@@ -20,6 +20,7 @@ interface ComponentProps {
   files: FileInfo[];
   setFiles: React.Dispatch<FileInfo[]>;
   canUpload: boolean;
+  canDelete: boolean;
   downloadAction: (...args: any[]) => Promise<void>;
   deleteAction: (...args: any[]) => Promise<void>;
   uploadElement: ReactElement;
@@ -29,6 +30,7 @@ const UploadViewBase: React.FC<ComponentProps> = ({
   files,
   setFiles,
   canUpload,
+  canDelete,
   downloadAction,
   deleteAction,
   uploadElement
@@ -105,7 +107,7 @@ const UploadViewBase: React.FC<ComponentProps> = ({
                     {DownloadTerminology.DOWNLOAD_2}
                   </Button>
 
-                  {canUpload && (
+                  {canDelete && (
                     <Button type="link" size="small" danger onClick={() => deleteFile(name)}>
                       {UploadTerminology.UPLOAD_11}
                     </Button>

@@ -1,4 +1,4 @@
-import { Empty, Space } from 'antd';
+import { Alert, Empty, Space } from 'antd';
 import { Moment } from 'moment';
 import React, { useEffect, useState } from 'react';
 
@@ -41,7 +41,15 @@ const ReviewInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch }) => {
 
   const validDateRange: [string | Moment, string | Moment] = [thesis.progressReport, thesis.review];
   const loginUser = LoginUser.getInstance();
-  const canUpload = review.reviewerId ? review.reviewerId === loginUser.getId() : false;
+  const canModifyUploadResult =
+    review.reviewerId === loginUser.getId() &&
+    thesis.state === ThesisState.REVIEW &&
+    review.result === StateResult.NOT_DECIDED;
+  const canModifyUploadReport =
+    loginUser.isStudent() &&
+    thesis.state === ThesisState.REVIEW &&
+    review.reporters.findIndex(({ id }) => id === loginUser.getId()) !== -1 &&
+    review.result === StateResult.NOT_DECIDED;
 
   return (
     <StateBaseInfo
@@ -82,16 +90,22 @@ const ReviewInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch }) => {
         {
           label: ReviewTerminology.REVIEW_13,
           element: (
-            <UploadViewResult
-              module={ResultModule.REVIEW}
-              topicId={topic.id}
-              canUpload={canUpload}
-              canFetch={canFetch}
-            />
+            <>
+              <Alert message={ReviewTerminology.REVIEW_16} type="info" showIcon />
+              <UploadViewResult
+                module={ResultModule.REVIEW}
+                topicId={topic.id}
+                canUpload={canModifyUploadResult}
+                canDelete={canModifyUploadResult}
+                canFetch={canFetch}
+              />
+            </>
           )
         }
       ]}
       canFetch={canFetch}
+      canUpload={canModifyUploadReport}
+      canDelete={canModifyUploadReport}
     />
   );
 };
