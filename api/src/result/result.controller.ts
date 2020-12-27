@@ -13,12 +13,11 @@ import {
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommonParam, CommonQueryValue } from '../common/common.resource';
-import { CommonResponse } from '../common/common.type';
 import { commonIdValidateSchema } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { ResultPath } from './result.resource';
 import { ResultService } from './result.service';
-import { ResultRequestBody } from './result.type';
+import { ResultChangeResponse, ResultRequestBody } from './result.type';
 import { ResultUpdateValidationSchema } from './result.validation';
 
 @UseGuards(JwtAuthGuard)
@@ -38,11 +37,13 @@ export class ResultController {
     id: number,
     @Body(new JoiValidationPipe(ResultUpdateValidationSchema)) body: ResultRequestBody,
     @Req() request: Express.CustomRequest
-  ): Promise<CommonResponse> {
-    await this.resultService.updateById(id, body, request.user!.userId);
+  ): Promise<ResultChangeResponse> {
+    const loginId = request.user!.userId;
+    const result = await this.resultService.updateById(id, body, loginId);
 
     return {
-      statusCode: HttpStatus.OK
+      statusCode: HttpStatus.OK,
+      result: await this.resultService.convertForView(result, loginId)
     };
   }
 }

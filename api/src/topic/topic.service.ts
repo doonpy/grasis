@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, FindConditions, In, Like, Repository } from 'typeorm';
 
 import { CommentService } from '../comment/comment.service';
-import { CouncilService } from '../council/council.service';
 import { DefenseService } from '../defense/defense.service';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { ProgressReportService } from '../progress-report/progress-report.service';
@@ -51,8 +50,7 @@ export class TopicService {
     @Inject(forwardRef(() => DefenseService))
     private readonly defenseService: DefenseService,
     @Inject(forwardRef(() => ResultService))
-    private readonly resultService: ResultService,
-    private readonly councilService: CouncilService
+    private readonly resultService: ResultService
   ) {}
 
   public async create(thesisId: number, topicBody: TopicRequestBody): Promise<Topic> {
@@ -871,28 +869,6 @@ export class TopicService {
             creatorId: review.reviewerId,
             studentId: student.studentId,
             type: ResultType.REVIEW
-          });
-        }
-
-        if (defense.councilId) {
-          const council = await this.councilService.getById(defense.councilId);
-          await this.resultService.initializeResultWithTransaction(manager, {
-            topicId: topic.id,
-            creatorId: council.chairmanId,
-            studentId: student.studentId,
-            type: ResultType.DEFENSE
-          });
-          await this.resultService.initializeResultWithTransaction(manager, {
-            topicId: topic.id,
-            creatorId: council.instructorId,
-            studentId: student.studentId,
-            type: ResultType.DEFENSE
-          });
-          await this.resultService.initializeResultWithTransaction(manager, {
-            topicId: topic.id,
-            creatorId: council.commissionerId,
-            studentId: student.studentId,
-            type: ResultType.DEFENSE
           });
         }
       }

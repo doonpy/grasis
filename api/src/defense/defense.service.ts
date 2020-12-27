@@ -1,9 +1,10 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment';
-import { EntityManager, Repository } from 'typeorm';
+import { Connection, EntityManager, Repository } from 'typeorm';
 
 import { CouncilService } from '../council/council.service';
+import { ResultService } from '../result/result.service';
 import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
 import { Thesis } from '../thesis/thesis.type';
@@ -23,7 +24,10 @@ export class DefenseService {
     private readonly topicStudentService: TopicStudentService,
     @Inject(forwardRef(() => ThesisService))
     private readonly thesisService: ThesisService,
-    private readonly councilService: CouncilService
+    private readonly councilService: CouncilService,
+    @Inject(forwardRef(() => ResultService))
+    private readonly resultService: ResultService,
+    private readonly connection: Connection
   ) {}
 
   public async createWithTransaction(
@@ -55,14 +59,27 @@ export class DefenseService {
       await this.checkValidTime(topic.thesis, data.time);
     }
 
-    if (data.councilId) {
-      const council = await this.councilService.getById(data.councilId);
-      if (topic.creatorId !== council.instructorId) {
-        throw new BadRequestException(DefenseError.ERR_1);
-      }
-    }
+    return this.connection.transaction(async (manager) => {
+      if (data.councilId && data.councilId !== currentDefense.councilId) {
+        const council = await this.councilService.getById(data.councilId);
+        if (topic.creatorId !== council.instructorId) {
+          throw new BadRequestException(DefenseError.ERR_1);
+        }
 
-    return this.defenseRepository.save({ ...currentDefense, ...data });
+        await this.resultService.deleteDefenseResultByTopicId(id);
+        const students = await this.topicStudentService.getStudentsParticipated(topic.id);
+        for (const student of students) {
+          await this.resultService.createDefenseResultWithTransaction(
+            manager,
+            topic.id,
+            student.studentId,
+            council
+          );
+        }
+      }
+
+      return manager.save(DefenseEntity, { ...currentDefense, ...data });
+    });
   }
 
   public async deleteByIdWithTransaction(

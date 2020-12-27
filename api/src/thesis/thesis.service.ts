@@ -636,9 +636,6 @@ export class ThesisService {
 
     if (state === ThesisState.DEFENSE) {
       await this.topicService.createDefenseWithTransaction(manager, thesis);
-    }
-
-    if (state === ThesisState.RESULT) {
       await this.topicService.createResultWithTransaction(manager, thesis);
     }
   }

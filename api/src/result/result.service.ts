@@ -2,6 +2,7 @@ import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/com
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, FindConditions, In, Repository } from 'typeorm';
 
+import { Council } from '../council/council.type';
 import { DefenseService } from '../defense/defense.service';
 import { LecturerService } from '../lecturer/lecturer.service';
 import { ReviewService } from '../review/review.service';
@@ -103,7 +104,7 @@ export class ResultService {
     return result;
   }
 
-  public async updateById(id: number, data: ResultRequestBody, userId: number): Promise<void> {
+  public async updateById(id: number, data: ResultRequestBody, userId: number): Promise<Result> {
     const currentResult = await this.getById(id);
     const topic = await this.topicService.getById(currentResult.topicId, true);
     this.thesisService.checkThesisIsActive(topic.thesis.status);
@@ -124,8 +125,10 @@ export class ResultService {
       });
     }
 
+    // In case the user update result only, TypeORM can not detect change action to update modify time.
     currentResult.updatedAt = new Date();
-    await this.resultRepository.save(currentResult);
+
+    return this.resultRepository.save(currentResult);
   }
 
   public async getByIdForView(id: number, userId: number): Promise<ResultForView> {
@@ -154,7 +157,7 @@ export class ResultService {
     return result;
   }
 
-  private async convertForView(result: Result, userId: number): Promise<ResultForView> {
+  public async convertForView(result: Result, userId: number): Promise<ResultForView> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { creatorId, studentId, point, ...remain } = result;
     const creator = (await this.lecturerService.getById(creatorId)).convertToFastView();
@@ -234,7 +237,7 @@ export class ResultService {
   }
 
   public checkStatePermission(thesisState: ThesisState): void {
-    if (thesisState !== ThesisState.RESULT) {
+    if (thesisState !== ThesisState.RESULT && thesisState !== ThesisState.DEFENSE) {
       throw new BadRequestException(ResultError.ERR_5);
     }
   }
@@ -277,5 +280,35 @@ export class ResultService {
     const total = instructorResult + reviewResult + councilResult / councilMember;
 
     return Math.round((total / 3) * 100) / 100;
+  }
+
+  public async deleteDefenseResultByTopicId(topicId: number): Promise<void> {
+    await this.resultRepository.delete({ topicId, type: ResultType.DEFENSE });
+  }
+
+  public async createDefenseResultWithTransaction(
+    manager: EntityManager,
+    topicId: number,
+    studentId: number,
+    council: Council
+  ): Promise<void> {
+    await this.initializeResultWithTransaction(manager, {
+      topicId,
+      creatorId: council.chairmanId,
+      studentId,
+      type: ResultType.DEFENSE
+    });
+    await this.initializeResultWithTransaction(manager, {
+      topicId,
+      creatorId: council.instructorId,
+      studentId,
+      type: ResultType.DEFENSE
+    });
+    await this.initializeResultWithTransaction(manager, {
+      topicId,
+      creatorId: council.commissionerId,
+      studentId,
+      type: ResultType.DEFENSE
+    });
   }
 }

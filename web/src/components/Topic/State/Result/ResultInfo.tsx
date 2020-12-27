@@ -1,9 +1,9 @@
 import { Collapse, Empty, Space, Tabs, Typography } from 'antd';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ResultTerminology } from '../../../../assets/terminology/result.terminology';
 import ResultService from '../../../../libs/result/result.service';
-import { ResultForView } from '../../../../libs/result/result.type';
+import { ResultForView, ResultOfStudentForView } from '../../../../libs/result/result.type';
 import TopicService from '../../../../libs/topic/topic.service';
 import LecturerFastView from '../../../Lecturer/LecturerFastView';
 import StudentFastView from '../../../Student/StudentFastView';
@@ -21,19 +21,37 @@ const ResultInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
   const topicService = TopicService.getInstance();
   const resultService = ResultService.getInstance();
   const { data } = topicService.useTopicResult(topicId, canFetch);
-  if (!data) {
+  const [results, setResults] = useState<ResultOfStudentForView[]>(data ? data.results : []);
+  useEffect(() => {
+    if (data) {
+      setResults(data.results);
+    }
+  }, [data]);
+
+  if (results.length === 0) {
     return <Empty description={ResultTerminology.RESULT_11} />;
   }
 
-  const defenseResultRender = (result: ResultForView[]) => {
+  const defenseResultRender = (studentId: number, result: ResultForView[]) => {
     return result.map((item, key) => (
-      <ResultItem key={key} result={item} extra={<ResultEdit result={item} />} />
+      <ResultItem
+        key={key}
+        result={item}
+        extra={
+          <ResultEdit
+            result={item}
+            results={results}
+            setResults={setResults}
+            studentId={studentId}
+          />
+        }
+      />
     ));
   };
 
   return (
     <Tabs defaultActiveKey="0" tabPosition="left">
-      {data.results.map((result, index) => (
+      {results.map((result, index) => (
         <Tabs.TabPane
           tab={
             <Space direction="vertical" align="end" style={{ width: '100%' }}>
@@ -62,7 +80,14 @@ const ResultInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
                 }>
                 <ResultItem
                   result={result.instructor}
-                  extra={<ResultEdit result={result.instructor} />}
+                  extra={
+                    <ResultEdit
+                      result={result.instructor}
+                      results={results}
+                      setResults={setResults}
+                      studentId={result.student.id}
+                    />
+                  }
                 />
               </Collapse.Panel>
               <Collapse.Panel
@@ -78,7 +103,17 @@ const ResultInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
                     )}
                   </Space>
                 }>
-                <ResultItem result={result.review} extra={<ResultEdit result={result.review} />} />
+                <ResultItem
+                  result={result.review}
+                  extra={
+                    <ResultEdit
+                      result={result.review}
+                      results={results}
+                      setResults={setResults}
+                      studentId={result.student.id}
+                    />
+                  }
+                />
               </Collapse.Panel>
               <Collapse.Panel
                 key="3"
@@ -89,7 +124,7 @@ const ResultInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
                   </Space>
                 }>
                 <Space direction="vertical" size="large">
-                  {defenseResultRender(result.defense)}
+                  {defenseResultRender(result.student.id, result.defense)}
                 </Space>
               </Collapse.Panel>
             </Collapse>

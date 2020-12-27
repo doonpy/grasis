@@ -149,7 +149,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
                   />
                 </Tabs.TabPane>
               )}
-              {thesisData.thesis.state >= ThesisState.RESULT && (
+              {thesisData.thesis.state >= ThesisState.DEFENSE && (
                 <Tabs.TabPane
                   tab={
                     <span>

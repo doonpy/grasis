@@ -14,6 +14,7 @@ const ResultPointRender: React.FC<ComponentProps> = ({ title, value }) => {
       title={title}
       value={value}
       valueStyle={{ color: value < 5 ? ResultPointColor.RED : ResultPointColor.GREEN }}
+      precision={2}
     />
   );
 };

@@ -1,3 +1,4 @@
+import { CommonResponse } from '../common/common.type';
 import { LecturerForFastView } from '../lecturer/lecturer.type';
 import { StudentForFastView } from '../student/student.type';
 import { ResultEntity } from './result.entity';
@@ -31,3 +32,7 @@ export type ResultInitialize = WithOptional<
   Pick<Result, 'topicId' | 'studentId' | 'creatorId' | 'type' | 'point'>,
   'point'
 >;
+
+export interface ResultChangeResponse extends CommonResponse {
+  result: ResultForView;
+}

@@ -1,8 +1,10 @@
+import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
 import CommonService from '../common/common.service';
-import { ResultApi } from './result.resource';
+import { ResultApi, ResultType } from './result.resource';
 import {
+  ResultChangeResponse,
   ResultForView,
   ResultGetByTopicIdForViewResponse,
   ResultOfStudentForView,
@@ -50,8 +52,44 @@ export default class ResultService extends CommonService {
     return Math.round(((instructorResult + reviewResult + defenseResult) / 3) * 100) / 100;
   }
 
-  public async updateById(id: number, body: ResultRequestBody): Promise<void> {
+  public async updateById(
+    id: number,
+    body: ResultRequestBody
+  ): Promise<AxiosResponse<ResultChangeResponse>> {
     await this.apiService.bindAuthorizationForClient();
-    await this.apiService.patch(ResultApi.SPECIFY, body, [id]);
+
+    return this.apiService.patch(ResultApi.SPECIFY, body, [id]);
+  }
+
+  public updateResultList(
+    studentId: number,
+    results: ResultOfStudentForView[],
+    result: ResultForView,
+    type: ResultType
+  ): ResultOfStudentForView[] {
+    const studentResult = results.find(({ student }) => student.id === studentId);
+    if (!studentResult) {
+      return results;
+    }
+
+    switch (type) {
+      case ResultType.INSTRUCTOR:
+        studentResult.instructor = result;
+        break;
+      case ResultType.REVIEW:
+        studentResult.review = result;
+        break;
+      case ResultType.DEFENSE:
+        studentResult.defense.map((item) => {
+          if (item.id === result.id) {
+            return result;
+          }
+
+          return item;
+        });
+        break;
+    }
+
+    return results;
   }
 }

@@ -27,6 +27,6 @@ export const ResultPointTableColumns: ColumnsType<ResultPoint> = [
     key: 'value',
     align: 'center',
     width: '10%',
-    render: (value: number | null) => <TextData text={value !== null ? value.toString() : null} />
+    render: (value: number | null) => <TextData text={value !== null ? value.toFixed(2) : null} />
   }
 ];

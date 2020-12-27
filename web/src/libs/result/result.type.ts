@@ -55,3 +55,7 @@ export interface UseResult {
   isLoading: boolean;
   data?: ResultGetByTopicIdForViewResponse;
 }
+
+export interface ResultChangeResponse extends CommonResponse {
+  result: ResultForView;
+}

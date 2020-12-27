@@ -7,14 +7,21 @@ import EditIcon from '../../../../assets/svg/regular/edit.svg';
 import { CommonTerminology } from '../../../../assets/terminology/common.terminology';
 import { ResultTerminology } from '../../../../assets/terminology/result.terminology';
 import ResultService from '../../../../libs/result/result.service';
-import { ResultForView, ResultRequestBody } from '../../../../libs/result/result.type';
+import {
+  ResultForView,
+  ResultOfStudentForView,
+  ResultRequestBody
+} from '../../../../libs/result/result.type';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
 
 interface ComponentProps {
   result: ResultForView | null;
+  results: ResultOfStudentForView[];
+  setResults: React.Dispatch<ResultOfStudentForView[]>;
+  studentId: number;
 }
 
-const ResultEdit: React.FC<ComponentProps> = ({ result }) => {
+const ResultEdit: React.FC<ComponentProps> = ({ result, results, setResults, studentId }) => {
   const loginUser = LoginUser.getInstance();
   const resultService = ResultService.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
@@ -48,7 +55,8 @@ const ResultEdit: React.FC<ComponentProps> = ({ result }) => {
   const onFormSubmit = async (formValues: ResultRequestBody) => {
     setLoading(true);
     try {
-      await resultService.updateById(result.id, formValues);
+      const { data } = await resultService.updateById(result.id, formValues);
+      setResults([...resultService.updateResultList(studentId, results, data.result, result.type)]);
       message.success(ResultTerminology.RESULT_16);
       setLoading(false);
       setVisible(false);
