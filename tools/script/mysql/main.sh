@@ -2,10 +2,10 @@
 set -e
 
 echo "=> Hello, how can I help you?"
-echo "1. Create local database container."
-echo "2. Start local database container."
-echo "3. Stop local database container."
-echo "4. Delete local database container."
+echo "1. Create local MySQL container."
+echo "2. Start local MySQL container."
+echo "3. Stop local MySQL container."
+echo "4. Delete local MySQL container."
 echo "=> Choose your command please..."
 
 read command

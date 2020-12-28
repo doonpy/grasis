@@ -1,12 +1,29 @@
 #!/bin/bash
 set -e
 
-source ./config.conf
+echo "=> Hello, how can I help you?"
+echo "1. Create local Redis container."
+echo "2. Start local Redis container."
+echo "3. Stop local Redis container."
+echo "4. Delete local Redis container."
+echo "=> Choose your command please..."
 
-echo "=> Creating Redis container..."
-docker run \
-  --name $CONTAINER_NAME \
-  -p 6379:6379 \
-  -d $MSSQL_IMAGE
+read command
 
-echo "=> Done! Container name: $CONTAINER_NAME"
+case $command in
+  "1")
+    bash ./create-db.sh
+    ;;
+  "2")
+    bash ./start-db.sh
+    ;;
+  "3")
+    bash ./stop-db.sh
+    ;;
+  "4")
+    bash ./delete-db.sh
+    ;;
+  *)
+    echo "=> Sorry, command is invalid!"
+    ;;
+esac
