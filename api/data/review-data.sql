@@ -313,8 +313,8 @@ TRUNCATE TABLE user;
 REPLACE INTO user (deleted_at, created_at, updated_at, id, username, password, firstname, lastname, gender, email,
                    address, phone, status, is_admin, user_type)
 VALUES (NULL, DEFAULT, DEFAULT, 1, 'quangnd',
-        '8b2659b0a8e342866353431e2a8dc457be01fc87', 'Quang', 'Nguyễn Đăng', 1, 'quannd@hcmute.edu.vn', NULL,
-        'NULL', 2, 2, 2),
+        'df0e3bcf85941f511c678ee07cdf1068bc861c69', 'Quang', 'Nguyễn Đăng', 1, 'quannd@hcmute.edu.vn', NULL,
+        'NULL', 2, 2, 1),
        (NULL, DEFAULT, DEFAULT, 2, 't16110226',
         '1213fe5b8487d512ed1b820a20c915eeca96c2ee', 'Toàn', 'Nguyễn Hữu', 1, '16110226@student.hcmute.edu.vn', NULL,
         'NULL', 2, 1, 2),
