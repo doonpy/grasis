@@ -9,7 +9,8 @@
   "scripts": {
     "start:dev": "next dev . -p 3001",
     "build": "yarn type-check && next build .",
-    "start:prod": "next start -p $PORT",
+    "start:prod": "next start -p 3001",
+    "start:prod-heroku": "next start -p $PORT",
     "install:dependencies": "yarn install",
     "type-check": "tsc",
     "type-check:dev": "tsc -w"
