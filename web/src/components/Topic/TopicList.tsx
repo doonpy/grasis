@@ -1,6 +1,6 @@
 import { Empty, Space, Table } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { DEFAULT_PAGE_SIZE } from '../../libs/common/common.resource';
@@ -27,14 +27,20 @@ const TopicList: React.FC<ComponentProps> = ({ thesis, canFetch }) => {
   });
   const [keyword, setKeyword] = useState<string>('');
   const topicService = TopicService.getInstance();
-  const { data: topicData, isLoading } = topicService.useTopics(
+  const { data, isLoading } = topicService.useTopics(
     thesis.id,
     pagination.current,
     pagination.pageSize,
     keyword,
     canFetch
   );
-  if (!topicData) {
+  useEffect(() => {
+    if (data) {
+      setPagination({ ...pagination, total: data.total });
+    }
+  }, [data]);
+
+  if (!data) {
     return <Empty description={TopicTerminology.TOPIC_63} />;
   }
 
@@ -58,7 +64,7 @@ const TopicList: React.FC<ComponentProps> = ({ thesis, canFetch }) => {
       )}
       bordered
       columns={TopicTableColumns}
-      dataSource={topicData && topicData.topics}
+      dataSource={data.topics}
       loading={isLoading}
       pagination={pagination}
       size="middle"

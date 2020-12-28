@@ -42,6 +42,7 @@ const CouncilList: React.FC<ComponentProps> = ({ thesis, canFetch }) => {
   useEffect(() => {
     if (data) {
       setCouncils(data.councils);
+      setPagination({ ...pagination, total: data.total });
     }
   }, [data]);
 
