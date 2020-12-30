@@ -175,7 +175,7 @@ Updating
     * `AWS_SECRET_ACCESS_KEY`: AWS secret access key for AWS S3 service.
     * `AWS_BUCKET_NAME`: Bucket name of AWS S3 service.
 * Step 3: Open file `web/.env.production` and config following params:
-    * `NEXT_PUBLIC_API_SERVER`: API sever address.
+    * `API_SERVER_PRODUCTION`: API sever address.
 * Step 4: Run shell script file `deploy/production.sh` to deploy.
 #### Use Docker
 * Step 1: Run shell script file `tools/script/mysql/main.sh` 
@@ -190,7 +190,7 @@ Updating
     * `AWS_SECRET_ACCESS_KEY`: AWS secret access key for AWS S3 service.
     * `AWS_BUCKET_NAME`: Bucket name of AWS S3 service.
 * Step 4: Open file `web/.env.production` and config following params:
-    * `NEXT_PUBLIC_API_SERVER`: API sever address. 
+    * `API_SERVER_PRODUCTION`: API sever address. 
 * Step 5: Run shell script file `deploy/production.sh` to deploy.
 ## Document
 Ref: [https://github.com/doonpy/grasis/tree/1.0.0/docs](https://github.com/doonpy/grasis/tree/1.0.0/docs)
