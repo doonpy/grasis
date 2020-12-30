@@ -1,4 +1,4 @@
-import { Collapse, Empty, Space, Tabs, Typography } from 'antd';
+import { Collapse, Empty, Space, Spin, Tabs, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import { ResultTerminology } from '../../../../assets/terminology/result.terminology';
@@ -20,13 +20,17 @@ interface ComponentProps {
 const ResultInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
   const topicService = TopicService.getInstance();
   const resultService = ResultService.getInstance();
-  const { data } = topicService.useTopicResult(topicId, canFetch);
+  const { data, isLoading } = topicService.useTopicResult(topicId, canFetch);
   const [results, setResults] = useState<ResultOfStudentForView[]>(data ? data.results : []);
   useEffect(() => {
     if (data) {
       setResults(data.results);
     }
   }, [data]);
+
+  if (isLoading) {
+    return <Spin />;
+  }
 
   if (results.length === 0) {
     return <Empty description={ResultTerminology.RESULT_11} />;

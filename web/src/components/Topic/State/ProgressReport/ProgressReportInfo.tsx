@@ -1,4 +1,4 @@
-import { Empty, Space } from 'antd';
+import { Empty, Space, Spin } from 'antd';
 import { Moment } from 'moment';
 import React, { useEffect, useState } from 'react';
 
@@ -25,7 +25,7 @@ interface ComponentProps {
 const ProgressReportInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch }) => {
   const progressReportService = ProgressReportService.getInstance();
   const loginUser = LoginUser.getInstance();
-  const { data } = progressReportService.useProgressReport(topic.id, canFetch);
+  const { data, isLoading } = progressReportService.useProgressReport(topic.id, canFetch);
   const [progressReport, setProgressReport] = useState<ProgressReportForView | undefined>(
     data ? data.progressReport : undefined
   );
@@ -34,6 +34,10 @@ const ProgressReportInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch 
       setProgressReport(data.progressReport);
     }
   }, [data]);
+
+  if (isLoading) {
+    return <Spin />;
+  }
 
   if (!progressReport) {
     return <Empty description={ProgressReportTerminology.PR_20} />;

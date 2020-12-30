@@ -1,8 +1,7 @@
-import { Empty, Space, Table } from 'antd';
+import { Space, Table } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination';
 import React, { useEffect, useState } from 'react';
 
-import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { DEFAULT_PAGE_SIZE } from '../../libs/common/common.resource';
 import { ThesisState } from '../../libs/thesis/thesis.resource';
 import { ThesisForView } from '../../libs/thesis/thesis.type';
@@ -40,10 +39,6 @@ const TopicList: React.FC<ComponentProps> = ({ thesis, canFetch }) => {
     }
   }, [data]);
 
-  if (!data) {
-    return <Empty description={TopicTerminology.TOPIC_63} />;
-  }
-
   const handleTableChange = (paginationValues: PaginationProps) => {
     setPagination({ ...pagination, ...paginationValues });
   };
@@ -64,7 +59,7 @@ const TopicList: React.FC<ComponentProps> = ({ thesis, canFetch }) => {
       )}
       bordered
       columns={TopicTableColumns}
-      dataSource={data.topics}
+      dataSource={data && data.topics}
       loading={isLoading}
       pagination={pagination}
       size="middle"

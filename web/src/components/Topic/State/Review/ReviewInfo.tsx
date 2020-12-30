@@ -1,4 +1,4 @@
-import { Alert, Empty, Space } from 'antd';
+import { Alert, Empty, Space, Spin } from 'antd';
 import { Moment } from 'moment';
 import React, { useEffect, useState } from 'react';
 
@@ -27,13 +27,17 @@ interface ComponentProps {
 
 const ReviewInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch }) => {
   const reviewService = ReviewService.getInstance();
-  const { data } = reviewService.useReview(topic.id, canFetch);
+  const { data, isLoading } = reviewService.useReview(topic.id, canFetch);
   const [review, setReview] = useState<ReviewForView | undefined>(data ? data.review : undefined);
   useEffect(() => {
     if (data) {
       setReview(data.review);
     }
   }, [data]);
+
+  if (isLoading) {
+    return <Spin />;
+  }
 
   if (!review) {
     return <Empty description={ReviewTerminology.REVIEW_4} />;

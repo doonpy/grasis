@@ -1,4 +1,4 @@
-import { Alert, Empty, Space } from 'antd';
+import { Alert, Empty, Space, Spin } from 'antd';
 import { Moment } from 'moment';
 import React, { useEffect, useState } from 'react';
 
@@ -26,15 +26,15 @@ const DefenseInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) =>
   const defenseService = DefenseService.getInstance();
   const councilService = CouncilService.getInstance();
 
-  const { data: defenseData } = defenseService.useDefense(topicId, canFetch);
+  const { data, isLoading } = defenseService.useDefense(topicId, canFetch);
   const [defense, setDefense] = useState<DefenseForView | undefined>(
-    defenseData ? defenseData.defense : undefined
+    data ? data.defense : undefined
   );
   useEffect(() => {
-    if (defenseData) {
-      setDefense(defenseData.defense);
+    if (data) {
+      setDefense(data.defense);
     }
-  }, [defenseData]);
+  }, [data]);
 
   const councilId = defense && defense.councilId ? defense.councilId : NaN;
   const { data: councilData } = councilService.useCouncil(
@@ -42,6 +42,10 @@ const DefenseInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) =>
     councilId,
     canFetch && !isNaN(councilId) && councilId !== NOT_SELECT_ID
   );
+
+  if (isLoading) {
+    return <Spin />;
+  }
 
   if (!defense) {
     return <Empty description={DefenseTerminology.DEFENSE_1} />;

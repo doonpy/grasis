@@ -72,20 +72,22 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
             key={TopicTabKey.INFO}>
             <TopicInfo topic={topicData.topic} thesis={thesisData.thesis} />
           </Tabs.TabPane>
-          <Tabs.TabPane
-            tab={
-              <span>
-                <LockOutlined />
-                {TopicTerminology.TOPIC_13}
-              </span>
-            }
-            key={TopicTabKey.PRIVATE_CONTENT}>
-            <TopicPrivateInfo
-              topic={topicData.topic}
-              thesis={thesisData.thesis}
-              canFetch={currentTab === TopicTabKey.PRIVATE_CONTENT}
-            />
-          </Tabs.TabPane>
+          {topicService.hasPrivateContentPermission(thesisData.thesis, topicData.topic) && (
+            <Tabs.TabPane
+              tab={
+                <span>
+                  <LockOutlined />
+                  {TopicTerminology.TOPIC_13}
+                </span>
+              }
+              key={TopicTabKey.PRIVATE_CONTENT}>
+              <TopicPrivateInfo
+                topic={topicData.topic}
+                thesis={thesisData.thesis}
+                canFetch={currentTab === TopicTabKey.PRIVATE_CONTENT}
+              />
+            </Tabs.TabPane>
+          )}
           {topicData.topic.status === TopicStateAction.APPROVED && (
             <>
               <Tabs.TabPane

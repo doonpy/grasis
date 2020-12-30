@@ -1,4 +1,4 @@
-import { Descriptions, Empty } from 'antd';
+import { Descriptions } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
@@ -37,18 +37,6 @@ const TopicPrivateInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch })
       setStates(topicStateData.states);
     }
   }, [topicStateData]);
-
-  if (!topic) {
-    return <Empty description={TopicTerminology.TOPIC_63} />;
-  }
-
-  if (!topicService.hasPrivateContentPermission(thesis, topic)) {
-    return <Empty description={TopicTerminology.TOPIC_65} />;
-  }
-
-  if (!topicStateData) {
-    return <Empty description={TopicTerminology.TOPIC_66} />;
-  }
 
   const creatorActions = [TopicStateAction.CANCELED];
   const approverActions = [
