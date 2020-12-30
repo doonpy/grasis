@@ -1,4 +1,7 @@
 {
+  "cacheDirectories": [
+    "dist/cache"
+  ],
   "name": "grasis-web",
   "version": "1.0.0",
   "private": true,
