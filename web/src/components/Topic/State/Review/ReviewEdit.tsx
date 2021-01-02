@@ -11,6 +11,7 @@ import { TopicTerminology } from '../../../../assets/terminology/topic.terminolo
 import { NOT_SELECT_ID } from '../../../../libs/common/common.resource';
 import ReviewAdminService from '../../../../libs/review/admin.service';
 import { REVIEWER_ID_FIELD } from '../../../../libs/review/review.resource';
+import ReviewService from '../../../../libs/review/review.service';
 import { ReviewForView, ReviewRequestBody } from '../../../../libs/review/review.type';
 import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
@@ -33,6 +34,7 @@ const ReviewEdit: React.FC<ComponentProps> = ({
   thesisCreatorId
 }) => {
   const adminService = ReviewAdminService.getInstance();
+  const reviewService = ReviewService.getInstance();
   const loginUser = LoginUser.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
@@ -54,7 +56,13 @@ const ReviewEdit: React.FC<ComponentProps> = ({
   const onFormSubmit = async (formValues: ReviewRequestBody) => {
     setLoading(true);
     try {
-      const { data } = await adminService.updateById(review.id, formValues);
+      let data;
+      if (loginUser.isAdmin()) {
+        data = (await adminService.updateById(review.id, formValues)).data;
+      } else {
+        data = (await reviewService.updateById(review.id, formValues)).data;
+      }
+
       setReview({ ...review, ...data.review });
       message.success(ReviewTerminology.REVIEW_11);
       setLoading(false);
@@ -67,7 +75,7 @@ const ReviewEdit: React.FC<ComponentProps> = ({
 
   useEffect(() => {
     if (!visible) {
-      review.time = moment(review.time);
+      review.time = moment(review.time || new Date());
       if (review.reviewerId === null) {
         review.reviewerId = NOT_SELECT_ID;
       }
@@ -77,8 +85,7 @@ const ReviewEdit: React.FC<ComponentProps> = ({
   }, [review]);
 
   if (
-    !loginUser.isAdmin() ||
-    loginUser.getId() !== thesisCreatorId ||
+    (loginUser.getId() !== thesisCreatorId && loginUser.getId() !== review.reviewerId) ||
     review.result !== StateResult.NOT_DECIDED
   ) {
     return <></>;

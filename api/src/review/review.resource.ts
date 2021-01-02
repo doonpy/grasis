@@ -16,7 +16,8 @@ export const ReviewError = {
   ERR_7: 'Bạn không phải người phản biện đề tài này.',
   ERR_8: 'Không thể chỉnh sửa tài liệu phản biện đã có kết quả.',
   ERR_9: 'Phản biện này đã có kết quả.',
-  ERR_10: 'Phản biện này chưa có kết quả hoặc có kết quả thất bại.'
+  ERR_10: 'Phản biện này chưa có kết quả hoặc có kết quả thất bại.',
+  ERR_11: 'Bạn không có quyền thay đổi người phản biện đề tài này.'
 };
 
 export const ReviewPath = {

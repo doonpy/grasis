@@ -1,10 +1,17 @@
 import { AxiosResponse } from 'axios';
 import useSWR from 'swr';
 
+import { NOT_SELECT_ID } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { StateResult } from '../topic/topic-state/topic-state.resource';
 import { ReviewApi } from './review.resource';
-import { ReviewChangeResultResponse, ReviewGetByIdResponse, UseReview } from './review.type';
+import {
+  ReviewChangeResultResponse,
+  ReviewGetByIdResponse,
+  ReviewRequestBody,
+  ReviewUpdateResponse,
+  UseReview
+} from './review.type';
 
 export default class ReviewService extends CommonService {
   private static instance: ReviewService;
@@ -40,5 +47,18 @@ export default class ReviewService extends CommonService {
       result,
       reviewerComment
     });
+  }
+
+  public async updateById(
+    id: number,
+    body: ReviewRequestBody
+  ): Promise<AxiosResponse<ReviewUpdateResponse>> {
+    if (body.reviewerId === NOT_SELECT_ID) {
+      delete body.reviewerId;
+    }
+
+    await this.apiService.bindAuthorizationForClient();
+
+    return this.apiService.patch<ReviewUpdateResponse>(ReviewApi.SPECIFY, body, [id]);
   }
 }

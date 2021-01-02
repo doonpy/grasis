@@ -67,6 +67,10 @@ export class ReviewService {
       await this.checkValidTime(topic.thesis, data.time);
     }
 
+    if (currentReview.reviewerId === userId && currentReview.reviewerId !== data.reviewerId) {
+      throw new BadRequestException(ReviewError.ERR_11);
+    }
+
     return this.reviewRepository.save({ ...currentReview, ...data });
   }
 

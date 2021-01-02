@@ -6,7 +6,9 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
+  Req,
   UseGuards
 } from '@nestjs/common';
 
@@ -21,9 +23,14 @@ import { ReviewService } from './review.service';
 import {
   ReviewChangeResultRequestBody,
   ReviewChangeResultResponse,
-  ReviewGetByIdResponse
+  ReviewGetByIdResponse,
+  ReviewRequestBody,
+  ReviewUpdateResponse
 } from './review.type';
-import { reviewChangeResultValidationSchema } from './review.validation';
+import {
+  reviewChangeResultValidationSchema,
+  reviewCreateValidationSchema
+} from './review.validation';
 
 @UseGuards(JwtAuthGuard, TopicPermissionGuard)
 @Controller(ReviewPath.ROOT)
@@ -62,6 +69,27 @@ export class ReviewController {
     topicId: number
   ): Promise<ReviewGetByIdResponse> {
     const review = await this.reviewService.getById(topicId);
+
+    return {
+      statusCode: HttpStatus.OK,
+      review: await this.reviewService.convertForView(review)
+    };
+  }
+
+  @Patch(ReviewPath.SPECIFY)
+  public async updateById(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number,
+    @Body(new JoiValidationPipe(reviewCreateValidationSchema))
+    body: ReviewRequestBody,
+    @Req() request: Express.CustomRequest
+  ): Promise<ReviewUpdateResponse> {
+    const review = await this.reviewService.updateById(id, body, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,

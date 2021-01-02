@@ -65,7 +65,7 @@ const ProgressReportEdit: React.FC<ComponentProps> = ({
 
   useEffect(() => {
     if (!visible) {
-      progressReport.time = moment(progressReport.time);
+      progressReport.time = moment(progressReport.time || new Date());
       form.setFieldsValue(progressReport);
     }
   }, [progressReport]);

@@ -68,7 +68,7 @@ const DefenseEdit: React.FC<ComponentProps> = ({
 
   useEffect(() => {
     if (!visible) {
-      defense.time = moment(defense.time);
+      defense.time = moment(defense.time || new Date());
       if (defense.councilId === null) {
         defense.councilId = NOT_SELECT_ID;
       }

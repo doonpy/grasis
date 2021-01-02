@@ -9,7 +9,7 @@ export const ReviewTerminology = {
   REVIEW_8: 'Không cho phép bảo vệ',
   REVIEW_9: 'Chưa có',
   REVIEW_10: 'Điểm số',
-  REVIEW_11: 'Chỉnh sửa phản biệt thành công.',
+  REVIEW_11: 'Chỉnh sửa phản biện thành công.',
   REVIEW_12: 'Nhận xét của giảng viên phản biện',
   REVIEW_13: 'Tài liệu phản biện',
   REVIEW_14: 'Thay đổi kết quả',
