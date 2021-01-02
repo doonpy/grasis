@@ -12,6 +12,7 @@ export interface CommonPageProps {
   isAdmin?: IsAdmin;
   isAdminCheck?: boolean;
   allowUserTypes?: UserType[];
+  screenWidth?: number;
 }
 
 export interface CommonResponse {

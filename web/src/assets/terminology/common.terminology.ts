@@ -11,5 +11,6 @@ export const CommonTerminology = {
   COMMON_9: 'Xác nhận',
   COMMON_10: 'Hủy',
   COMMON_11: 'Bạn không có quyền để truy cập vào nội dung này',
-  COMMON_12: 'Chỉnh sửa'
+  COMMON_12: 'Chỉnh sửa',
+  COMMON_13: 'Đánh giá kết quả'
 };

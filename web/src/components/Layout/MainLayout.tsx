@@ -5,17 +5,19 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 import styles from '../../assets/css/components/layout/main-layout.module.css';
-import { COMMON_PATH } from '../../libs/common/common.resource';
+import { COMMON_PATH, MOBILE_RESPONSIVE } from '../../libs/common/common.resource';
 import { CommonPageProps } from '../../libs/common/common.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import { IsAdmin } from '../../libs/user/user.resource';
 import UserService from '../../libs/user/user.service';
 import { Breadcrumb } from '../Breadcrumb/Breadcrumb';
+import ResolutionNotCompatible from '../Common/ResolutionNotCompatible';
 import Copyright from '../Copyright/Copyright';
 import Header from '../Header/Header';
 import Sider from '../Sider/Sider';
 
 const MainLayout: React.FC<CommonPageProps> = (props) => {
+  const screenWidth = props.screenWidth || 0;
   const userClient = UserService.getInstance();
   const data = userClient.useAuthorization();
   const router = useRouter();
@@ -46,21 +48,29 @@ const MainLayout: React.FC<CommonPageProps> = (props) => {
       <Head>
         <title>{props.title} - Grasis</title>
       </Head>
-      <Sider
-        selectedMenu={props.selectedMenu}
-        isAdmin={data && (data.user.isAdmin as IsAdmin)}
-        userType={data && data.user.userType}
-      />
-      <Layout className={styles.layout}>
-        <Header />
-        <Layout.Content className={styles.content}>
-          <Breadcrumb breadcrumbs={props.breadcrumbs || []} />
-          <div>{props.children}</div>
-        </Layout.Content>
-        <Layout.Footer className={styles.footer}>
-          <Copyright />
-        </Layout.Footer>
-      </Layout>
+      {screenWidth <= MOBILE_RESPONSIVE && !router.route.includes('mobile') ? (
+        <ResolutionNotCompatible />
+      ) : (
+        <>
+          <Sider
+            selectedMenu={props.selectedMenu}
+            isAdmin={data && (data.user.isAdmin as IsAdmin)}
+            userType={data && data.user.userType}
+          />
+          <Layout className={styles.layout}>
+            <Header screenWidth={screenWidth} />
+            <Layout.Content className={styles.content}>
+              {screenWidth > MOBILE_RESPONSIVE && (
+                <Breadcrumb breadcrumbs={props.breadcrumbs || []} />
+              )}
+              <div>{props.children}</div>
+            </Layout.Content>
+            <Layout.Footer className={styles.footer}>
+              <Copyright />
+            </Layout.Footer>
+          </Layout>
+        </>
+      )}
     </Layout>
   );
 };

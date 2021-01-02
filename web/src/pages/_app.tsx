@@ -4,7 +4,7 @@ import { ConfigProvider } from 'antd';
 import locale from 'antd/lib/locale/vi_VN';
 import Router from 'next/router';
 import NProgress from 'nprogress';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SWRConfig } from 'swr';
 
 import CommonService from '../libs/common/common.service';
@@ -26,13 +26,23 @@ Router.events.on('routeChangeError', () => {
 
 const MyApp = ({
   Component,
-  pageProps
+  pageProps: initPageProps
 }: {
   Component: NextPageWithLayout;
   pageProps: CommonPageProps;
 }) => {
   const commonClient = new CommonService();
   const Layout = Component.Layout ? Component.Layout : React.Fragment;
+  const [pageProps, setPageProps] = useState(initPageProps);
+  const resizeHandler = () => {
+    setPageProps({ ...pageProps, screenWidth: window.screen.width });
+  };
+
+  useEffect(() => {
+    setPageProps({ ...pageProps, screenWidth: window.screen.width });
+    window.removeEventListener('resize', resizeHandler);
+    window.addEventListener('resize', resizeHandler);
+  }, []);
 
   return (
     <SWRConfig

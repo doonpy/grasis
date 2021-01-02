@@ -16,7 +16,7 @@ interface SiderProps {
 
 const Sider: React.FC<SiderProps> = ({ isAdmin, userType, selectedMenu }) => {
   return (
-    <AntSider className={styles.sidebar}>
+    <AntSider className={styles.sidebar} breakpoint="lg" collapsedWidth="0">
       <Layout.Header className={styles.logo}>
         <Link href={'/'}>
           <a>

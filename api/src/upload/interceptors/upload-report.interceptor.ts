@@ -49,7 +49,7 @@ export class UploadReportInterceptor implements NestInterceptor {
             const error = transformException(err);
             return reject(error);
           }
-          resolve();
+          resolve(true);
         }
       );
     });

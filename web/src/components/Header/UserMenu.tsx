@@ -6,11 +6,19 @@ import { getAvatarUrl } from '../../libs/avatar/avatar.service';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import UserMenuItem from './UserMenuItem';
 
-const UserMenu: React.FC = () => {
+interface ComponentProps {
+  screenWidth: number;
+}
+
+const UserMenu: React.FC<ComponentProps> = ({ screenWidth }) => {
   const loginUser = LoginUser.getInstance();
 
   return (
-    <Dropdown overlay={() => <UserMenuItem />} placement="bottomCenter" trigger={['click']} arrow>
+    <Dropdown
+      overlay={() => <UserMenuItem screenWidth={screenWidth} />}
+      placement="bottomCenter"
+      trigger={['click']}
+      arrow>
       <Button type="text" block size="large">
         <Space>
           <Avatar

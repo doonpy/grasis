@@ -21,12 +21,13 @@ import fhqLogo from '../assets/img/fhq-logo.png';
 import hcmuteLogo from '../assets/img/hcmute-logo.png';
 import { LoginTerminology } from '../assets/terminology/login.terminology';
 import Copyright from '../components/Copyright/Copyright';
-import { COMMON_PATH } from '../libs/common/common.resource';
+import { COMMON_PATH, MOBILE_RESPONSIVE } from '../libs/common/common.resource';
 import CommonService from '../libs/common/common.service';
+import { CommonPageProps } from '../libs/common/common.type';
 import UserService from '../libs/user/user.service';
 import { LoginInputs } from '../libs/user/user.type';
 
-const Login: NextPage = () => {
+const Login: NextPage<CommonPageProps> = ({ screenWidth }) => {
   const router = useRouter();
   const userClient = UserService.getInstance();
   const [loading, setLoading] = useState(false);
@@ -74,7 +75,9 @@ const Login: NextPage = () => {
       </Head>
       <Layout>
         <Layout.Content className={styles.background} />
-        <Layout.Sider theme="light" width={'40%'}>
+        <Layout.Sider
+          theme="light"
+          width={screenWidth && screenWidth > MOBILE_RESPONSIVE ? '40%' : '100%'}>
           <Form
             name="normal_login"
             initialValues={{ remember: true, username }}
