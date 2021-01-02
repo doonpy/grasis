@@ -32,9 +32,9 @@ jobs:
                   cache-name: cache-node-modules
               with:
                   path: '**/node_modules'
-                  key: ${{ runner.os }}_checking_${{ env.cache-name }}_${{ hashFiles('**/yarn.lock') }}
-                  restore-keys: |
-                      ${{ runner.os }}_checking_${{ env.cache-name }}_
+                  key: ${{ runner.os }}-checking-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys:
+                      ${{ runner.os }}-checking-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
 
             - name: Install dependencies
               run: yarn install
@@ -95,9 +95,9 @@ jobs:
                   cache-name: cache-node-modules
               with:
                   path: '**/node_modules'
-                  key: ${{ runner.os }}-checking-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-                  restore-keys: |
-                      ${{ runner.os }}-checking-${{ env.cache-name }}-
+                  key: ${{ runner.os }}-checking-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys:
+                      ${{ runner.os }}-checking-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
 
             - name: Install dependencies
               run: yarn install
