@@ -8,6 +8,7 @@ import { ReviewService } from '../review/review.service';
 import { ThesisService } from '../thesis/thesis.service';
 import { TopicService } from '../topic/topic.service';
 import { UploadService } from '../upload/upload.service';
+import { UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { DOWNLOAD_ROOT_FOLDER, DownloadError } from './download.resource';
 
@@ -99,8 +100,17 @@ export class DownloadService {
     }
   }
 
-  public async checkDocumentPermission(userId: number, topicId: number): Promise<void> {
+  public async checkDocumentPermission(
+    userId: number,
+    topicId: number,
+    isResult = false
+  ): Promise<void> {
     const topic = await this.topicService.getById(topicId, true);
+    const user = await this.userService.getById(userId);
+    if (isResult && user.userType === UserType.STUDENT) {
+      throw new BadRequestException(DownloadError.ERR_2);
+    }
+
     await this.topicService.checkPermission(topic, userId);
     this.thesisService.checkThesisIsActive(topic.thesis.status);
   }

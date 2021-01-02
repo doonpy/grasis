@@ -99,7 +99,7 @@ export class DownloadController {
     @Req() request: Express.CustomRequest
   ): Promise<DownloadReportLinkResponse> {
     const loginUserId = request.user!.userId;
-    await this.downloadService.checkDocumentPermission(loginUserId, topicId);
+    await this.downloadService.checkDocumentPermission(loginUserId, topicId, true);
     const sourcePath = this.downloadService.getResultSourcePath(topicId, module);
     const path = this.downloadService.getDownloadPath(filename, sourcePath);
 

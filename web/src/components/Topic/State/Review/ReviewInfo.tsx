@@ -54,6 +54,38 @@ const ReviewInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch }) => {
     thesis.state === ThesisState.REVIEW &&
     review.reporters.findIndex(({ id }) => id === loginUser.getId()) !== -1 &&
     review.result === StateResult.NOT_DECIDED;
+  const extendInfo = [
+    {
+      label: ReviewTerminology.REVIEW_5,
+      element: review.reviewer ? <LecturerFastView lecturer={review.reviewer} /> : <TextData />
+    },
+
+    {
+      label: ReviewTerminology.REVIEW_12,
+      element: <TextData text={review.reviewerComment} isParagraph={true} />
+    },
+    {
+      label: ReviewTerminology.REVIEW_1,
+      element: <ReviewResult result={review.result} />
+    }
+  ];
+  if (!loginUser.isStudent()) {
+    extendInfo.push({
+      label: ReviewTerminology.REVIEW_13,
+      element: (
+        <>
+          <Alert message={ReviewTerminology.REVIEW_16} type="info" showIcon />
+          <UploadViewResult
+            module={ResultModule.REVIEW}
+            topicId={topic.id}
+            canUpload={canModifyUploadResult}
+            canDelete={canModifyUploadResult}
+            canFetch={canFetch}
+          />
+        </>
+      )
+    });
+  }
 
   return (
     <StateBaseInfo
@@ -77,36 +109,7 @@ const ReviewInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch }) => {
             )}
         </Space>
       }
-      extendInfo={[
-        {
-          label: ReviewTerminology.REVIEW_5,
-          element: review.reviewer ? <LecturerFastView lecturer={review.reviewer} /> : <TextData />
-        },
-
-        {
-          label: ReviewTerminology.REVIEW_12,
-          element: <TextData text={review.reviewerComment} isParagraph={true} />
-        },
-        {
-          label: ReviewTerminology.REVIEW_1,
-          element: <ReviewResult result={review.result} />
-        },
-        {
-          label: ReviewTerminology.REVIEW_13,
-          element: (
-            <>
-              <Alert message={ReviewTerminology.REVIEW_16} type="info" showIcon />
-              <UploadViewResult
-                module={ResultModule.REVIEW}
-                topicId={topic.id}
-                canUpload={canModifyUploadResult}
-                canDelete={canModifyUploadResult}
-                canFetch={canFetch}
-              />
-            </>
-          )
-        }
-      ]}
+      extendInfo={extendInfo}
       canFetch={canFetch}
       canUpload={canModifyUploadReport}
       canDelete={canModifyUploadReport}

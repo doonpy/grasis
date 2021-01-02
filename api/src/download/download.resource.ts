@@ -17,5 +17,6 @@ export const DownloadReportQuery = {
 };
 
 export const DownloadError = {
-  ERR_1: 'Tệp tin không tồn tại.'
+  ERR_1: 'Tệp tin không tồn tại.',
+  ERR_2: 'Bạn không có quyền tải tệp tin này.'
 };
