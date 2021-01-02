@@ -26,7 +26,7 @@ export const TopicTerminology = {
   TOPIC_25: 'Mới',
   TOPIC_26: 'Thu hồi',
   TOPIC_27: 'Xác nhận',
-  TOPIC_28: 'Đang được phê duyệt',
+  TOPIC_28: 'Gửi yêu cầu phê duyệt',
   TOPIC_29: 'Hủy bỏ',
   TOPIC_30: 'Yêu cầu phê duyệt',
   TOPIC_31: 'Bạn chắc chắn?',
