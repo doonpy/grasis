@@ -33,13 +33,21 @@ const MyApp = ({
 }) => {
   const commonClient = new CommonService();
   const Layout = Component.Layout ? Component.Layout : React.Fragment;
+  const [componentProps, setComponentProps] = useState(initPageProps);
   const [pageProps, setPageProps] = useState(initPageProps);
   const resizeHandler = () => {
-    setPageProps({ ...pageProps, screenWidth: window.screen.width });
+    setComponentProps({ ...componentProps, screenWidth: window.screen.width });
+    if (Component.Layout) {
+      setPageProps({ ...pageProps, screenWidth: window.screen.width });
+    }
   };
 
   useEffect(() => {
-    setPageProps({ ...pageProps, screenWidth: window.screen.width });
+    setComponentProps({ ...componentProps, screenWidth: window.screen.width });
+    if (Component.Layout) {
+      setPageProps({ ...pageProps, screenWidth: window.screen.width });
+    }
+
     window.removeEventListener('resize', resizeHandler);
     window.addEventListener('resize', resizeHandler);
   }, []);
@@ -52,7 +60,7 @@ const MyApp = ({
       }}>
       <ConfigProvider locale={locale}>
         <Layout {...pageProps}>
-          <Component {...pageProps} />
+          <Component {...componentProps} />
         </Layout>
       </ConfigProvider>
     </SWRConfig>
