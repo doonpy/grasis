@@ -12,13 +12,13 @@ import { ProgressReport } from '../../progress-report/progress-report.type';
 import { Review } from '../../review/review.type';
 import { ThesisEntity } from '../../thesis/thesis.entity';
 import { Thesis } from '../../thesis/thesis.type';
+import { TOPIC_TABLE, TopicColumn, TopicRegisterStatus } from '../topic.resource';
 import { TopicStateEntity } from '../topic-state/topic-state.entity';
 import { TopicStateAction, TopicStateColumn } from '../topic-state/topic-state.resource';
 import { TopicState } from '../topic-state/topic-state.type';
 import { TopicStudentEntity } from '../topic-student/topic-student.entity';
 import { TopicStudentColumn } from '../topic-student/topic-student.resouce';
 import { TopicStudent } from '../topic-student/topic-student.type';
-import { TOPIC_TABLE, TopicColumn, TopicRegisterStatus } from '../topic.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: TOPIC_TABLE })
 export class TopicEntity extends CommonEntity {
@@ -71,7 +71,7 @@ export class TopicEntity extends CommonEntity {
 
   @ManyToOne(() => ThesisEntity, (thesis) => thesis)
   @JoinColumn({ name: TopicColumn.THESIS_ID, referencedColumnName: CommonColumn.ID })
-  public thesis!: Thesis;
+  public thesis?: Thesis;
 
   @OneToMany(() => TopicStateEntity, ({ topic }) => topic, { cascade: true })
   @JoinColumn({ name: CommonColumn.ID, referencedColumnName: TopicStateColumn.TOPIC_ID })

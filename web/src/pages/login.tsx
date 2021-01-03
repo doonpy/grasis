@@ -14,7 +14,7 @@ import {
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import styles from '../assets/css/pages/login/index.module.css';
 import fhqLogo from '../assets/img/fhq-logo.png';
@@ -27,7 +27,18 @@ import { CommonPageProps } from '../libs/common/common.type';
 import UserService from '../libs/user/user.service';
 import { LoginInputs } from '../libs/user/user.type';
 
-const Login: NextPage<CommonPageProps> = ({ screenWidth }) => {
+const Login: NextPage<CommonPageProps> = () => {
+  const [screenWidth, setScreenWidth] = useState(0);
+  const resizeHandler = () => {
+    setScreenWidth(window.screen.width);
+  };
+
+  useEffect(() => {
+    setScreenWidth(window.screen.width);
+    window.removeEventListener('resize', resizeHandler);
+    window.addEventListener('resize', resizeHandler);
+  }, []);
+
   const router = useRouter();
   const userClient = UserService.getInstance();
   const [loading, setLoading] = useState(false);

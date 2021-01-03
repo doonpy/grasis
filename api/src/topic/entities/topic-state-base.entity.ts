@@ -12,7 +12,8 @@ export abstract class TopicStateBaseEntity extends CommonEntity {
 
   @Column({
     name: TopicStateBaseColumn.TIME,
-    type: 'datetime'
+    type: 'datetime',
+    nullable: true
   })
   public time!: Date;
 

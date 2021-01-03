@@ -37,6 +37,10 @@ const ResultInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
   }
 
   const defenseResultRender = (studentId: number, result: ResultForView[]) => {
+    if (result.length === 0) {
+      return <Empty description={ResultTerminology.RESULT_11} />;
+    }
+
     return result.map((item, key) => (
       <ResultItem
         key={key}
@@ -58,7 +62,7 @@ const ResultInfo: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
       {results.map((result, index) => (
         <Tabs.TabPane
           tab={
-            <Space direction="vertical" align="end" style={{ width: '100%' }}>
+            <Space direction="vertical" align="start" style={{ width: '100%' }}>
               <StudentFastView student={result.student} />
               <ResultPointRender
                 title={ResultTerminology.RESULT_14}

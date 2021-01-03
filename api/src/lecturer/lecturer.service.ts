@@ -2,8 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
 
-import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
 import { ThesisService } from '../thesis/thesis.service';
+import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
 import { UserColumn, UserError, UserStatus, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { UserRequestBody } from '../user/user.type';

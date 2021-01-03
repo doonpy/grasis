@@ -33,15 +33,6 @@ import { TopicStudentRegisterGuard } from './guards/topic-student-register.guard
 import { ParseTopicChangeStatusPipe } from './pipes/parse-topic-change-status.pipe';
 import { ParseTopicChangeStudentRegisterStatusPipe } from './pipes/parse-topic-change-student-register-status.pipe';
 import { ParseTopicRequestBodyPipe } from './pipes/parse-topic-request-body.pipe';
-import { TopicStateService } from './topic-state/topic-state.service';
-import { TopicChangeStateResponse, TopicGetStatesResponse } from './topic-state/topic-state.type';
-import { TopicStudentService } from './topic-student/topic-student.service';
-import {
-  TopicGetStudentsResponse,
-  TopicStudentChangeRegisterStatusResponse,
-  TopicStudentForView,
-  TopicStudentRegisterResponse
-} from './topic-student/topic-student.type';
 import { TopicError, TopicPath, TopicQuery } from './topic.resource';
 import { TopicService } from './topic.service';
 import {
@@ -61,6 +52,15 @@ import {
   topicCreateValidationSchema,
   topicUpdateValidationSchema
 } from './topic.validation';
+import { TopicStateService } from './topic-state/topic-state.service';
+import { TopicChangeStateResponse, TopicGetStatesResponse } from './topic-state/topic-state.type';
+import { TopicStudentService } from './topic-student/topic-student.service';
+import {
+  TopicGetStudentsResponse,
+  TopicStudentChangeRegisterStatusResponse,
+  TopicStudentForView,
+  TopicStudentRegisterResponse
+} from './topic-student/topic-student.type';
 
 @UseGuards(JwtAuthGuard)
 @Controller(TopicPath.ROOT)
@@ -349,7 +349,7 @@ export class TopicController {
   ): Promise<TopicGetStatesResponse> {
     const loginUserId = request.user!.userId;
     const topic = await this.topicService.getById(id, true);
-    if (topic.creatorId !== loginUserId && topic.thesis.creatorId !== loginUserId) {
+    if (topic.creatorId !== loginUserId && topic.thesis!.creatorId !== loginUserId) {
       throw new BadRequestException(TopicError.ERR_14);
     }
 

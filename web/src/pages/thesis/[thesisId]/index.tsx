@@ -6,8 +6,8 @@ import React, { useState } from 'react';
 
 import ChalkBoardTeacherIcon from '../../../assets/svg/regular/chalkboard-teacher.svg';
 import ListAltIcon from '../../../assets/svg/regular/list-alt.svg';
-import UsersClassIcon from '../../../assets/svg/regular/users-class.svg';
 import UsersIcon from '../../../assets/svg/regular/users.svg';
+import UsersClassIcon from '../../../assets/svg/regular/users-class.svg';
 import { CouncilTerminology } from '../../../assets/terminology/council.terminology';
 import { ThesisTerminology } from '../../../assets/terminology/thesis.terminology';
 import { TopicTerminology } from '../../../assets/terminology/topic.terminology';

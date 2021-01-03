@@ -1,7 +1,7 @@
 import { CommonColumns, CommonResponse } from '../common/common.type';
 import { LecturerForFastView } from '../lecturer/lecturer.type';
-import { TopicStateBaseForView } from '../topic/topic-state/topic-state.type';
 import { StateResult } from '../topic/topic.resource';
+import { TopicStateBaseForView } from '../topic/topic-state/topic-state.type';
 import { ReviewEntity } from './review.entity';
 
 export type Review = ReviewEntity;

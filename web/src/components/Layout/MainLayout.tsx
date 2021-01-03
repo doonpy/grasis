@@ -2,7 +2,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Layout, Result } from 'antd';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import styles from '../../assets/css/components/layout/main-layout.module.css';
 import { COMMON_PATH, MOBILE_RESPONSIVE } from '../../libs/common/common.resource';
@@ -17,7 +17,17 @@ import Header from '../Header/Header';
 import Sider from '../Sider/Sider';
 
 const MainLayout: React.FC<CommonPageProps> = (props) => {
-  const screenWidth = props.screenWidth || 0;
+  const [screenWidth, setScreenWidth] = useState(0);
+  const resizeHandler = () => {
+    setScreenWidth(window.screen.width);
+  };
+
+  useEffect(() => {
+    setScreenWidth(window.screen.width);
+    window.removeEventListener('resize', resizeHandler);
+    window.addEventListener('resize', resizeHandler);
+  }, []);
+
   const userClient = UserService.getInstance();
   const data = userClient.useAuthorization();
   const router = useRouter();

@@ -3,11 +3,6 @@ import useSWR from 'swr';
 import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { LecturerForFastView } from '../lecturer/lecturer.type';
-import {
-  ThesisGetLecturersResponse,
-  UseThesisLecturers
-} from './thesis-lecturer/thesis-lecturer.type';
-import { ThesisGetStudentsResponse, UseThesisStudents } from './thesis-student/thesis-student.type';
 import { ThesisApi, ThesisState } from './thesis.resource';
 import {
   Thesis,
@@ -17,6 +12,11 @@ import {
   UseTheses,
   UseThesis
 } from './thesis.type';
+import {
+  ThesisGetLecturersResponse,
+  UseThesisLecturers
+} from './thesis-lecturer/thesis-lecturer.type';
+import { ThesisGetStudentsResponse, UseThesisStudents } from './thesis-student/thesis-student.type';
 
 export default class ThesisService extends CommonService {
   private static instance: ThesisService;
@@ -36,11 +36,12 @@ export default class ThesisService extends CommonService {
   public useTheses(
     pageNumber = 0,
     pageSize: number = DEFAULT_PAGE_SIZE,
-    keyword?: string
+    keyword?: string,
+    canFetch = true
   ): UseTheses {
     const offset = (pageNumber - 1) * pageSize;
     const { data } = useSWR<ThesisFindManyResponse>(
-      this.replaceParams(ThesisApi.GET_MANY, [offset, keyword || ''])
+      canFetch ? this.replaceParams(ThesisApi.GET_MANY, [offset, keyword || '']) : null
     );
     if (data) {
       data.theses = data.theses.map((thesis) => ({ ...thesis, key: thesis.id.toString() }));

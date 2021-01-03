@@ -4,8 +4,8 @@ import { EntityManager, FindConditions, Like, Repository } from 'typeorm';
 
 import { DefenseService } from '../defense/defense.service';
 import { LecturerService } from '../lecturer/lecturer.service';
-import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
 import { ThesisService } from '../thesis/thesis.service';
+import { ThesisLecturerService } from '../thesis/thesis-lecturer/thesis-lecturer.service';
 import { CouncilEntity } from './council.entity';
 import { CouncilError } from './council.resource';
 import {

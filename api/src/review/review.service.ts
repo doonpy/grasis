@@ -8,9 +8,9 @@ import { LecturerForFastView } from '../lecturer/lecturer.type';
 import { ThesisState } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
 import { Thesis } from '../thesis/thesis.type';
-import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { StateResult } from '../topic/topic.resource';
 import { TopicService } from '../topic/topic.service';
+import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { UserService } from '../user/user.service';
 import { ReviewEntity } from './review.entity';
 import { ReviewError } from './review.resource';
@@ -62,9 +62,9 @@ export class ReviewService {
     this.checkResultIsNotDecided(currentReview.result);
     const topic = await this.topicService.getById(id, true);
     await this.topicService.checkPermission(topic, userId);
-    await this.thesisService.checkThesisIsActive(topic.thesis.status);
+    await this.thesisService.checkThesisIsActive(topic.thesis!.status);
     if (data.time) {
-      await this.checkValidTime(topic.thesis, data.time);
+      await this.checkValidTime(topic.thesis!, data.time);
     }
 
     if (currentReview.reviewerId === userId && currentReview.reviewerId !== data.reviewerId) {
@@ -91,9 +91,9 @@ export class ReviewService {
   public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
     const topic = await this.topicService.getById(topicId, true);
     await this.topicService.checkPermission(topic, userId);
-    this.thesisService.checkThesisIsActive(topic.thesis.status);
+    this.thesisService.checkThesisIsActive(topic.thesis!.status);
 
-    if (topic.thesis.state !== ThesisState.REVIEW) {
+    if (topic.thesis!.state !== ThesisState.REVIEW) {
       throw new BadRequestException(ReviewError.ERR_6);
     }
 
@@ -121,9 +121,9 @@ export class ReviewService {
 
   public async checkUploadResultPermission(topicId: number, userId: number): Promise<void> {
     const { thesis } = await this.topicService.getById(topicId, true);
-    this.thesisService.checkThesisIsActive(thesis.status);
+    this.thesisService.checkThesisIsActive(thesis!.status);
 
-    if (thesis.state !== ThesisState.REVIEW) {
+    if (thesis!.state !== ThesisState.REVIEW) {
       throw new BadRequestException(ReviewError.ERR_6);
     }
 

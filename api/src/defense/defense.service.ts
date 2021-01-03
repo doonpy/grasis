@@ -8,8 +8,8 @@ import { ResultService } from '../result/result.service';
 import { ThesisState, ThesisStatus } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
 import { Thesis } from '../thesis/thesis.type';
-import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { TopicService } from '../topic/topic.service';
+import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { DefenseEntity } from './defense.entity';
 import { DefenseError } from './defense.resource';
 import { Defense, DefenseForView, DefenseRequestBody } from './defense.type';
@@ -57,7 +57,7 @@ export class DefenseService {
     const topic = await this.topicService.getById(id, true);
     await this.topicService.checkPermission(topic, userId);
     if (data.time) {
-      await this.checkValidTime(topic.thesis, data.time);
+      await this.checkValidTime(topic.thesis!, data.time);
     }
 
     return this.connection.transaction(async (manager) => {
@@ -100,11 +100,11 @@ export class DefenseService {
   public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
     const topic = await this.topicService.getById(topicId, true);
     await this.topicService.checkPermission(topic, userId);
-    if (topic.thesis.status === ThesisStatus.INACTIVE) {
+    if (topic.thesis!.status === ThesisStatus.INACTIVE) {
       throw new BadRequestException(DefenseError.ERR_4);
     }
 
-    if (topic.thesis.state !== ThesisState.DEFENSE) {
+    if (topic.thesis!.state !== ThesisState.DEFENSE) {
       throw new BadRequestException(DefenseError.ERR_5);
     }
 
@@ -117,9 +117,9 @@ export class DefenseService {
 
   public async checkUploadResultPermission(topicId: number, userId: number): Promise<void> {
     const { thesis } = await this.topicService.getById(topicId, true);
-    await this.thesisService.checkThesisIsActive(thesis.status);
+    await this.thesisService.checkThesisIsActive(thesis!.status);
 
-    if (thesis.state !== ThesisState.DEFENSE) {
+    if (thesis!.state !== ThesisState.DEFENSE) {
       throw new BadRequestException(DefenseError.ERR_5);
     }
 

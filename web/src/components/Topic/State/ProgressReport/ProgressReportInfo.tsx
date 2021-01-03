@@ -8,8 +8,8 @@ import ProgressReportService from '../../../../libs/progress-report/progress-rep
 import { ProgressReportForView } from '../../../../libs/progress-report/progress-report.type';
 import { ThesisState } from '../../../../libs/thesis/thesis.resource';
 import { ThesisForView } from '../../../../libs/thesis/thesis.type';
-import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
 import { TopicForView } from '../../../../libs/topic/topic.type';
+import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
 import StateBaseInfo from '../StateBaseInfo';
 import ProgressReportButton from './ProgressReportButton';

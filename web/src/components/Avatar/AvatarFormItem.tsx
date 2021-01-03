@@ -1,7 +1,7 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Image, message, Space, Upload } from 'antd';
-import ImgCrop from 'antd-img-crop';
 import { UploadChangeParam } from 'antd/lib/upload';
+import ImgCrop from 'antd-img-crop';
 import React, { useState } from 'react';
 
 import FallbackImage from '../../assets/img/fallback-img.png';

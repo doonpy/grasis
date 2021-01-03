@@ -112,6 +112,6 @@ export class DownloadService {
     }
 
     await this.topicService.checkPermission(topic, userId);
-    this.thesisService.checkThesisIsActive(topic.thesis.status);
+    this.thesisService.checkThesisIsActive(topic.thesis!.status);
   }
 }

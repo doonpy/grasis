@@ -5,14 +5,6 @@ import { DEFAULT_PAGE_SIZE } from '../common/common.resource';
 import CommonService from '../common/common.service';
 import { ThesisForView } from '../thesis/thesis.type';
 import LoginUser from '../user/instance/LoginUser';
-import { TopicStateAction } from './topic-state/topic-state.resource';
-import { TopicChangeStateResponse } from './topic-state/topic-state.type';
-import { TopicStudentStatus } from './topic-student/topic-student.resource';
-import {
-  TopicRegisterResponse,
-  TopicStudent,
-  TopicStudentChangeRegisterStatusResponse
-} from './topic-student/topic-student.type';
 import { TOPIC_API_ROOT, TopicApi } from './topic.resource';
 import {
   Topic,
@@ -27,6 +19,14 @@ import {
   UseTopicResult,
   UseTopics
 } from './topic.type';
+import { TopicStateAction } from './topic-state/topic-state.resource';
+import { TopicChangeStateResponse } from './topic-state/topic-state.type';
+import { TopicStudentStatus } from './topic-student/topic-student.resource';
+import {
+  TopicRegisterResponse,
+  TopicStudent,
+  TopicStudentChangeRegisterStatusResponse
+} from './topic-student/topic-student.type';
 
 export default class TopicService extends CommonService {
   private static instance: TopicService;

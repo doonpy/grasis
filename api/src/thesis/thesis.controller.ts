@@ -20,10 +20,6 @@ import {
 } from '../common/common.validation';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { LecturerService } from '../lecturer/lecturer.service';
-import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
-import { ThesisGetThesisLecturersResponse } from './thesis-lecturer/thesis-lecturer.type';
-import { ThesisStudentService } from './thesis-student/thesis-student.service';
-import { ThesisGetThesisStudentsResponse } from './thesis-student/thesis-student.type';
 import { THESIS_ROOT_PATH, ThesisPath } from './thesis.resource';
 import { ThesisService } from './thesis.service';
 import {
@@ -32,6 +28,10 @@ import {
   ThesisGetManyResponse,
   ThesisSearchLecturerInThesis
 } from './thesis.type';
+import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
+import { ThesisGetThesisLecturersResponse } from './thesis-lecturer/thesis-lecturer.type';
+import { ThesisStudentService } from './thesis-student/thesis-student.service';
+import { ThesisGetThesisStudentsResponse } from './thesis-student/thesis-student.type';
 
 @UseGuards(JwtAuthGuard)
 @Controller(THESIS_ROOT_PATH)

@@ -5,11 +5,11 @@ import React, { useEffect, useState } from 'react';
 import CheckIcon from '../../assets/svg/regular/check.svg';
 import MinusIcon from '../../assets/svg/regular/minus.svg';
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
+import TopicService from '../../libs/topic/topic.service';
+import { TopicForView } from '../../libs/topic/topic.type';
 import { TopicStudentStatus } from '../../libs/topic/topic-student/topic-student.resource';
 import TopicStudentService from '../../libs/topic/topic-student/topic-student.service';
 import { TopicStudentForView } from '../../libs/topic/topic-student/topic-student.type';
-import TopicService from '../../libs/topic/topic.service';
-import { TopicForView } from '../../libs/topic/topic.type';
 
 const { confirm } = Modal;
 
