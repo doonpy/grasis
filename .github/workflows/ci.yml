@@ -23,54 +23,21 @@ jobs:
               with:
                   node-version: 14.x
 
-            - name: Install Yarn
-              run: npm install -g yarn
-
             - name: Cache node modules
               uses: actions/cache@v2
               env:
                   cache-name: cache-node-modules
               with:
                   path: '**/node_modules'
-                  key: ${{ runner.os }}-checking-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+                  key: ${{ runner.os }}-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
                   restore-keys:
-                      ${{ runner.os }}-checking-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
+                      ${{ runner.os }}-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
 
             - name: Install dependencies
               run: yarn install
 
             - name: Lint
               run: yarn run lint
-
-#    unit-test:
-#        runs-on: ubuntu-latest
-#        if: "!contains(github.event.head_commit.message, '[skip-ci]')"
-#
-#        steps:
-#            - uses: actions/checkout@v2
-#
-#            - name: Use Node.js 12.x
-#              uses: actions/setup-node@v1
-#              env:
-#                  CI: true
-#              with:
-#                  node-version: 12.x
-#
-#            - name: Cache node modules
-#              uses: actions/cache@v2
-#              env:
-#                  cache-name: cache-node-modules
-#              with:
-#                  path: '**/node_modules'
-#                  key: ${{ runner.os }}-checking-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-#                  restore-keys: |
-#                      ${{ runner.os }}-checking-${{ env.cache-name }}-
-#
-#            - name: Install dependencies
-#              run: npm ci
-#
-#            - name: Test
-#              run: npm run test
 
     build:
         runs-on: ubuntu-latest
@@ -86,18 +53,15 @@ jobs:
               with:
                   node-version: 14.x
 
-            - name: Install Yarn
-              run: npm install -g yarn
-
             - name: Cache node modules
               uses: actions/cache@v2
               env:
                   cache-name: cache-node-modules
               with:
                   path: '**/node_modules'
-                  key: ${{ runner.os }}-checking-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+                  key: ${{ runner.os }}-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
                   restore-keys:
-                      ${{ runner.os }}-checking-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
+                      ${{ runner.os }}-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
 
             - name: Install dependencies
               run: yarn install
@@ -107,22 +71,3 @@ jobs:
                 NODE_ENV: production
               run: yarn run build
 
-#            - name: Archive Grasis API artifacts
-#              uses: actions/upload-artifact@v2
-#              with:
-#                name: grasis-1.0.0-api
-#                path: |
-#                  api/dist
-#                  api/package*
-#                  api/ormconfig.js
-#                  api/config
-#
-#            - name: Archive Grasis Web artifacts
-#              uses: actions/upload-artifact@v2
-#              with:
-#                name: grasis-1.0.0-web
-#                path: |
-#                  web/dist
-#                  web/package*
-#                  web/next.config.js
-#                  web/.env.local
