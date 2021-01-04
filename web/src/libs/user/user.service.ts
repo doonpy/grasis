@@ -68,14 +68,9 @@ export default class UserService extends CommonService {
 
   public useAuthorization(): FindUserByIdResponse | undefined {
     const userId = this.jwtService.accessTokenPayload.userId;
-    const currentPath = this.redirectService.currentPath;
     const { data } = useSWR<FindUserByIdResponse>(`${UserApi.ROOT}/${userId}`, {
       onSuccess: async () => {
         this.jwtService.initialValue();
-        this.redirectService.resetCurrentPathForClient();
-        if (userId && currentPath === COMMON_PATH.LOGIN) {
-          await this.redirectService.redirectTo(COMMON_PATH.INDEX);
-        }
       },
       refreshInterval: 5000
     });

@@ -50,3 +50,5 @@ export enum ResultModule {
 export const NOT_SELECT_ID = -1;
 
 export const MOBILE_RESPONSIVE = 768;
+
+export const REDIRECT_URL_QUERY = 'r';

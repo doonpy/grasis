@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { COMMON_PATH } from '../../libs/common/common.resource';
 
 const Error403: NextPage = () => {
@@ -22,7 +23,7 @@ const Error403: NextPage = () => {
         subTitle={message || 'Xin lỗi, bạn không có quyền truy cập vào trang này.'}
         extra={
           <Link href={COMMON_PATH.INDEX}>
-            <Button type="primary">Quay lại trang chủ</Button>
+            <Button type="primary">{CommonTerminology.COMMON_15}</Button>
           </Link>
         }
       />

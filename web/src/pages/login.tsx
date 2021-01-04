@@ -21,7 +21,7 @@ import fhqLogo from '../assets/img/fhq-logo.png';
 import hcmuteLogo from '../assets/img/hcmute-logo.png';
 import { LoginTerminology } from '../assets/terminology/login.terminology';
 import Copyright from '../components/Copyright/Copyright';
-import { COMMON_PATH, MOBILE_RESPONSIVE } from '../libs/common/common.resource';
+import { COMMON_PATH, MOBILE_RESPONSIVE, REDIRECT_URL_QUERY } from '../libs/common/common.resource';
 import CommonService from '../libs/common/common.service';
 import { CommonPageProps } from '../libs/common/common.type';
 import UserService from '../libs/user/user.service';
@@ -44,6 +44,14 @@ const Login: NextPage<CommonPageProps> = () => {
   const [loading, setLoading] = useState(false);
   const { username } = userClient.getRememberValue();
 
+  const handleRedirect = async () => {
+    if (router.query[REDIRECT_URL_QUERY]) {
+      await userClient.redirectService.redirectTo(router.query[REDIRECT_URL_QUERY] as string);
+    } else {
+      await userClient.redirectService.redirectTo(COMMON_PATH.INDEX);
+    }
+  };
+
   const handleSubmit = async (values: LoginInputs) => {
     setLoading(true);
     const { remember, ...inputs } = values;
@@ -60,11 +68,7 @@ const Login: NextPage<CommonPageProps> = () => {
       return;
     }
 
-    if (router.query.redirectUrl) {
-      await userClient.redirectService.redirectTo(router.query.redirectUrl as string);
-    } else {
-      await userClient.redirectService.redirectTo(COMMON_PATH.INDEX);
-    }
+    await handleRedirect();
   };
 
   (async () => {
@@ -72,7 +76,7 @@ const Login: NextPage<CommonPageProps> = () => {
     try {
       await commonClient.jwtService.checkTokenExpire();
       if (!commonClient.jwtService.isAccessTokenExpired()) {
-        await commonClient.redirectService.redirectTo(COMMON_PATH.INDEX);
+        await handleRedirect();
       }
     } catch (error) {
       await commonClient.requestErrorHandler(error);

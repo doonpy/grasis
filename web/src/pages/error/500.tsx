@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+import { CommonTerminology } from '../../assets/terminology/common.terminology';
+import { COMMON_PATH } from '../../libs/common/common.resource';
+
 const Error500: NextPage = () => {
   const router = useRouter();
   const { title, message } = router.query;
@@ -19,8 +22,8 @@ const Error500: NextPage = () => {
         title={title}
         subTitle={message}
         extra={
-          <Link href={'/'}>
-            <Button type="primary">Quay lại trang chủ</Button>
+          <Link href={COMMON_PATH.INDEX}>
+            <Button type="primary">{CommonTerminology.COMMON_15}</Button>
           </Link>
         }
       />

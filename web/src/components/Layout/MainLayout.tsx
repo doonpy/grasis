@@ -59,33 +59,29 @@ const MainLayout: React.FC<CommonPageProps> = (props) => {
       <Head>
         <title>{props.title} - Grasis</title>
       </Head>
-      {screenWidth <= MOBILE_RESPONSIVE && !router.route.includes('mobile') ? (
-        <ResolutionNotCompatible />
-      ) : (
-        <>
-          <Sider
-            selectedMenu={props.selectedMenu}
-            isAdmin={data && (data.user.isAdmin as IsAdmin)}
-            userType={data && data.user.userType}
-          />
-          <Layout className={styles.layout}>
-            {screenWidth > MOBILE_RESPONSIVE ? (
-              <Header screenWidth={screenWidth} />
-            ) : (
-              <HeaderMobile screenWidth={screenWidth} />
+      <ResolutionNotCompatible screenWidth={screenWidth}>
+        <Sider
+          selectedMenu={props.selectedMenu}
+          isAdmin={data && (data.user.isAdmin as IsAdmin)}
+          userType={data && data.user.userType}
+        />
+        <Layout className={styles.layout}>
+          {screenWidth > MOBILE_RESPONSIVE ? (
+            <Header screenWidth={screenWidth} />
+          ) : (
+            <HeaderMobile screenWidth={screenWidth} />
+          )}
+          <Layout.Content className={styles.content}>
+            {screenWidth > MOBILE_RESPONSIVE && (
+              <Breadcrumb breadcrumbs={props.breadcrumbs || []} />
             )}
-            <Layout.Content className={styles.content}>
-              {screenWidth > MOBILE_RESPONSIVE && (
-                <Breadcrumb breadcrumbs={props.breadcrumbs || []} />
-              )}
-              <div>{props.children}</div>
-            </Layout.Content>
-            <Layout.Footer className={styles.footer}>
-              <Copyright />
-            </Layout.Footer>
-          </Layout>
-        </>
-      )}
+            <div>{props.children}</div>
+          </Layout.Content>
+          <Layout.Footer className={styles.footer}>
+            <Copyright />
+          </Layout.Footer>
+        </Layout>
+      </ResolutionNotCompatible>
     </Layout>
   );
 };

@@ -2,6 +2,7 @@ import { message } from 'antd';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import axios, { AxiosResponse } from 'axios';
 import { StatusCodes } from 'http-status-codes';
+import Router from 'next/router';
 
 import ApiService from '../api/api.service';
 import JwtClient from '../jwt/jwt.client';
@@ -41,10 +42,7 @@ export default class CommonService {
 
     if (error.response) {
       const { data } = error.response;
-      if (
-        data.statusCode === StatusCodes.UNAUTHORIZED &&
-        this.redirectService.currentPath !== COMMON_PATH.LOGIN
-      ) {
+      if (data.statusCode === StatusCodes.UNAUTHORIZED && Router.pathname !== COMMON_PATH.LOGIN) {
         this.jwtService.deleteAllToken();
         message.error(`[${data.statusCode}] ${data.message}`, 2.5).then(
           async () => await this.redirectService.redirectTo(COMMON_PATH.LOGIN),

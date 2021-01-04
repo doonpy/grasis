@@ -23,6 +23,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
-    'simple-import-sort/imports': 'error'
+    'simple-import-sort/imports': 'error',
+    'no-console': 'error'
   }
 };
