@@ -2,10 +2,10 @@ import { CommonColumns, CommonResponse } from '../common/common.type';
 import { Lecturer, LecturerForFastView } from '../lecturer/lecturer.type';
 import { ResultOfStudentForView } from '../result/result.type';
 import { Thesis } from '../thesis/thesis.type';
+import { TopicRegisterStatus } from './topic.resource';
 import { TopicStateAction } from './topic-state/topic-state.resource';
 import { TopicState } from './topic-state/topic-state.type';
 import { TopicStudent } from './topic-student/topic-student.type';
-import { TopicRegisterStatus } from './topic.resource';
 
 export interface Topic extends CommonColumns {
   id: number;

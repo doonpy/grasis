@@ -3,9 +3,9 @@ import { Moment } from 'moment';
 import { CommonColumns, CommonResponse } from '../common/common.type';
 import { Lecturer, LecturerForFastView, LecturerSearchAttendee } from '../lecturer/lecturer.type';
 import { StudentSearchAttendee } from '../student/student.type';
+import { ThesisState, ThesisStatus } from './thesis.resource';
 import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
 import { ThesisStudent } from './thesis-student/thesis-student.type';
-import { ThesisState, ThesisStatus } from './thesis.resource';
 
 export interface Thesis extends CommonColumns {
   id: number;

@@ -14,23 +14,43 @@ import {
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import styles from '../assets/css/pages/login/index.module.css';
 import fhqLogo from '../assets/img/fhq-logo.png';
 import hcmuteLogo from '../assets/img/hcmute-logo.png';
 import { LoginTerminology } from '../assets/terminology/login.terminology';
 import Copyright from '../components/Copyright/Copyright';
-import { COMMON_PATH } from '../libs/common/common.resource';
+import { COMMON_PATH, MOBILE_RESPONSIVE, REDIRECT_URL_QUERY } from '../libs/common/common.resource';
 import CommonService from '../libs/common/common.service';
+import { CommonPageProps } from '../libs/common/common.type';
 import UserService from '../libs/user/user.service';
 import { LoginInputs } from '../libs/user/user.type';
 
-const Login: NextPage = () => {
+const Login: NextPage<CommonPageProps> = () => {
+  const [screenWidth, setScreenWidth] = useState(0);
+  const resizeHandler = () => {
+    setScreenWidth(window.screen.width);
+  };
+
+  useEffect(() => {
+    setScreenWidth(window.screen.width);
+    window.removeEventListener('resize', resizeHandler);
+    window.addEventListener('resize', resizeHandler);
+  }, []);
+
   const router = useRouter();
   const userClient = UserService.getInstance();
   const [loading, setLoading] = useState(false);
   const { username } = userClient.getRememberValue();
+
+  const handleRedirect = async () => {
+    if (router.query[REDIRECT_URL_QUERY]) {
+      await userClient.redirectService.redirectTo(router.query[REDIRECT_URL_QUERY] as string);
+    } else {
+      await userClient.redirectService.redirectTo(COMMON_PATH.INDEX);
+    }
+  };
 
   const handleSubmit = async (values: LoginInputs) => {
     setLoading(true);
@@ -48,11 +68,7 @@ const Login: NextPage = () => {
       return;
     }
 
-    if (router.query.redirectUrl) {
-      await userClient.redirectService.redirectTo(router.query.redirectUrl as string);
-    } else {
-      await userClient.redirectService.redirectTo(COMMON_PATH.INDEX);
-    }
+    await handleRedirect();
   };
 
   (async () => {
@@ -60,7 +76,7 @@ const Login: NextPage = () => {
     try {
       await commonClient.jwtService.checkTokenExpire();
       if (!commonClient.jwtService.isAccessTokenExpired()) {
-        await commonClient.redirectService.redirectTo(COMMON_PATH.INDEX);
+        await handleRedirect();
       }
     } catch (error) {
       await commonClient.requestErrorHandler(error);
@@ -74,7 +90,9 @@ const Login: NextPage = () => {
       </Head>
       <Layout>
         <Layout.Content className={styles.background} />
-        <Layout.Sider theme="light" width={'40%'}>
+        <Layout.Sider
+          theme="light"
+          width={screenWidth && screenWidth > MOBILE_RESPONSIVE ? '40%' : '100%'}>
           <Form
             name="normal_login"
             initialValues={{ remember: true, username }}

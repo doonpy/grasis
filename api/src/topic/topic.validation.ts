@@ -1,13 +1,13 @@
 import Joi from '@hapi/joi';
 
-import { TopicStateAction } from './topic-state/topic-state.resource';
-import { TopicStudentStatus } from './topic-student/topic-student.resouce';
 import { StateResult } from './topic.resource';
 import {
   Topic,
   TopicChangeStatusRequestBody,
   TopicChangeStudentRegisterStatusRequestBody
 } from './topic.type';
+import { TopicStateAction } from './topic-state/topic-state.resource';
+import { TopicStudentStatus } from './topic-student/topic-student.resouce';
 
 const topicValidationSchema = Joi.object<Topic>({
   subject: Joi.string().messages({ 'string.base': 'Tiêu đề phải là chuỗi.' }),
@@ -74,20 +74,20 @@ export const topicChangeActionValidationSchema = Joi.object<TopicChangeStatusReq
   })
 });
 
-export const topicChangeStudentRegisterStatusValidationSchema = Joi.object<
-  TopicChangeStudentRegisterStatusRequestBody
->({
-  status: Joi.number()
-    .integer()
-    .valid(TopicStudentStatus.APPROVED, TopicStudentStatus.REJECTED)
-    .required()
-    .messages({
-      'number.base': 'Trạng thái phê duyệt không hợp lệ (NUMBER).',
-      'number.integer': 'Trạng thái phê duyệt không hợp lệ (INTEGER).',
-      'any.only': 'Trạng thái phê duyệt không hợp lệ (ONLY).',
-      'any.required': 'Trạng thái phê duyệt là thông tin bắt buộc.'
-    })
-});
+export const topicChangeStudentRegisterStatusValidationSchema = Joi.object<TopicChangeStudentRegisterStatusRequestBody>(
+  {
+    status: Joi.number()
+      .integer()
+      .valid(TopicStudentStatus.APPROVED, TopicStudentStatus.REJECTED)
+      .required()
+      .messages({
+        'number.base': 'Trạng thái phê duyệt không hợp lệ (NUMBER).',
+        'number.integer': 'Trạng thái phê duyệt không hợp lệ (INTEGER).',
+        'any.only': 'Trạng thái phê duyệt không hợp lệ (ONLY).',
+        'any.required': 'Trạng thái phê duyệt là thông tin bắt buộc.'
+      })
+  }
+);
 
 export const stateResultValidationSchema = Joi.number()
   .integer()

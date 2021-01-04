@@ -2,13 +2,13 @@ import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ThesisAdminController } from './admin.controller';
+import { ThesisController } from './thesis.controller';
+import { ThesisEntity } from './thesis.entity';
+import { ThesisService } from './thesis.service';
 import { ThesisLecturerEntity } from './thesis-lecturer/thesis-lecturer.entity';
 import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
 import { ThesisStudentEntity } from './thesis-student/thesis-student.entity';
 import { ThesisStudentService } from './thesis-student/thesis-student.service';
-import { ThesisController } from './thesis.controller';
-import { ThesisEntity } from './thesis.entity';
-import { ThesisService } from './thesis.service';
 
 @Global()
 @Module({

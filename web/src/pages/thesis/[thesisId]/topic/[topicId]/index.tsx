@@ -31,9 +31,9 @@ import {
   ThesisState
 } from '../../../../../libs/thesis/thesis.resource';
 import ThesisService from '../../../../../libs/thesis/thesis.service';
-import { TopicStateAction } from '../../../../../libs/topic/topic-state/topic-state.resource';
 import { TopicTabKey } from '../../../../../libs/topic/topic.resource';
 import TopicService from '../../../../../libs/topic/topic.service';
+import { TopicStateAction } from '../../../../../libs/topic/topic-state/topic-state.resource';
 import { UserType } from '../../../../../libs/user/user.resource';
 
 interface PageProps extends CommonPageProps {

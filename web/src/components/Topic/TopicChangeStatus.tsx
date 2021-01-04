@@ -3,10 +3,10 @@ import { Comment, Input, message, Modal } from 'antd';
 import React, { ChangeEvent, useState } from 'react';
 
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
-import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
-import { TopicStateForView } from '../../libs/topic/topic-state/topic-state.type';
 import TopicService from '../../libs/topic/topic.service';
 import { TopicForView } from '../../libs/topic/topic.type';
+import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
+import { TopicStateForView } from '../../libs/topic/topic-state/topic-state.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import AvatarForComment from '../Avatar/AvatarForComment';
 import TopicChangeStatusButtonForApprover from './TopicChangeStatusButtonForApprover';

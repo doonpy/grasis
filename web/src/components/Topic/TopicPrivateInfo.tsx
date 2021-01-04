@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
 import { ThesisForView } from '../../libs/thesis/thesis.type';
+import TopicService from '../../libs/topic/topic.service';
+import { TopicForView } from '../../libs/topic/topic.type';
 import { TopicStateAction } from '../../libs/topic/topic-state/topic-state.resource';
 import TopicStateService from '../../libs/topic/topic-state/topic-state.service';
 import { TopicStateForView } from '../../libs/topic/topic-state/topic-state.type';
-import TopicService from '../../libs/topic/topic.service';
-import { TopicForView } from '../../libs/topic/topic.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import LecturerFastView from '../Lecturer/LecturerFastView';
 import TopicChangeStatus from './TopicChangeStatus';

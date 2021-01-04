@@ -35,7 +35,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    'simple-import-sort/sort': 'error',
+    'simple-import-sort/imports': 'error',
     'jsx-a11y/anchor-is-valid': [
       'error',
       {
@@ -43,6 +43,7 @@ module.exports = {
         specialLink: ['hrefLeft', 'hrefRight'],
         aspects: ['invalidHref', 'preferButton']
       }
-    ]
+    ],
+    'no-console': 'error'
   }
 };

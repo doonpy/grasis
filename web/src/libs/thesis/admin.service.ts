@@ -45,7 +45,7 @@ export default class ThesisAdminService extends CommonService {
 
   public formatThesisRequestBody(formValues: ThesisRequestBody): ThesisRequestBody {
     const result: ThesisRequestBody = {};
-    const [startTime, endTime] = formValues.duration;
+    const [startTime, endTime] = formValues.duration || [moment(), moment()];
 
     result.startTime = startTime.startOf('days');
     result.endTime = endTime.endOf('days').subtract(1, 'minutes');

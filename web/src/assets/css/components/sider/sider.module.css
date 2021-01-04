@@ -22,3 +22,17 @@
     background-color: transparent;
     letter-spacing: 2px;
 }
+
+.logoTextMobile {
+    text-transform: uppercase;
+    margin-left: 5px;
+    display: block;
+    font-size: 25px;
+    color: white;
+    text-align: left;
+    font-weight: 500;
+    line-height: 30px;
+    text-decoration: none;
+    background-color: transparent;
+    letter-spacing: 2px;
+}

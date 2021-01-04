@@ -1,13 +1,13 @@
 import Icon, { InfoCircleOutlined } from '@ant-design/icons';
-import { Card, Empty, Tabs } from 'antd';
+import { Card, Tabs } from 'antd';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useState } from 'react';
 
 import ChalkBoardTeacherIcon from '../../../assets/svg/regular/chalkboard-teacher.svg';
 import ListAltIcon from '../../../assets/svg/regular/list-alt.svg';
-import UsersClassIcon from '../../../assets/svg/regular/users-class.svg';
 import UsersIcon from '../../../assets/svg/regular/users.svg';
+import UsersClassIcon from '../../../assets/svg/regular/users-class.svg';
 import { CouncilTerminology } from '../../../assets/terminology/council.terminology';
 import { ThesisTerminology } from '../../../assets/terminology/thesis.terminology';
 import { TopicTerminology } from '../../../assets/terminology/topic.terminology';
@@ -37,16 +37,16 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   const [currentTab, setCurrentTab] = useState<string>(ThesisTabKey.INFO);
   const loginUser = LoginUser.getInstance();
   const thesisService = ThesisService.getInstance();
-  const { data } = thesisService.useThesis(thesisId);
+  const { data, isLoading } = thesisService.useThesis(thesisId);
   const onTabChange = (activeKey: string) => {
     setCurrentTab(activeKey);
   };
 
-  if (!data) {
-    return <Empty description={TopicTerminology.TOPIC_63} />;
-  }
-
   const topicListRender = () => {
+    if (!data) {
+      return <></>;
+    }
+
     if (
       (loginUser.isStudent() && data.thesis.state >= ThesisState.STUDENT_TOPIC_REGISTER) ||
       (loginUser.isLecturer() && data.thesis.state >= ThesisState.LECTURER_TOPIC_REGISTER)
@@ -69,10 +69,8 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
   };
 
   return (
-    <Card title={ThesisTerminology.THESIS_4}>
-      {!data ? (
-        <Empty description={ThesisTerminology.THESIS_48} />
-      ) : (
+    <Card title={ThesisTerminology.THESIS_4} loading={isLoading}>
+      {data && (
         <Tabs defaultActiveKey={currentTab} onChange={onTabChange}>
           <Tabs.TabPane
             tab={
@@ -111,7 +109,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
             />
           </Tabs.TabPane>
           {topicListRender()}
-          {data.thesis.state >= ThesisState.DEFENSE && loginUser.getId() === data.thesis.creatorId && (
+          {loginUser.getId() === data.thesis.creatorId && (
             <Tabs.TabPane
               tab={
                 <span>
@@ -124,7 +122,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
             </Tabs.TabPane>
           )}
         </Tabs>
-      )}
+      )}{' '}
     </Card>
   );
 };

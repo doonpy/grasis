@@ -2,20 +2,33 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Layout, Result } from 'antd';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import styles from '../../assets/css/components/layout/main-layout.module.css';
-import { COMMON_PATH } from '../../libs/common/common.resource';
+import { COMMON_PATH, MOBILE_RESPONSIVE } from '../../libs/common/common.resource';
 import { CommonPageProps } from '../../libs/common/common.type';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import { IsAdmin } from '../../libs/user/user.resource';
 import UserService from '../../libs/user/user.service';
 import { Breadcrumb } from '../Breadcrumb/Breadcrumb';
+import ResolutionNotCompatible from '../Common/ResolutionNotCompatible';
 import Copyright from '../Copyright/Copyright';
 import Header from '../Header/Header';
+import HeaderMobile from '../Header/HeaderMobile';
 import Sider from '../Sider/Sider';
 
 const MainLayout: React.FC<CommonPageProps> = (props) => {
+  const [screenWidth, setScreenWidth] = useState(0);
+  const resizeHandler = () => {
+    setScreenWidth(window.screen.width);
+  };
+
+  useEffect(() => {
+    setScreenWidth(window.screen.width);
+    window.removeEventListener('resize', resizeHandler);
+    window.addEventListener('resize', resizeHandler);
+  }, []);
+
   const userClient = UserService.getInstance();
   const data = userClient.useAuthorization();
   const router = useRouter();
@@ -46,21 +59,29 @@ const MainLayout: React.FC<CommonPageProps> = (props) => {
       <Head>
         <title>{props.title} - Grasis</title>
       </Head>
-      <Sider
-        selectedMenu={props.selectedMenu}
-        isAdmin={data && (data.user.isAdmin as IsAdmin)}
-        userType={data && data.user.userType}
-      />
-      <Layout className={styles.layout}>
-        <Header />
-        <Layout.Content className={styles.content}>
-          <Breadcrumb breadcrumbs={props.breadcrumbs || []} />
-          <div>{props.children}</div>
-        </Layout.Content>
-        <Layout.Footer className={styles.footer}>
-          <Copyright />
-        </Layout.Footer>
-      </Layout>
+      <ResolutionNotCompatible screenWidth={screenWidth}>
+        <Sider
+          selectedMenu={props.selectedMenu}
+          isAdmin={data && (data.user.isAdmin as IsAdmin)}
+          userType={data && data.user.userType}
+        />
+        <Layout className={styles.layout}>
+          {screenWidth > MOBILE_RESPONSIVE ? (
+            <Header screenWidth={screenWidth} />
+          ) : (
+            <HeaderMobile screenWidth={screenWidth} />
+          )}
+          <Layout.Content className={styles.content}>
+            {screenWidth > MOBILE_RESPONSIVE && (
+              <Breadcrumb breadcrumbs={props.breadcrumbs || []} />
+            )}
+            <div>{props.children}</div>
+          </Layout.Content>
+          <Layout.Footer className={styles.footer}>
+            <Copyright />
+          </Layout.Footer>
+        </Layout>
+      </ResolutionNotCompatible>
     </Layout>
   );
 };

@@ -3,19 +3,28 @@ import { Avatar, Button, Dropdown, Space } from 'antd';
 import React from 'react';
 
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
+import { MOBILE_RESPONSIVE } from '../../libs/common/common.resource';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import UserMenuItem from './UserMenuItem';
 
-const UserMenu: React.FC = () => {
+interface ComponentProps {
+  screenWidth: number;
+}
+
+const UserMenu: React.FC<ComponentProps> = ({ screenWidth }) => {
   const loginUser = LoginUser.getInstance();
 
   return (
-    <Dropdown overlay={() => <UserMenuItem />} placement="bottomCenter" trigger={['click']} arrow>
+    <Dropdown
+      overlay={() => <UserMenuItem screenWidth={screenWidth} />}
+      placement="bottomCenter"
+      trigger={['click']}
+      arrow>
       <Button type="text" block size="large">
         <Space>
           <Avatar
             src={getAvatarUrl(loginUser.getId())}
-            size="large"
+            size={screenWidth > MOBILE_RESPONSIVE ? 'large' : 'small'}
             style={{ backgroundColor: '#1890ff' }}
             icon={<UserOutlined />}
           />

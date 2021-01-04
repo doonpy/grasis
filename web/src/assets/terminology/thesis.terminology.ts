@@ -53,5 +53,6 @@ export const ThesisTerminology = {
   THESIS_46: 'Đang diễn ra',
   THESIS_47: 'Chưa chọn',
   THESIS_48: 'Không có dữ liệu khóa luận',
-  THESIS_49: 'Xóa khóa luận'
+  THESIS_49: 'Xóa khóa luận',
+  THESIS_50: 'Chọn khóa luận'
 };

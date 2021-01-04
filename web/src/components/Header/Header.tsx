@@ -6,13 +6,17 @@ import UserMenu from './UserMenu';
 
 const { Header: AntHeader } = Layout;
 
-const Header: React.FC = () => {
+interface ComponentProps {
+  screenWidth: number;
+}
+
+const Header: React.FC<ComponentProps> = ({ screenWidth }) => {
   return (
-    <AntHeader className="site-layout-background">
+    <AntHeader style={{ padding: 0 }}>
       <Row justify="end" align="middle">
         <Space>
           {/*<NotificationMenu />*/}
-          <UserMenu />
+          <UserMenu screenWidth={screenWidth} />
         </Space>
       </Row>
     </AntHeader>

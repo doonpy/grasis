@@ -21,7 +21,7 @@ interface ComponentProps {
   studentId: number;
 }
 
-const ResultEdit: React.FC<ComponentProps> = ({ result, results, setResults, studentId }) => {
+const ResultEditMobile: React.FC<ComponentProps> = ({ result, results, setResults, studentId }) => {
   const loginUser = LoginUser.getInstance();
   const resultService = ResultService.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
@@ -67,10 +67,11 @@ const ResultEdit: React.FC<ComponentProps> = ({ result, results, setResults, stu
   };
 
   return (
-    <>
+    <div>
       <Drawer
+        placement="top"
         title={ResultTerminology.RESULT_15}
-        width={720}
+        height="100%"
         onClose={handleCancel}
         visible={visible}>
         <Form form={form} requiredMark={true} layout="vertical" onFinish={onFormSubmit}>
@@ -92,11 +93,11 @@ const ResultEdit: React.FC<ComponentProps> = ({ result, results, setResults, stu
           </Space>
         </Form>
       </Drawer>
-      <Button type="primary" icon={<Icon component={EditIcon} />} onClick={onClickEditButton}>
+      <Button type="link" icon={<Icon component={EditIcon} />} onClick={onClickEditButton}>
         {CommonTerminology.COMMON_12}
       </Button>
-    </>
+    </div>
   );
 };
 
-export default ResultEdit;
+export default ResultEditMobile;

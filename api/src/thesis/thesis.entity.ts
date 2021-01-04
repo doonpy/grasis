@@ -11,13 +11,13 @@ import { Lecturer } from '../lecturer/lecturer.type';
 import { TopicEntity } from '../topic/entities/topic.entity';
 import { TopicColumn } from '../topic/topic.resource';
 import { Topic } from '../topic/topic.type';
+import { THESIS_TABLE, ThesisColumn, ThesisState, ThesisStatus } from './thesis.resource';
 import { ThesisLecturerEntity } from './thesis-lecturer/thesis-lecturer.entity';
 import { ThesisLecturerColumn } from './thesis-lecturer/thesis-lecturer.resource';
 import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
 import { ThesisStudentEntity } from './thesis-student/thesis-student.entity';
 import { ThesisStudentColumn } from './thesis-student/thesis-student.resource';
 import { ThesisStudent } from './thesis-student/thesis-student.type';
-import { THESIS_TABLE, ThesisColumn, ThesisState, ThesisStatus } from './thesis.resource';
 
 @Entity({ ...COMMON_ENTITY_OPTIONS, name: THESIS_TABLE })
 export class ThesisEntity extends CommonEntity {

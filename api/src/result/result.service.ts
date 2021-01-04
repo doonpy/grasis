@@ -8,8 +8,8 @@ import { LecturerService } from '../lecturer/lecturer.service';
 import { ReviewService } from '../review/review.service';
 import { ThesisState } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
-import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { TopicService } from '../topic/topic.service';
+import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { ResultEntity } from './result.entity';
 import {
   RESULT_INSTRUCTOR_INITIAL_DATA,
@@ -108,9 +108,9 @@ export class ResultService {
   public async updateById(id: number, data: ResultRequestBody, userId: number): Promise<Result> {
     const currentResult = await this.getById(id);
     const topic = await this.topicService.getById(currentResult.topicId, true);
-    this.thesisService.checkThesisIsActive(topic.thesis.status);
+    this.thesisService.checkThesisIsActive(topic.thesis!.status);
     await this.topicService.checkPermission(topic, userId);
-    this.checkStatePermission(topic.thesis.state);
+    this.checkStatePermission(topic.thesis!.state);
     this.checkEditPermission(currentResult, userId);
     if (data.note) {
       currentResult.note = data.note;

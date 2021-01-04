@@ -23,12 +23,6 @@ import { TopicService } from '../topic/topic.service';
 import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.type';
-import { ThesisLecturerColumn } from './thesis-lecturer/thesis-lecturer.resource';
-import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
-import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
-import { ThesisStudentColumn } from './thesis-student/thesis-student.resource';
-import { ThesisStudentService } from './thesis-student/thesis-student.service';
-import { ThesisStudent } from './thesis-student/thesis-student.type';
 import { ThesisEntity } from './thesis.entity';
 import { ThesisError, ThesisState, ThesisStatus } from './thesis.resource';
 import {
@@ -38,6 +32,12 @@ import {
   ThesisForView,
   ThesisRequestBody
 } from './thesis.type';
+import { ThesisLecturerColumn } from './thesis-lecturer/thesis-lecturer.resource';
+import { ThesisLecturerService } from './thesis-lecturer/thesis-lecturer.service';
+import { ThesisLecturer } from './thesis-lecturer/thesis-lecturer.type';
+import { ThesisStudentColumn } from './thesis-student/thesis-student.resource';
+import { ThesisStudentService } from './thesis-student/thesis-student.service';
+import { ThesisStudent } from './thesis-student/thesis-student.type';
 
 @Injectable()
 export class ThesisService {

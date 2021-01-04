@@ -15,6 +15,8 @@ export const SIDER_KEYS = {
   ADMIN_STUDENT: '7'
 };
 
+export const MOBILE_PATH_PREFIX = '/mobile';
+
 export const COMMON_PATH = {
   INDEX: '/',
   LOGIN: '/login',
@@ -22,6 +24,9 @@ export const COMMON_PATH = {
   ERROR: {
     ERR_403: '/error/403',
     ERR_500: '/error/500'
+  },
+  MOBILE: {
+    RESULT: `${MOBILE_PATH_PREFIX}/result`
   }
 };
 
@@ -43,3 +48,7 @@ export enum ResultModule {
 }
 
 export const NOT_SELECT_ID = -1;
+
+export const MOBILE_RESPONSIVE = 768;
+
+export const REDIRECT_URL_QUERY = 'r';

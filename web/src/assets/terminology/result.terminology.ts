@@ -14,5 +14,7 @@ export const ResultTerminology = {
   RESULT_13: 'Tổng điểm',
   RESULT_14: 'Tổng điểm khóa luận',
   RESULT_15: 'Chỉnh sửa kết quả',
-  RESULT_16: 'Chỉnh sửa điểm thành công.'
+  RESULT_16: 'Chỉnh sửa điểm thành công.',
+  RESULT_17: 'Đánh giá kết quả',
+  RESULT_18: 'Khóa luận được chọn chưa cho phép đánh giá kết quả.'
 };

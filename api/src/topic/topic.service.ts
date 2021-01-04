@@ -17,6 +17,8 @@ import { IsAdmin, UserType } from '../user/user.resource';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.type';
 import { TopicEntity } from './entities/topic.entity';
+import { StateResult, TopicError, TopicRegisterStatus } from './topic.resource';
+import { Topic, TopicChangeStatusRequestBody, TopicForView, TopicRequestBody } from './topic.type';
 import {
   CANCELLED_STATE_NOTE,
   NEW_STATE_NOTE,
@@ -27,8 +29,6 @@ import { TopicState } from './topic-state/topic-state.type';
 import { TopicStudentStatus } from './topic-student/topic-student.resouce';
 import { TopicStudentService } from './topic-student/topic-student.service';
 import { TopicStudent } from './topic-student/topic-student.type';
-import { StateResult, TopicError, TopicRegisterStatus } from './topic.resource';
-import { Topic, TopicChangeStatusRequestBody, TopicForView, TopicRequestBody } from './topic.type';
 
 @Injectable()
 export class TopicService {
@@ -335,16 +335,16 @@ export class TopicService {
   }
 
   public async hasPermission(topic: Topic, user: User): Promise<boolean> {
-    if (topic.thesis.creatorId === user.id && user.isAdmin === IsAdmin.TRUE) {
+    if (topic.thesis!.creatorId === user.id && user.isAdmin === IsAdmin.TRUE) {
       return topic.status !== TopicStateAction.NEW || topic.creatorId === user.id;
     }
 
     switch (user.userType) {
       case UserType.LECTURER:
         if (
-          (topic.thesis.state >= ThesisState.REVIEW &&
+          (topic.thesis!.state >= ThesisState.REVIEW &&
             (await this.reviewService.hasReviewerPermission(topic.id, user.id))) ||
-          (topic.thesis.state >= ThesisState.DEFENSE &&
+          (topic.thesis!.state >= ThesisState.DEFENSE &&
             (await this.defenseService.hasCouncilPermission(topic.id, user.id))) ||
           topic.creatorId === user.id
         ) {
@@ -354,7 +354,7 @@ export class TopicService {
         break;
       case UserType.STUDENT:
         if (
-          (topic.thesis.state === ThesisState.STUDENT_TOPIC_REGISTER &&
+          (topic.thesis!.state === ThesisState.STUDENT_TOPIC_REGISTER &&
             topic.status === TopicStateAction.APPROVED) ||
           (await this.topicStudentService.hasParticipatedTopic(topic.id, user.id))
         ) {
@@ -382,7 +382,7 @@ export class TopicService {
       user = userId;
     }
 
-    await this.thesisService.checkPermission(topic.thesis, user);
+    await this.thesisService.checkPermission(topic.thesis!, user);
     if (!(await this.hasPermission(topic, user))) {
       throw new BadRequestException(TopicError.ERR_6);
     }
@@ -392,7 +392,7 @@ export class TopicService {
     const currentTopic = await this.getById(topicId, true);
     const user = await this.userService.getById(userId);
     await this.checkPermission(currentTopic, user);
-    this.thesisService.checkThesisIsActive(currentTopic.thesis.status);
+    this.thesisService.checkThesisIsActive(currentTopic.thesis!.status);
     if (!this.canEdit(user, currentTopic)) {
       throw new BadRequestException(TopicError.ERR_17);
     }
@@ -523,7 +523,7 @@ export class TopicService {
       await this.connection.transaction(async (manager) => {
         // Create progress report appointment
         await this.progressReportService.createWithTransaction(manager, topic.id, {
-          time: topic.thesis.progressReport
+          time: topic.thesis!.progressReport
         });
 
         await manager.save(TopicEntity, topic);
@@ -891,6 +891,9 @@ export class TopicService {
 
   public async convertForView({ approverId, creator, ...remain }: Topic): Promise<TopicForView> {
     const approver = (await this.lecturerService.getById(approverId)).convertToFastView();
+    if (remain.thesis) {
+      delete remain.thesis;
+    }
 
     return {
       ...remain,

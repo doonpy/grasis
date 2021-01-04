@@ -6,9 +6,9 @@ import { EntityManager, Repository } from 'typeorm';
 import { ThesisState } from '../thesis/thesis.resource';
 import { ThesisService } from '../thesis/thesis.service';
 import { Thesis } from '../thesis/thesis.type';
-import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { StateResult } from '../topic/topic.resource';
 import { TopicService } from '../topic/topic.service';
+import { TopicStudentService } from '../topic/topic-student/topic-student.service';
 import { ProgressReportEntity } from './progress-report.entity';
 import { ProgressReportError } from './progress-report.resource';
 import {
@@ -56,7 +56,7 @@ export class ProgressReportService {
     this.checkResultIsNotDecided(currentProgressReport.result);
     const { thesis } = await this.topicService.getById(id, true);
     if (data.time) {
-      await this.checkValidTime(thesis, data.time);
+      await this.checkValidTime(thesis!, data.time);
     }
 
     return this.progressReportRepository.save({ ...currentProgressReport, ...data });
@@ -100,9 +100,9 @@ export class ProgressReportService {
   public async checkUploadReportPermission(topicId: number, userId: number): Promise<void> {
     const topic = await this.topicService.getById(topicId, true);
     await this.topicService.checkPermission(topic, userId);
-    this.thesisService.checkThesisIsActive(topic.thesis.status);
+    this.thesisService.checkThesisIsActive(topic.thesis!.status);
 
-    if (topic.thesis.state !== ThesisState.PROGRESS_REPORT) {
+    if (topic.thesis!.state !== ThesisState.PROGRESS_REPORT) {
       throw new BadRequestException(ProgressReportError.ERR_6);
     }
 

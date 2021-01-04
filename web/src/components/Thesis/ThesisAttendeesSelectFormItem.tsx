@@ -103,7 +103,7 @@ const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({
     }
   };
 
-  const renderFooter = ({ direction }: TransferListProps): JSX.Element => {
+  const renderFooter = ({ direction }: TransferListProps<TransferItem>): JSX.Element => {
     if (direction === 'left') {
       return (
         <Form.Item noStyle>
@@ -164,7 +164,7 @@ const ThesisAttendeesSelectFormItem: React.FC<ComponentProps> = ({
 
     return (
       <Space>
-        <Avatar src={getAvatarUrl(parseInt(key))} size="small" icon={<UserOutlined />}>
+        <Avatar src={getAvatarUrl(parseInt(key || ''))} size="small" icon={<UserOutlined />}>
           {fullName[0]}
         </Avatar>
         {`${fullName || ''} ${attendeeIdStr}`}
