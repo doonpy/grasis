@@ -86,7 +86,7 @@ const TopicPrivateInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch })
         <TopicStatusRender status={currentState} />
       </Descriptions.Item>
       <Descriptions.Item label={<b>{TopicTerminology.TOPIC_15}</b>} span={4}>
-        <Descriptions bordered column={4}>
+        <Descriptions bordered column={4} style={{ width: '100%' }}>
           <Descriptions.Item span={4}>
             <TopicStatesRender states={states} />
           </Descriptions.Item>

@@ -33,13 +33,12 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
       {data && (
         <Space size={48} align="start" style={{ width: '100%' }}>
           <Space direction="vertical" align="center">
-            {login.getId() === data.lecturer.id && (
-              <AvatarFormItem
-                defaultImageUrl={getAvatarUrl(login.getId())}
-                width={250}
-                height={250}
-              />
-            )}
+            <AvatarFormItem
+              defaultImageUrl={getAvatarUrl(login.getId())}
+              width={250}
+              height={250}
+              isEdit={login.getId() === data.lecturer.id}
+            />
           </Space>
           <UserView user={data.lecturer.user} userType={UserType.LECTURER} />
           <LecturerView lecturer={data.lecturer} />

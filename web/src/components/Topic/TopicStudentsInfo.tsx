@@ -175,6 +175,7 @@ const TopicStudentInfo: React.FC<ComponentProps> = ({ topic: initTopic, canFetch
           dataSource={topicStudents}
           bordered
           pagination={pagination}
+          style={{ width: '100%' }}
         />
       </Descriptions.Item>
     </Descriptions>
