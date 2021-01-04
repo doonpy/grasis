@@ -1,5 +1,5 @@
 import { Descriptions } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { CommonTerminology } from '../../assets/terminology/common.terminology';
 import { ThesisTerminology } from '../../assets/terminology/thesis.terminology';
@@ -19,6 +19,9 @@ interface ComponentProps {
 
 const ThesisInfo: React.FC<ComponentProps> = ({ thesis: initThesis }) => {
   const [thesis, setThesis] = useState<ThesisForView>(initThesis);
+  useEffect(() => {
+    setThesis(initThesis);
+  }, [initThesis]);
 
   return (
     <Descriptions
