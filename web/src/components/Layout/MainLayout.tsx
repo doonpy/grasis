@@ -14,6 +14,7 @@ import { Breadcrumb } from '../Breadcrumb/Breadcrumb';
 import ResolutionNotCompatible from '../Common/ResolutionNotCompatible';
 import Copyright from '../Copyright/Copyright';
 import Header from '../Header/Header';
+import HeaderMobile from '../Header/HeaderMobile';
 import Sider from '../Sider/Sider';
 
 const MainLayout: React.FC<CommonPageProps> = (props) => {
@@ -68,7 +69,11 @@ const MainLayout: React.FC<CommonPageProps> = (props) => {
             userType={data && data.user.userType}
           />
           <Layout className={styles.layout}>
-            <Header screenWidth={screenWidth} />
+            {screenWidth > MOBILE_RESPONSIVE ? (
+              <Header screenWidth={screenWidth} />
+            ) : (
+              <HeaderMobile screenWidth={screenWidth} />
+            )}
             <Layout.Content className={styles.content}>
               {screenWidth > MOBILE_RESPONSIVE && (
                 <Breadcrumb breadcrumbs={props.breadcrumbs || []} />

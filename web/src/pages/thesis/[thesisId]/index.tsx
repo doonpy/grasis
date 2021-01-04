@@ -111,7 +111,7 @@ const Index: NextPageWithLayout<PageProps> = ({ params }) => {
             />
           </Tabs.TabPane>
           {topicListRender()}
-          {data.thesis.state >= ThesisState.DEFENSE && loginUser.getId() === data.thesis.creatorId && (
+          {loginUser.getId() === data.thesis.creatorId && (
             <Tabs.TabPane
               tab={
                 <span>

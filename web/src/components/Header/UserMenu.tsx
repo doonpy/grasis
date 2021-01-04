@@ -3,6 +3,7 @@ import { Avatar, Button, Dropdown, Space } from 'antd';
 import React from 'react';
 
 import { getAvatarUrl } from '../../libs/avatar/avatar.service';
+import { MOBILE_RESPONSIVE } from '../../libs/common/common.resource';
 import LoginUser from '../../libs/user/instance/LoginUser';
 import UserMenuItem from './UserMenuItem';
 
@@ -23,7 +24,7 @@ const UserMenu: React.FC<ComponentProps> = ({ screenWidth }) => {
         <Space>
           <Avatar
             src={getAvatarUrl(loginUser.getId())}
-            size="large"
+            size={screenWidth > MOBILE_RESPONSIVE ? 'large' : 'small'}
             style={{ backgroundColor: '#1890ff' }}
             icon={<UserOutlined />}
           />

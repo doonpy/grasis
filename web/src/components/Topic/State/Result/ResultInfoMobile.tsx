@@ -41,31 +41,33 @@ const ResultInfoMobile: React.FC<ComponentProps> = ({ topicId, canFetch }) => {
       return <Empty description={ResultTerminology.RESULT_11} />;
     }
 
-    return result.map((item, key) => (
-      <Table
-        key={key}
-        title={() => (
-          <ResultEditMobile
-            result={item}
-            results={results}
-            setResults={setResults}
-            studentId={studentId}
-          />
-        )}
-        bordered
-        columns={ResultPointTableColumns}
-        dataSource={
-          item.point
-            ? item.point.map((point, index) => ({
-                ...point,
-                key: index.toString()
-              }))
-            : []
-        }
-        size="middle"
-        pagination={false}
-      />
-    ));
+    return result
+      .filter((item) => item.creator.id === login.getId())
+      .map((item, key) => (
+        <Table
+          key={key}
+          title={() => (
+            <ResultEditMobile
+              result={item}
+              results={results}
+              setResults={setResults}
+              studentId={studentId}
+            />
+          )}
+          bordered
+          columns={ResultPointTableColumns}
+          dataSource={
+            item.point
+              ? item.point.map((point, index) => ({
+                  ...point,
+                  key: index.toString()
+                }))
+              : []
+          }
+          size="middle"
+          pagination={false}
+        />
+      ));
   };
 
   return (

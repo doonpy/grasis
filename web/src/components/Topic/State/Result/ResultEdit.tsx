@@ -76,7 +76,7 @@ const ResultEdit: React.FC<ComponentProps> = ({ result, results, setResults, stu
         <Form form={form} requiredMark={true} layout="vertical" onFinish={onFormSubmit}>
           {result.point.map((item, key) => (
             <Form.Item key={key} label={item.title} name={['point', key, 'value']}>
-              <InputNumber max={10} min={0} step={0.05} />
+              <InputNumber max={10} min={0} step={0.05} placeholder={ResultTerminology.RESULT_7} />
             </Form.Item>
           ))}
           <Form.Item label={ResultTerminology.RESULT_3} name="note">
