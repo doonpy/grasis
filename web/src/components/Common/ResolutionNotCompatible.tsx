@@ -15,7 +15,7 @@ const ResolutionNotCompatible: React.FC<ComponentProps> = ({ screenWidth, childr
   const loginUser = LoginUser.getInstance();
   const router = useRouter();
 
-  if (screenWidth <= MOBILE_RESPONSIVE && !router.pathname.includes('mobile')) {
+  if (screenWidth <= MOBILE_RESPONSIVE && !router.asPath.includes('mobile')) {
     return (
       <Result
         status="error"
@@ -34,7 +34,7 @@ const ResolutionNotCompatible: React.FC<ComponentProps> = ({ screenWidth, childr
     );
   }
 
-  if (screenWidth > MOBILE_RESPONSIVE && router.pathname.includes('mobile')) {
+  if (screenWidth > MOBILE_RESPONSIVE && router.asPath.includes('mobile')) {
     return (
       <Result
         status="error"

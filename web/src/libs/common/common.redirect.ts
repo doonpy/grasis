@@ -33,7 +33,7 @@ export default class CommonRedirect {
 
   public async redirectTo(url: string): Promise<void> {
     if (url === COMMON_PATH.LOGIN) {
-      url += `?${REDIRECT_URL_QUERY}=${Router.pathname}`;
+      url += `?${REDIRECT_URL_QUERY}=${Router.asPath}`;
     }
 
     if (this.renderSide === RenderSide.CLIENT) {

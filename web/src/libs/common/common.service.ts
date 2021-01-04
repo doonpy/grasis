@@ -42,7 +42,7 @@ export default class CommonService {
 
     if (error.response) {
       const { data } = error.response;
-      if (data.statusCode === StatusCodes.UNAUTHORIZED && Router.pathname !== COMMON_PATH.LOGIN) {
+      if (data.statusCode === StatusCodes.UNAUTHORIZED && Router.asPath !== COMMON_PATH.LOGIN) {
         this.jwtService.deleteAllToken();
         message.error(`[${data.statusCode}] ${data.message}`, 2.5).then(
           async () => await this.redirectService.redirectTo(COMMON_PATH.LOGIN),
