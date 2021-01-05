@@ -41,26 +41,28 @@ export class AwsService {
     }
   }
 
-  public async downloadFilesFromS3(folderPath: string): Promise<void> {
+  public async downloadFilesFromS3(folderPath: string): Promise<void[]> {
     if (!this.s3 || !this.bucketName) {
-      return;
+      return [];
     }
 
     try {
       const getListObjectsPromise = await this.getListObjectsFromS3(folderPath);
       const { Contents } = await getListObjectsPromise;
       if (!Contents) {
-        return;
+        return [];
       }
 
+      const promise: Promise<void>[] = [];
       for (const { Key } of Contents) {
         if (!Key) {
           continue;
         }
 
-        const file = this.s3!.getObject({ Bucket: this.bucketName!, Key }).createReadStream();
-        file.pipe(fs.createWriteStream(`./${Key}`));
+        promise.push(this.downloadFileFromS3(`./${Key}`));
       }
+
+      return Promise.all(promise);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -91,5 +93,42 @@ export class AwsService {
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
+  }
+
+  public async downloadFileFromS3(filePath: string): Promise<void> {
+    const Key = this.removePrefix(filePath);
+    const file = fs.createWriteStream(filePath);
+
+    return new Promise<void>((resolve) => {
+      this.s3!.getObject({ Bucket: this.bucketName!, Key })
+        .createReadStream()
+        .on('end', () => {
+          return resolve();
+        })
+        .on('error', (error) => {
+          throw new InternalServerErrorException(error);
+        })
+        .pipe(file);
+    });
+  }
+
+  public async isFileExist(filePath: string): Promise<boolean> {
+    try {
+      const Key = this.removePrefix(filePath);
+      await this.s3!.getObject({ Bucket: this.bucketName!, Key }).promise();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  private removePrefix(filePath: string): string {
+    let returnValue = filePath;
+    const REMOVE_PREFIX_REGEX = new RegExp(/^.\//g);
+    if (REMOVE_PREFIX_REGEX.test(filePath)) {
+      returnValue = returnValue.replace(REMOVE_PREFIX_REGEX, '');
+    }
+
+    return returnValue;
   }
 }

@@ -1,10 +1,12 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import chalk from 'chalk';
+import fs from 'fs';
 import { Connection } from 'typeorm';
 
 import { isProductionMode, isReviewData } from './common/common.helper';
 import { initReviewData } from './database/database.helper';
 import { LecturerService } from './lecturer/lecturer.service';
+import { UploadDestination } from './upload/upload.resource';
 import { IsAdmin } from './user/user.resource';
 import { UserService } from './user/user.service';
 import { UserRequestBody } from './user/user.type';
@@ -22,6 +24,8 @@ export class AppService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap(): Promise<void> {
+    this.createRootUploadDirectories();
+
     if (isProductionMode() && !isReviewData()) {
       Logger.log(chalk.yellow('Run migrations...'));
       await this.connection.runMigrations({ transaction: 'all' });
@@ -48,6 +52,19 @@ export class AppService implements OnApplicationBootstrap {
       };
       await this.lecturerService.create(user);
       Logger.log(chalk.yellow('Create administrator account.. Done!'));
+    }
+  }
+
+  private createRootUploadDirectories(): void {
+    const directories = [
+      UploadDestination.AVATAR_ROOT,
+      UploadDestination.REPORT_ROOT,
+      UploadDestination.RESULT_ROOT
+    ];
+    for (const dir of directories) {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
     }
   }
 }

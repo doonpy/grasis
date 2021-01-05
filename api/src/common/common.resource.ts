@@ -69,3 +69,5 @@ export enum ResultModule {
   REVIEW = 1,
   DEFENSE
 }
+
+export const ASSETS_ROOT_FOLDER = './assets';
