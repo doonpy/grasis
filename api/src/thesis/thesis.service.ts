@@ -360,6 +360,10 @@ export class ThesisService {
     await this.connection.transaction(async (manager) => {
       for (const thesis of theses) {
         const currentState = this.getThesisCurrentState(thesis);
+        if (currentState === thesis.state) {
+          continue;
+        }
+
         await this.handleChangeStateWithTransaction(manager, thesis, currentState);
         thesis.state = currentState;
       }

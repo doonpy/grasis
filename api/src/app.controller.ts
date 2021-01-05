@@ -14,15 +14,13 @@ import { AuthService, JwtToken } from './auth/auth.service';
 import { LocalAuthGuard } from './auth/guards/local-auth.guard';
 import { CommonPath } from './common/common.resource';
 import { RefreshService } from './refresh/refresh.service';
-import { UploadService } from './upload/upload.service';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly authService: AuthService,
-    private readonly refreshService: RefreshService,
-    private readonly uploadService: UploadService
+    private readonly refreshService: RefreshService
   ) {}
 
   @Get()
