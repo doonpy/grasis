@@ -174,7 +174,7 @@ export class CouncilService {
   }
 
   public async updateById(id: number, data: CouncilRequestBody, userId: number): Promise<Council> {
-    const council = await this.getById(id, true);
+    const council = await this.getById(id);
     const thesis = await this.thesisService.getById(council.thesisId);
     await this.thesisService.checkPermission(thesis, userId);
     this.thesisService.checkThesisIsActive(thesis.status);
@@ -228,7 +228,19 @@ export class CouncilService {
     }));
   }
 
-  public convertForView(council: Council): CouncilForView {
+  public async convertForView(council: Council): Promise<CouncilForView> {
+    if (!council.chairman) {
+      council.chairman = await this.lecturerService.getById(council.chairmanId);
+    }
+
+    if (!council.commissioner) {
+      council.commissioner = await this.lecturerService.getById(council.commissionerId);
+    }
+
+    if (!council.instructor) {
+      council.instructor = await this.lecturerService.getById(council.instructorId);
+    }
+
     return {
       ...council,
       chairman: council.chairman.convertToFastView(),

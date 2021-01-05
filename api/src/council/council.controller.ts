@@ -45,7 +45,7 @@ export class CouncilController {
 
     return {
       statusCode: HttpStatus.OK,
-      council: this.councilService.convertForView(council)
+      council: await this.councilService.convertForView(council)
     };
   }
 

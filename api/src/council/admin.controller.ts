@@ -55,7 +55,7 @@ export class CouncilAdminController {
 
     return {
       statusCode: HttpStatus.OK,
-      council: this.councilService.convertForView(council)
+      council: await this.councilService.convertForView(council)
     };
   }
 
@@ -75,7 +75,7 @@ export class CouncilAdminController {
 
     return {
       statusCode: HttpStatus.OK,
-      council: this.councilService.convertForView(council)
+      council: await this.councilService.convertForView(council)
     };
   }
 
@@ -138,7 +138,7 @@ export class CouncilAdminController {
 
     return {
       statusCode: HttpStatus.OK,
-      council: this.councilService.convertForView(council)
+      council: await this.councilService.convertForView(council)
     };
   }
 
