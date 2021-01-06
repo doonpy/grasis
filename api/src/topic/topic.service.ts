@@ -843,37 +843,41 @@ export class TopicService {
       status: TopicStateAction.APPROVED
     });
     const topicIds = topics.map(({ id }) => id);
-    const [reviews, defenses] = await Promise.all([
-      this.reviewService.getByIds(topicIds),
-      this.defenseService.getByIds(topicIds)
-    ]);
+    const reviews = await this.reviewService.getByIds(topicIds);
+
+    const promises: Promise<void>[] = [];
     for (const topic of topics) {
       const students = await this.topicStudentService.getStudentsParticipated(topic.id);
       for (const student of students) {
-        const defense = defenses.find(({ id }) => id === topic.id);
         const review = reviews.find(({ id }) => id === topic.id);
-        if (!review || !defense) {
+        if (!review) {
           // Failed thesis
           continue;
         }
 
-        await this.resultService.initializeResultWithTransaction(manager, {
-          topicId: topic.id,
-          creatorId: topic.creatorId,
-          studentId: student.studentId,
-          type: ResultType.INSTRUCTOR
-        });
+        promises.push(
+          this.resultService.initializeResultWithTransaction(manager, {
+            topicId: topic.id,
+            creatorId: topic.creatorId,
+            studentId: student.studentId,
+            type: ResultType.INSTRUCTOR
+          })
+        );
 
         if (review.reviewerId) {
-          await this.resultService.initializeResultWithTransaction(manager, {
-            topicId: topic.id,
-            creatorId: review.reviewerId,
-            studentId: student.studentId,
-            type: ResultType.REVIEW
-          });
+          promises.push(
+            this.resultService.initializeResultWithTransaction(manager, {
+              topicId: topic.id,
+              creatorId: review.reviewerId,
+              studentId: student.studentId,
+              type: ResultType.REVIEW
+            })
+          );
         }
       }
     }
+
+    await Promise.all(promises);
   }
 
   public async enableRegisterByThesisIdWithTransaction(
