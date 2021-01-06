@@ -94,6 +94,15 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesis, setThesis }) => {
     if (thesis.status === ThesisStatus.INACTIVE) {
       buttonList.push(
         () => (
+          <Button
+            type="primary"
+            icon={<Icon component={CheckCircleIcon} />}
+            loading={switchButtonLoading}
+            onClick={showStatusConfirm}>
+            {ThesisTerminology.THESIS_29}
+          </Button>
+        ),
+        () => (
           <Link href={adminService.replaceParams(ThesisPath.EDIT, [thesis.id])}>
             <Button type="primary" icon={<EditOutlined />}>
               {ThesisTerminology.THESIS_26}
@@ -103,15 +112,6 @@ const ThesisInfoButtons: React.FC<ComponentProps> = ({ thesis, setThesis }) => {
         () => (
           <Button type="primary" danger icon={<DeleteOutlined />} onClick={showDeleteConfirm}>
             {ThesisTerminology.THESIS_49}
-          </Button>
-        ),
-        () => (
-          <Button
-            type="primary"
-            icon={<Icon component={CheckCircleIcon} />}
-            loading={switchButtonLoading}
-            onClick={showStatusConfirm}>
-            {ThesisTerminology.THESIS_29}
           </Button>
         )
       );

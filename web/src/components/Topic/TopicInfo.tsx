@@ -118,6 +118,7 @@ const TopicInfo: React.FC<ComponentProps> = ({ topic: initTopic, thesis }) => {
       bordered
       title={
         <>
+          {changeRegisterStatusButton()}
           {topicService.canEdit(topic) && (
             <Space size="middle">
               <TopicCreateAndUpdate thesisId={thesis.id} topic={topic} setTopic={setTopic} />
@@ -126,7 +127,6 @@ const TopicInfo: React.FC<ComponentProps> = ({ topic: initTopic, thesis }) => {
               </Button>
             </Space>
           )}
-          {changeRegisterStatusButton()}
         </>
       }>
       <Descriptions.Item label={<b>{TopicTerminology.TOPIC_2}</b>} span={3}>
