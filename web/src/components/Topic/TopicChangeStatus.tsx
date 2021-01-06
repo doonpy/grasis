@@ -1,5 +1,5 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Comment, Input, message, Modal } from 'antd';
+import { Comment, Form, Input, message, Modal } from 'antd';
 import React, { ChangeEvent, useState } from 'react';
 
 import { TopicTerminology } from '../../assets/terminology/topic.terminology';
@@ -15,21 +15,24 @@ const { confirm } = Modal;
 
 interface ComponentProps {
   topic: TopicForView;
+  setTopic: React.Dispatch<TopicForView>;
   setStates: React.Dispatch<TopicStateForView[]>;
   currentState: TopicStateAction;
   setCurrentState: React.Dispatch<TopicStateAction>;
 }
 
 const TopicChangeStatus: React.FC<ComponentProps> = ({
-  topic: {
-    id,
-    approver: { id: approverId },
-    creator: { id: creatorId }
-  },
+  topic,
+  setTopic,
   setStates,
   currentState,
   setCurrentState
 }) => {
+  const {
+    id,
+    approver: { id: approverId },
+    creator: { id: creatorId }
+  } = topic;
   const [note, setNote] = useState<string>('');
   const topicService = TopicService.getInstance();
   const loginUser = LoginUser.getInstance();
@@ -50,6 +53,7 @@ const TopicChangeStatus: React.FC<ComponentProps> = ({
           const { data } = await topicService.changeStatus(id, action, note);
           setStates([...data.states]);
           setNote('');
+          setTopic({ ...topic, status: action });
           const lastState = data.states.pop();
           if (lastState) {
             setCurrentState(lastState.action);
@@ -95,18 +99,19 @@ const TopicChangeStatus: React.FC<ComponentProps> = ({
           lastname={loginUser.getLastname()}
         />
       }
+      style={{ width: '100%' }}
       content={
-        <div>
-          <Input.TextArea
-            placeholder={TopicTerminology.TOPIC_21}
-            value={note}
-            rows={4}
-            onChange={onNoteChange}
-          />
-          <br />
-          <br />
-          {buttonsRender()}
-        </div>
+        <>
+          <Form.Item style={{ width: '100%' }}>
+            <Input.TextArea
+              placeholder={TopicTerminology.TOPIC_21}
+              value={note}
+              rows={4}
+              onChange={onNoteChange}
+            />
+          </Form.Item>
+          <Form.Item>{buttonsRender()}</Form.Item>
+        </>
       }
     />
   );

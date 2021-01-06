@@ -16,11 +16,12 @@ import TopicStatusRender from './TopicStatusRender';
 
 interface ComponentProps {
   topic: TopicForView;
+  setTopic: React.Dispatch<TopicForView>;
   thesis: ThesisForView;
   canFetch: boolean;
 }
 
-const TopicPrivateInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch }) => {
+const TopicPrivateInfo: React.FC<ComponentProps> = ({ topic, setTopic, thesis, canFetch }) => {
   const topicService = TopicService.getInstance();
   const loginUser = LoginUser.getInstance();
   const topicStateService = TopicStateService.getInstance();
@@ -66,34 +67,31 @@ const TopicPrivateInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch })
     }
 
     return (
-      <Descriptions.Item span={4}>
-        <TopicChangeStatus
-          topic={topic}
-          setStates={setStates}
-          currentState={currentState}
-          setCurrentState={setCurrentState}
-        />
-      </Descriptions.Item>
+      <TopicChangeStatus
+        topic={topic}
+        setTopic={setTopic}
+        setStates={setStates}
+        currentState={currentState}
+        setCurrentState={setCurrentState}
+      />
     );
   };
 
   return (
-    <Descriptions column={4}>
-      <Descriptions.Item label={<b>{TopicTerminology.TOPIC_14}</b>} span={2}>
-        <LecturerFastView lecturer={topic.approver} />
-      </Descriptions.Item>
-      <Descriptions.Item label={<b>{TopicTerminology.TOPIC_8}</b>} span={2}>
-        <TopicStatusRender status={currentState} />
-      </Descriptions.Item>
-      <Descriptions.Item label={<b>{TopicTerminology.TOPIC_15}</b>} span={4}>
-        <Descriptions bordered column={4} style={{ width: '100%' }}>
-          <Descriptions.Item span={4}>
-            <TopicStatesRender states={states} />
-          </Descriptions.Item>
-          {changeStatusRender()}
-        </Descriptions>
-      </Descriptions.Item>
-    </Descriptions>
+    <>
+      <Descriptions bordered>
+        <Descriptions.Item label={<b>{TopicTerminology.TOPIC_14}</b>} span={3}>
+          <LecturerFastView lecturer={topic.approver} />
+        </Descriptions.Item>
+        <Descriptions.Item label={<b>{TopicTerminology.TOPIC_8}</b>} span={3}>
+          <TopicStatusRender status={currentState} />
+        </Descriptions.Item>
+        <Descriptions.Item label={<b>{TopicTerminology.TOPIC_15}</b>} span={3}>
+          <TopicStatesRender states={states} />
+        </Descriptions.Item>
+      </Descriptions>
+      {changeStatusRender()}
+    </>
   );
 };
 

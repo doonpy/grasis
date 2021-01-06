@@ -114,6 +114,7 @@ export default class TopicService extends CommonService {
 
   public canEdit({ creator: { id }, status }: Topic | TopicForView): boolean {
     const loginUser = LoginUser.getInstance();
+
     const allowEditStates = [
       TopicStateAction.NEW,
       TopicStateAction.WITHDRAW,

@@ -1,6 +1,6 @@
 import Icon, { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Descriptions, message, Modal, Space } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 
 import CheckCircleIcon from '../../assets/svg/regular/check-circle.svg';
 import MinusCircleIcon from '../../assets/svg/regular/minus-circle.svg';
@@ -23,13 +23,13 @@ const { confirm } = Modal;
 
 interface ComponentProps {
   topic: TopicForView;
+  setTopic: React.Dispatch<TopicForView>;
   thesis: ThesisForView;
 }
 
-const TopicInfo: React.FC<ComponentProps> = ({ topic: initTopic, thesis }) => {
+const TopicInfo: React.FC<ComponentProps> = ({ topic, setTopic, thesis }) => {
   const topicService = TopicService.getInstance();
   const loginUser = LoginUser.getInstance();
-  const [topic, setTopic] = useState<TopicForView>(initTopic);
 
   const onConfirmChangeRegisterStatus = async () => {
     confirm({
