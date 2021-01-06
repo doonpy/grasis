@@ -48,9 +48,10 @@ export class ReviewController {
     )
     id: number,
     @Body(new JoiValidationPipe(reviewChangeResultValidationSchema))
-    body: ReviewChangeResultRequestBody
+    body: ReviewChangeResultRequestBody,
+    @Req() request: Express.CustomRequest
   ): Promise<ReviewChangeResultResponse> {
-    const review = await this.reviewService.changeResult(id, body);
+    const review = await this.reviewService.changeResult(id, body, request.user!.userId);
 
     return {
       statusCode: HttpStatus.OK,

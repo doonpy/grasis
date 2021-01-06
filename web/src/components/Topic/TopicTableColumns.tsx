@@ -40,7 +40,7 @@ export const TopicTableColumns: ColumnsType<Topic> = [
     key: 'subject',
     width: '20%',
     sorter: { compare: (a, b) => sortByString(a.subject, b.subject), multiple: 1 },
-    render: (value: string) => <TextData text={value} enableTruncate={true} />
+    render: (value: string) => <TextData text={value} />
   },
   {
     title: TopicTerminology.TOPIC_7,

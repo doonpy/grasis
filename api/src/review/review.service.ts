@@ -104,11 +104,15 @@ export class ReviewService {
 
   public async changeResult(
     id: number,
-    { result, reviewerComment }: ReviewChangeResultRequestBody
+    { result, reviewerComment }: ReviewChangeResultRequestBody,
+    userId: number
   ): Promise<Review> {
+    const topic = await this.topicService.getById(id, true);
+    await this.topicService.checkPermission(topic, userId);
+    await this.thesisService.checkThesisIsActive(topic.thesis!.status);
+
     const review = await this.getById(id);
     this.checkResultIsNotDecided(review.result);
-
     review.result = result;
     review.reviewerComment = reviewerComment;
 
