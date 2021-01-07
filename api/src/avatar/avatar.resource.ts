@@ -10,6 +10,4 @@ export const AVATAR_CONTROLLER_RESOURCE = {
   }
 };
 
-export const AVATAR_ERROR_RESOURCE = {
-  ERR_1: 'Avatar không tồn tại.'
-};
+export const FALLBACK_IMAGE = `fallback-img.png`;

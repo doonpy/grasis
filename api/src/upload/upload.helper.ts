@@ -45,8 +45,8 @@ export function getAvatarDestination(
   file: Express.Multer.File,
   callback: FileDestinationCallback
 ): void {
-  createDestination(UploadDestination.AVATAR);
-  callback(null, UploadDestination.AVATAR);
+  createDestination(UploadDestination.AVATAR_ROOT);
+  callback(null, UploadDestination.AVATAR_ROOT);
 }
 
 export function getAvatarFilename(

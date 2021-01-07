@@ -35,5 +35,5 @@ export function sortByNumber(a: number | null, b: number | null): number {
 }
 
 export function removeFilenamePrefix(filename: string): string {
-  return filename.replace(/^.*_/, '');
+  return filename.replace(/^\d*_/, '');
 }
