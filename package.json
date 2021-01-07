@@ -14,7 +14,8 @@
     "test": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"yarn --cwd ./api test\" \"yarn --cwd ./web test\"",
     "install": "yarn install --cwd ./api && yarn install --cwd ./web",
     "build": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"yarn --cwd ./api build\" \"yarn --cwd ./web build\"",
-    "start:prod": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"yarn --cwd ./api start:prod\" \"PORT=3001 yarn --cwd ./web start:prod\""
+    "start:prod": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"yarn --cwd ./api start:prod\" \"PORT=3001 yarn --cwd ./web start:prod\"",
+    "type-check": "concurrently -p \"[{name}]\" -n \"API,WEB\" -c \"magenta.bold,blue.bold\" \"yarn --cwd ./api type-check\" \"yarn --cwd ./web type-check\""
   },
   "repository": {
     "type": "git",
