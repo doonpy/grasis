@@ -45,7 +45,8 @@ const Login: NextPage<CommonPageProps> = () => {
   const { username } = userClient.getRememberValue();
 
   const handleRedirect = async () => {
-    if (router.query[REDIRECT_URL_QUERY]) {
+    const redirectUrl = router.query[REDIRECT_URL_QUERY];
+    if (typeof redirectUrl === 'string' && !redirectUrl.includes(COMMON_PATH.LOGIN)) {
       await userClient.redirectService.redirectTo(router.query[REDIRECT_URL_QUERY] as string);
     } else {
       await userClient.redirectService.redirectTo(COMMON_PATH.INDEX);
