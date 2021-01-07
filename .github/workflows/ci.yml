@@ -37,37 +37,68 @@ jobs:
               run: yarn install
 
             - name: Lint
-              run: yarn run lint
+              run: yarn lint
+
+    check-type:
+      runs-on: ubuntu-latest
+      if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+
+      steps:
+        - uses: actions/checkout@v2
+
+        - name: Use Node.js 14.x
+          uses: actions/setup-node@v1
+          env:
+            CI: true
+          with:
+            node-version: 14.x
+
+        - name: Cache node modules
+          uses: actions/cache@v2
+          env:
+            cache-name: cache-node-modules
+          with:
+            path: '**/node_modules'
+            key: ${{ runner.os }}-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+            restore-keys:
+              ${{ runner.os }}-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
+
+        - name: Install dependencies
+          run: yarn install
+
+        - name: Check type
+          run: yarn type-check
 
     build:
-        runs-on: ubuntu-latest
-        if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+      needs: check-type
+      runs-on: ubuntu-latest
+      if: "!contains(github.event.head_commit.message, '[skip-ci]')"
 
-        steps:
-            - uses: actions/checkout@v2
+      steps:
+          - uses: actions/checkout@v2
 
-            - name: Use Node.js 14.x
-              uses: actions/setup-node@v1
-              env:
-                  CI: true
-              with:
-                  node-version: 14.x
+          - name: Use Node.js 14.x
+            uses: actions/setup-node@v1
+            env:
+                CI: true
+            with:
+                node-version: 14.x
 
-            - name: Cache node modules
-              uses: actions/cache@v2
-              env:
-                  cache-name: cache-node-modules
-              with:
-                  path: '**/node_modules'
-                  key: ${{ runner.os }}-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
-                  restore-keys:
-                      ${{ runner.os }}-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
+          - name: Cache node modules
+            uses: actions/cache@v2
+            env:
+                cache-name: cache-node-modules
+            with:
+                path: '**/node_modules'
+                key: ${{ runner.os }}-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+                restore-keys:
+                    ${{ runner.os }}-${{ env.cache-name }}-${{ secrets.CACHE_VERSION }}
 
-            - name: Install dependencies
-              run: yarn install
+          - name: Install dependencies
+            run: yarn install
 
-            - name: Build
-              env:
-                NODE_ENV: production
-              run: yarn run build
+          - name: Build
+            env:
+              NODE_ENV: production
+            run: yarn build
 
