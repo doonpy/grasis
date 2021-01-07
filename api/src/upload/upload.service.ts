@@ -129,7 +129,7 @@ export class UploadService {
         break;
     }
 
-    return `${UPLOAD_ROOT_FOLDER}/${result}`;
+    return result;
   }
 
   public async getResultFiles(
@@ -145,7 +145,7 @@ export class UploadService {
 
   private async getFilesFromPath(folderPath: string): Promise<FileInfo[]> {
     const result: FileInfo[] = [];
-    if (folderPath === `${UPLOAD_ROOT_FOLDER}/${UploadDestination.REPORT_ROOT}`) {
+    if (folderPath === UploadDestination.REPORT_ROOT) {
       return result;
     }
 

@@ -15,8 +15,8 @@ export const UPLOAD_RESULT_BODY_PROPERTY = 'file';
 
 export const UploadDestination = {
   AVATAR_ROOT: `${UPLOAD_ROOT_FOLDER}/avatar`,
-  REPORT_ROOT: 'report',
-  RESULT_ROOT: 'result',
+  REPORT_ROOT: `${UPLOAD_ROOT_FOLDER}/report`,
+  RESULT_ROOT: `${UPLOAD_ROOT_FOLDER}/result`,
   PROGRESS_REPORT: 'progress-report',
   REVIEW: 'review',
   DEFENSE: 'defense'
