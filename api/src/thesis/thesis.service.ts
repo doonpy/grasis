@@ -357,6 +357,7 @@ export class ThesisService {
       cache: true
     });
 
+    const promises: Promise<void>[] = [];
     await this.connection.transaction(async (manager) => {
       for (const thesis of theses) {
         const currentState = this.getThesisCurrentState(thesis);
@@ -364,10 +365,11 @@ export class ThesisService {
           continue;
         }
 
-        await this.handleChangeStateWithTransaction(manager, thesis, currentState);
+        promises.push(this.handleChangeStateWithTransaction(manager, thesis, currentState));
         thesis.state = currentState;
       }
 
+      await Promise.all(promises);
       await manager.save(ThesisEntity, theses);
       Logger.log('Switch thesis state... Done!');
     });
@@ -377,10 +379,14 @@ export class ThesisService {
     await this.checkExistById(id);
     await this.connection.transaction(async (manager) => {
       const deletedAt = new Date();
-      await this.thesisLecturerService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
-      await this.thesisStudentService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
-      await this.topicService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
-      await this.councilService.deleteByThesisIdWithTransaction(manager, id, deletedAt);
+      const promises: Promise<void>[] = [
+        this.thesisLecturerService.deleteByThesisIdWithTransaction(manager, id, deletedAt),
+        this.thesisStudentService.deleteByThesisIdWithTransaction(manager, id, deletedAt),
+        this.topicService.deleteByThesisIdWithTransaction(manager, id, deletedAt),
+        this.councilService.deleteByThesisIdWithTransaction(manager, id, deletedAt)
+      ];
+
+      await Promise.all(promises);
       await manager.update(ThesisEntity, { id }, { deletedAt });
     });
   }
