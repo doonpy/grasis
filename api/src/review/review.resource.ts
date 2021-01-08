@@ -24,5 +24,6 @@ export const ReviewPath = {
   ROOT: 'reviews',
   ADMIN_ROOT: 'admin/reviews',
   SPECIFY: ':id',
-  CHANGE_RESULT: ':id/change-result'
+  CHANGE_RESULT: ':id/change-result',
+  GET_RESULT: ':id/result'
 };

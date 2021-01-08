@@ -8,9 +8,11 @@ import { ReviewApi } from './review.resource';
 import {
   ReviewChangeResultResponse,
   ReviewGetByIdResponse,
+  ReviewGetResultResponse,
   ReviewRequestBody,
   ReviewUpdateResponse,
-  UseReview
+  UseReview,
+  UseReviewResult
 } from './review.type';
 
 export default class ReviewService extends CommonService {
@@ -60,5 +62,13 @@ export default class ReviewService extends CommonService {
     await this.apiService.bindAuthorizationForClient();
 
     return this.apiService.patch<ReviewUpdateResponse>(ReviewApi.SPECIFY, body, [id]);
+  }
+
+  public useReviewResult(id: number, canFetch = true): UseReviewResult {
+    const { data } = useSWR<ReviewGetResultResponse>(
+      canFetch ? this.replaceParams(ReviewApi.GET_RESULT, [id]) : null
+    );
+
+    return { data, isLoading: !data };
   }
 }

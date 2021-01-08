@@ -7,8 +7,10 @@ import { NOT_SELECT_ID, ReportModule, ResultModule } from '../../../../libs/comm
 import CouncilService from '../../../../libs/council/council.service';
 import DefenseService from '../../../../libs/defense/defense.service';
 import { DefenseForView } from '../../../../libs/defense/defense.type';
+import ReviewService from '../../../../libs/review/review.service';
 import { ThesisState } from '../../../../libs/thesis/thesis.resource';
 import { ThesisForView } from '../../../../libs/thesis/thesis.type';
+import { StateResult } from '../../../../libs/topic/topic-state/topic-state.resource';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
 import TextData from '../../../Common/TextData';
 import CouncilInfo from '../../../Council/CouncilInfo';
@@ -25,16 +27,24 @@ interface ComponentProps {
 const DefenseInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) => {
   const defenseService = DefenseService.getInstance();
   const councilService = CouncilService.getInstance();
+  const reviewService = ReviewService.getInstance();
 
-  const { data, isLoading } = defenseService.useDefense(topicId, canFetch);
+  const { data: reviewResult, isLoading: reviewResultLoading } = reviewService.useReviewResult(
+    topicId,
+    canFetch
+  );
+  const { data: defenseData, isLoading: defenseLoading } = defenseService.useDefense(
+    topicId,
+    canFetch && reviewResult && reviewResult.result === StateResult.TRUE
+  );
   const [defense, setDefense] = useState<DefenseForView | undefined>(
-    data ? data.defense : undefined
+    defenseData ? defenseData.defense : undefined
   );
   useEffect(() => {
-    if (data) {
-      setDefense(data.defense);
+    if (defenseData) {
+      setDefense(defenseData.defense);
     }
-  }, [data]);
+  }, [defenseData]);
 
   const councilId = defense && defense.councilId ? defense.councilId : NaN;
   const { data: councilData } = councilService.useCouncil(
@@ -43,8 +53,12 @@ const DefenseInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) =>
     canFetch && !isNaN(councilId) && councilId !== NOT_SELECT_ID
   );
 
-  if (isLoading) {
+  if (defenseLoading && reviewResultLoading) {
     return <Spin />;
+  }
+
+  if (reviewResult && reviewResult.result !== StateResult.TRUE) {
+    return <Empty description={DefenseTerminology.DEFENSE_9} />;
   }
 
   if (!defense) {

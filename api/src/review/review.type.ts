@@ -26,3 +26,5 @@ export type ReviewChangeResultRequestBody = Pick<Review, 'reviewerComment' | 're
 export type ReviewChangeResultResponse = ReviewGetByIdResponse;
 
 export type ReviewUpdateResponse = ReviewGetByIdResponse;
+
+export type ReviewGetResultResponse = CommonResponse & Pick<Review, 'result'>;

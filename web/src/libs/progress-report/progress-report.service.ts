@@ -7,7 +7,9 @@ import { ProgressReportApi } from './progress-report.resource';
 import {
   ProgressReportChangeResultResponse,
   ProgressReportGetByIdResponse,
-  UseProgressReport
+  ProgressReportGetResultResponse,
+  UseProgressReport,
+  UseProgressReportResult
 } from './progress-report.type';
 
 export default class ProgressReportService extends CommonService {
@@ -42,5 +44,13 @@ export default class ProgressReportService extends CommonService {
     return this.apiService.post(this.replaceParams(ProgressReportApi.ADMIN_CHANGE_RESULT, [id]), {
       result
     });
+  }
+
+  public useProgressReportResult(id: number, canFetch = true): UseProgressReportResult {
+    const { data } = useSWR<ProgressReportGetResultResponse>(
+      canFetch ? this.replaceParams(ProgressReportApi.GET_RESULT, [id]) : null
+    );
+
+    return { data, isLoading: !data };
   }
 }

@@ -18,7 +18,8 @@ export const ProgressReportPath = {
   ROOT: 'progress-reports',
   ADMIN_ROOT: 'admin/progress-reports',
   SPECIFY: ':id',
-  ADMIN_CHANGE_RESULT: '/:id/change-result'
+  ADMIN_CHANGE_RESULT: '/:id/change-result',
+  GET_RESULT: ':id/result'
 };
 
 export const ProgressReportBody = {

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import { ReviewTerminology } from '../../../../assets/terminology/review.terminology';
 import { ReportModule, ResultModule } from '../../../../libs/common/common.resource';
+import ProgressReportService from '../../../../libs/progress-report/progress-report.service';
 import ReviewService from '../../../../libs/review/review.service';
 import { ReviewForView } from '../../../../libs/review/review.type';
 import { ThesisState } from '../../../../libs/thesis/thesis.resource';
@@ -27,16 +28,30 @@ interface ComponentProps {
 
 const ReviewInfo: React.FC<ComponentProps> = ({ topic, thesis, canFetch }) => {
   const reviewService = ReviewService.getInstance();
-  const { data, isLoading } = reviewService.useReview(topic.id, canFetch);
-  const [review, setReview] = useState<ReviewForView | undefined>(data ? data.review : undefined);
+  const progressReportService = ProgressReportService.getInstance();
+  const {
+    data: progressReportResultData,
+    isLoading: progressReportResultLoading
+  } = progressReportService.useProgressReportResult(topic.id, canFetch);
+  const { data: reviewData, isLoading: reviewLoading } = reviewService.useReview(
+    topic.id,
+    canFetch && progressReportResultData && progressReportResultData.result === StateResult.TRUE
+  );
+  const [review, setReview] = useState<ReviewForView | undefined>(
+    reviewData ? reviewData.review : undefined
+  );
   useEffect(() => {
-    if (data) {
-      setReview(data.review);
+    if (reviewData) {
+      setReview(reviewData.review);
     }
-  }, [data]);
+  }, [reviewData]);
 
-  if (isLoading) {
+  if (reviewLoading && progressReportResultLoading) {
     return <Spin />;
+  }
+
+  if (progressReportResultData && progressReportResultData.result !== StateResult.TRUE) {
+    return <Empty description={ReviewTerminology.REVIEW_18} />;
   }
 
   if (!review) {

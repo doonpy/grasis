@@ -33,3 +33,10 @@ export interface UseReview {
 export type ReviewUpdateResponse = ReviewGetByIdResponse;
 
 export type ReviewChangeResultResponse = ReviewGetByIdResponse;
+
+export type ReviewGetResultResponse = CommonResponse & Pick<Review, 'result'>;
+
+export interface UseReviewResult {
+  isLoading: boolean;
+  data?: ReviewGetResultResponse;
+}

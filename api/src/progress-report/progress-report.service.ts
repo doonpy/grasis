@@ -140,4 +140,17 @@ export class ProgressReportService {
       reporters
     };
   }
+
+  public async getResult(id: number): Promise<StateResult> {
+    const progressReport = await this.progressReportRepository.findOne({
+      where: { id },
+      cache: true
+    });
+
+    if (!progressReport) {
+      return StateResult.FAILED;
+    }
+
+    return progressReport.result;
+  }
 }

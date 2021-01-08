@@ -15,7 +15,10 @@ import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { TopicPermissionGuard } from '../topic/guards/topic-permission.guard';
 import { ProgressReportPath } from './progress-report.resource';
 import { ProgressReportService } from './progress-report.service';
-import { ProgressReportGetByIdResponse } from './progress-report.type';
+import {
+  ProgressReportGetByIdResponse,
+  ProgressReportGetResultResponse
+} from './progress-report.type';
 
 @UseGuards(JwtAuthGuard, TopicPermissionGuard)
 @Controller(ProgressReportPath.ROOT)
@@ -37,6 +40,24 @@ export class ProgressReportController {
     return {
       statusCode: HttpStatus.OK,
       progressReport
+    };
+  }
+
+  @Get(ProgressReportPath.GET_RESULT)
+  public async getResult(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number
+  ): Promise<ProgressReportGetResultResponse> {
+    const result = await this.progressReportService.getResult(id);
+
+    return {
+      statusCode: HttpStatus.OK,
+      result
     };
   }
 }

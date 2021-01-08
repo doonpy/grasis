@@ -7,7 +7,8 @@ const REVIEW_ADMIN_API_ROOT = 'admin/reviews';
 export const ReviewApi = {
   ADMIN_SPECIFY: `${REVIEW_ADMIN_API_ROOT}/@0`,
   CHANGE_RESULT: `${REVIEW_API_ROOT}/@0/change-result`,
-  SPECIFY: `${REVIEW_API_ROOT}/@0`
+  SPECIFY: `${REVIEW_API_ROOT}/@0`,
+  GET_RESULT: `${REVIEW_API_ROOT}/@0/result`
 };
 
 export const ReviewResultText = [

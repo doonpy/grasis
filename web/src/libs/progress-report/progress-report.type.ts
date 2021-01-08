@@ -33,3 +33,10 @@ export interface UseProgressReport {
 export type ProgressReportUpdateResponse = ProgressReportGetByIdResponse;
 
 export type ProgressReportChangeResultResponse = ProgressReportGetByIdResponse;
+
+export type ProgressReportGetResultResponse = CommonResponse & Pick<ProgressReport, 'result'>;
+
+export interface UseProgressReportResult {
+  isLoading: boolean;
+  data?: ProgressReportGetResultResponse;
+}

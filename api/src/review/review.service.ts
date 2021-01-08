@@ -201,4 +201,17 @@ export class ReviewService {
       reviewerComment
     };
   }
+
+  public async getResult(id: number): Promise<StateResult> {
+    const progressReport = await this.reviewRepository.findOne({
+      where: { id },
+      cache: true
+    });
+
+    if (!progressReport) {
+      return StateResult.FAILED;
+    }
+
+    return progressReport.result;
+  }
 }

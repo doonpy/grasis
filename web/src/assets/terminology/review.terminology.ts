@@ -17,5 +17,6 @@ export const ReviewTerminology = {
   REVIEW_16:
     'Tài liệu phản biện không thể thay đổi nếu phản biện đã có kết quả hoặc khóa luận không đang trong giai đoạn phản biện.',
   REVIEW_17:
-    'Tài liệu báo cáo không thể thay đổi nếu phản biện đã có kết quả hoặc khóa luận không đang trong giai đoạn phản biện.'
+    'Tài liệu báo cáo không thể thay đổi nếu phản biện đã có kết quả hoặc khóa luận không đang trong giai đoạn phản biện.',
+  REVIEW_18: 'Đề tài này không cho phép phản biện.'
 };

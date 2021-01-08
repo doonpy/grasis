@@ -24,6 +24,7 @@ import {
   ReviewChangeResultRequestBody,
   ReviewChangeResultResponse,
   ReviewGetByIdResponse,
+  ReviewGetResultResponse,
   ReviewRequestBody,
   ReviewUpdateResponse
 } from './review.type';
@@ -95,6 +96,24 @@ export class ReviewController {
     return {
       statusCode: HttpStatus.OK,
       review: await this.reviewService.convertForView(review)
+    };
+  }
+
+  @Get(ReviewPath.GET_RESULT)
+  public async getResult(
+    @Param(
+      CommonParam.ID,
+      new JoiValidationPipe(commonIdValidateSchema),
+      new DefaultValuePipe(CommonQueryValue.FAILED_ID),
+      ParseIntPipe
+    )
+    id: number
+  ): Promise<ReviewGetResultResponse> {
+    const result = await this.reviewService.getResult(id);
+
+    return {
+      statusCode: HttpStatus.OK,
+      result
     };
   }
 }
