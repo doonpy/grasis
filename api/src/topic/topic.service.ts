@@ -808,7 +808,7 @@ export class TopicService {
       if (review.result === StateResult.PASSED) {
         await this.defenseService.createWithTransaction(manager, {
           id: topic.id,
-          time: thesis.review
+          time: thesis.defense
         });
       }
     }

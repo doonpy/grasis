@@ -63,9 +63,9 @@ export class DefenseService {
     return this.connection.transaction(async (manager) => {
       if (data.councilId && data.councilId !== currentDefense.councilId) {
         const council = await this.councilService.getById(data.councilId);
-        if (topic.creatorId !== council.instructorId) {
-          throw new BadRequestException(DefenseError.ERR_1);
-        }
+        // if (topic.creatorId !== council.instructorId) {
+        //   throw new BadRequestException(DefenseError.ERR_1);
+        // }
 
         await this.resultService.deleteDefenseResultByTopicId(id);
         const students = await this.topicStudentService.getStudentsParticipated(topic.id);
@@ -91,8 +91,8 @@ export class DefenseService {
     await manager.update(DefenseEntity, { id }, { deletedAt });
   }
 
-  private checkValidTime({ studentTopicRegister, review }: Thesis, time: string | Date): void {
-    if (!moment(time).isBetween(studentTopicRegister, review, 'day', '(]')) {
+  private checkValidTime({ review, defense }: Thesis, time: string | Date): void {
+    if (!moment(time).isBetween(review, defense, 'day', '(]')) {
       throw new BadRequestException(DefenseError.ERR_3);
     }
   }

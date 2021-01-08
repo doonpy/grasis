@@ -65,6 +65,7 @@ const CouncilForm: React.FC<ComponentProps> = ({
       }
       setVisible(false);
       setLoading(false);
+      form.resetFields();
     } catch (error) {
       await councilService.requestErrorHandler(error);
       setLoading(false);

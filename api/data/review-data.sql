@@ -26,7 +26,8 @@ VALUES (NULL, DEFAULT, DEFAULT, 1, '2148', 'Trưởng ngành', NULL),
        (NULL, DEFAULT, DEFAULT, 54, '2150', 'Giảng viên', NULL),
        (NULL, DEFAULT, DEFAULT, 55, '4124', 'Giảng viên', NULL),
        (NULL, DEFAULT, DEFAULT, 56, '0002', 'Giảng viên', NULL),
-       (NULL, DEFAULT, DEFAULT, 57, '0003', 'Giảng viên', NULL);
+       (NULL, DEFAULT, DEFAULT, 57, '0003', 'Giảng viên', NULL),
+       (NULL, DEFAULT, DEFAULT, 58, '0000', 'Giảng viên', NULL);
 
 ALTER TABLE lecturer
     ENABLE KEYS;
@@ -94,7 +95,7 @@ TRUNCATE TABLE thesis;
 REPLACE INTO thesis (deleted_at, created_at, updated_at, id, subject, creator_id, start_time, end_time, state,
                      lecturer_topic_register, student_topic_register, progress_report, review, defense, status)
 VALUES (NULL, DEFAULT, DEFAULT, 1, 'KHÓA LUẬN TỐT NGHIỆP HK1 2020-2021', 1, '2020-08-24 17:00:00',
-        '2021-01-16 16:59:00', 5, '2020-08-31 16:59:00', '2020-09-12 16:59:00', '2020-11-28 16:59:00',
+        '2021-01-16 16:59:00', 6, '2020-08-31 16:59:00', '2020-09-12 16:59:00', '2020-11-28 16:59:00',
         '2021-01-07 16:59:00', '2021-01-09 16:59:00', 2);
 
 ALTER TABLE thesis
@@ -120,7 +121,8 @@ VALUES (NULL, DEFAULT, DEFAULT, 1, 1),
        (NULL, DEFAULT, DEFAULT, 1, 54),
        (NULL, DEFAULT, DEFAULT, 1, 55),
        (NULL, DEFAULT, DEFAULT, 1, 56),
-       (NULL, DEFAULT, DEFAULT, 1, 57);
+       (NULL, DEFAULT, DEFAULT, 1, 57),
+       (NULL, DEFAULT, DEFAULT, 1, 58);
 
 ALTER TABLE thesis_lecturer
     ENABLE KEYS;
@@ -510,6 +512,9 @@ VALUES (NULL, DEFAULT, DEFAULT, 1, 'quangnd',
         'NULL', 2, 1, 2),
        (NULL, DEFAULT, DEFAULT, 57, 'hongtt',
         '175485b08c6388ac25224bb5d751c8545dd0c7ac', 'Hồng', 'Từ Tuyết', 1, 'hongtt@hcmute.edu.vn', NULL,
+        'NULL', 2, 1, 2),
+       (NULL, DEFAULT, DEFAULT, 58, 'quangtn',
+        '38c0dc88572ad3010f64fb8b3a61ed64d4b5227d', 'Quang', 'Trần Nhật', 1, 'quangtn@hcmute.edu.vn', NULL,
         'NULL', 2, 1, 2);
 
 ALTER TABLE user
@@ -612,32 +617,6066 @@ TRUNCATE TABLE review;
 
 REPLACE INTO review (deleted_at, created_at, updated_at, id, time, place, note, result, reviewer_id,
                      reviewer_comment)
-VALUES (NULL, DEFAULT, DEFAULT, 1, DEFAULT, NULL, NULL, 1, 46, NULL),
-       (NULL, DEFAULT, DEFAULT, 2, DEFAULT, NULL, NULL, 1, 46, NULL),
-       (NULL, DEFAULT, DEFAULT, 3, DEFAULT, NULL, NULL, 1, 45, NULL),
-       (NULL, DEFAULT, DEFAULT, 4, DEFAULT, NULL, NULL, 1, 45, NULL),
-       (NULL, DEFAULT, DEFAULT, 5, DEFAULT, NULL, NULL, 1, 48, NULL),
+VALUES (NULL, DEFAULT, DEFAULT, 1, DEFAULT, NULL, NULL, 2, 46, NULL),
+       (NULL, DEFAULT, DEFAULT, 2, DEFAULT, NULL, NULL, 2, 46, NULL),
+       (NULL, DEFAULT, DEFAULT, 3, DEFAULT, NULL, NULL, 3, 45, NULL),
+       (NULL, DEFAULT, DEFAULT, 4, DEFAULT, NULL, NULL, 2, 45, NULL),
+       (NULL, DEFAULT, DEFAULT, 5, DEFAULT, NULL, NULL, 3, 48, NULL),
        (NULL, DEFAULT, DEFAULT, 6, DEFAULT, NULL, NULL, 2, 47, NULL),
-       (NULL, DEFAULT, DEFAULT, 7, DEFAULT, NULL, NULL, 1, 56, NULL),
-       (NULL, DEFAULT, DEFAULT, 8, DEFAULT, NULL, NULL, 1, 56, NULL),
-       (NULL, DEFAULT, DEFAULT, 9, DEFAULT, NULL, NULL, 1, 56, NULL),
-       (NULL, DEFAULT, DEFAULT, 10, DEFAULT, NULL, NULL, 1, 57, NULL),
-       (NULL, DEFAULT, DEFAULT, 11, DEFAULT, NULL, NULL, 1, 57, NULL),
-       (NULL, DEFAULT, DEFAULT, 12, DEFAULT, NULL, NULL, 1, 49, NULL),
-       (NULL, DEFAULT, DEFAULT, 13, DEFAULT, NULL, NULL, 1, 49, NULL),
-       (NULL, DEFAULT, DEFAULT, 14, DEFAULT, NULL, NULL, 1, 53, NULL),
-       (NULL, DEFAULT, DEFAULT, 15, DEFAULT, NULL, NULL, 1, 53, NULL),
-       (NULL, DEFAULT, DEFAULT, 16, DEFAULT, NULL, NULL, 1, 54, NULL),
-       (NULL, DEFAULT, DEFAULT, 17, DEFAULT, NULL, NULL, 1, 54, NULL),
-       (NULL, DEFAULT, DEFAULT, 18, DEFAULT, NULL, NULL, 1, 54, NULL),
-       (NULL, DEFAULT, DEFAULT, 19, DEFAULT, NULL, NULL, 1, 52, NULL),
-       (NULL, DEFAULT, DEFAULT, 20, DEFAULT, NULL, NULL, 1, 52, NULL),
-       (NULL, DEFAULT, DEFAULT, 21, DEFAULT, NULL, NULL, 1, 52, NULL),
-       (NULL, DEFAULT, DEFAULT, 22, DEFAULT, NULL, NULL, 1, 1, NULL),
-       (NULL, DEFAULT, DEFAULT, 23, DEFAULT, NULL, NULL, 1, 1, NULL),
-       (NULL, DEFAULT, DEFAULT, 24, DEFAULT, NULL, NULL, 1, 55, NULL);
+       (NULL, DEFAULT, DEFAULT, 7, DEFAULT, NULL, NULL, 2, 56, NULL),
+       (NULL, DEFAULT, DEFAULT, 8, DEFAULT, NULL, NULL, 2, 56, NULL),
+       (NULL, DEFAULT, DEFAULT, 9, DEFAULT, NULL, NULL, 2, 56, NULL),
+       (NULL, DEFAULT, DEFAULT, 10, DEFAULT, NULL, NULL, 2, 57, NULL),
+       (NULL, DEFAULT, DEFAULT, 11, DEFAULT, NULL, NULL, 2, 57, NULL),
+       (NULL, DEFAULT, DEFAULT, 12, DEFAULT, NULL, NULL, 2, 49, NULL),
+       (NULL, DEFAULT, DEFAULT, 13, DEFAULT, NULL, NULL, 2, 49, NULL),
+       (NULL, DEFAULT, DEFAULT, 14, DEFAULT, NULL, NULL, 2, 53, NULL),
+       (NULL, DEFAULT, DEFAULT, 15, DEFAULT, NULL, NULL, 2, 53, NULL),
+       (NULL, DEFAULT, DEFAULT, 16, DEFAULT, NULL, NULL, 2, 54, NULL),
+       (NULL, DEFAULT, DEFAULT, 17, DEFAULT, NULL, NULL, 2, 54, NULL),
+       (NULL, DEFAULT, DEFAULT, 18, DEFAULT, NULL, NULL, 2, 54, NULL),
+       (NULL, DEFAULT, DEFAULT, 19, DEFAULT, NULL, NULL, 2, 52, NULL),
+       (NULL, DEFAULT, DEFAULT, 20, DEFAULT, NULL, NULL, 2, 52, NULL),
+       (NULL, DEFAULT, DEFAULT, 21, DEFAULT, NULL, NULL, 2, 52, NULL),
+       (NULL, DEFAULT, DEFAULT, 22, DEFAULT, NULL, NULL, 3, 1, NULL),
+       (NULL, DEFAULT, DEFAULT, 23, DEFAULT, NULL, NULL, 3, 1, NULL),
+       (NULL, DEFAULT, DEFAULT, 24, DEFAULT, NULL, NULL, 3, 55, NULL);
 
 ALTER TABLE review
+    ENABLE KEYS;
+UNLOCK TABLES;
+
+LOCK TABLES council WRITE;
+ALTER TABLE council
+    DISABLE KEYS;
+TRUNCATE TABLE council;
+
+REPLACE INTO council (deleted_at, created_at, updated_at, id, name, thesis_id, chairman_id, instructor_id,
+                      commissioner_id)
+VALUES (null, '2021-01-08 09:32:46.144571', '2021-01-08 09:36:24', 1, 'Hội đồng 1 - Tổ 1', 1, 45, 48, 47),
+       (null, '2021-01-08 09:33:31.759974', '2021-01-08 09:39:38', 2, 'Hội đồng 1 - Tổ 2', 1, 46, 48, 47),
+       (null, '2021-01-08 09:34:02.301344', '2021-01-08 09:40:21', 3, 'Hội đồng 1 - Tổ 3', 1, 47, 46, 45),
+       (null, '2021-01-08 09:40:50.918654', '2021-01-08 09:40:50.918654', 4, 'Hội đồng 2 - Tổ 1', 1, 56, 51, 50),
+       (null, '2021-01-08 09:41:16.916930', '2021-01-08 09:41:16.916930', 5, 'Hội đồng 2 - Tổ 2', 1, 49, 57, 50),
+       (null, '2021-01-08 09:41:23.254399', '2021-01-08 09:41:23.254399', 6, 'Hội đồng 2 - Tổ 3', 1, 49, 57, 56),
+       (null, '2021-01-08 09:41:39.760832', '2021-01-08 09:41:39.760832', 7, 'Hội đồng 2 - Tổ 4', 1, 56, 51, 57),
+       (null, '2021-01-08 09:42:11.557557', '2021-01-08 09:42:11.557557', 8, 'Hội đồng 2 - Tổ 5', 1, 57, 51, 56),
+       (null, '2021-01-08 09:42:18.413145', '2021-01-08 09:42:18.413145', 9, 'Hội đồng 2 - Tổ 6', 1, 57, 51, 49),
+       (null, '2021-01-08 09:42:34.999012', '2021-01-08 09:42:34.999012', 10, 'Hội đồng 3 - Tổ 1', 1, 54, 52, 58),
+       (null, '2021-01-08 09:42:52.286979', '2021-01-08 09:42:52.286979', 11, 'Hội đồng 3 - Tổ 2', 1, 52, 53, 58),
+       (null, '2021-01-08 09:43:05.321009', '2021-01-08 09:43:05.321009', 12, 'Hội đồng 3 - Tổ 3', 1, 53, 58, 54),
+       (null, '2021-01-08 09:43:26.439165', '2021-01-08 09:43:26.439165', 13, 'Hội đồng 3 - Tổ 4', 1, 52, 53, 49),
+       (null, '2021-01-08 09:43:35.752805', '2021-01-08 09:43:35.752805', 14, 'Hội đồng 3 - Tổ 5', 1, 54, 52, 49);
+
+ALTER TABLE council
+    ENABLE KEYS;
+UNLOCK TABLES;
+
+LOCK TABLES defense WRITE;
+ALTER TABLE defense
+    DISABLE KEYS;
+TRUNCATE TABLE defense;
+
+REPLACE INTO defense (deleted_at, created_at, updated_at, id, time, place, note, council_id)
+VALUES (null, '2021-01-08 10:03:22.862511', '2021-01-08 13:23:57', 1, '2021-01-09 07:00:00', 'A2-402', null, 2),
+       (null, '2021-01-08 10:03:22.870900', '2021-01-08 13:25:34', 2, '2021-01-09 07:45:00', 'A2-402', null, 2),
+       (null, '2021-01-08 10:03:22.888227', '2021-01-08 13:27:07', 4, '2021-01-09 06:15:00', 'A2-402', null, 1),
+       (null, '2021-01-08 09:53:06.315211', '2021-01-08 13:32:13', 6, '2021-01-09 08:30:00', 'A2-402', null, 3),
+       (null, '2021-01-08 10:03:22.904475', '2021-01-08 13:33:01', 7, '2021-01-09 05:30:00', 'A3-303', null, 4),
+       (null, '2021-01-08 10:03:22.913728', '2021-01-08 13:33:52', 8, '2021-01-09 06:15:00', 'A3-303', ' ', 4),
+       (null, '2021-01-08 10:03:22.924536', '2021-01-08 13:34:50', 9, '2021-01-09 08:30:00', 'A3-303', null, 7),
+       (null, '2021-01-08 10:03:22.933048', '2021-01-08 13:35:28', 10, '2021-01-09 10:00:00', 'A3-303', null, 9),
+       (null, '2021-01-08 10:03:22.941285', '2021-01-08 13:36:15', 11, '2021-01-09 09:15:00', 'A3-303', null, 8),
+       (null, '2021-01-08 10:03:22.950481', '2021-01-08 13:37:10', 12, '2021-01-09 07:45:00', 'A3-303', null, 6),
+       (null, '2021-01-08 10:03:22.959470', '2021-01-08 13:37:51', 13, '2021-01-09 07:00:00', 'A3-303', null, 5),
+       (null, '2021-01-08 10:03:22.969550', '2021-01-08 13:39:24', 14, '2021-01-09 08:30:00', 'A3-408', null, 12),
+       (null, '2021-01-08 10:03:22.979602', '2021-01-08 13:41:19', 15, '2021-01-09 09:15:00', 'A3-408', null, 12),
+       (null, '2021-01-08 10:03:22.987005', '2021-01-08 13:42:28', 16, '2021-01-09 10:45:00', 'A3-408', null, 14),
+       (null, '2021-01-08 10:03:22.996460', '2021-01-08 13:43:05', 17, '2021-01-09 05:30:00', 'A3-408', null, 10),
+       (null, '2021-01-08 10:03:23.005538', '2021-01-08 13:43:44', 18, '2021-01-09 06:15:00', 'A3-408', null, 10),
+       (null, '2021-01-08 10:03:23.015103', '2021-01-08 13:44:48', 19, '2021-01-09 10:00:00', 'A3-408', null, 13),
+       (null, '2021-01-08 10:03:23.023856', '2021-01-08 13:45:38', 20, '2021-01-09 09:00:00', 'A3-408', null, 12),
+       (null, '2021-01-08 10:03:23.033304', '2021-01-08 13:46:26', 21, '2021-01-09 07:45:00', 'A3-408', null, 11);
+
+ALTER TABLE defense
+    ENABLE KEYS;
+UNLOCK TABLES;
+
+LOCK TABLES result WRITE;
+ALTER TABLE result
+    DISABLE KEYS;
+TRUNCATE TABLE result;
+
+REPLACE INTO result (deleted_at, created_at, updated_at, id, topic_id, student_id, creator_id, note, type, point,
+                     status)
+VALUES (null, '2021-01-08 13:21:54.773753', '2021-01-08 13:21:54.773753', 1, 1, 2, 46, null, 2, '[
+  {
+    "rate": 10,
+    "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+    "value": null
+  },
+  {
+    "rate": 40,
+    "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+    "value": null
+  },
+  {
+    "rate": 10,
+    "title": "Chất lượng của bài thuyết trình",
+    "value": null
+  },
+  {
+    "rate": 5,
+    "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+    "value": null
+  },
+  {
+    "rate": 10,
+    "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+    "value": null
+  },
+  {
+    "rate": 5,
+    "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+    "value": null
+  },
+  {
+    "rate": 20,
+    "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+    "value": null
+  }
+]', 1),
+       (null, '2021-01-08 13:21:54.781637', '2021-01-08 13:21:54.781637', 2, 1, 2, 45, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.789826', '2021-01-08 13:21:54.789826', 3, 1, 3, 45, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.794818', '2021-01-08 13:21:54.794818', 4, 1, 3, 46, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.823138', '2021-01-08 13:21:54.823138', 5, 2, 4, 45, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.832012', '2021-01-08 13:21:54.832012', 6, 2, 4, 46, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.834879', '2021-01-08 13:21:54.834879', 7, 2, 5, 46, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.838294', '2021-01-08 13:21:54.838294', 8, 2, 5, 45, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.853789', '2021-01-08 13:21:54.853789', 9, 3, 6, 45, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.863070', '2021-01-08 13:21:54.863070', 10, 3, 6, 46, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.864988', '2021-01-08 13:21:54.864988', 11, 3, 7, 46, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.868361', '2021-01-08 13:21:54.868361', 12, 3, 7, 45, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.891382', '2021-01-08 13:21:54.891382', 13, 4, 8, 46, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.900031', '2021-01-08 13:21:54.900031', 14, 4, 8, 45, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.904646', '2021-01-08 13:21:54.904646', 15, 4, 9, 46, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.910812', '2021-01-08 13:21:54.910812', 16, 4, 9, 45, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.921095', '2021-01-08 13:21:54.921095', 17, 5, 10, 47, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.923596', '2021-01-08 13:21:54.923596', 18, 5, 10, 48, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.930125', '2021-01-08 13:21:54.930125', 19, 5, 11, 47, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.934432', '2021-01-08 13:21:54.934432', 20, 5, 11, 48, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.972311', '2021-01-08 13:21:54.972311', 21, 6, 12, 48, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:54.993170', '2021-01-08 13:21:54.993170', 22, 6, 12, 47, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.006585', '2021-01-08 13:21:55.006585', 23, 7, 13, 49, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.039668', '2021-01-08 13:21:55.039668', 24, 7, 14, 49, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.048855', '2021-01-08 13:21:55.048855', 25, 7, 13, 56, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.056958', '2021-01-08 13:21:55.056958', 26, 7, 14, 56, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.086968', '2021-01-08 13:21:55.086968', 27, 8, 15, 49, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.095684', '2021-01-08 13:21:55.095684', 28, 8, 16, 56, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.106077', '2021-01-08 13:21:55.106077', 29, 8, 15, 56, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.119879', '2021-01-08 13:21:55.119879', 30, 8, 16, 49, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.164827', '2021-01-08 13:21:55.164827', 31, 9, 17, 56, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.173943', '2021-01-08 13:21:55.173943', 32, 9, 17, 50, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.177354', '2021-01-08 13:21:55.177354', 33, 9, 18, 50, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.182720', '2021-01-08 13:21:55.182720', 34, 9, 18, 56, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.199251', '2021-01-08 13:21:55.199251', 35, 10, 19, 50, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.202678', '2021-01-08 13:21:55.202678', 36, 10, 19, 57, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.214214', '2021-01-08 13:21:55.214214', 37, 10, 20, 50, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.224526', '2021-01-08 13:21:55.224526', 38, 10, 20, 57, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.241021', '2021-01-08 13:21:55.241021', 39, 11, 21, 50, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.248937', '2021-01-08 13:21:55.248937', 40, 11, 21, 57, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.283342', '2021-01-08 13:21:55.283342', 41, 11, 22, 50, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.287898', '2021-01-08 13:21:55.287898', 42, 11, 22, 57, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.326891', '2021-01-08 13:21:55.326891', 43, 12, 23, 51, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.332503', '2021-01-08 13:21:55.332503', 44, 12, 23, 49, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.335318', '2021-01-08 13:21:55.335318', 45, 12, 24, 51, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.338255', '2021-01-08 13:21:55.338255', 46, 12, 24, 49, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.349367', '2021-01-08 13:21:55.349367', 47, 13, 25, 51, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.355783', '2021-01-08 13:21:55.355783', 48, 13, 25, 49, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.362118', '2021-01-08 13:21:55.362118', 49, 13, 26, 51, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.366043', '2021-01-08 13:21:55.366043', 50, 13, 26, 49, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.382193', '2021-01-08 13:21:55.382193', 51, 14, 27, 52, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.384727', '2021-01-08 13:21:55.384727', 52, 14, 28, 52, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.387011', '2021-01-08 13:21:55.387011', 53, 14, 27, 53, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.389803', '2021-01-08 13:21:55.389803', 54, 14, 28, 53, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.391983', '2021-01-08 13:21:55.391983', 55, 15, 29, 53, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.393936', '2021-01-08 13:21:55.393936', 56, 15, 29, 52, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.396047', '2021-01-08 13:21:55.396047', 57, 15, 30, 52, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.398289', '2021-01-08 13:21:55.398289', 58, 15, 30, 53, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.404534', '2021-01-08 13:21:55.404534', 59, 16, 31, 53, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.406923', '2021-01-08 13:21:55.406923', 60, 16, 31, 54, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.421688', '2021-01-08 13:21:55.421688', 61, 17, 32, 53, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.423998', '2021-01-08 13:21:55.423998', 62, 17, 32, 54, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.426684', '2021-01-08 13:21:55.426684', 63, 17, 33, 53, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.429368', '2021-01-08 13:21:55.429368', 64, 17, 33, 54, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.439263', '2021-01-08 13:21:55.439263', 65, 18, 34, 53, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.441885', '2021-01-08 13:21:55.441885', 66, 18, 34, 54, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.449580', '2021-01-08 13:21:55.449580', 67, 18, 35, 53, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.452325', '2021-01-08 13:21:55.452325', 68, 18, 35, 54, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.460529', '2021-01-08 13:21:55.460529', 69, 19, 36, 54, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.463491', '2021-01-08 13:21:55.463491', 70, 19, 37, 52, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.465913', '2021-01-08 13:21:55.465913', 71, 19, 36, 52, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.468516', '2021-01-08 13:21:55.468516', 72, 19, 37, 54, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.476198', '2021-01-08 13:21:55.476198', 73, 20, 39, 52, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.479228', '2021-01-08 13:21:55.479228', 74, 20, 39, 54, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.481905', '2021-01-08 13:21:55.481905', 75, 20, 38, 52, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.484208', '2021-01-08 13:21:55.484208', 76, 20, 38, 54, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.489447', '2021-01-08 13:21:55.489447', 77, 21, 40, 54, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.491871', '2021-01-08 13:21:55.491871', 78, 21, 41, 52, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.493865', '2021-01-08 13:21:55.493865', 79, 21, 41, 54, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.495975', '2021-01-08 13:21:55.495975', 80, 21, 40, 52, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.512938', '2021-01-08 13:21:55.512938', 81, 22, 42, 55, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.515020', '2021-01-08 13:21:55.515020', 82, 22, 42, 1, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.531074', '2021-01-08 13:21:55.531074', 83, 23, 43, 1, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.534619', '2021-01-08 13:21:55.534619', 84, 23, 43, 55, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.543507', '2021-01-08 13:21:55.543507', 85, 24, 44, 1, null, 1, '[
+         {
+           "rate": 100,
+           "title": "Tổng điểm giảng viên hướng dẫn",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:21:55.549153', '2021-01-08 13:21:55.549153', 86, 24, 44, 55, null, 2, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:23:57.130858', '2021-01-08 13:23:57.130858', 87, 1, 2, 46, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:23:57.151439', '2021-01-08 13:23:57.151439', 88, 1, 2, 48, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:23:57.170683', '2021-01-08 13:23:57.170683', 89, 1, 2, 47, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:23:57.194651', '2021-01-08 13:23:57.194651', 90, 1, 3, 46, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:23:57.211323', '2021-01-08 13:23:57.211323', 91, 1, 3, 48, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:23:57.230112', '2021-01-08 13:23:57.230112', 92, 1, 3, 47, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:25:33.965621', '2021-01-08 13:25:33.965621', 93, 2, 4, 46, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:25:33.981827', '2021-01-08 13:25:33.981827', 94, 2, 4, 48, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:25:34.015924', '2021-01-08 13:25:34.015924', 95, 2, 4, 47, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:25:34.031805', '2021-01-08 13:25:34.031805', 96, 2, 5, 46, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:25:34.065718', '2021-01-08 13:25:34.065718', 97, 2, 5, 48, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:25:34.083288', '2021-01-08 13:25:34.083288', 98, 2, 5, 47, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:27:06.933142', '2021-01-08 13:27:06.933142', 99, 4, 8, 45, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:27:06.960967', '2021-01-08 13:27:06.960967', 100, 4, 8, 48, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:27:06.973961', '2021-01-08 13:27:06.973961', 101, 4, 8, 47, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:27:07.010534', '2021-01-08 13:27:07.010534', 102, 4, 9, 45, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:27:07.025736', '2021-01-08 13:27:07.025736', 103, 4, 9, 48, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:27:07.060646', '2021-01-08 13:27:07.060646', 104, 4, 9, 47, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:01.532079', '2021-01-08 13:33:01.532079', 105, 7, 13, 56, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:01.567167', '2021-01-08 13:33:01.567167', 106, 7, 13, 51, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:01.583827', '2021-01-08 13:33:01.583827', 107, 7, 13, 50, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:01.617050', '2021-01-08 13:33:01.617050', 108, 7, 14, 56, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:01.631437', '2021-01-08 13:33:01.631437', 109, 7, 14, 51, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:01.666791', '2021-01-08 13:33:01.666791', 110, 7, 14, 50, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:52.169192', '2021-01-08 13:33:52.169192', 111, 8, 15, 56, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:52.206377', '2021-01-08 13:33:52.206377', 112, 8, 15, 51, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:52.219547', '2021-01-08 13:33:52.219547', 113, 8, 15, 50, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:52.256710', '2021-01-08 13:33:52.256710', 114, 8, 16, 56, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:52.269728', '2021-01-08 13:33:52.269728', 115, 8, 16, 51, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:33:52.306686', '2021-01-08 13:33:52.306686', 116, 8, 16, 50, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:34:50.451625', '2021-01-08 13:34:50.451625', 117, 9, 17, 56, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:34:50.501829', '2021-01-08 13:34:50.501829', 118, 9, 17, 51, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:34:50.551862', '2021-01-08 13:34:50.551862', 119, 9, 17, 57, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:34:50.602125', '2021-01-08 13:34:50.602125', 120, 9, 18, 56, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:34:50.652177', '2021-01-08 13:34:50.652177', 121, 9, 18, 51, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:34:50.702145', '2021-01-08 13:34:50.702145', 122, 9, 18, 57, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:35:28.209637', '2021-01-08 13:35:28.209637', 123, 10, 19, 57, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:35:28.259802', '2021-01-08 13:35:28.259802', 124, 10, 19, 51, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:35:28.309688', '2021-01-08 13:35:28.309688', 125, 10, 19, 49, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:35:28.325603', '2021-01-08 13:35:28.325603', 126, 10, 20, 57, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:35:28.359936', '2021-01-08 13:35:28.359936', 127, 10, 20, 51, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:35:28.374026', '2021-01-08 13:35:28.374026', 128, 10, 20, 49, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:36:14.903313', '2021-01-08 13:36:14.903313', 129, 11, 21, 57, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:36:14.941287', '2021-01-08 13:36:14.941287', 130, 11, 21, 51, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:36:14.954282', '2021-01-08 13:36:14.954282', 131, 11, 21, 56, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:36:14.991388', '2021-01-08 13:36:14.991388', 132, 11, 22, 57, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:36:15.004109', '2021-01-08 13:36:15.004109', 133, 11, 22, 51, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:36:15.041412', '2021-01-08 13:36:15.041412', 134, 11, 22, 56, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:10.536114', '2021-01-08 13:37:10.536114', 135, 12, 23, 49, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:10.576793', '2021-01-08 13:37:10.576793', 136, 12, 23, 57, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:10.619305', '2021-01-08 13:37:10.619305', 137, 12, 23, 56, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:10.632369', '2021-01-08 13:37:10.632369', 138, 12, 24, 49, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:10.669733', '2021-01-08 13:37:10.669733', 139, 12, 24, 57, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:10.683156', '2021-01-08 13:37:10.683156', 140, 12, 24, 56, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:51.559494', '2021-01-08 13:37:51.559494', 141, 13, 25, 49, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:51.596028', '2021-01-08 13:37:51.596028', 142, 13, 25, 57, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:51.611875', '2021-01-08 13:37:51.611875', 143, 13, 25, 50, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:51.651865', '2021-01-08 13:37:51.651865', 144, 13, 26, 49, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:51.695770', '2021-01-08 13:37:51.695770', 145, 13, 26, 57, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:37:51.712221', '2021-01-08 13:37:51.712221', 146, 13, 26, 50, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:39:23.858869', '2021-01-08 13:39:23.858869', 147, 14, 27, 53, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:39:23.894561', '2021-01-08 13:39:23.894561', 148, 14, 27, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:39:23.909791', '2021-01-08 13:39:23.909791', 149, 14, 27, 54, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:39:23.944435', '2021-01-08 13:39:23.944435', 150, 14, 28, 53, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:39:23.958416', '2021-01-08 13:39:23.958416', 151, 14, 28, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:39:23.994666', '2021-01-08 13:39:23.994666', 152, 14, 28, 54, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:41:19.878342', '2021-01-08 13:41:19.878342', 153, 15, 29, 53, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:41:19.892263', '2021-01-08 13:41:19.892263', 154, 15, 29, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:41:19.906146', '2021-01-08 13:41:19.906146', 155, 15, 29, 54, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:41:19.923172', '2021-01-08 13:41:19.923172', 156, 15, 30, 53, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:41:19.936653', '2021-01-08 13:41:19.936653', 157, 15, 30, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:41:19.949513', '2021-01-08 13:41:19.949513', 158, 15, 30, 54, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:42:28.805804', '2021-01-08 13:42:28.805804', 159, 16, 31, 54, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:42:28.819182', '2021-01-08 13:42:28.819182', 160, 16, 31, 52, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:42:28.832432', '2021-01-08 13:42:28.832432', 161, 16, 31, 49, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:05.713656', '2021-01-08 13:43:05.713656', 162, 17, 32, 54, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:05.749681', '2021-01-08 13:43:05.749681', 163, 17, 32, 52, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:05.763459', '2021-01-08 13:43:05.763459', 164, 17, 32, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:05.800137', '2021-01-08 13:43:05.800137', 165, 17, 33, 54, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:05.813819', '2021-01-08 13:43:05.813819', 166, 17, 33, 52, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:05.850107', '2021-01-08 13:43:05.850107', 167, 17, 33, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:44.422523', '2021-01-08 13:43:44.422523', 168, 18, 34, 54, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:44.444257', '2021-01-08 13:43:44.444257', 169, 18, 34, 52, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:44.460836', '2021-01-08 13:43:44.460836', 170, 18, 34, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:44.475268', '2021-01-08 13:43:44.475268', 171, 18, 35, 54, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:44.488540', '2021-01-08 13:43:44.488540', 172, 18, 35, 52, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:43:44.505620', '2021-01-08 13:43:44.505620', 173, 18, 35, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:44:48.591210', '2021-01-08 13:44:48.591210', 174, 19, 36, 52, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:44:48.626796', '2021-01-08 13:44:48.626796', 175, 19, 36, 53, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:44:48.641901', '2021-01-08 13:44:48.641901', 176, 19, 36, 49, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:44:48.676724', '2021-01-08 13:44:48.676724', 177, 19, 37, 52, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:44:48.692382', '2021-01-08 13:44:48.692382', 178, 19, 37, 53, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:44:48.727217', '2021-01-08 13:44:48.727217', 179, 19, 37, 49, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:45:38.766186', '2021-01-08 13:45:38.766186', 180, 20, 38, 53, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:45:38.802128', '2021-01-08 13:45:38.802128', 181, 20, 38, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:45:38.815570', '2021-01-08 13:45:38.815570', 182, 20, 38, 54, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:45:38.851699', '2021-01-08 13:45:38.851699', 183, 20, 39, 53, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:45:38.901765', '2021-01-08 13:45:38.901765', 184, 20, 39, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:45:38.917373', '2021-01-08 13:45:38.917373', 185, 20, 39, 54, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:46:26.102091', '2021-01-08 13:46:26.102091', 186, 21, 40, 52, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:46:26.138709', '2021-01-08 13:46:26.138709', 187, 21, 40, 53, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:46:26.154425', '2021-01-08 13:46:26.154425', 188, 21, 40, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:46:26.188978', '2021-01-08 13:46:26.188978', 189, 21, 41, 52, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:46:26.204715', '2021-01-08 13:46:26.204715', 190, 21, 41, 53, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1)
+        ,
+       (null, '2021-01-08 13:46:26.238901', '2021-01-08 13:46:26.238901', 191, 21, 41, 58, null, 3, '[
+         {
+           "rate": 10,
+           "title": "Tính thực tiễn của đề tài, sự hiểu biết về vấn đề nghiên cứu",
+           "value": null
+         },
+         {
+           "rate": 40,
+           "title": "Tính đúng đắn và hợp lý của phương pháp nghiên cứu, của thiết kế, của giải pháp được nêu ra trong luận văn. Mức độ hoàn thiện của sản phẩm, mức độ hoàn thành công việc của sinh viên",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Chất lượng của bài thuyết trình",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Khả năng đọc sách ngoại ngữ tham khảo",
+           "value": null
+         },
+         {
+           "rate": 10,
+           "title": "Khả năng tổng hợp kiến thức, viết luận văn",
+           "value": null
+         },
+         {
+           "rate": 5,
+           "title": "Chất lượng về hình thức của luận văn (Cấu trúc, định dạng, chính tả, ...)",
+           "value": null
+         },
+         {
+           "rate": 20,
+           "title": "Chất lượng trả lời các câu hỏi của hội đồng",
+           "value": null
+         }
+       ]', 1);
+
+ALTER TABLE result
     ENABLE KEYS;
 UNLOCK TABLES;
 

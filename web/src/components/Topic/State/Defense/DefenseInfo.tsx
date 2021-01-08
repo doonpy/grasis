@@ -65,7 +65,7 @@ const DefenseInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) =>
     return <Empty description={DefenseTerminology.DEFENSE_1} />;
   }
 
-  const validDateRange: [string | Moment, string | Moment] = [thesis.progressReport, thesis.review];
+  const validDateRange: [string | Moment, string | Moment] = [thesis.review, thesis.defense];
   const loginUser = LoginUser.getInstance();
   const canModifyUploadResult = councilData
     ? councilData.council.chairman.id === loginUser.getId()
