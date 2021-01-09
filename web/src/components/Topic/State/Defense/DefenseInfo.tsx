@@ -74,6 +74,29 @@ const DefenseInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) =>
     loginUser.isStudent() &&
     thesis.state === ThesisState.DEFENSE &&
     defense.reporters.findIndex(({ id }) => id === loginUser.getId()) !== -1;
+  const extendInfo = [
+    {
+      label: DefenseTerminology.DEFENSE_2,
+      element: councilData ? <CouncilInfo council={councilData.council} /> : <TextData />
+    }
+  ];
+  if (!loginUser.isStudent()) {
+    extendInfo.push({
+      label: DefenseTerminology.DEFENSE_3,
+      element: (
+        <>
+          <Alert message={DefenseTerminology.DEFENSE_8} type="info" showIcon />
+          <UploadViewResult
+            module={ResultModule.DEFENSE}
+            topicId={topicId}
+            canUpload={canModifyUploadResult}
+            canDelete={canModifyUploadResult}
+            canFetch={canFetch}
+          />
+        </>
+      )
+    });
+  }
 
   return (
     <StateBaseInfo
@@ -93,27 +116,7 @@ const DefenseInfo: React.FC<ComponentProps> = ({ topicId, thesis, canFetch }) =>
           )}
         </Space>
       }
-      extendInfo={[
-        {
-          label: DefenseTerminology.DEFENSE_2,
-          element: councilData ? <CouncilInfo council={councilData.council} /> : <TextData />
-        },
-        {
-          label: DefenseTerminology.DEFENSE_3,
-          element: (
-            <>
-              <Alert message={DefenseTerminology.DEFENSE_8} type="info" showIcon />
-              <UploadViewResult
-                module={ResultModule.DEFENSE}
-                topicId={topicId}
-                canUpload={canModifyUploadResult}
-                canDelete={canModifyUploadResult}
-                canFetch={canFetch}
-              />
-            </>
-          )
-        }
-      ]}
+      extendInfo={extendInfo}
       canFetch={canFetch}
       canUpload={canModifyUploadReport}
       canDelete={canModifyUploadReport}
