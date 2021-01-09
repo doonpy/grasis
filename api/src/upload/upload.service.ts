@@ -11,7 +11,7 @@ import { ProgressReportService } from '../progress-report/progress-report.servic
 import { ReviewService } from '../review/review.service';
 import { TopicService } from '../topic/topic.service';
 import { UserService } from '../user/user.service';
-import { UPLOAD_ROOT_FOLDER, UploadDestination, UploadError } from './upload.resource';
+import { UploadDestination, UploadError } from './upload.resource';
 
 @Injectable()
 export class UploadService {
@@ -59,7 +59,7 @@ export class UploadService {
         break;
     }
 
-    return `${UPLOAD_ROOT_FOLDER}/${result}`;
+    return result;
   }
 
   public async deleteFileByPath(filePath: string): Promise<void> {

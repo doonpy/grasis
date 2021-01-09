@@ -126,6 +126,7 @@ export class UploadReportInterceptor implements NestInterceptor {
   private getFolderPathFromRequest(req: Express.CustomRequest): string {
     const module: ReportModule = parseInt(req.body!.module);
     const topicId = parseInt(req.body!.topicId);
+
     return this.uploadService.getReportFolderPath(module, topicId);
   }
 }
