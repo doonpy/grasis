@@ -4,6 +4,7 @@ import useSWR from 'swr';
 import CommonService from '../common/common.service';
 import { ResultApi, ResultType } from './result.resource';
 import {
+  Result,
   ResultChangeResponse,
   ResultForView,
   ResultGetByTopicIdForViewResponse,
@@ -91,5 +92,24 @@ export default class ResultService extends CommonService {
     }
 
     return results;
+  }
+
+  public calculateAverage({ point }: Result | ResultForView | ResultRequestBody): number {
+    if (!point) {
+      return 0;
+    }
+
+    let result = 0;
+    point.forEach(({ value, rate }) => {
+      if (!value) {
+        result += 0;
+        return;
+      }
+
+      const partialPoint = Math.round(value * (rate / 100) * 100) / 100;
+      result = Math.round((result + partialPoint) * 100) / 100;
+    });
+
+    return result;
   }
 }

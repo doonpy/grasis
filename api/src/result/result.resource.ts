@@ -77,10 +77,4 @@ export const RESULT_REVIEW_AND_DEFENSE_INITIAL_DATA: ResultPoint[] = [
   }
 ];
 
-export const RESULT_INSTRUCTOR_INITIAL_DATA: ResultPoint[] = [
-  {
-    title: 'Tổng điểm giảng viên hướng dẫn',
-    rate: 100,
-    value: null
-  }
-];
+export const RESULT_INSTRUCTOR_INITIAL_DATA: ResultPoint[] = RESULT_REVIEW_AND_DEFENSE_INITIAL_DATA;

@@ -13,6 +13,7 @@ import {
   ResultRequestBody
 } from '../../../../libs/result/result.type';
 import LoginUser from '../../../../libs/user/instance/LoginUser';
+import ResultPointRender from './ResultPointRender';
 
 interface ComponentProps {
   result: ResultForView | null;
@@ -26,6 +27,9 @@ const ResultEditMobile: React.FC<ComponentProps> = ({ result, results, setResult
   const resultService = ResultService.getInstance();
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
+  const [tempResult, setTempResult] = useState<number>(
+    result ? resultService.calculateAverage(result) : 0
+  );
   const [form] = useForm();
 
   useEffect(() => {
@@ -52,7 +56,7 @@ const ResultEditMobile: React.FC<ComponentProps> = ({ result, results, setResult
     setVisible(false);
   };
 
-  const onFormSubmit = async (formValues: ResultRequestBody) => {
+  const handleFormSubmit = async (formValues: ResultRequestBody) => {
     setLoading(true);
     try {
       const { data } = await resultService.updateById(result.id, formValues);
@@ -66,6 +70,13 @@ const ResultEditMobile: React.FC<ComponentProps> = ({ result, results, setResult
     }
   };
 
+  const handleValuesChange = async (
+    changedValues: Partial<ResultRequestBody>,
+    allValues: ResultRequestBody
+  ) => {
+    setTempResult(resultService.calculateAverage(allValues));
+  };
+
   return (
     <div>
       <Drawer
@@ -74,15 +85,30 @@ const ResultEditMobile: React.FC<ComponentProps> = ({ result, results, setResult
         height="100%"
         onClose={handleCancel}
         visible={visible}>
-        <Form form={form} requiredMark={true} layout="vertical" onFinish={onFormSubmit}>
+        <Form
+          form={form}
+          requiredMark={true}
+          layout="vertical"
+          onFinish={handleFormSubmit}
+          onValuesChange={handleValuesChange}>
           {result.point.map((item, key) => (
-            <Form.Item key={key} label={item.title} name={['point', key, 'value']}>
-              <InputNumber max={10} min={0} step={0.05} placeholder={ResultTerminology.RESULT_7} />
-            </Form.Item>
+            <div key={key}>
+              <Form.Item key={key} label={item.title} name={['point', key, 'value']}>
+                <InputNumber
+                  max={10}
+                  min={0}
+                  step={0.05}
+                  placeholder={ResultTerminology.RESULT_7}
+                />
+              </Form.Item>
+              <Form.Item key={'rate' + key} name={['point', key, 'rate']} hidden />
+            </div>
           ))}
           <Form.Item label={ResultTerminology.RESULT_3} name="note">
             <Input.TextArea rows={3} />
           </Form.Item>
+          <ResultPointRender value={tempResult} title={ResultTerminology.RESULT_13} />
+          <br />
           <Space size="middle">
             <Button loading={loading} onClick={handleOk} type="primary">
               {CommonTerminology.COMMON_9}
