@@ -36,6 +36,7 @@ const TopicPrivateInfo: React.FC<ComponentProps> = ({ topic, setTopic, thesis, c
   useEffect(() => {
     if (topicStateData) {
       setStates(topicStateData.states);
+      setCurrentState(topicStateData.states[topicStateData.states.length - 1].action);
     }
   }, [topicStateData]);
 
