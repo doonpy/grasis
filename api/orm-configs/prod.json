@@ -1,6 +1,6 @@
 {
   "type": "mysql",
-  "url": "mysql://md34fo1r8p80wnre:j3ks7utki9sgauep@s54ham9zz83czkff.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/qhfv9l22x1ge0szq",
+  "url": "mysql://setnefr41i4dxqag:uflkuarlq1vw9o5p@jhdjjtqo9w5bzq2t.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/iebyzmkq16oun8m7",
   "entities": [
     "src/**/*.entity.ts"
   ],
